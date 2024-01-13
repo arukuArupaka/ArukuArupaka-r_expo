@@ -7,7 +7,7 @@ import {useState} from 'react'
 const styles=StyleSheet.create({
   infoDaialog:{
     alignItems:'center',
-    zIndex: 10,
+    zIndex: 100,
     elevation: Platform.OS === 'android' ? 100 : 0,
     position:'absolute',
     width:"80%",

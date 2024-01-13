@@ -133,7 +133,7 @@ const TimrTableView = () => {
  
   return (
     <View style={{width:'100%',height:'100%',margin:0,padding:0}}>
-      <View style={{left:'10%',top:110,}}>
+      <View style={{zIndex:100,left:'10%',top:110,}}>
         {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSudmit={onSubmit}/>}
       </View>
       

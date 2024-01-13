@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState,useEffect } from 'react';
-import {Text, View,StyleSheet} from 'react-native';
+import {Text, ScrollView,StyleSheet,RefreshControl} from 'react-native';
 import * as Notifications from 'expo-notifications';
 
 import TimeTableNotificationsList from '../component/TimeTable/TimeTableNotificationsList'
@@ -22,14 +22,25 @@ const HelloWorldApp = () => {
       getPushDateUnitList();
     })
 
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }, []);
+
   return (
-    <View
-      style={styles.body}>
+    <ScrollView
+      style={styles.body} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         {/* <TimeTableNotificationsList
           data={NotficatonUnitList[0]}
         /> */}
          {NotficatonUnitList.map((NotficatonUnit,index)=><TimeTableNotificationsList key={index} data={NotficatonUnit}/>)}
-    </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
