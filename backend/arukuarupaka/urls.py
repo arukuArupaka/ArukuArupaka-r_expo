@@ -17,8 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+
+#写真表示用
+from django.contrib.staticfiles.urls import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf import settings
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/',include('home_view.urls')),
     path('textbook_market/',include('textbook_market.urls')),
 ]
+
+#写真表示用
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
