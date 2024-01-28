@@ -5,6 +5,7 @@ import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
+import ASetting from './src/View/ASetting';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ function App() {
         <Stack.Screen name="TimeTable" component={TimeTableRoot}/>
         <Stack.Screen name="Bike" component={BikeView}/>
         <Stack.Screen name="weather" component={WeatherView}/>
+        <Stack.Screen name="settings" component={ASetting}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

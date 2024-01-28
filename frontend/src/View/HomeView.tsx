@@ -44,12 +44,15 @@ type ApplistProps = {
 };
 
 
-const Headerlist = (props: HeaderlistProps) => {
+const Headerlist = (props) => {
   return (
 
-    <View style={styles.homeSetting}>
+    <TouchableOpacity 
+      style={styles.homeSetting}
+      onPress={() => { props.props.navigation.navigate('settings')}}
+      >
       <Image style={{ width: 24, height: 24, marginLeft: 'auto', marginRight: 'auto', marginTop: 'auto', marginBottom: 'auto' }} source={{ uri: props.url }} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -213,7 +216,7 @@ const HomeView = (props) => {
       <View style={styles.topScreen}></View>
       <View style={styles.profileIcon}></View>
       <View style={styles.headerListStyle}>
-        <Headerlist url='https://cdn-icons-png.flaticon.com/512/126/126472.png' />
+        <Headerlist props={props} url='https://cdn-icons-png.flaticon.com/512/126/126472.png' />
         <Headerlist url='https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Home-icon.svg/640px-Home-icon.svg.png' />
       </View>
       <View style={{ marginLeft: 5, marginRight: 5, marginBottom: 20, flex: 1 }}>
