@@ -78,19 +78,23 @@ const TimeTableInfo = (props) => {
     classRoom:props.pushFramDetail.classRoom,
     className:props.pushFramDetail.className,
     memo:props.pushFramDetail.memo,
-    notification:10,
+    notification:props.pushFramDetail.notification,
   })
   return (
     <View style={styles.infoDaialog}>
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>授業</Text>
-          <TextInput style={styles.TextInputInfo} autoFocus={true} clearTextOnFocus={true} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.className=text; return prev});}}><Text>{infoDetail.className}</Text></TextInput>
+          <TextInput style={styles.TextInputInfo} autoFocus={true} clearTextOnFocus={true} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.className=text; return prev});}}>
+            <Text>{infoDetail.className}</Text>
+          </TextInput>
           <Text style={styles.backText}></Text>
         </View>
 
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>教室</Text>
-          <TextInput style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.classRoom=text; return prev});}}><Text>{infoDetail.classRoom}</Text></TextInput>
+          <TextInput style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.classRoom=text; return prev});}}>
+            <Text>{infoDetail.classRoom}</Text>
+          </TextInput>
           <Text style={styles.backText}></Text>
         </View>
 
@@ -105,7 +109,7 @@ const TimeTableInfo = (props) => {
 
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>通知時間</Text>
-          <TextInput  editable={false} style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.notification=text; return prev});}}>
+          <TextInput style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.notification=text; return prev});}}>
             <Text>{infoDetail.notification}</Text>
           </TextInput>
           <Text style={styles.backText}> 分前に通知する</Text>
@@ -114,7 +118,8 @@ const TimeTableInfo = (props) => {
           <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();props.onSudmit(infoDetail)}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
           <TouchableOpacity style={styles.determinationButton} onPress={()=>{props.onEventCallBack()}}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
-    </View>
+    </View> 
   );
 };
+//a
 export default TimeTableInfo;

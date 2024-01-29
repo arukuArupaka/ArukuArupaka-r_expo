@@ -7,13 +7,52 @@ const ClassFrame = (props) => {
     day:props.day,
     period:props.period,
   }
+
+  const getheight = (qty) => {
+    let Height = '100'; // デフォルト値
+  
+    switch (qty){
+      case 5:
+        Height = '100';
+        break;
+      case 6:
+        Height = '83.333';
+        break;
+      case 7:
+        Height = '71.42857'
+        break;
+    }
+    return `${Height}%`;
+  };
+
+  const ClassNameHeight = (size) => {
+    let Height = 60;
+
+    switch (size){
+      case 5:
+        Height = 60;
+        break;
+      case 6:
+        Height = 45;
+        break;
+      case 7:
+        Height = 32;
+        break;
+    }
+
+    return Height;
+  };
+
+  const heightsize = getheight(props.weekTimeQty);
+  const classnameheight = ClassNameHeight(props.weekTimeQty);
+  
   return (
     <TouchableOpacity
       style={{
         color:'black',
         width:'100%',
         backgroundColor:'white',
-        height:'100%',
+        height: heightsize,
         lineHeight:35,
         marginLeft:1,
         marginRight:1,
@@ -25,7 +64,7 @@ const ClassFrame = (props) => {
                 marginTop:5,
                 color:'black',
                 textAlign:'center', 
-                height:60,
+                height: classnameheight,
             }}>{props.className}</Text>
             <Text style={{
               top:20,

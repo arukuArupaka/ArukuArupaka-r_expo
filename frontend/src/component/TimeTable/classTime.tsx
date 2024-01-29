@@ -2,12 +2,13 @@ import React from 'react';
 import {Text, View,StyleSheet} from 'react-native';
 
 const ClassTime = (props) => {
+        
   return (
         <View style={styles.body}>
                 <Text
                 style={{
                          textAlign:'center',
-                         top:'10%', 
+                         top: '10%', 
                         // height:'100%',
                         // lineHeight:35,
                         // marginLeft:1,
@@ -17,7 +18,8 @@ const ClassTime = (props) => {
                 </Text>
                 <Text
                 style={{
-                        top:'55%'
+                        textAlign:'center',
+                        top: '55%',
                         // textAlign:'center', 
                         // height:'100%',
                         // lineHeight:35,
@@ -30,6 +32,7 @@ const ClassTime = (props) => {
         </View>
   );
 };
+
 const styles=StyleSheet.create({
         body:{
                 flex:1,
