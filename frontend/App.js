@@ -17,7 +17,7 @@ function App() {
         <Stack.Screen name="TimeTable" component={TimeTableRoot}/>
         <Stack.Screen name="Bike" component={BikeView}/>
         <Stack.Screen name="weather" component={WeatherView}/>
-        <Stack.Screen name="settings" component={ASetting}/>
+        <Stack.Screen name="settings" component={ASetting} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
