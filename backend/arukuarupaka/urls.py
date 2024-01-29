@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/',include('home_view.urls')),
     path('textbook_market/',include('textbook_market.urls')),
+    path('common_deta',include('common_data.urls'))
 ]
 
 #写真表示用
