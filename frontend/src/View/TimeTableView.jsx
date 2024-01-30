@@ -24,22 +24,37 @@ const TimrTableView = () => {
     }),
   });
 
-  const scheduleNotificationAsync = async (classDetail) => {
-    const trigger = new Date(); // 現在の日時を取得
-    trigger.setHours(3);       // 通知を送信する時間（例：10時）
-    trigger.setMinutes(19);      // 分を設定（例：0分）
-  
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        body: classDetail.memo,
-        title: classDetail.classRoom + " " + classDetail.className
-      },
-      trigger: {
-        repeats: true, // 繰り返し通知する場合は true
-        //seconds: trigger.getTime() / 1000 // Unixタイムスタンプを秒単位で設定
+  const scheduleNotificationAsync = async (classDetail, notificationHour, notificationMinute) => {
+    try{
+      // デバッグ: notificationTime の内容を確認
+      console.log('Scheduling notification:', notificationHour);
+    
+      // 通知をスケジュールする際に数値であることを確認
+      if (typeof notificationHour === 'number' && typeof notificationMinute === 'number') {
+        const trigger = new Date();
+        trigger.setHours(notificationHour);
+        trigger.setMinutes(notificationMinute);
+        console.log('notificationHour:', notificationHour);
+        console.log('notificationMinute:', notificationMinute);
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            body: classDetail.memo,
+            title: classDetail.classRoom + " " + classDetail.className + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
+          },
+          trigger: {
+            weekday: classDetail.day+2,
+            hour: notificationHour,
+            minute: notificationMinute,
+            repeats: true
+          }
+        });
       }
-    });
+    } catch (e) {
+      console.log(e.message);
+    }
   };
+  
   
 
 
@@ -50,6 +65,43 @@ const TimrTableView = () => {
     await Notifications.requestPermissionsAsync();
   }
 
+  //通知時間計算
+  const timeCalc = (hour, minute, notification) => {
+    let notificationHour = hour
+    let notificationMinute = minute;
+
+    if(minute >= notification){
+      notificationHour = hour;
+      notificationMinute = minute - notification;
+    }else if(minute < notification){
+      if(notification <= 60){
+        notificationHour = hour - 1;
+        notificationMinute = 60 - (notification - minute);
+      }else if(minute >= Math.floor(notification%60)){
+        notificationHour = hour - Math.floor(notification/60);
+        notificationMinute = minute - Math.floor(notification%60);
+      }else{
+        notificationHour = hour - Math.floor(notification/60) - 1;
+        notificationMinute = 60 - Math.abs(minute - Math.floor(notification%60));
+      }
+    }
+        //0時、24時の処理
+    if (notificationHour < 0) {
+      notificationHour += 24;
+    }else if (notificationHour >= 24) {
+      notificationHour -= 24;
+    }
+
+    return {notificationHour,notificationMinute};
+  };
+
+  const notificationTime = [
+    [{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''}],
+    [{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''}],
+    [{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''}],
+    [{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''}],
+    [{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''},{notihour:'',notiminute:''}]
+  ]
 
   //時間割系
   const [isShow,setIsShow]=useState(false)
@@ -72,7 +124,7 @@ const TimrTableView = () => {
       start:"10:40",
       end:"12:10",
       hour:10,
-      minutte:40
+      minute:40
     },
     {
       start:"13:00",
@@ -112,6 +164,23 @@ const TimrTableView = () => {
     period:"",
   })
 
+  //確認
+  /*const scheduleAllNotifications = () => {
+    if (Array.isArray(classStartEndTimeUnitList) && Array.isArray(weekTime)) {
+      for (let i = 0; i < classStartEndTimeUnitList.length; i++) {
+        if (Array.isArray(weekTime[i])) {
+          for (let j = 0; j < weekTime[i].length; j++) {
+            const notificationTime = timeCalc(classStartEndTimeUnitList[i].hour, classStartEndTimeUnitList[i].minute, weekTime[i][j].notification);
+            scheduleNotificationAsync(weekTime[i][j], notificationTime);
+          }
+        }
+      }
+    }
+  }; */
+
+  //scheduleAllNotifications();
+  
+
 
   //保存系
   //weekTimeの行列保存、読み出し
@@ -129,6 +198,7 @@ const TimrTableView = () => {
       jsonValue != null ? setWeekTime((JSON.parse(jsonValue))) : null;
       console.log('timeTableKey:',jsonValue)
       console.log('weekTimeQty:',weekTimeQty)
+      console.log('scheduleNotificationAsync:',scheduleNotificationAsync())
     } catch (e) {
       console.log(e)
     }
@@ -316,16 +386,18 @@ const TimrTableView = () => {
     },
   });
 
-  const onSubmit=(classDetail)=>{
+  const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
     setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
-    scheduleNotificationAsync(classDetail);
+    scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
+    console.log('onSubmit///hour:',notificationHour);
+    console.log('onSubmit///minute:',notificationMinute);
     
   }
  
   return (
     <View style={{width:'100%',height:'100%',margin:0,padding:0}}>
       <View style={{zIndex:300,left:'10%',top:110,}}>
-        {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSudmit={onSubmit}/>}
+        {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
       </View>
       
     <View style={styles.bodys}>

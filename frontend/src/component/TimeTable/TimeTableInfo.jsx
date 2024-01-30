@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 
 
 
@@ -72,14 +72,47 @@ const styles=StyleSheet.create({
 })
 
 const TimeTableInfo = (props) => {
-  const [infoDetail,setInfoDetail]=useState({
-    day:props.day,
-    period:props.period,
-    classRoom:props.pushFramDetail.classRoom,
-    className:props.pushFramDetail.className,
-    memo:props.pushFramDetail.memo,
-    notification:props.pushFramDetail.notification,
-  })
+
+  const [infoDetail, setInfoDetail] = useState({
+    day: props.day,
+    period: props.period,
+    classRoom: props.pushFramDetail.classRoom,
+    className: props.pushFramDetail.className,
+    memo: props.pushFramDetail.memo,
+    notification: props.pushFramDetail.notification,
+    hour:props.classStartEndTimeUnitList[props.period].hour,
+    minute:props.classStartEndTimeUnitList[props.period].minute
+  });
+
+  const [check, setCheck] = useState(1);
+
+  const Submit = async() => {
+
+    const timecalc = props.timeCalc(
+    infoDetail.hour , infoDetail.minute,
+    infoDetail.notification);
+
+    const { notificationHour, notificationMinute } = timecalc;
+
+    setInfoDetail((prev)=>{prev.timecalc=timecalc; return prev});
+    setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
+    setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
+    
+    
+
+    console.log('Info///timeCalc///hour:',infoDetail.hour);
+    console.log('Info///timeCalc///minute:',infoDetail.minute);
+    console.log('Info///timeCalc///timecalc:',timecalc);
+    console.log('Info///timeCalc///notificationHour:',notificationHour);
+    console.log('Info///timeCalc///notificationMinute:',notificationMinute);
+
+
+
+    props.onSubmit(infoDetail,notificationHour,notificationMinute);
+
+
+  }
+
   return (
     <View style={styles.infoDaialog}>
         <View style={styles.InfoText}>
@@ -115,11 +148,10 @@ const TimeTableInfo = (props) => {
           <Text style={styles.backText}> 分前に通知する</Text>
         </View >
         <View style={{flexDirection:'row',flex:1,}}>
-          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();props.onSudmit(infoDetail)}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
+          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();setCheck(check*(-1));Submit();}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
           <TouchableOpacity style={styles.determinationButton} onPress={()=>{props.onEventCallBack()}}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
-    </View> 
+    </View>
   );
 };
-//a
 export default TimeTableInfo;
