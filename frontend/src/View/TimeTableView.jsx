@@ -36,6 +36,10 @@ const TimrTableView = () => {
         trigger.setMinutes(notificationMinute);
         console.log('notificationHour:', notificationHour);
         console.log('notificationMinute:', notificationMinute);
+        console.log('classDetail.day:',classDetail.day);
+        if (classDetail.day == 5){
+          classDetail.day = 0;
+        }
 
         await Notifications.scheduleNotificationAsync({
           content: {
