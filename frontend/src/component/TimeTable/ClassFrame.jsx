@@ -1,8 +1,9 @@
 import React from 'react';
 import {Text, View,TouchableOpacity} from 'react-native';
-
+import { useTimeTable } from './TimeTableContext'
 
 const ClassFrame = (props) => {
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange } = useTimeTable();
   const frameDetail={
     day:props.day,
     period:props.period,
@@ -25,6 +26,14 @@ const ClassFrame = (props) => {
     return `${Height}%`;
   };
 
+  let heightsize = '100%';
+
+  if(sizechange === false){
+    heightsize = getheight(props.weekTimeQty);
+  }else{
+    heightsize = '100%';
+  }
+
   const ClassNameHeight = (size) => {
     let Height = 60;
 
@@ -43,7 +52,6 @@ const ClassFrame = (props) => {
     return Height;
   };
 
-  const heightsize = getheight(props.weekTimeQty);
   const classnameheight = ClassNameHeight(props.weekTimeQty);
   
   return (
