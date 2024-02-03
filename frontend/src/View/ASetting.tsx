@@ -1,17 +1,49 @@
-import React from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, { useState } from 'react';
+import {ScrollView, Text, TextInput, TouchableOpacity, View,Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
+import {ActionSheet} from 'react-native-cross-actionsheet';
+import * as ImagePicker from 'expo-image-picker';
+
+
 
 const ASetting = (props) => {
+  props.navigation.navigate('login')
+  const [image, setImage] = useState(null);
+
+  const onPressAction = () => {
+    return ActionSheet.options({
+      options: [
+        {text: '写真を選択', onPress: () => pickImage()},
+      ],
+      cancel: {text: 'キャンセル'},
+    });
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      console.log(result.assets[0].uri)
+      setImage(result.assets[0].uri);
+    }
+  }
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <SafeAreaView>
         <TouchableOpacity
           onPress={()=>props.navigation.navigate('Home')}
           style={{
-            marginTop:20,
+            marginTop:0,
             marginLeft:20,
             backgroundColor:'#D9D9D9',
             borderRadius:50,
@@ -29,8 +61,12 @@ const ASetting = (props) => {
               borderRadius:100,
               marginLeft:'auto',
               marginRight:'auto',
-          }}>
-            <TouchableOpacity style={{
+          }}
+          > 
+          {image&&<Image source={{uri:image}} style={{width: 200, height: 200 ,borderRadius:100,}}/>}
+            <TouchableOpacity 
+            onPress={onPressAction}
+            style={{
               position:'absolute',
               right:20,
               bottom:10,
@@ -51,8 +87,52 @@ const ASetting = (props) => {
           <TextInput style={{
             marginTop:5,
             borderRadius:5,
-            fontSize:30,backgroundColor:'#D9D9D9'}}></TextInput>
+            fontSize:30,
+            backgroundColor:'#D9D9D9',
+            marginBottom:20}}></TextInput>
+            <Text>学部</Text>
+            <TextInput style={{
+            marginTop:5,
+            borderRadius:5,
+            fontSize:30,
+            backgroundColor:'#D9D9D9',
+            marginBottom:20}}></TextInput>
+            <Text>学科・専攻</Text>
+            <TextInput style={{
+            marginTop:5,
+            borderRadius:5,
+            fontSize:30,
+            backgroundColor:'#D9D9D9',
+            marginBottom:20}}></TextInput>
+            <Text>回生</Text>
+            <TextInput style={{
+            marginTop:5,
+            borderRadius:5,
+            fontSize:30,
+            backgroundColor:'#D9D9D9',
+            marginBottom:20}}></TextInput>
+            <Text>プロフィール</Text>
+            <TextInput style={{
+            marginTop:5,
+            borderRadius:5,
+            fontSize:30,
+            backgroundColor:'#D9D9D9',
+            marginBottom:20}}></TextInput>
+            <TouchableOpacity 
+            style={{
+              marginLeft:'80%',
+              backgroundColor:'blue',
+              borderRadius:5,
+              height:30
+              }}><Text style={{
+                color:'white',
+                textAlign:'center',
+                fontSize:20,
+                fontWeight:'400',
+                paddingTop:2,
+              }} >登録</Text></TouchableOpacity>
         </View>
+
       </SafeAreaView>
     </ScrollView>
   );
