@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet, Switch} from 'react-native';
+import {Text, View, StyleSheet, Switch } from 'react-native';
 import TimeTableQty from '../component/TimeTable/TimeTableQty';
 import { useState, useEffect } from 'react';
 import TimrTableView from './TimeTableView'
@@ -9,7 +9,6 @@ const TimeTableSetting = () => {
 
   const { timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch } = useTimeTable();
 
-  
     // その他のコンポーネントのコード...
 
     const styles = StyleSheet.create({
@@ -61,6 +60,9 @@ const TimeTableSetting = () => {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between'
+        },
+        SizeSet:{
+            paddingLeft: '30%'
         }
     })
 
@@ -104,7 +106,7 @@ const TimeTableSetting = () => {
                 <Switch
                     value={sizechange}
                     onValueChange={toggleSwitch}
-                    trackColor={{false: '#888888', true: '#ffffff'}}
+                    trackColor={{false: '#888888', true: 'green'}}
                     thumbColor={'white'}
                 />
             </View>

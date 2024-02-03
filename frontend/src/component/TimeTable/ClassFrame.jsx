@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View,TouchableOpacity} from 'react-native';
+import { Platform, Text, View,TouchableOpacity} from 'react-native';
 import { useTimeTable } from './TimeTableContext'
 
 const ClassFrame = (props) => {
@@ -52,7 +52,13 @@ const ClassFrame = (props) => {
     return Height;
   };
 
-  const classnameheight = ClassNameHeight(props.weekTimeQty);
+  let classnameheight = 60;
+
+  if(sizechange === false){
+    classnameheight = ClassNameHeight(props.weekTimeQty);
+  }else{
+    classnameheight = 60;
+  }
   
   return (
     <TouchableOpacity
@@ -69,9 +75,14 @@ const ClassFrame = (props) => {
         borderRadius: 10, 
       }}onPress={()=>{props.onEventCallBack(frameDetail)}}>
       <Text style={{
-                marginTop:5,
+                marginTop:8,
                 color:'black',
                 textAlign:'center', 
+                fontSize: 12,
+                ...Platform.select({
+                  ios: {flexWrap: 'wrap',width: '100%'},
+                  android: {}
+                }),
                 height: classnameheight,
             }}>{props.className}</Text>
             <Text style={{

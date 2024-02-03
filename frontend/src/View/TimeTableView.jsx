@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View,StyleSheet,useColorScheme, Button, ScrollView} from 'react-native';
+import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions} from 'react-native';
 import WeekFram from '../component/TimeTable/WeekFrame';
 import ClassFrame from '../component/TimeTable/ClassFrame';
 import TimeTableInfo from '../component/TimeTable/TimeTableInfo';
@@ -14,6 +14,8 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 const TimrTableView = () => {
   const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding } = useTimeTable();
+
+  const window = Dimensions.get('window');
 
   //プッシュ通知系
   React.useEffect(() => {
@@ -295,7 +297,7 @@ const TimrTableView = () => {
 
     bodys:{
       flexDirection: 'row',
-      backgroundColor:'F8F8F8',
+      backgroundColor:'#F8F8F8',
       width:'100%',
       paddingTop:30,
       paddingBottom:padding,
