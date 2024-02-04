@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import {ScrollView, Text, TextInput, TouchableOpacity, View,Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +9,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 const ASetting = (props) => {
-  props.navigation.navigate('login')
+
+    // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
+    
+
+  //props.navigation.navigate('login')
   const [image, setImage] = useState(null);
 
   const onPressAction = () => {

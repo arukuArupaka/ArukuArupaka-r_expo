@@ -3,5 +3,5 @@ from .views import helloworldfunc
 
 
 urlpatterns = [
-    path('',)
+    path('',helloworldfunc)
 ]
