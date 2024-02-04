@@ -1,12 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+# photo/views.py
 
+from rest_framework import generics
+from .models import Photo
+from .serializer import PhotoSerializer
 
+class PhotoListCreateView(generics.ListCreateAPIView):
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
 
-# Create your views here.
-@api_view(['GET'])
-def helloworldfunc(request):
-  person = {'name':'テスト', 'コードを書く場所':'home_viewのファイルの中は自由に変えてもらって大丈夫です。'}
-  return Response(person)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)  # ユーザーに関連付ける
