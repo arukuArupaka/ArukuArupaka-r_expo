@@ -11,6 +11,7 @@ import { AntDesign } from '@expo/vector-icons';
 import TimeTableSetting from './src/View/TimeTableSetting';
 import { TimeTableProvider } from './src/component/TimeTable/TimeTableContext'; 
 
+import ALoginView from './src/View/ALoginView';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ function App() {
           <Stack.Screen name="Bike" component={BikeView}/>
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="settings" component={ASetting}/>
+          <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
           <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
         </Stack.Navigator>
       </NavigationContainer>
