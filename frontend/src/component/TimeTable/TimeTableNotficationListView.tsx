@@ -3,7 +3,7 @@ import { useState,useEffect } from 'react';
 import {Text, ScrollView,StyleSheet,RefreshControl} from 'react-native';
 import * as Notifications from 'expo-notifications';
 
-import TimeTableNotificationsList from '../component/TimeTable/TimeTableNotificationsList'
+import TimeTableNotificationsList from './TimeTableNotificationsList'
 
 
 const HelloWorldApp = () => {

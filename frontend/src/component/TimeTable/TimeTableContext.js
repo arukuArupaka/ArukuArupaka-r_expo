@@ -16,7 +16,7 @@ export const TimeTableProvider = ({ children }) => {
   useEffect(() => {
     // sizechange または weekTimeQty が変更された場合にのみ実行
     const newSize = sizechange ? getTimeSize(weekTimeQty) : 625.5;
-    const newPad = sizechange ? getpadding(weekTimeQty) : 0;
+    const newPad = sizechange ? getpadding(weekTimeQty) : 100;
     setTimesize(newSize);
     setPadding(newPad);
   }, [sizechange, weekTimeQty]);
@@ -43,13 +43,13 @@ export const TimeTableProvider = ({ children }) => {
   const getpadding = (qty) => {
     switch(qty){
       case 5:
-        pad = 0;
+        pad = 100;
         break;
       case 6:
-        pad = 30;
+        pad = 100;
         break;
       case 7:
-        pad = 30;
+        pad = 100;
         break;
       default:
         pad = 0;

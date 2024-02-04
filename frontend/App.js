@@ -20,8 +20,9 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name="Home" component={HomeView} options={{ headerShown: false }}/>
-          <Stack.Screen name="TimeTable" component={TimeTableRoot} 
+          <Stack.Screen name="TimeTable" component={TimeTable} 
             options={({ navigation }) => ({ 
+              title: '',
               headerRight: () => (
                 <TouchableOpacity onPress={() => navigation.navigate('TimeTableSetting')}>
                   <AntDesign name="ellipsis1" size={24} color="black" />
@@ -30,8 +31,8 @@ function App() {
             })} />
           <Stack.Screen name="Bike" component={BikeView}/>
           <Stack.Screen name="weather" component={WeatherView}/>
-          <Stack.Screen name="settings" component={ASetting}/>
-          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
+          <Stack.Screen name="settings" component={ASetting} />
+          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>

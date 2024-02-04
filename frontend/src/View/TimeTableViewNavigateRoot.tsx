@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TimeTableView from './TimeTableView';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import TimeTableNotficationList from './TimeTableNotficationListView' 
+import TimeTableNotficationList from '../component/TimeTable/TimeTableNotficationListView' 
 import { Feather } from '@expo/vector-icons'; 
 
 

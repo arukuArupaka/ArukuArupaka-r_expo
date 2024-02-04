@@ -8,7 +8,6 @@ import {useState,useEffect} from 'react'
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TimeTableQty from '../component/TimeTable/TimeTableQty';
-import TimeTableSetting from './TimeTableSetting'
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
