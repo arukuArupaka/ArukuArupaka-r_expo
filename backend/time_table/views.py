@@ -1,12 +1,10 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.shortcuts import render  # ステップ2で作成した関数をインポート
+from .scraper import scrape_website
+from .web_auto_scrape import web_auto
 
-
-
-# Create your views here.
-@api_view(['GET'])
-def helloworldfunc(request):
-  person = {'name':'テスト', 'コードを書く場所':'time_tableフォルダの中は自由に変えてもらって大丈夫です。'}
-  return Response(person)
+def search_class(request):
+    if request.method == 'POST':
+        url = 'https://ct.ritsumei.ac.jp/syllabussearch/'  # スクレイピングするURL
+        web_auto(url)
+        return render(request, 'time_table/result.html')
+    return render(request, 'time_table/index.html')
