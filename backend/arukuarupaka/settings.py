@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'home_view',
     'textbook_market',
+    'time_table',
     'common_data'
-    'time_table'
 ]
 
 MIDDLEWARE = [

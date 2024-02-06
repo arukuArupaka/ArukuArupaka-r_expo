@@ -1,11 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+from lxml import html
 
-def scrape_website(url, class_name):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    element = soup.find('table', class_='infobox')  # CSSセレクタを使用
-    if element:
-        return element.get_text()
-    else:
-        return "指定された要素が見つかりません。"
+def scrape_website(html):
+    tree = html.fromstring(html)
+    element = tree.xpath("/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[2]/td[2]/a")
+    
+    return element
