@@ -34,9 +34,9 @@ function App() {
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="settings" component={ASetting} />
           <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} />
-          <Stack.Screen name="settings" component={ASetting}/>
+          {/* <Stack.Screen name="settings" component={ASetting}/> */}
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
-          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
+          {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>

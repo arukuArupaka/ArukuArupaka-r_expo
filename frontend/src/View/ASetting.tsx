@@ -1,9 +1,9 @@
 import React, { useState ,useEffect} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View,Image} from 'react-native';
+import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import {ActionSheet} from 'react-native-cross-actionsheet';
+import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -16,14 +16,32 @@ const ASetting = (props) => {
   //props.navigation.navigate('login')
   const [image, setImage] = useState(null);
 
-  const onPressAction = () => {
-    return ActionSheet.options({
-      options: [
-        {text: '写真を選択', onPress: () => pickImage()},
-      ],
-      cancel: {text: 'キャンセル'},
-    });
-  };
+  // const onPressAction = () => {
+  //   return ActionSheet.options({
+  //     options: [
+  //       {text: '写真を選択', onPress: () => pickImage()},
+  //     ],
+  //     cancel: {text: 'キャンセル'},
+  //   });
+  // };
+
+  const onOpenActionSheet=()=> {
+    if(Platform.OS=='android'){
+      pickImage()
+      return
+    }
+    const options = ['写真を選択', 'キャンセル'];
+    const cancelButtonIndex = 1;
+    ActionSheet.showActionSheetWithOptions({
+      options,
+      cancelButtonIndex
+    },
+    buttonIndex => {
+      if(buttonIndex==0){
+        pickImage()
+      }
+    })
+  }
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -69,7 +87,7 @@ const ASetting = (props) => {
           > 
           {image&&<Image source={{uri:image}} style={{width: 200, height: 200 ,borderRadius:100,}}/>}
             <TouchableOpacity 
-            onPress={onPressAction}
+            onPress={onOpenActionSheet}
             style={{
               position:'absolute',
               right:20,

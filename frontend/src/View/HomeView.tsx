@@ -144,7 +144,7 @@ const Carousel = () => {
 
   useEffect(() => {
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-    fetch("http://192.168.2.125:8000/image/photos/favicon.png")
+    fetch("http://127.0.0.1:8000/image/photos/favicon.png")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -164,7 +164,7 @@ const Carousel = () => {
       .catch((error) =>
         console.error("Error fetching image data:", error.message)
       );
-  }, []);
+  }, ['a']);
   return (
     <View style={{}}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
