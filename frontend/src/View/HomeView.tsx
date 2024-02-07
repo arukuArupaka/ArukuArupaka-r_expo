@@ -154,7 +154,7 @@ const Carousel = () => {
       .catch((error) =>
         console.error("Error fetching image data:", error.message)
       );
-  }, []);
+  }, ['a']);
   return (
     <View style={{}}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
