@@ -1,5 +1,4 @@
 from django.shortcuts import render  # ステップ2で作成した関数をインポート
-from .scraper import scrape_website
 from .web_auto import web_search
 
 def search_class(request):
