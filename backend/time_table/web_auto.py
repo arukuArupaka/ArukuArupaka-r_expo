@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import re
 
 # Chromeオプションを設定する
 options = webdriver.ChromeOptions()
@@ -70,13 +71,21 @@ def web_search(url, select_season, select_time, select_day, select_department, c
     
     tree = html.fromstring(html_content)
     
-    page = tree.xpath("/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/a[3]")
+    page = tree.xpath("/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/span[1]")
     
     page_qty = page[0].text_content()
     
+    page_all = re.sub(r"\D", "", page_qty)
+    
+    rem = int(page_all) % 10
+    
+    if rem > 0:
+        page_all_qty = (int(page_all)/10)+1
+    else:
+        page_all_qty = int(page_all)/10    
     element_texts = []
     
-    for i in range(int(page_qty)):
+    for i in range(int(page_all_qty)):
         for j in range(2, 12):
             html_content = driver.page_source
             tree = html.fromstring(html_content)
