@@ -3771,13 +3771,6 @@ glob-parent@^5.1.2, glob-parent@~5.1.2:
   dependencies:
     is-glob "^4.0.1"
 
-glob-parent@^6.0.2:
-  version "6.0.2"
-  resolved "https://registry.npmjs.org/glob-parent/-/glob-parent-6.0.2.tgz"
-  integrity sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==
-  dependencies:
-    is-glob "^4.0.3"
-
 glob@^6.0.1:
   version "6.0.4"
   resolved "https://registry.npmjs.org/glob/-/glob-6.0.4.tgz"
@@ -4497,10 +4490,24 @@ leven@^3.1.0:
   resolved "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz"
   integrity sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==
 
+<<<<<<< HEAD
 lightningcss-win32-x64-msvc@1.19.0:
   version "1.19.0"
   resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz"
   integrity sha512-C+VuUTeSUOAaBZZOPT7Etn/agx/MatzJzGRkeV+zEABmPuntv1zihncsi+AyGmjkkzq3wVedEy7h0/4S84mUtg==
+=======
+<<<<<<< HEAD
+lightningcss-win32-x64-msvc@1.19.0:
+  version "1.19.0"
+  resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz"
+  integrity sha512-C+VuUTeSUOAaBZZOPT7Etn/agx/MatzJzGRkeV+zEABmPuntv1zihncsi+AyGmjkkzq3wVedEy7h0/4S84mUtg==
+=======
+lightningcss-darwin-x64@1.19.0:
+  version "1.19.0"
+  resolved "https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.19.0.tgz"
+  integrity sha512-Lif1wD6P4poaw9c/4Uh2z+gmrWhw/HtXFoeZ3bEsv6Ia4tt8rOJBdkfVaUJ6VXmpKHALve+iTyP2+50xY1wKPw==
+>>>>>>> 95adc6149e3c9065c97f3ab55c9d6c5048778420
+>>>>>>> ce79c2ce2267b9bf4ac276dc1273fcd0db0701d2
 
 lightningcss@~1.19.0:
   version "1.19.0"
@@ -5839,6 +5846,14 @@ react-is@^18.0.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
+<<<<<<< HEAD
+react-native-cross-actionsheet@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/react-native-cross-actionsheet/-/react-native-cross-actionsheet-1.0.1.tgz"
+  integrity sha512-GbLLHKNrdlm1AZm3EJO1AGclaYbbZEqpp4zGAFGuHclNg9O9z2RnHX6JwVj79SlfeYMc/cT+jM5KtJZU3x4eTg==
+
+=======
+>>>>>>> 95adc6149e3c9065c97f3ab55c9d6c5048778420
 react-native-debugger@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/react-native-debugger/-/react-native-debugger-1.1.0.tgz"
