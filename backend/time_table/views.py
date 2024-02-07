@@ -17,3 +17,4 @@ def search_class(request):
         
         return render(request, 'time_table/result.html', {"results":results})
     return render(request, 'time_table/index.html')
+

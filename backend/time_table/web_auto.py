@@ -8,6 +8,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+# Chromeオプションを設定する
+options = webdriver.ChromeOptions()
+options.add_argument("disable-blink-features=AutomationControlled")
+
+# Chromeドライバのパスを指定（webdriver_managerを使用して自動管理）
+service = Service(ChromeDriverManager().install())
+
+# Chromeドライバを初期化
+driver = webdriver.Chrome(service=service, options=options)
 
 def web_search(url, select_season, select_time, select_day, select_department, class_name):
     driver = webdriver.Chrome()
@@ -49,28 +60,42 @@ def web_search(url, select_season, select_time, select_day, select_department, c
     class_submit = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[1]/input[3]")
     class_submit.click()
     
-    page = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[3]/select")
-    page.click()
+    #page = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[3]/select")
+    #page.click()
     
-    page_qty = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div/div/form/div/div[3]/select/option[3]')
-    page_qty.click()
+    #page_qty = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div/div/form/div/div[3]/select/option[3]')
+    #page_qty.click()
     
-    element_texts = []
-            
     html_content = driver.page_source
     
     tree = html.fromstring(html_content)
     
-    driver.quit()
+    page = tree.xpath("/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/a[3]")
     
-    for i in range(2, 51):
-    # フォーマット済み文字列リテラルを使って動的にXPath式を生成
-        xpath_expression = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{i}]/td[2]/a"
-        element = tree.xpath(xpath_expression)
+    page_qty = page[0].text_content()
     
+    element_texts = []
+    
+    for i in range(int(page_qty)):
+        for j in range(2, 12):
+            html_content = driver.page_source
+            tree = html.fromstring(html_content)
+            xpath_expression = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[2]/a"
+            element = tree.xpath(xpath_expression)
+
         # 要素が存在する場合、そのテキストをリストに追加
-        if element:
-            element_texts.append(element[0].text_content())
+            if element:
+                element_texts.append(element[0].text_content())
+            
+        page_num = 10*(i+1)+1
+        javascript_code = f"""
+        var form = document.getElementById('syllabussearchform');
+        manaba.appendHidden(form,'start','{page_num}');  
+        form.submit();
+        """
+        driver.execute_script(javascript_code)
+    
+    driver.quit()
     
     return element_texts
     
