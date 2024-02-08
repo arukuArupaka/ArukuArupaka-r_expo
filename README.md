@@ -1,4 +1,4 @@
-起動方法
+起動方法<br>
 frontend
   npm install
   npx expo start
