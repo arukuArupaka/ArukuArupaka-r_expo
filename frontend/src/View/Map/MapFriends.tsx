@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-const WeatherView = () => {
+const MapFriendsView = () => {
   return (
     <View
       style={{
@@ -9,8 +9,8 @@ const WeatherView = () => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <Text>Hello, world!</Text>
+      <Text style ={{fontSize: 30}}>Friends Screen!</Text>
     </View>
   );
 };
-export default WeatherView  ;
+export default MapFriendsView;

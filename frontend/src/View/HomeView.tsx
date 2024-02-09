@@ -154,7 +154,7 @@ const HomeView = (props) => {
         </View>
         <View style={styles.appListFlex}>
           <AppList
-            appName="教科書     中古販売"
+            appName="教科書     フリマ"
             color="#FFCB08"
             iconName="book-multiple"
           />

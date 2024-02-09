@@ -11,9 +11,9 @@ import * as ImagePicker from 'expo-image-picker';
 const ASetting = (props) => {
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-    
 
-  //props.navigation.navigate('login')
+
+  props.navigation.navigate('login')
   const [image, setImage] = useState(null);
 
   // const onPressAction = () => {
@@ -84,9 +84,9 @@ const ASetting = (props) => {
               marginLeft:'auto',
               marginRight:'auto',
           }}
-          > 
+          >
           {image&&<Image source={{uri:image}} style={{width: 200, height: 200 ,borderRadius:100,}}/>}
-            <TouchableOpacity 
+            <TouchableOpacity
             onPress={onOpenActionSheet}
             style={{
               position:'absolute',
@@ -140,7 +140,7 @@ const ASetting = (props) => {
             fontSize:30,
             backgroundColor:'#D9D9D9',
             marginBottom:20}}></TextInput>
-            <TouchableOpacity 
+            <TouchableOpacity
             style={{
               marginLeft:'80%',
               backgroundColor:'blue',
