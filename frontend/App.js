@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
+import MapView from './src/View/MapView'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
 import { TouchableOpacity } from 'react-native';
@@ -32,6 +33,7 @@ function App() {
             })} />
           <Stack.Screen name="Bike" component={BikeView}/>
           <Stack.Screen name="weather" component={WeatherView}/>
+          <Stack.Screen name="Map" component={MapView}/>
           <Stack.Screen name="settings" component={ASetting} />
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
