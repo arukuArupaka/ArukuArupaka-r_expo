@@ -6,7 +6,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 const HomeCarousel = () => {
 
     const [activeDotIndex, setActiveDotIndex] = useState(0);
-
     const _carousel = useRef();
 
     const data = [
