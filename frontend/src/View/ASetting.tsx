@@ -26,7 +26,7 @@ const ASetting = (props) => {
   }, []);
 
 
-  props.navigation.navigate('login')
+  //props.navigation.navigate('login')
   const [image, setImage] = useState(null);
 
 
