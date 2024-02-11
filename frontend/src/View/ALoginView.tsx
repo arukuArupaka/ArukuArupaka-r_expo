@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {Alert,Text, View,Image, TouchableOpacity,TextInput, KeyboardAvoidingView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,onAuthStateChanged,signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
+import Dialog from "react-native-dialog";
 
 
 
@@ -14,6 +15,10 @@ const ALoginView = (props) => {
   const [isResetPass,setIsResetPass]=useState(false)
   const [userInfo,setUserInfo]=useState()
   const [showResendRegisterBotton,setShowResendRegisterBotton]=useState(false)
+  const [showRegisterBotton,setShowRegisterBotton]=useState(false)
+  const [errorMessage,setErrorMessage]=useState('')
+  const [authMail,setAuthMail]=useState('')
+  const [authPass,setAuthPass]=useState('')
 
 
     const [showCreateAccount,setShowCreateAccount]=useState(false)
@@ -39,15 +44,30 @@ const ALoginView = (props) => {
     const handleRegister = async () => {
       try {
         const user = await createUserWithEmailAndPassword(auth, email, password);
+        setAuthMail(email)
+        setAuthPass(password)
         //console.log(user);
         await setUserInfo(user)
         setShowResendRegisterBotton(true)
+        setShowRegisterBotton(true)
 
         await sendEmailVerification(user.user);
 
         //props.navigation.navigate('Home')
       } catch (error) {
         console.log(error.message);
+        switch (error.message){
+          case "Firebase: Error (auth/email-already-in-use).":
+            setErrorMessage("このアカウントは登録されいます。ログインしてください。")
+            break;
+          case "Firebase: Error (auth/invalid-credential).":
+            setErrorMessage("メールアドレスまたはパスワードが間違えています。")
+            break;
+          case "Firebase: Error (auth/invalid-email).":
+            setErrorMessage("メールアドレスを入力してください。")
+          default:
+            break
+        }
       }
     };
 
@@ -56,36 +76,98 @@ const ALoginView = (props) => {
         await signInWithEmailAndPassword(auth, email, password);
       } catch (error) {
         console.log(error.message);
+        switch (error.message){
+          case "Firebase: Error (auth/email-already-in-use).":
+            setErrorMessage("このアカウントは登録されいます。ログインしてください。")
+            break;
+          case "Firebase: Error (auth/invalid-credential).":
+            setErrorMessage("メールアドレスまたはパスワードが間違えています。")
+            break;
+          case "Firebase: Error (auth/invalid-email).":
+            setErrorMessage("メールアドレスを入力してください。")
+          default:
+            break
+        }
       }
+    };
+
+    const pleaseValidateMailDialog = () => {
+      Alert.alert(
+          'まだアカウントは作成されていません。', 
+          'メールに送付されたリンクをクリックしてください。メールが届かない場合は再送信してください。',
+      [
+        {text: 'OK', onPress: () => console.log('アラートのOKをタップした時の挙動を書く')},
+      ]);
+    };
+    
+    const changePageDialog = () => {
+      Alert.alert(
+          'メールアドレスを認証できました。', 
+          'ありがとうございます。引き続きご利用ください。',
+      [
+        {text: 'OK', onPress: () => props.navigation.navigate('settings')},
+      ]);
     };
 
     const switchLogin=()=>{
       setIsCreateAcount(false);
       setIsResetPass(false)
       setIsLogin(true)
+      setErrorMessage('')
     }
 
     const switchCreateAccount=()=>{
       setIsResetPass(false)
       setIsLogin(false)
       setIsCreateAcount(true);
+      setErrorMessage('')
+
     }
 
     const switchResetPassWord=()=>{
       setIsLogin(false)
       setIsCreateAcount(false);
       setIsResetPass(true)
+      setErrorMessage('')
+
     }
     const setdRegisterMail=async()=>{
-      // try{
-      //   await deleteUser(userInfo)
-      //   await handleLogin
-      // }catch{
-
-      // }
       await sendEmailVerification(userInfo.user);
 
     }
+
+    const signOUt=()=>{
+      signOut(auth)
+      .then(() => {
+        console.log('logout');
+       })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    }
+
+    const completeCreateAccount=async()=>{
+      try {
+        await signOUt()
+        await signInWithEmailAndPassword(auth, authMail, authPass);
+        const unsubscribe = await onAuthStateChanged(auth, (user) => {
+          if (user.emailVerified) {
+            changePageDialog()
+
+          }else{
+            pleaseValidateMailDialog()
+          }
+        });
+        unsubscribe();
+        
+      } catch (error) {
+          console.log(error)
+          setErrorMessage("申し訳ありません。予期しないエラーが発生しました。時間を空けて再度行ってください。")
+        }
+      }
+
+      
+    
 
   return (
     <View
@@ -136,6 +218,7 @@ const ALoginView = (props) => {
             <Text style={{}}>さあ、あなたも！</Text>
             <Fontisto style={{textAlign:'center'}} name="angle-down" size={40} color="black" />
         </TouchableOpacity>
+        {errorMessage&&<Text style={{color:'red',fontSize:10}}>{errorMessage}</Text>}
         {showCreateAccount&&isCreateAcount&&<KeyboardAvoidingView style={{width:'80%'}} behavior="padding"><View style={{backgroundColor:'#EEEEEE',borderRadius:10,marginBottom:5,padding:20}}>
                 <Text>メールアドレスを入力</Text>
                 <View style={{flexDirection:'row'}}>
@@ -166,13 +249,24 @@ const ALoginView = (props) => {
                 {showResendRegisterBotton&&<TouchableOpacity onPress={setdRegisterMail} style={{marginBottom:5}}>
                   <Text style={{textAlign:'center',color:'#C8252B'}}>メールを再送信</Text>
                 </TouchableOpacity>}
-                <TouchableOpacity disabled={!email || !password} style={{
+                {/* {showRegisterBotton&&<TouchableOpacity onPress={setdRegisterMail} style={{marginBottom:5}}>
+                  <Text style={{textAlign:'center',color:'#C8252B'}}>メールを認証したらクリック</Text>
+                </TouchableOpacity>} */}
+                {!showRegisterBotton?<TouchableOpacity disabled={!email || !password} style={{
                   marginTop:20,
                   backgroundColor:(email&&password.length>=6)?'#C8252B':'#FFAFB2',
                   padding:5,
                   borderRadius:5}} onPress={handleRegister}>
                     <Text style={{color:'white',textAlign:'center',fontWeight:'700'}}>確認メールを送信</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>:
+                <TouchableOpacity onPress={completeCreateAccount} style={{
+                  marginTop:20,
+                  backgroundColor:(email&&password.length>=6)?'#C8252B':'#FFAFB2',
+                  padding:5,
+                  borderRadius:5
+                }}>
+                  <Text style={{color:'white',textAlign:'center',fontWeight:'700'}}>メールを認証したらクリック</Text>
+                </TouchableOpacity>}
             </KeyboardAvoidingView>
             }
             {showCreateAccount&&isLogin&&<KeyboardAvoidingView style={{width:'80%'}} behavior="padding"><View style={{backgroundColor:'#EEEEEE',borderRadius:10,marginBottom:20,padding:20}}>
