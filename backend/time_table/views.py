@@ -7,6 +7,9 @@ import re
 import datetime
 from asgiref.sync import sync_to_async
 import asyncio
+from django.db.models import Q
+from rest_framework import viewsets
+from .serializers import MyModelSerializer
 
 async def search_class(request):
     if request.method == 'POST': 
@@ -36,24 +39,24 @@ async def search_class(request):
     return await sync_to_async(lambda: render(request, 'time_table/index.html'))()
 
 def search_db(request):
-    query = request.GET.get('query', None)
+    if request.method == 'POST':
+        kamoku_department = request.POST.get('department')
+        kamoku_time = request.POST.get('time')
+        kamoku_day = request.POST.get('day')
+        kamoku_season = request.POST.get('season')
+        
+        # filter() メソッドを使って複数の結果を取得する
+        results = Kamoku.objects.filter(kamoku_department = kamoku_department, kamoku_time=kamoku_time, kamoku_day=kamoku_day, kamoku_season = kamoku_season)
+        
+        if kamoku_department == None or kamoku_time == None or kamoku_day == None or kamoku_season == None:
+            results = Kamoku.objects.filter(Q(kamoku_department = kamoku_department) | Q(kamoku_time = kamoku_time) | Q(kamoku_day=kamoku_day) | Q(kamoku_season = kamoku_season))
+        
+        count = results.count() # QuerySetのcount() メソッドを使用して結果の数を取得
+        
+        return render(request, 'time_table/result_search.html', {"results": results, "count": count})
+    
+    return render(request, 'time_table/search.html')
 
-    if query is not None:
-    # 5桁の数字であるかどうかを判断
-        if re.match(r'^\d{5}$', query):
-            # 5桁の数字の場合、kamoku_numを検索
-            sql = "SELECT * FROM Kamoku WHERE kamoku_num = %s"
-        else:
-            # それ以外の場合、kamoku_nameを検索
-            sql = "SELECT * FROM Kamoku WHERE kamoku_name LIKE %s"
-
-        with connection.cursor() as cursor:
-            cursor.execute(sql, [query])
-            results = cursor.fetchall()
-
-        # resultsをテンプレートに渡して表示
-        return render(request, 'time_table/result_search.html', {'results': results})
-    else:
-        # GETリクエストのクエリパラメータ 'query' が存在しない場合、
-        # 検索フォームを表示するsearch.htmlをレンダリング
-        return render(request, 'time_table/search.html')
+class MyModelViewSet(viewsets.ModelViewSet):
+    queryset = Kamoku.objects.all()
+    serializer_class = MyModelSerializer
