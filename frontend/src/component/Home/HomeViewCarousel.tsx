@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, SafeAreaView, TouchableOpacity, Image, Linking, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const HomeCarousel = () => {
 
     const [activeDotIndex, setActiveDotIndex] = useState(0);
-
     const _carousel = useRef();
 
     const data = [

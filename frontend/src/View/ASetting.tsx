@@ -14,6 +14,7 @@ const ASetting = (props) => {
   
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
+<<<<<<< HEAD
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -24,8 +25,11 @@ const ASetting = (props) => {
     });
     return () => unsubscribe();
   }, []);
+=======
+>>>>>>> af080137f6d8deeb5ec573ad23ddabc2ca7fc393
 
-  //props.navigation.navigate('login')
+
+  props.navigation.navigate('login')
   const [image, setImage] = useState(null);
 
 
@@ -100,9 +104,9 @@ const ASetting = (props) => {
               marginLeft:'auto',
               marginRight:'auto',
           }}
-          > 
+          >
           {image&&<Image source={{uri:image}} style={{width: 200, height: 200 ,borderRadius:100,}}/>}
-            <TouchableOpacity 
+            <TouchableOpacity
             onPress={onOpenActionSheet}
             style={{
               position:'absolute',
@@ -156,7 +160,7 @@ const ASetting = (props) => {
             fontSize:30,
             backgroundColor:'#D9D9D9',
             marginBottom:20}}></TextInput>
-            <TouchableOpacity 
+            <TouchableOpacity
             style={{
               marginLeft:'80%',
               backgroundColor:'blue',
