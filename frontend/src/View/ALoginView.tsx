@@ -6,8 +6,6 @@ import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVeri
 import { auth } from '../../firebase';
 import Dialog from "react-native-dialog";
 
-
-
 const ALoginView = (props) => {
 
   const [isCreateAcount,setIsCreateAcount]=useState(true)
