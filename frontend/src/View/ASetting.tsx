@@ -14,7 +14,6 @@ const ASetting = (props) => {
   
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-<<<<<<< HEAD
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -25,8 +24,6 @@ const ASetting = (props) => {
     });
     return () => unsubscribe();
   }, []);
-=======
->>>>>>> af080137f6d8deeb5ec573ad23ddabc2ca7fc393
 
 
   props.navigation.navigate('login')
