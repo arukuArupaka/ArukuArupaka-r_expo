@@ -5,16 +5,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 
 
 const ASetting = (props) => {
+  
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-    
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+      }else{
+        props.navigation.navigate('login')
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
 
   //props.navigation.navigate('login')
   const [image, setImage] = useState(null);
+
+
+
+
 
   // const onPressAction = () => {
   //   return ActionSheet.options({
@@ -84,9 +101,9 @@ const ASetting = (props) => {
               marginLeft:'auto',
               marginRight:'auto',
           }}
-          > 
+          >
           {image&&<Image source={{uri:image}} style={{width: 200, height: 200 ,borderRadius:100,}}/>}
-            <TouchableOpacity 
+            <TouchableOpacity
             onPress={onOpenActionSheet}
             style={{
               position:'absolute',
@@ -140,7 +157,7 @@ const ASetting = (props) => {
             fontSize:30,
             backgroundColor:'#D9D9D9',
             marginBottom:20}}></TextInput>
-            <TouchableOpacity 
+            <TouchableOpacity
             style={{
               marginLeft:'80%',
               backgroundColor:'blue',

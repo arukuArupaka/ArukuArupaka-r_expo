@@ -6,9 +6,21 @@
 </head>
 <body>
     <h1>スクレイピング結果</h1>
+    <h2>{{ start_time }}</h2>
+    <h2>{{ end_time }}</h2>
+    <p>{{ time }}</p>
     <ul>
-        {% for result in results %}
-        <li role="button">{{ result }}</li>
+        {% for kamoku_list in kamoku_lists %}
+        <li>授業名:{{ kamoku_list.kamoku_name }}</li>
+        <li>教室:{{ kamoku_list.kamoku_class }}</li>
+        <li>学科:{{ kamoku_list.kamoku_department}}</li>
+        <li>セメスター:{{ kamoku_list.kamoku_season }}</li>
+        <li>曜日:{{ kamoku_list.kamoku_day }}</li>
+        <li>時限:{{ kamoku_list.kamoku_time }}</li>
+        <li>授業コード:{{ kamoku_list.kamoku_num }}</li>
+        <li>教授:{{ kamoku_list.kamoku_teacher }}</li>
+        <li>レジュメ:{{ kamoku_list.kamoku_resume }}</li>
+        <br>
         {% endfor %}
     </ul>
 </body>

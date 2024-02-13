@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^v-nnsmj31ix0z=_2q728f#nkfs7%q10j8&gur@#dw_9@ge(y2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.125','127.0.0.1',"192.168.11.3" ]
+ALLOWED_HOSTS = ['192.168.2.125','127.0.0.1',"192.168.11.3",'192.168.11.4']
 
 
 # Application definition
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'home_view',
     'textbook_market',
     'time_table',
-    'common_data'
+    'common_data',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -136,6 +137,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 #CORS_ALLOWED_ORIGINS = "192.168.11.3:8081"
-CORS_ALLOWED_ORIGINS = '*',
+CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000',
+        'http://192.168.11.1:19000',
+]
 
