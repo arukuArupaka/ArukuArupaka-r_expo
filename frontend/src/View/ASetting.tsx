@@ -7,10 +7,13 @@ import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
+import store from '../store';
 
 
 
 const ASetting = (props) => {
+
+  //const srore =store()
   
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
@@ -69,7 +72,7 @@ const ASetting = (props) => {
       quality: 1,
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       console.log(result.assets[0].uri)

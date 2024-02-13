@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {Alert,Text, View,Image, TouchableOpacity,TextInput, KeyboardAvoidingView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,onAuthStateChanged,signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,onAuthStateChanged,signOut,sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebase';
 import Dialog from "react-native-dialog";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ALoginView = (props) => {
 
@@ -35,6 +36,15 @@ const ALoginView = (props) => {
         ]);
     };
 
+    const pleaseReLogin=()=>{
+      Alert.alert(
+        'パスワード再設定メールを送信しました。', 
+        'パスワードを再設定してログインしてください。',
+    [
+        {text: 'OK', onPress: () => switchLogin()},
+    ]);
+    }
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -44,7 +54,6 @@ const ALoginView = (props) => {
         const user = await createUserWithEmailAndPassword(auth, email, password);
         setAuthMail(email)
         setAuthPass(password)
-        //console.log(user);
         await setUserInfo(user)
         setShowResendRegisterBotton(true)
         setShowRegisterBotton(true)
@@ -72,6 +81,11 @@ const ALoginView = (props) => {
     const handleLogin = async () => {
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        if(await isMailVerified()){
+          await props.navigation.navigate('settings')
+        }else{
+          pleaseValidateMailDialog()
+        }
       } catch (error) {
         console.log(error.message);
         switch (error.message){
@@ -94,7 +108,8 @@ const ALoginView = (props) => {
           'まだアカウントは作成されていません。', 
           'メールに送付されたリンクをクリックしてください。メールが届かない場合は再送信してください。',
       [
-        {text: 'OK', onPress: () => console.log('アラートのOKをタップした時の挙動を書く')},
+        {text: 'OK', onPress: () =>{}},
+        {text:'メールを再送信',onPress:()=>setdRegisterMail()}
       ]);
     };
     
@@ -134,10 +149,18 @@ const ALoginView = (props) => {
 
     }
 
+    const isMailVerified=async()=>{
+      let result
+      const unsubscribe = await onAuthStateChanged(auth, (user) => {
+        result=user.emailVerified
+      });
+      unsubscribe();
+      return result
+    }
+
     const signOUt=()=>{
       signOut(auth)
       .then(() => {
-        console.log('logout');
        })
       .catch((error) => {
         console.log(error.message);
@@ -164,9 +187,29 @@ const ALoginView = (props) => {
         }
       }
 
-      
+      const passwordReset = () => {
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            pleaseReLogin()
+          })
+          .catch((error) => {
+            switch (error.message){
+              case "Firebase: Error (auth/email-already-in-use).":
+                setErrorMessage("このアカウントは登録されいます。ログインしてください。")
+                break;
+              case "Firebase: Error (auth/invalid-credential).":
+                setErrorMessage("メールアドレスまたはパスワードが間違えています。")
+                break;
+              case "Firebase: Error (auth/invalid-email).":
+                setErrorMessage("メールアドレスを入力してください。")
+              default:
+                break
+            }
+          });
+      };
     
 
+    
   return (
     <View
       style={{
@@ -233,7 +276,7 @@ const ALoginView = (props) => {
                       ></TextInput>
                       <Text style={{width:130}}>@ed.ritsumei.ac.jp</Text>
                     </View>
-                <Text>パスワードを入力</Text>
+                <Text>パスワードを入力 (6文字以上)</Text>
                 <TextInput style={{
                     borderBottomWidth:1,
                     marginTop:5,
@@ -283,7 +326,7 @@ const ALoginView = (props) => {
                       ></TextInput>
                       <Text style={{width:130}}>@ed.ritsumei.ac.jp</Text>
                     </View>
-                <Text>パスワードを入力</Text>
+                <Text>パスワードを入力 (6文字以上)</Text>
                 <TextInput style={{
                     borderBottomWidth:1,
                     marginTop:5,
@@ -323,7 +366,7 @@ const ALoginView = (props) => {
                 <TouchableOpacity disabled={!email} style={{
                   backgroundColor:email?'#C8252B':'#FFAFB2',
                   padding:5,
-                  borderRadius:5}} onPress={handleRegister}>
+                  borderRadius:5}} onPress={passwordReset}>
                     <Text style={{color:'white',textAlign:'center',fontWeight:'700'}}>リセットメールを送信</Text>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
