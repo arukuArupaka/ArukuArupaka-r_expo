@@ -42,30 +42,6 @@ async def search_class(request):
     # GETリクエストの場合の処理
     return await sync_to_async(lambda: render(request, 'time_table/index.html'))()
 
-<<<<<<< HEAD
-def search_db(request):
-    if request.method == 'POST':
-        kamoku_department = request.POST.get('department')
-        kamoku_time = request.POST.get('time')
-        kamoku_day = request.POST.get('day')
-        kamoku_season = request.POST.get('season')
-        
-        # filter() メソッドを使って複数の結果を取得する
-        results = Kamoku.objects.filter(kamoku_department = kamoku_department, kamoku_time=kamoku_time, kamoku_day=kamoku_day, kamoku_season = kamoku_season)
-        
-        if kamoku_department == None or kamoku_time == None or kamoku_day == None or kamoku_season == None:
-            results = Kamoku.objects.filter(Q(kamoku_department = kamoku_department) | Q(kamoku_time = kamoku_time) | Q(kamoku_day=kamoku_day) | Q(kamoku_season = kamoku_season))
-        
-        count = results.count() # QuerySetのcount() メソッドを使用して結果の数を取得
-        
-        return render(request, 'time_table/result_search.html', {"results": results, "count": count})
-    
-    return render(request, 'time_table/search.html')
-
-class MyModelViewSet(viewsets.ModelViewSet):
-    queryset = Kamoku.objects.all()
-    serializer_class = MyModelSerializer
-=======
 from rest_framework import generics
 
 class Kamoku_table(generics.ListAPIView):
@@ -133,4 +109,3 @@ class GetSearchKamoku(generics.ListAPIView):
         # GETリクエストのクエリパラメータ 'query' が存在しない場合、
         # 検索フォームを表示するsearch.htmlをレンダリング
         #return render(request, 'time_table/search.html')
->>>>>>> main
