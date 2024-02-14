@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from .views import Kamoku_table
 from .views import GetSearchKamoku

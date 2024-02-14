@@ -27,9 +27,16 @@ from .change_sentence import change
 # Chromeオプションを設定する
 
 async def web_search(url, select_season, select_time, select_day, select_department, class_name):
-    break_point = None
     end_loop_point = None
+    end_loop_season = None
+    end_loop_depart = None
+    end_loop_point = None
+    end_loop_day = None
+    break_point = None
+    break_point_day = None
     out_loop_point = None
+    break_depart = None
+    break_season = None
     options = webdriver.ChromeOptions()
     options.add_argument("disable-blink-features=AutomationControlled")
 
@@ -44,197 +51,232 @@ async def web_search(url, select_season, select_time, select_day, select_departm
     
     driver.get(url)
     
-    department_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select")
-    department_select.click()
+    #department_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select")
+    #department_select.click()
     
-    department_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select/option[{select_department}]"
-    department = driver.find_element(by=By.XPATH, value=department_xpath)
-    department.click()
+    #department_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select/option[{select_department}]"
+    #department = driver.find_element(by=By.XPATH, value=department_xpath)
+    #department.click()
+    
+    page = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[3]/select")
+    page.click()
+                
+    page_qty = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div/div/form/div/div[3]/select/option[3]')
+    page_qty.click()
     
     start_point = 1
     qty = 0
     
-    for a in range (2):
-        season_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[2]/td/select[2]")
-        season_select.click()
+    for d in range(2, 18):
+        department_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select")
+        department_select.click()
         
-        print(f'アウトループポイント：{ out_loop_point }')
+        department_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[1]/td/select/option[{d}]"
+        department = driver.find_element(by=By.XPATH, value=department_xpath)
+        department.click()
         
-        season_xpath = f"/html/body/div[1]/div[2]/div/div/form/div[1]/div[5]/table/tbody/tr[2]/td/select[2]/option[{int(select_season)+a}]"
-        season = driver.find_element(by=By.XPATH, value=season_xpath)
-        season.click()
-        point = 0
-        
-        for b in range (5):
-            for c in range (7):
-                koma_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/img")
-                koma_select.click()
-                              
-                if c > 0:
-                    koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c-1}]/td[{int(select_day)+b}]"
-                    select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                    select_koma.click()
-                    koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                    select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                    select_koma.click()
-                elif c == 0 and b > 0:
-                    if end_loop_point == 6:
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+6}]/td[{int(select_day)+b-1}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                    else:
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+break_point}]/td[{int(select_day)+b-1}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                elif c == 0 and b == 0:
-                    if out_loop_point == 1 or out_loop_point == 2: #金曜7限まで処理が実行された
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+6}]/td[{int(select_day)+4}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                    elif end_loop_point:
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+break_point}]/td[{int(select_day)+4}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
-                    else:
-                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
-                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
-                        select_koma.click()
+        for a in range (2):
+            season_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[2]/td/select[2]")
+            season_select.click()
             
-                kettei = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[3]/input")
-                kettei.click()
+            print(f'アウトループポイント：{ out_loop_point }')
+            
+            season_xpath = f"/html/body/div[1]/div[2]/div/div/form/div[1]/div[5]/table/tbody/tr[2]/td/select[2]/option[{int(select_season)+a}]"
+            season = driver.find_element(by=By.XPATH, value=season_xpath)
+            season.click()
+            point = 0
+            
+            for b in range (5):
+                for c in range (7):
+                    koma_select = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/img")
+                    koma_select.click()
+                                
+                    if c > 0:
+                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c-1}]/td[{int(select_day)+b}]"
+                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                        select_koma.click()
+                        koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                        select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                        select_koma.click()
+                    elif c == 0 and b > 0:
+                        if end_loop_point == 6:
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+6}]/td[{int(select_day)+b-1}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                        else:
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+break_point}]/td[{int(select_day)+b-1}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                    elif c == 0 and b == 0:
+                        if  break_point_day == 4 and out_loop_point == 0 and break_depart == d:#同学部の春セメから秋セメの移動時に春セメの金曜で例外処理していた場合
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+ break_point}]/td[{int(select_day)+4}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                        elif break_point_day == 4 and out_loop_point == 1 and break_depart == d-1 and break_season == 1:#次の学部の移動時に前学部の金曜に例外処理をしていた場合
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+break_point}]/td[{int(select_day)+4}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                        elif break_point_day != 4 and end_loop_point == 6 and end_loop_day == 4 and end_loop_depart == d and out_loop_point == 0:#同学部の春セメから秋セメの移動時に春セメ金7限までしっかり実行されていた場合
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+6}]/td[{int(select_day)+4}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                        elif break_point_day != 4 and end_loop_point == 6 and end_loop_day == 4 and end_loop_depart == d-1 and end_loop_season == 1 and out_loop_point == 1:#次の学部の移動時に前学部の金曜にしっかり7限まで実行されていた場合
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+6}]/td[{int(select_day)+4}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
+                        elif a == 0 and b == 0 and c == 0 and d == 2:    
+                            koma_xpath = f"/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[1]/table/tbody/tr[{int(select_time)+c}]/td[{int(select_day)+b}]"
+                            select_koma = driver.find_element(by=By.XPATH, value=koma_xpath)
+                            select_koma.click()
                 
-                try:
-                    end_point = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/span[1]")
-                    print(f'b = { b }のループ')
-                    print(f'c = { c }のループ')
+                    kettei = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[5]/table/tbody/tr[3]/td/div/div[3]/input")
+                    kettei.click()
                     
-                except NoSuchElementException:
-                    print('ブレイク')
-                    break_point = c
-                    print(f'ブレイクポイント={break_point}')
-                    break
-                
-                class_type = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[1]/input[1]")
-                class_type.click()
-                
-                class_type.send_keys(class_name)
-                
-                class_submit = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[1]/input[3]")
-                class_submit.click()
-                
-                #page = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[3]/select")
-                #page.click()
-                
-                #page_qty = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div/div/form/div/div[3]/select/option[3]')
-                #page_qty.click()
-                
-                html_content = driver.page_source
-                
-                tree = html.fromstring(html_content)
-                
-                page = tree.xpath("/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/span[1]")
-                
-                page_qty = page[0].text_content()
-                
-                page_all = re.sub(r"\D", "", page_qty)
-                
-                rem = int(page_all) % 10
-                
-                if rem > 0:
-                    page_all_qty = (int(page_all)/10)+1
-                else:
-                    page_all_qty = int(page_all)/10    
-                
-                for i in range(int(page_all_qty)):
-                    urls = []
-                    for j in range(2, 12):
-                        html_content = driver.page_source
-                        tree = html.fromstring(html_content)
-                        xpath_kamoku = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[2]/a"
-                        xpath_season = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[3]"
-                        xpath_teacher = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[6]"
-                        xpath_unit = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[8]"
-                        xpath_daytime = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[4]"
-                        element_kamoku = tree.xpath(xpath_kamoku)
-                        element_season = tree.xpath(xpath_season)
-                        element_teacher = tree.xpath(xpath_teacher)
-                        element_unit = tree.xpath(xpath_unit)
-                        element_daytime = tree.xpath(xpath_daytime)
+                    try:
+                        end_point = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/span[1]")
+                        print(f'b = { b }のループ')
+                        print(f'c = { c }のループ')
                         
-                        if element_kamoku:
-                            kamoku = element_kamoku[0].text_content()
-                            resume = element_kamoku[0].get('href')
-                            season = element_season[0].text_content()
-                            teacher = element_teacher[0].text_content()
-                            unit = element_unit[0].text_content()
-                            ad_dep = department_adjust(int(select_department))
-                            ka_daytime = day_time(element_daytime[0].text_content())
-                            ad_day = day_adjust(b+1)
-                            day = ka_daytime[1]
-                            time = ka_daytime[0]
+                    except NoSuchElementException:
+                        print('ブレイク')
+                        break_season = a
+                        break_point = c
+                        break_point_day = b
+                        break_depart = d
+                        print(f'ブレイクポイント={break_point}')
+                        break
+                    
+                    #class_type = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[1]/input[1]")
+                    #class_type.click()
+                    
+                    #class_type.send_keys(class_name)
+                    
+                    #class_submit = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[1]/input[3]")
+                    #class_submit.click()
+                    
+                    
+                    
+                    #page = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[2]/div/div/form/div/div[3]/select")
+                    #page.click()
+                    
+                    #page_qty = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div/div/form/div/div[3]/select/option[3]')
+                    #page_qty.click()
+                    
+                    html_content = driver.page_source
+                    
+                    tree = html.fromstring(html_content)
+                    
+                    page = tree.xpath("/html/body/div[1]/div[2]/div/div/form/div[2]/div[2]/span[1]")
+                    
+                    page_qty = page[0].text_content()
+                    
+                    page_all = re.sub(r"\D", "", page_qty)
+                    
+                    rem = int(page_all) % 50
+                    
+                    if rem > 0:
+                        page_all_qty = (int(page_all)/50)+1
+                    else:
+                        page_all_qty = int(page_all)/50    
+                    
+                    for i in range(int(page_all_qty)):
+                        urls = []
+                        for j in range(2, 52):
+                            html_content = driver.page_source
+                            tree = html.fromstring(html_content)
+                            xpath_kamoku = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[2]/a"
+                            xpath_season = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[3]"
+                            xpath_teacher = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[6]"
+                            xpath_unit = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[8]"
+                            xpath_daytime = f"/html/body/div[1]/div[2]/div/div/form/table/tbody/tr[{j}]/td[4]"
+                            element_kamoku = tree.xpath(xpath_kamoku)
+                            element_season = tree.xpath(xpath_season)
+                            element_teacher = tree.xpath(xpath_teacher)
+                            element_unit = tree.xpath(xpath_unit)
+                            element_daytime = tree.xpath(xpath_daytime)
                             
-                            kamoku_contain = '§' in kamoku
-                            if kamoku_contain:
-                                values = kamoku.count('§')
-                                splited_kamoku = split(kamoku)
-                                for value in range(int(values)+1):
-                                    re_kamoku = splited_kamoku[value]
-                                    num_name_split = num_name(re_kamoku)
+                            if element_kamoku:
+                                kamoku = element_kamoku[0].text_content()
+                                resume = element_kamoku[0].get('href')
+                                season = element_season[0].text_content()
+                                teacher = element_teacher[0].text_content()
+                                unit = element_unit[0].text_content()
+                                ad_dep = department_adjust(d)
+                                ka_daytime = day_time(element_daytime[0].text_content())
+                                ad_day = day_adjust(b+1)
+                                day = ka_daytime[1]
+                                time = ka_daytime[0]
+                                
+                                kamoku_contain = '§' in kamoku
+                                if kamoku_contain:
+                                    values = kamoku.count('§')
+                                    splited_kamoku = split(kamoku)
+                                    for value in range(int(values)+1):
+                                        re_kamoku = splited_kamoku[value]
+                                        num_name_split = num_name(re_kamoku)
+                                        num = num_name_split[0]
+                                        name = num_name_split[1]
+                                        url = "https://ct.ritsumei.ac.jp"+resume
+                                        urls.append(url)
+                                        #classroom = syllabus(url)
+                                        await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season)
+                                else:
+                                    num_name_split = num_name(kamoku)
                                     num = num_name_split[0]
                                     name = num_name_split[1]
                                     url = "https://ct.ritsumei.ac.jp"+resume
                                     urls.append(url)
                                     #classroom = syllabus(url)
                                     await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season)
-                            else:
-                                num_name_split = num_name(kamoku)
-                                num = num_name_split[0]
-                                name = num_name_split[1]
-                                url = "https://ct.ritsumei.ac.jp"+resume
-                                urls.append(url)
-                                #classroom = syllabus(url)
-                                await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season)
-                                
-                    kamoku_qty = await sync_to_async(Kamoku.objects.all().count)()
-                    
-                    texts = await async_class(urls)
-                    
-                    print(f'start_point: {start_point}, qty: {qty}')
-                    
-                    qty = len(urls)
-                    
-                    for dbnum in range(int(start_point), int(qty)+start_point):
-                        cleaned_data = await sync_to_async(change)(texts)
-                        await sync_to_async(class_in_database)(dbnum, cleaned_data[dbnum-start_point])
-                        print(cleaned_data[dbnum-start_point])
-                        print(f"for文が回っているかの確認:{dbnum}")
-                    
-                    start_point = qty + start_point
+                                    
+                        kamoku_qty = await sync_to_async(Kamoku.objects.all().count)()
+                        
+                        texts = await async_class(urls)
+                        
+                        print(f'start_point: {start_point}, qty: {qty}')
+                        
+                        qty = len(urls)
+                        
+                        for dbnum in range(int(start_point), int(qty)+start_point):
+                            cleaned_data = await sync_to_async(change)(texts)
+                            await sync_to_async(class_in_database)(dbnum, cleaned_data[dbnum-start_point])
+                        
+                        start_point = qty + start_point
 
-                    page_num = 10*(i+1)+1
+                        page_num = 10*(i+1)+1
+                        
+                        if i == int(page_all_qty)-1:
+                            break
+                        javascript_code = f"""
+                        var form = document.getElementById('syllabussearchform');
+                        manaba.appendHidden(form,'start','{page_num}');  
+                        form.submit();
+                        """
+                        driver.execute_script(javascript_code)
+                    end_loop_season = a
+                    end_loop_depart = d
+                    end_loop_point = c
+                    end_loop_day = b
                     
-                    if i == int(page_all_qty)-1:
-                        break
-                    javascript_code = f"""
-                    var form = document.getElementById('syllabussearchform');
-                    manaba.appendHidden(form,'start','{page_num}');  
-                    form.submit();
-                    """
-                    driver.execute_script(javascript_code)
-                end_loop_point = c
-        out_loop_point = a
+            out_loop_point = a
         
     driver.quit()
     
