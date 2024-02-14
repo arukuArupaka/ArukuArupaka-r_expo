@@ -11,8 +11,8 @@ import TimeTableQty from '../component/TimeTable/TimeTableQty';
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
-const TimrTableView = () => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding } = useTimeTable();
+const TimrTableView = ({ navigation }) => {
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -168,11 +168,6 @@ const TimrTableView = () => {
   ]
   const [weekTime,setWeekTime]=useState(weekTimeSaveData);
 
-  const [pushedClassFrameDetail,setPushedClassFrameDetail]=useState({
-    day:"",
-    period:"",
-  })
-
   //確認
   /*const scheduleAllNotifications = () => {
     if (Array.isArray(classStartEndTimeUnitList) && Array.isArray(weekTime)) {
@@ -291,6 +286,68 @@ const TimrTableView = () => {
   useEffect(() => {
     console.log('sizechange:',sizechange);
   },[sizechange]);
+
+  useEffect(() => {
+    const getDepartmentChange = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('departmentkey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setDepartment(value);
+          console.log(department);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    getDepartmentChange();
+  }, []);
+
+useEffect(() => {
+    const saveDepartmentChange = async () => {
+      try {
+        const stringValue = JSON.stringify(department);
+        await AsyncStorage.setItem('departmentkey', stringValue);
+        console.log('保存実行されました');
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    saveDepartmentChange();
+  }, [department]);
+  
+useEffect(() => {
+    const getSeasonChange = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('seasonkey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setSeason(value);
+          console.log(season);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    getSeasonChange();
+  }, []);
+
+useEffect(() => {
+    const saveSeasonChange = async () => {
+      try {
+        const stringValue = JSON.stringify(season);
+        await AsyncStorage.setItem('seasonkey', stringValue);
+        console.log('保存実行されました');
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    saveSeasonChange();
+  }, [season]);
 
   const styles = StyleSheet.create({
 
@@ -421,7 +478,31 @@ const TimrTableView = () => {
   }
 
   const [childSize, setChildSize] = useState({ width: 0, height: 0 });
- 
+
+  const dayad = (qty) => {
+    let day = '月';
+    switch (qty) {
+      case 0:
+        day = '月';
+        break;
+      case 1:
+        day = '火';
+        break;
+      case 2:
+        day = '水';
+        break;
+      case 3:
+        day = '木';
+        break;
+      case 4:
+        day = '金';
+        break;
+      default:
+        day = '月';
+    }
+    return day;
+  };
+
   return (
   <View>
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
@@ -461,8 +542,24 @@ const TimrTableView = () => {
                           weekTimeQty={weekTimeQty} 
                           
                           onEventCallBack={(frameDetail)=>{
-                            setIsShow(true);
-                            setPushedClassFrameDetail(frameDetail);
+                            if(weekTime2.className == ""){
+                              setShow(true);
+                              const adDay = dayad(weekTime2.day)
+                              setDay(adDay)
+                              setTime(weekTime2.period+1)
+                              console.log(weekTime2.period+1);
+                              console.log(weekTime2.day);
+                              console.log(day);
+                              console.log(time);
+                              navigation.navigate('TimeTableClass')
+                              setDodata(true);
+                              console.log(department);
+                              console.log(season);
+                              setPushedClassFrameDetail(frameDetail);
+                            }else{
+                              setIsShow(true);
+                              setPushedClassFrameDetail(frameDetail);
+                            }
                             }}
                         />) 
                       }

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from time_table.models import Kamoku
+from .models import Kamoku
 
 class MyModelSerializer(serializers.ModelSerializer):
     class Meta:

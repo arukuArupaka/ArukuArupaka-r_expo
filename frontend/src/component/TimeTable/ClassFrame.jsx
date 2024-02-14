@@ -1,13 +1,18 @@
 import React from 'react';
 import { Platform, Text, View,TouchableOpacity} from 'react-native';
 import { useTimeTable } from './TimeTableContext'
+import { useNavigation } from '@react-navigation/native'; // ここに追加
+
 
 const ClassFrame = (props) => {
   const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange } = useTimeTable();
+  const navigation = useNavigation();
   const frameDetail={
     day:props.day,
     period:props.period,
   }
+
+  /* const [timetableclass, setTimetableclass] = useState(True); */
 
   const getheight = (qty) => {
     let Height = '100'; // デフォルト値
@@ -110,7 +115,7 @@ const ClassFrame = (props) => {
     fontTop = 12;
     fontBottom = 11;
   }
-  
+
   return (
     <TouchableOpacity
       style={{
@@ -124,7 +129,7 @@ const ClassFrame = (props) => {
         borderWidth: 1,
         borderColor: '#888888',
         borderRadius: 10, 
-      }}onPress={()=>{props.onEventCallBack(frameDetail)}}>
+      }}onPress={()=>{props.onEventCallBack(frameDetail);}}>
       <Text style={{
                 marginTop:8,
                 color:'black',
