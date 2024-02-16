@@ -29,7 +29,7 @@ function App() {
               title: '',
               headerRight: () => (
                 <TouchableOpacity onPress={() => navigation.navigate('TimeTableSetting')}>
-                  <AntDesign name="ellipsis1" size={24} color="black" />
+                  <AntDesign name="setting" size={24} color="black" />
                 </TouchableOpacity>
               ),
             })} />

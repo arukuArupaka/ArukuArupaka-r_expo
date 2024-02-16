@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
 const TimrTableView = ({ navigation }) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -63,9 +63,10 @@ const TimrTableView = ({ navigation }) => {
       console.log(e.message);
     }
   };
-  
-  
 
+  useEffect(() => {
+    setNodata(false);
+  }, []);
 
   const requestPermissionsAsync = async () => {
     const { granted } = await Notifications.getPermissionsAsync();
@@ -114,13 +115,6 @@ const TimrTableView = ({ navigation }) => {
 
   //時間割系
   const [isShow,setIsShow]=useState(false)
-  const weekTimeSaveData=[
-    [{day:0,period:0,className:"",classRoom:"",memo:"",notification:""},{day:0,period:1,className:"",classRoom:"",memo:"",notification:""},{day:0,period:2,className:"",classRoom:"",memo:"",notification:""},{day:0,period:3,className:"",classRoom:"",memo:"",notification:""},{day:0,period:4,className:"",classRoom:"",memo:"",notification:""},{day:0,period:5,className:"",classRoom:"",memo:"",notification:""},{day:0,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:1,period:0,className:"",classRoom:"",memo:"",notification:""},{day:1,period:1,className:"",classRoom:"",memo:"",notification:""},{day:1,period:2,className:"",classRoom:"",memo:"",notification:""},{day:1,period:3,className:"",classRoom:"",memo:"",notification:""},{day:1,period:4,className:"",classRoom:"",memo:"",notification:""},{day:1,period:5,className:"",classRoom:"",memo:"",notification:""},{day:1,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:2,period:0,className:"",classRoom:"",memo:"",notification:""},{day:2,period:1,className:"",classRoom:"",memo:"",notification:""},{day:2,period:2,className:"",classRoom:"",memo:"",notification:""},{day:2,period:3,className:"",classRoom:"",memo:"",notification:""},{day:2,period:4,className:"",classRoom:"",memo:"",notification:""},{day:2,period:5,className:"",classRoom:"",memo:"",notification:""},{day:2,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:3,period:0,className:"",classRoom:"",memo:"",notification:""},{day:3,period:1,className:"",classRoom:"",memo:"",notification:""},{day:3,period:2,className:"",classRoom:"",memo:"",notification:""},{day:3,period:3,className:"",classRoom:"",memo:"",notification:""},{day:3,period:4,className:"",classRoom:"",memo:"",notification:""},{day:3,period:5,className:"",classRoom:"",memo:"",notification:""},{day:3,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:4,period:0,className:"",classRoom:"",memo:"",notification:""},{day:4,period:1,className:"",classRoom:"",memo:"",notification:""},{day:4,period:2,className:"",classRoom:"",memo:"",notification:""},{day:4,period:3,className:"",classRoom:"",memo:"",notification:""},{day:4,period:4,className:"",classRoom:"",memo:"",notification:""},{day:4,period:5,className:"",classRoom:"",memo:"",notification:""},{day:4,period:6,className:"",classRoom:"",memo:"",notification:""}],
-  ]
 
   const classStartEndTimeUnitList=[
     {
@@ -166,7 +160,6 @@ const TimrTableView = ({ navigation }) => {
       minute:40
     },
   ]
-  const [weekTime,setWeekTime]=useState(weekTimeSaveData);
 
   //確認
   /*const scheduleAllNotifications = () => {
@@ -201,8 +194,9 @@ const TimrTableView = ({ navigation }) => {
     try {
       const jsonValue = await AsyncStorage.getItem('timeTableKey');
       jsonValue != null ? setWeekTime((JSON.parse(jsonValue))) : null;
-      console.log('timeTableKey:',jsonValue)
+      //console.log('timeTableKey:',jsonValue)
       console.log('weekTimeQty:',weekTimeQty)
+      //console.log(weekTime)
       console.log('scheduleNotificationAsync:',scheduleNotificationAsync())
     } catch (e) {
       console.log(e)
@@ -475,7 +469,7 @@ useEffect(() => {
     console.log('onSubmit///hour:',notificationHour);
     console.log('onSubmit///minute:',notificationMinute);
     
-  }
+  };
 
   const [childSize, setChildSize] = useState({ width: 0, height: 0 });
 
@@ -542,23 +536,27 @@ useEffect(() => {
                           weekTimeQty={weekTimeQty} 
                           
                           onEventCallBack={(frameDetail)=>{
+                            //console.log(typeof weekTime2.day);
+                            //console.log(typeof weekTime2.period);
                             if(weekTime2.className == ""){
                               setShow(true);
+                              setPeriod(weekTime2.period);
                               const adDay = dayad(weekTime2.day)
-                              setDay(adDay)
-                              setTime(weekTime2.period+1)
-                              console.log(weekTime2.period+1);
-                              console.log(weekTime2.day);
-                              console.log(day);
-                              console.log(time);
-                              navigation.navigate('TimeTableClass')
+                              setDay(adDay);
+                              setTime(weekTime2.period+1);
+                              navigation.navigate('TimeTableClass');
                               setDodata(true);
-                              console.log(department);
-                              console.log(season);
-                              setPushedClassFrameDetail(frameDetail);
+                              console.log('Viewのdayとperiod');
+                              console.log(weekTime2.day-0);
+                              console.log(weekTime2.period-0);
+                              console.log(weekTime2);
+                              setPushedClassFrameDetail({
+                                day: weekTime2.day-0,period: weekTime2.period-0
+                              });
                             }else{
                               setIsShow(true);
                               setPushedClassFrameDetail(frameDetail);
+                              console.log(weekTime2);
                             }
                             }}
                         />) 

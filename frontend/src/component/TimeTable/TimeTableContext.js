@@ -12,14 +12,36 @@ export const TimeTableProvider = ({ children }) => {
   const [padding, setPadding] = useState(0);
   const [department, setDepartment] = useState();
   const [season, setSeason] = useState();
-  const [day, setDay] = useState();
-  const [time, setTime] = useState();
+  const [day, setDay] = useState(NaN);
+  const [time, setTime] = useState(NaN);
+  const [period, setPeriod] = useState(NaN);
   const [show, setShow] = useState(false);
   const [data, setData] = useState([]);
   const [dodata, setDodata] = useState(false);
+  const [indata, setIndata] = useState();
+  const [nodata, setNodata] = useState(false);
   const [pushedClassFrameDetail,setPushedClassFrameDetail]=useState({
-    day:"",
-    period:"",
+    day: NaN,
+    period: NaN,
+  });
+
+  const weekTimeSaveData=[
+    [{day:0,period:0,className:"",classRoom:"",memo:"",notification:""},{day:0,period:1,className:"",classRoom:"",memo:"",notification:""},{day:0,period:2,className:"",classRoom:"",memo:"",notification:""},{day:0,period:3,className:"",classRoom:"",memo:"",notification:""},{day:0,period:4,className:"",classRoom:"",memo:"",notification:""},{day:0,period:5,className:"",classRoom:"",memo:"",notification:""},{day:0,period:6,className:"",classRoom:"",memo:"",notification:""}],
+    [{day:1,period:0,className:"",classRoom:"",memo:"",notification:""},{day:1,period:1,className:"",classRoom:"",memo:"",notification:""},{day:1,period:2,className:"",classRoom:"",memo:"",notification:""},{day:1,period:3,className:"",classRoom:"",memo:"",notification:""},{day:1,period:4,className:"",classRoom:"",memo:"",notification:""},{day:1,period:5,className:"",classRoom:"",memo:"",notification:""},{day:1,period:6,className:"",classRoom:"",memo:"",notification:""}],
+    [{day:2,period:0,className:"",classRoom:"",memo:"",notification:""},{day:2,period:1,className:"",classRoom:"",memo:"",notification:""},{day:2,period:2,className:"",classRoom:"",memo:"",notification:""},{day:2,period:3,className:"",classRoom:"",memo:"",notification:""},{day:2,period:4,className:"",classRoom:"",memo:"",notification:""},{day:2,period:5,className:"",classRoom:"",memo:"",notification:""},{day:2,period:6,className:"",classRoom:"",memo:"",notification:""}],
+    [{day:3,period:0,className:"",classRoom:"",memo:"",notification:""},{day:3,period:1,className:"",classRoom:"",memo:"",notification:""},{day:3,period:2,className:"",classRoom:"",memo:"",notification:""},{day:3,period:3,className:"",classRoom:"",memo:"",notification:""},{day:3,period:4,className:"",classRoom:"",memo:"",notification:""},{day:3,period:5,className:"",classRoom:"",memo:"",notification:""},{day:3,period:6,className:"",classRoom:"",memo:"",notification:""}],
+    [{day:4,period:0,className:"",classRoom:"",memo:"",notification:""},{day:4,period:1,className:"",classRoom:"",memo:"",notification:""},{day:4,period:2,className:"",classRoom:"",memo:"",notification:""},{day:4,period:3,className:"",classRoom:"",memo:"",notification:""},{day:4,period:4,className:"",classRoom:"",memo:"",notification:""},{day:4,period:5,className:"",classRoom:"",memo:"",notification:""},{day:4,period:6,className:"",classRoom:"",memo:"",notification:""}],
+  ]
+
+  const [weekTime,setWeekTime]=useState(weekTimeSaveData);
+
+  const [kamokuItem, setKamokuItem] = useState({
+    day: pushedClassFrameDetail.day,
+    period: pushedClassFrameDetail.period,
+    classRoom: "",
+    className: "",
+    memo: "",
+    notification: "",
   });
 
   const toggleSwitch = () => setSizechange(previousState => !previousState);
@@ -62,13 +84,39 @@ export const TimeTableProvider = ({ children }) => {
     };
   
     fetchData();
-  }, [dodata]); // dodataが更新されたときに再フェッチ
+    //console.log(time);
+    console.log(pushedClassFrameDetail.day);
+    console.log(typeof weekTime);
+    if (isNaN(pushedClassFrameDetail.day)) {
+      console.log('pushedClassFrameDetail.dayはNaNです');
+  } else {
+      console.log('pushedClassFrameDetail.dayはNaNではありません');
+  }
+  
+    
+    //setPushedClassFrameDetail({day: day-0, period: period-0});
+    //console.log('コンポーネントマウントされました');
+    setDodata(false);
+  }, [dodata]); // dodataが更新されたときに再フェッチ  
 
   useEffect(() => {
-    setDodata(false)
-}, [dodata]);
-
-  
+    const onSubmit = async (pushedClassFrameDetail, classDetail) => {
+      setWeekTime((prev) => {
+        // 範囲チェックを追加
+        if (isNaN(pushedClassFrameDetail.day)) {
+          console.log('NaNだからonSubmitは実行できません');
+        }else{
+          console.log(kamokuItem);
+          prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period] = classDetail;
+          console.log('onSubmitでobject');
+        }
+        return [...prev];
+      });
+    };
+    onSubmit(pushedClassFrameDetail, kamokuItem);
+    console.log('indataをfalseに変更');
+    setIndata(false);
+  }, [indata]); 
 
   // Timesize の計算
   const getTimeSize = (qty) => {
@@ -108,7 +156,7 @@ export const TimeTableProvider = ({ children }) => {
     };
 
   return (
-    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail}}>
+    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata}}>
       { children }
     </TimeTableContext.Provider>
   );

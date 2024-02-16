@@ -6,7 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTimeTable } from './TimeTableContext'
 
 const KamokuKoma = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, data, setData, kamokuInfo } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, department, setDepartment, data, setData, kamokuInfo, weekTime, setWeekTime, pushedClassFrameDetail, setPushedClassFrameDetail, indata, setIndata } = useTimeTable();
+
   const styles = StyleSheet.create({
     body:{
       display: 'flex',
@@ -17,19 +18,23 @@ const KamokuKoma = (props) => {
       alignItems: 'center',
       justifyContent: 'flex-start'
     }
-  })
+  });
 
   return(
     <View>
       <TouchableOpacity style={styles.body}
         onPress={() => {
         console.log('TouchableOpacity pressed');
-        props.onSubmit(infoDetail);
+        //console.log(props.kamokudata.className);
+        props.eventPush();
         }}>
         <Text style={{
           paddingRight: 30,
-          paddingLeft: 5
-        }}>{props.item.kamoku_num}</Text>
+          paddingLeft: 5,
+          fontSize: 16
+        }}>{props.item.kamoku_num+" "}</Text>
+        <Text>{props.item.kamoku_day+" "}</Text>
+        <Text>{props.item.kamoku_time+" "}</Text>
         <Text>{props.item.kamoku_name}</Text>
       </TouchableOpacity>
     </View>
