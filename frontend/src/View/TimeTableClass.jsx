@@ -87,7 +87,7 @@ const TimeTableClass = ({ navigation }) => {
         <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
               <View>
-              {data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> {navigation.navigate('TimeTable'); setIndata(true);  console.log('indataをtrueに変更');setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`});}}/>)}
+                {data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> {navigation.navigate('TimeTable'); setIndata(true);  console.log('indataをtrueに変更');setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`});}}/>)}
               </View>
         </ScrollView>
       );

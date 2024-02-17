@@ -64,10 +64,6 @@ const TimrTableView = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    setNodata(false);
-  }, []);
-
   const requestPermissionsAsync = async () => {
     const { granted } = await Notifications.getPermissionsAsync();
     if (granted) { return }
@@ -181,9 +177,14 @@ const TimrTableView = ({ navigation }) => {
 
   //保存系
   //weekTimeの行列保存、読み出し
+
+  useEffect(() => {
+    console.log('nodata:',nodata);
+  },[nodata]);
+
   useEffect(()=>{
     getData();
-  },[setIsShow])
+  },[nodata])
 
   useEffect(()=>{
     getData();
@@ -500,9 +501,9 @@ useEffect(() => {
   return (
   <View>
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
-        <View style={{zIndex:300,left:'10%',top:110,}}>
+        {/*<View style={{zIndex:300,left:'10%',top:110,}}>
           {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
-        </View>
+  </View>*/}
       <View style={styles.bodys}>
           <View style={styles.classTimeContiner} onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
@@ -555,7 +556,14 @@ useEffect(() => {
                               });
                             }else{
                               setIsShow(true);
-                              setPushedClassFrameDetail(frameDetail);
+                              setPushedClassFrameDetail({
+                                day: weekTime2.day-0,period: weekTime2.period-0
+                              });
+                              setPeriod(weekTime2.period);
+                              const adDay = dayad(weekTime2.day)
+                              setDay(adDay);
+                              setTime(weekTime2.period+1);
+                              navigation.navigate('KomaView');
                               console.log(weekTime2);
                             }
                             }}

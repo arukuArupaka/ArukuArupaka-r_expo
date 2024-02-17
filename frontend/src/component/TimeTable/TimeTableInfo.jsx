@@ -1,7 +1,7 @@
 import React from 'react';
-import {Text, View,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
+import {Switch,Text, View,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
 import {useState,useEffect} from 'react'
-
+import { useTimeTable } from './TimeTableContext'
 
 
 const styles=StyleSheet.create({
@@ -68,10 +68,44 @@ const styles=StyleSheet.create({
     //backgroundColor:'blue',
     fontSize:14,
     width:110,
+  },
+  Infotoggle:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    right: 70
   }
-})
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#789',
+    borderRadius: 4,
+    color: '#789',
+    paddingRight: 30, // to ensure the text is never behind the icon
+    width: 230,
+    marginLeft: 30
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: '#789',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+    width: 178,
+    marginLeft: 30,
+    backgroundColor: '#fff',
+  },
+});
 
 const TimeTableInfo = (props) => {
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, notifiSwitch } = useTimeTable();
 
   const [infoDetail, setInfoDetail] = useState({
     day: props.day,
@@ -88,6 +122,7 @@ const TimeTableInfo = (props) => {
 
   const Submit = async() => {
 
+    if(nodata){
     const timecalc = props.timeCalc(
     infoDetail.hour , infoDetail.minute,
     infoDetail.notification);
@@ -97,6 +132,7 @@ const TimeTableInfo = (props) => {
     setInfoDetail((prev)=>{prev.timecalc=timecalc; return prev});
     setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
     setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
+
     
     
 
@@ -109,7 +145,7 @@ const TimeTableInfo = (props) => {
 
 
     props.onSubmit(infoDetail,notificationHour,notificationMinute);
-
+    }
 
   }
 
@@ -140,6 +176,16 @@ const TimeTableInfo = (props) => {
           <Text style={styles.backText}></Text>
         </View>
 
+        <View style={styles.Infotoggle}>
+          <Text>通知ON</Text>
+          <Switch
+                    value={nodata}
+                    onValueChange={notifiSwitch}
+                    trackColor={{ false: '#888888', true: Platform.OS === 'android' ? '#00ff7f' : '#00ff7f' }}
+                    thumbColor={'white'}
+                    style={{left: 35}}
+                />
+        </View>
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>通知時間</Text>
           <TextInput style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.notification=text; return prev});}}>
@@ -148,7 +194,7 @@ const TimeTableInfo = (props) => {
           <Text style={styles.backText}> 分前に通知する</Text>
         </View >
         <View style={{flexDirection:'row',flex:1,}}>
-          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();setCheck(check*(-1));Submit();}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
+          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();setCheck(check*(-1));Submit();setIndata(true);}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
           <TouchableOpacity style={styles.determinationButton} onPress={()=>{props.onEventCallBack()}}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
     </View>

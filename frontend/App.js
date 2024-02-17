@@ -15,6 +15,8 @@ import LogoTitle from './src/component/Map/headerForMap';
 import ALoginView from './src/View/ALoginView';
 import MapLoot from './src/component/Map/MapLoot';
 import TimeTableClass from './src/View/TimeTableClass';
+import KomaView from './src/View/KomaView';
+import WebSite from './src/View/WebSite';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +45,8 @@ function App() {
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
           <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
           <Stack.Screen name="TimeTableClass" component={TimeTableClass} />
+          <Stack.Screen name="KomaView" component={KomaView} />
+          <Stack.Screen name="WebSite" component={WebSite} />
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>

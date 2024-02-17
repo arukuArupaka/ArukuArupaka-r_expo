@@ -26,11 +26,11 @@ export const TimeTableProvider = ({ children }) => {
   });
 
   const weekTimeSaveData=[
-    [{day:0,period:0,className:"",classRoom:"",memo:"",notification:""},{day:0,period:1,className:"",classRoom:"",memo:"",notification:""},{day:0,period:2,className:"",classRoom:"",memo:"",notification:""},{day:0,period:3,className:"",classRoom:"",memo:"",notification:""},{day:0,period:4,className:"",classRoom:"",memo:"",notification:""},{day:0,period:5,className:"",classRoom:"",memo:"",notification:""},{day:0,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:1,period:0,className:"",classRoom:"",memo:"",notification:""},{day:1,period:1,className:"",classRoom:"",memo:"",notification:""},{day:1,period:2,className:"",classRoom:"",memo:"",notification:""},{day:1,period:3,className:"",classRoom:"",memo:"",notification:""},{day:1,period:4,className:"",classRoom:"",memo:"",notification:""},{day:1,period:5,className:"",classRoom:"",memo:"",notification:""},{day:1,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:2,period:0,className:"",classRoom:"",memo:"",notification:""},{day:2,period:1,className:"",classRoom:"",memo:"",notification:""},{day:2,period:2,className:"",classRoom:"",memo:"",notification:""},{day:2,period:3,className:"",classRoom:"",memo:"",notification:""},{day:2,period:4,className:"",classRoom:"",memo:"",notification:""},{day:2,period:5,className:"",classRoom:"",memo:"",notification:""},{day:2,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:3,period:0,className:"",classRoom:"",memo:"",notification:""},{day:3,period:1,className:"",classRoom:"",memo:"",notification:""},{day:3,period:2,className:"",classRoom:"",memo:"",notification:""},{day:3,period:3,className:"",classRoom:"",memo:"",notification:""},{day:3,period:4,className:"",classRoom:"",memo:"",notification:""},{day:3,period:5,className:"",classRoom:"",memo:"",notification:""},{day:3,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:4,period:0,className:"",classRoom:"",memo:"",notification:""},{day:4,period:1,className:"",classRoom:"",memo:"",notification:""},{day:4,period:2,className:"",classRoom:"",memo:"",notification:""},{day:4,period:3,className:"",classRoom:"",memo:"",notification:""},{day:4,period:4,className:"",classRoom:"",memo:"",notification:""},{day:4,period:5,className:"",classRoom:"",memo:"",notification:""},{day:4,period:6,className:"",classRoom:"",memo:"",notification:""}],
+    [{day:0,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:0,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""}],
+    [{day:1,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:1,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""}],
+    [{day:2,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:2,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""}],
+    [{day:3,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:3,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""}],
+    [{day:4,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""},{day:4,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:""}],
   ]
 
   const [weekTime,setWeekTime]=useState(weekTimeSaveData);
@@ -41,10 +41,16 @@ export const TimeTableProvider = ({ children }) => {
     classRoom: "",
     className: "",
     memo: "",
+    notifion: false,
     notification: "",
+    department: "",
+    unit: "",
+    num: "",
+    resume: ""
   });
 
   const toggleSwitch = () => setSizechange(previousState => !previousState);
+  const notifiSwitch = () => setNodata(previousState => !previousState);
   
   useEffect(() => {
     // sizechange または weekTimeQty が変更された場合にのみ実行
@@ -54,6 +60,9 @@ export const TimeTableProvider = ({ children }) => {
     setPadding(newPad);
   }, [sizechange, weekTimeQty]);
 
+  useEffect(() => {
+    setKamokuItem({...kamokuItem, notifion: nodata});
+  },[nodata]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -156,7 +165,7 @@ export const TimeTableProvider = ({ children }) => {
     };
 
   return (
-    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata}}>
+    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch}}>
       { children }
     </TimeTableContext.Provider>
   );
