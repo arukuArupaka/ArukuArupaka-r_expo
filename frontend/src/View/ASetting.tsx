@@ -1,5 +1,5 @@
 import React, { useState ,useEffect} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform} from 'react-native';
+import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, Settings} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
@@ -7,43 +7,43 @@ import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
-import store from '../store';
-
+import { connect } from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux';
+import {Dispatch} from 'redux';
+import State from '../redux/states/userState';
+import { handleLoginAfterPageName } from '../redux/actions/commonAction';
 
 
 const ASetting = (props) => {
 
-  //const srore =store()
-  
+  //ログインしてるかチェックするコード探しに来た人へ　ここから
+
+  const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
+  const dispatch: Dispatch = useDispatch();
+  const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
+  if(!isLogin||isLoginNotVerificationEmail){
+    dispatch(handleLoginAfterPageName('settings'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力
+    props.navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+  }
+
+  //ここまでコピーしてね
 
     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(user);
-      }else{
-        props.navigation.navigate('login')
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  // useEffect(() => {
+  //   console.log(isLogin)
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       console.log(user);
+  //     }else{
+  //       props.navigation.navigate('login')
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []);
 
 
   //props.navigation.navigate('login')
   const [image, setImage] = useState(null);
-
-
-
-
-
-  // const onPressAction = () => {
-  //   return ActionSheet.options({
-  //     options: [
-  //       {text: '写真を選択', onPress: () => pickImage()},
-  //     ],
-  //     cancel: {text: 'キャンセル'},
-  //   });
-  // };
 
   const onOpenActionSheet=()=> {
     if(Platform.OS=='android'){
@@ -161,6 +161,9 @@ const ASetting = (props) => {
             backgroundColor:'#D9D9D9',
             marginBottom:20}}></TextInput>
             <TouchableOpacity
+            onPress={()=>{
+              dispatch(isLoginAction(true));
+            }}
             style={{
               marginLeft:'80%',
               backgroundColor:'blue',
@@ -174,9 +177,11 @@ const ASetting = (props) => {
                 paddingTop:2,
               }} >登録</Text></TouchableOpacity>
         </View>
-
       </SafeAreaView>
     </ScrollView>
   );
 };
+
 export default ASetting;
+
+
