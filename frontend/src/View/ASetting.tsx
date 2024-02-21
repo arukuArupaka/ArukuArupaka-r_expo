@@ -6,16 +6,39 @@ import { AntDesign } from '@expo/vector-icons';
 import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { auth ,db} from '../../firebase';
 import { connect } from 'react-redux'
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../redux/states/userState';
 import { handleLoginAfterPageName } from '../redux/actions/commonAction';
+import { addDoc, collection ,getDocs} from "firebase/firestore"; 
 
 
 const ASetting = (props) => {
 
+const dbtest=async()=>{
+try {
+  const docRef = await addDoc(collection(db, "users"), {
+    first: "Alans",
+    middle: "Mathison",
+    last: "Turing",
+    born: 1912
+  });
+
+  console.log("Document written with ID: ", docRef.id);
+} catch (e) {
+  console.error("Error adding document: ", e);
+}
+}
+dbtest()
+const gettest=async()=>{
+  const querySnapshot = await getDocs(collection(db, "userss"));
+querySnapshot.forEach((doc) => {
+  console.log(`${doc.id} => ${doc.data()}`);
+});
+}
+gettest()
   //ログインしてるかチェックするコード探しに来た人へ　ここから
 
   const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね

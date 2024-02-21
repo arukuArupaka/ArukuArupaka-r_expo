@@ -40,7 +40,7 @@ function App() {
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="Map" component={MapLoot}
             options={{headerTitle: (props) => <LogoTitle {...props} />}}/>
-          <Stack.Screen name="settings" component={ASetting} />
+          <Stack.Screen name="settings" component={ASetting} options={{headerShown:false}}/>
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
