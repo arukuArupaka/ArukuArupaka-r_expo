@@ -12,6 +12,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeCarousel from '../component/Home/HomeViewCarousel';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from "../../firebase";
+import { handleLoginAction,handleLoginNotVerificationEmail } from "../redux/actions/userAction";
+import { useDispatch } from "react-redux";
 
 
 //右上アクションボタンのコンポーネント
@@ -104,6 +108,23 @@ const ShowDate = () => {
 
 //実際に描画される部分
 const HomeView = (props) => {
+
+  //fireBaseログイン確認
+  const dispatch: Dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+        dispatch(handleLoginAction(user.emailVerified))
+      }else{
+        dispatch(handleLoginAction(false));
+        dispatch(handleLoginNotVerificationEmail(false))
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <SafeAreaView>
       <ScrollView>
