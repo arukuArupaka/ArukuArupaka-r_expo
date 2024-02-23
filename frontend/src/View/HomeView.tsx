@@ -177,6 +177,8 @@ const HomeView = (props) => {
           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"
+            test={props}
+            jumpPage="textbook"
             iconName="book-multiple"
           />
           <AppList
