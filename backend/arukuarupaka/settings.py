@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'time_table',
     'common_data',
     'corsheaders',
-    'weather'
+    'weather',
+    'specialsite'
 ]
 
 MIDDLEWARE = [

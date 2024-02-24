@@ -27,6 +27,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/',include('home_view.urls')),
+    path('special/',include('specialsite.urls')),
     path('time_table/',include('time_table.urls')),
     path('textbook_market/',include('textbook_market.urls')),
     path('common_deta',include('common_data.urls')),
