@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('kamoku_time', models.IntegerField()),
                 ('kamoku_department', models.CharField(max_length=100)),
                 ('kamoku_unit', models.IntegerField()),
-                ('kamoku_season', models.CharField())
+                ('kamoku_season', models.CharField(max_length=100))
             ],
         ),
     ]

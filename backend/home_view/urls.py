@@ -1,9 +1,9 @@
 # photo/urls.py
 
 from django.urls import path
-from .views import PhotoListCreateView
+from .views import AllPhotosView
 
 urlpatterns = [
-    path('photos/', PhotoListCreateView.as_view(), name='photo-list-create'),
+    path('photo/',AllPhotosView.as_view(), name='all-photos'),
 ]
 
