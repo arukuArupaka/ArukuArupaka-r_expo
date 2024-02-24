@@ -20,6 +20,7 @@
     "@yfuks/react-native-action-sheet": "^0.0.5",
     "clone": "^2.1.2",
     "expo": "~49.0.15",
+    "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",
     "expo-notifications": "~0.20.1",
     "expo-status-bar": "~1.6.0",

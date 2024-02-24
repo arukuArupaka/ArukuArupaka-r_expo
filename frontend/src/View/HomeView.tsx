@@ -14,7 +14,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeCarousel from '../component/Home/HomeViewCarousel';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
-import { handleLoginAction,handleLoginNotVerificationEmail } from "../redux/actions/userAction";
+import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject } from "../redux/actions/userAction";
 import { useDispatch } from "react-redux";
 
 
@@ -117,9 +117,13 @@ const HomeView = (props) => {
       if (user) {
         console.log(user);
         dispatch(handleLoginAction(user.emailVerified))
+        dispatch(setUserUUIDAction(user.uid))
+        dispatch(setUserObject(user))
       }else{
         dispatch(handleLoginAction(false));
         dispatch(handleLoginNotVerificationEmail(false))
+        dispatch(setUserUUIDAction(""))
+        dispatch(setUserObject({}))
       }
     });
     return () => unsubscribe();
