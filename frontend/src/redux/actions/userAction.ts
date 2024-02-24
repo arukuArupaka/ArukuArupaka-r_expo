@@ -11,3 +11,17 @@ export const handleLoginNotVerificationEmail = (res) => {
     payload:res
   }
 }
+
+export const setUserUUIDAction=(res)=>{
+  return{
+    type:'setUserUUIDAction',
+    payload:res
+  }
+}
+
+export const setUserObject=(res)=>{
+  return{
+    type:'setUserObject',
+    payload:res
+  }
+}
