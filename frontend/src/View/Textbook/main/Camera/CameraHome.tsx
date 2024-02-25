@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform,Dimensions } from 'react-native';
 import { HeaderforTextbook2 } from '../../../../component/Textbook/HeaderforTextbook2';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const CameraHome = ({ navigation }) => {
+
   return (
     <View>
       <HeaderforTextbook2 />
@@ -39,8 +40,8 @@ const TwoBox = (props) => {
 const styles = StyleSheet.create({
 
   main: {
-    height:Platform.OS==='ios' ?'88%' : '92%',
-    backgroundColor: '#fff',
+    height:Platform.OS==='ios'?'88%':'92%',
+    backgroundColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center'
   },
