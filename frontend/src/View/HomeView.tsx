@@ -14,8 +14,11 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeCarousel from '../component/Home/HomeViewCarousel';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
-import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject } from "../redux/actions/userAction";
-import { useDispatch } from "react-redux";
+import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject, fetchUserObject } from "../redux/actions/userAction";
+import {useDispatch, useSelector} from 'react-redux';
+import { doc, getDoc } from '@firebase/firestore';
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage,db } from "../../firebase";
 
 
 //右上アクションボタンのコンポーネント
@@ -118,7 +121,8 @@ const HomeView = (props) => {
         console.log(user);
         dispatch(handleLoginAction(user.emailVerified))
         dispatch(setUserUUIDAction(user.uid))
-        dispatch(setUserObject(user))
+        //dispatch(setUserObject(user))
+        fetchUserObject(user.uid)
       }else{
         dispatch(handleLoginAction(false));
         dispatch(handleLoginNotVerificationEmail(false))
@@ -128,6 +132,43 @@ const HomeView = (props) => {
     });
     return () => unsubscribe();
   }, []);
+
+  const fetchUserObject=async(userUUID)=>{
+    //const dispatch = useDispatch();
+    console.log('actionf')
+  
+    const refFiresrore = doc(db, `users/${userUUID}`);
+    const appUser = (await getDoc(refFiresrore)).data() ;//appUserがデータベースから取得したオブジェクト
+    getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)).then((getURI)=>{
+  
+      const data= {
+        id: appUser.id,
+        userName: appUser.userName,
+        faculty:appUser.faculty,
+        department:appUser.department,
+        grade:appUser.grade,
+        profile:appUser.profile,
+        userImage:getURI
+      };
+      console.log('action')
+        console.log(data)
+      dispatch(setUserObject(data))
+      }).
+      catch((e)=>{
+        console.log(e.message)
+        const data= {
+          id: appUser.id,
+          userName: appUser.userName,
+          faculty:appUser.faculty,
+          department:appUser.department,
+          grade:appUser.grade,
+          profile:appUser.profile,
+        };
+        console.log('action')
+        console.log(data)
+        dispatch(setUserObject(data))
+      })
+    }
 
   return (
     <SafeAreaView>

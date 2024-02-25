@@ -15,6 +15,7 @@ import { handleLoginAfterPageName } from '../redux/actions/commonAction';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
+import { setUserObject } from '../redux/actions/userAction';
 
 
 const MAIN_PICTURE_MAX_SIZE:number=10000
@@ -145,7 +146,18 @@ const ASetting = (props) => {
       if (image) {
         uploadImageAsync(image)
       }   
-
+      const reduxDate={
+        id: userUUID,
+        userName: userName,
+        faculty:faculty,
+        department:department,
+        grade:grade,
+        profile:profile,
+        userImage:image
+    }
+    console.log('asetting')
+    console.log(reduxDate)
+    dispatch(setUserObject(reduxDate))
   }
   const uploadImageAsync = async (uri: string): Promise<string> => {
     console.log('uri:', uri);
