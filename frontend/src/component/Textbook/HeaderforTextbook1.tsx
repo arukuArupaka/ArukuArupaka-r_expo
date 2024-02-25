@@ -1,49 +1,55 @@
-import React,{useState} from 'react';
-import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,TextInput,Button,SafeAreaView,StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight, TextInput, Button, SafeAreaView, StatusBar, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import { MaterialIcons,MaterialCommunityIcons ,Ionicons,AntDesign,FontAwesome } from '@expo/vector-icons';
-
-
-
+import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
 
 export const HeaderforTextbook1 = () => {
 
-
   const navigation = useNavigation();
-  const [showModal, setshowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const SE_WIDTH = 375;
+  const SE_HEIGHT = 667;
+  const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
   const toggleModal = () => {
-    setshowModal(!showModal);
+    setShowModal(!showModal);
   };
 
+  // console.warn(windowHeight);
+  // console.warn(windowWidth);
+
   return (
-    
+
     <View>
-      <StatusBar backgroundColor='#F36F21'/>
-      {Platform.OS === 'ios' && <View style={styles.headerupios}></View>}
-      {/* {Platform.OS === 'android' && <View style={styles.headerupandroid}></View>} */}
+      <StatusBar backgroundColor='#F36F21' />
+      {Platform.OS === 'ios' && 
+      <View style={{
+                    backgroundColor: '#F36F21',
+                    height: Platform.OS === 'ios' && (windowWidth === SE_WIDTH && windowHeight === SE_HEIGHT) ? 20 : 59}}>
+      </View>
+      }
 
       <View style={styles.header}>
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Home')}
         >
-          {Platform.OS === 'android'&& <Ionicons name="arrow-back-sharp" size={26} color="black" 
-          style={[styles.back,{marginLeft:16,paddingTop:14}]}/>}
+          {Platform.OS === 'android' && <Ionicons name="arrow-back-sharp" size={26} color="black"
+            style={[styles.back, { marginLeft: 16, paddingTop: 14 }]} />}
 
-          {Platform.OS === 'ios'&& <MaterialIcons name="arrow-back-ios" size={22} color="black" 
-          style={[styles.back,{color:'#027aff',marginLeft:10,paddingTop:10}]}/>}
+          {Platform.OS === 'ios' && <MaterialIcons name="arrow-back-ios" size={22} color="black"
+            style={[styles.back, { color: '#027aff', marginLeft: 10, paddingTop: 10 }]} />}
         </TouchableOpacity>
 
         <View style={styles.input}>
-          <TextInput placeholder="なにかお探しですか？" ></TextInput>
-          <Ionicons name='search' size={26} style={{height:30}}></Ionicons>
+          <TextInput placeholder="なにかお探しですか？"></TextInput>
+          <Ionicons name='search' size={26} style={{ height: 30 }}></Ionicons>
         </View>
 
         <TouchableOpacity
-        style={{marginRight:Platform.OS === 'ios' ? 10 : 16}}
-        onPress={() => setshowModal(true)}
+          style={{ marginRight: Platform.OS === 'ios' ? 10 : 16 }}
+          onPress={() => setShowModal(true)}
         // onPress={() => navigation.navigate('Home')}
         >
           <FontAwesome name="question-circle-o" size={28} color="black" style={styles.question} />
@@ -57,10 +63,10 @@ export const HeaderforTextbook1 = () => {
           <View style={styles.centerview}>
             <TouchableHighlight
               style={styles.modalview}
-              onPress={() => setshowModal(false)}
+              onPress={() => setShowModal(false)}
             >
               <View>
-                <Button title="Close" onPress={() => setshowModal(false)} />
+                <Button title="Close" onPress={() => setShowModal(false)} />
               </View>
             </TouchableHighlight>
           </View>
@@ -74,38 +80,23 @@ export const HeaderforTextbook1 = () => {
 
 const styles = StyleSheet.create({
 
-  headerupandroid:{
-    height:32,
-    // borderBottomColor:'orange',
-    // borderBottomWidth:2
-  },
-
-  headerupios:{
-    height:59,
-    backgroundColor:'#F36F21'
-    // borderBottomColor:'orange',
-    // borderBottomWidth:2
-  },
-
   header: {
     height: Platform.OS === 'ios' ? 40 : 56,
     flexDirection: 'row',
     backgroundColor: "#F36F21",
-    justifyContent:'space-between',
-    alignItems:'center',
-    borderBottomWidth:1,
-    borderColor:'#aaa',
-
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#aaa',
   },
 
-  back:{
-    // backgroundColor:'red',
-    height:'100%',
+  back: {
+    height: '100%',
   },
 
-  input:{
-    height:'80%',
-    width:'65%',
+  input: {
+    height: '80%',
+    width: '65%',
     borderRadius: 20,
     backgroundColor: '#ddd',
     padding: 8,
@@ -114,10 +105,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  question:{
-    // backgroundColor:'red',
-    paddingTop:Platform.OS === 'ios' ? 6 : 14,
-    height:'100%',
+  question: {
+    paddingTop: Platform.OS === 'ios' ? 6 : 14,
+    height: '100%',
   },
 
   centerview: {
@@ -131,6 +121,6 @@ const styles = StyleSheet.create({
     height: 140,
     backgroundColor: 'orange',
     borderRadius: 8,
-    padding: 8, // Changed to numeric value
+    padding: 8,
   },
 });

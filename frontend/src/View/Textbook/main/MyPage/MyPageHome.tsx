@@ -40,8 +40,8 @@ const ThreeBox = (props) => {
 const styles = StyleSheet.create({
 
   main:{
-    height:Platform.OS==='ios' ?'88%' : '92%',
-    backgroundColor:'#fff',
+    height:Platform.OS==='ios'?'88%':'92%',
+    backgroundColor:'#eee',
     justifyContent: 'center',
     alignItems: 'center'
   },

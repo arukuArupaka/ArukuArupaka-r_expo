@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,SafeAreaView,Button,StatusBar } from 'react-native';
+import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,SafeAreaView,Button,StatusBar,Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { MaterialIcons,MaterialCommunityIcons ,Ionicons,AntDesign,FontAwesome, Feather  } from '@expo/vector-icons';
@@ -10,6 +10,9 @@ export const HeaderforTextbook3 = () => {
 
   const navigation = useNavigation();
   const [showModal, setshowModal] = useState(false);
+  const SE_WIDTH = 375;
+  const SE_HEIGHT = 667;
+  const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
   const toggleModal = () => {
     setshowModal(!showModal);
@@ -17,8 +20,13 @@ export const HeaderforTextbook3 = () => {
 
   return (
     <View>
-      {Platform.OS === 'ios' && <View style={styles.headerupios}></View>}
-      {/* {Platform.OS === 'android' && <View style={styles.headerupandroid}></View>} */}
+      <StatusBar backgroundColor='#F36F21' />
+      {Platform.OS === 'ios' && 
+      <View style={{
+                    backgroundColor: '#F36F21',
+                    height: Platform.OS === 'ios' && (windowWidth === SE_WIDTH && windowHeight === SE_HEIGHT) ? 20 : 59}}>
+      </View>
+      }
 
       <View style={styles.header}>
 
@@ -67,19 +75,6 @@ export const HeaderforTextbook3 = () => {
 };
 
 const styles = StyleSheet.create({
-
-  headerupandroid:{
-    height:32,
-    // borderBottomColor:'orange',
-    // borderBottomWidth:2
-  },
-
-  headerupios:{
-    height:59,
-    backgroundColor:'#F36F21'
-    // borderBottomColor:'orange',
-    // borderBottomWidth:2
-  },
 
   header: {
     height: Platform.OS === 'ios' ? 40 : 56,
