@@ -8,7 +8,7 @@ const HomeCarousel = () => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/home/photo/")
+    fetch("http://192.168.2.125:8000/home/photo/")
       .then((response) => response.json())
       .then((data) => {
         setImages(data);
