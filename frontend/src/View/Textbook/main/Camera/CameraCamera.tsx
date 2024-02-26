@@ -37,7 +37,7 @@ export const CameraCamera = () => {
 
     console.log(result);
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       const newImages = [...images];
       newImages[index] = result.uri;
       setImages(newImages);
