@@ -9,7 +9,7 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TimeTableQty from '../component/TimeTable/TimeTableQty';
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
-import { WebView } from 'react-native-webview';
+//import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
     const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
@@ -42,7 +42,7 @@ const KomaView = ({ navigation }) => {
           notificationHour -= 24;
         }
     
-        return {notificationHour,notificationMinute};
+        return [notificationHour,notificationMinute];
       };
 
       React.useEffect(() => {
@@ -100,11 +100,15 @@ const KomaView = ({ navigation }) => {
       }
 
     const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
-    setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
-    scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
-    console.log('onSubmit///hour:',notificationHour);
-    console.log('onSubmit///minute:',notificationMinute);
+      setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
+      scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
+      console.log('onSubmit///hour:',notificationHour);
+      console.log('onSubmit///minute:',notificationMinute);
     
+    };
+
+    const offSubmit=(classDetail)=>{
+      setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
     };
 
     const classStartEndTimeUnitList=[
@@ -152,12 +156,12 @@ const KomaView = ({ navigation }) => {
         },
       ]
 
-    console.log('授業に関する情報')
-    console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num);
-    console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className);
-    console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit);
-    console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume);
-    console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].department);
+    //console.log('授業に関する情報')
+    //console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num);
+    //console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className);
+    //console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit);
+    //console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume);
+    //console.log(typeof weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].department);
 
     const styles = StyleSheet.create({
         body: {
@@ -194,18 +198,19 @@ const KomaView = ({ navigation }) => {
     return (
         <View style={styles.body}>
             <View style={{zIndex:300,right: 157,top:110,}}>
-                {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
+                {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false);}} onSubmit={onSubmit} offSubmit={offSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
             </View>
             <View style={styles.title}>
-                <Text style={{fontSize: 20}}>{weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].department + " " + day + "曜" + " " + time + "限"}</Text>
+                <Text style={{fontSize: 20}}>{day + "曜" + " " + time + "限"}</Text>
             </View>
                 <View style={styles.info}>
                     <View style={styles.list}>
                         <Text style={{fontSize: 17, padding: 5}}>{"授業名：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"教室名：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].classRoom}</Text>
+                        <Text style={{fontSize: 17, padding: 5}}>{"教授：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].teacher}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"単位数：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"授業コード：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num}</Text>
-                        <Text style={{fontSize: 17, padding: 5}}>{"レジュメ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume}</Text>
+                        <Text style={{fontSize: 17, padding: 5}}>{"メモ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo}</Text>
                     </View>
                 </View>
                 <View style={styles.notifi}>

@@ -6,6 +6,8 @@ import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVeri
 import { auth } from '../../firebase';
 import Dialog from "react-native-dialog";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { handleLoginAction,handleLoginNotVerificationEmail } from "../redux/actions/userAction";
+import { useDispatch ,useSelector} from "react-redux";
 
 const ALoginView = (props) => {
 
@@ -19,6 +21,8 @@ const ALoginView = (props) => {
   const [authMail,setAuthMail]=useState('')
   const [authPass,setAuthPass]=useState('')
 
+  const dispatch = useDispatch();
+  const loginAfterPageName:boolean=useSelector((state)=>state.common.loginAfterPageName)
 
     const [showCreateAccount,setShowCreateAccount]=useState(false)
 
@@ -80,9 +84,11 @@ const ALoginView = (props) => {
 
     const handleLogin = async () => {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const user=await signInWithEmailAndPassword(auth, email, password);
+        setUserInfo(user)
         if(await isMailVerified()){
-          await props.navigation.navigate('settings')
+          await dispatch(handleLoginAction(isMailVerified()))
+          await props.navigation.navigate(loginAfterPageName)
         }else{
           pleaseValidateMailDialog()
         }
@@ -118,7 +124,7 @@ const ALoginView = (props) => {
           'メールアドレスを認証できました。', 
           'ありがとうございます。引き続きご利用ください。',
       [
-        {text: 'OK', onPress: () => props.navigation.navigate('settings')},
+        {text: 'OK', onPress: () => props.navigation.navigate(loginAfterPageName)},
       ]);
     };
 
@@ -145,7 +151,12 @@ const ALoginView = (props) => {
 
     }
     const setdRegisterMail=async()=>{
-      await sendEmailVerification(userInfo.user);
+      //console.log(userInfo)
+      if(userInfo.user){
+        await sendEmailVerification(userInfo.user);
+      }else{
+        
+      }
 
     }
 

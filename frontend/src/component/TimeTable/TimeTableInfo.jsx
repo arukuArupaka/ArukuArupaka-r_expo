@@ -2,6 +2,7 @@ import React from 'react';
 import {Switch,Text, View,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
 import {useState,useEffect} from 'react'
 import { useTimeTable } from './TimeTableContext'
+import { useNavigation } from '@react-navigation/native';
 
 
 const styles=StyleSheet.create({
@@ -105,49 +106,53 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const TimeTableInfo = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, notifiSwitch } = useTimeTable();
-
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, notifiSwitch, kamokuShow, setKamokuShow } = useTimeTable();
+  const navigation = useNavigation();
   const [infoDetail, setInfoDetail] = useState({
     day: props.day,
     period: props.period,
-    classRoom: props.pushFramDetail.classRoom,
-    className: props.pushFramDetail.className,
-    memo: props.pushFramDetail.memo,
-    notification: props.pushFramDetail.notification,
+    classRoom: weekTime[props.day][props.period].classRoom,
+    className: weekTime[props.day][props.period].className,
+    memo: weekTime[props.day][props.period].memo,
+    notification: weekTime[props.day][props.period].notification,
     hour:props.classStartEndTimeUnitList[props.period].hour,
-    minute:props.classStartEndTimeUnitList[props.period].minute
+    minute:props.classStartEndTimeUnitList[props.period].minute,
+
   });
 
   const [check, setCheck] = useState(1);
 
   const Submit = async() => {
-
+    console.log('onSubmitが実行されました');
     if(nodata){
     const timecalc = props.timeCalc(
     infoDetail.hour , infoDetail.minute,
     infoDetail.notification);
 
-    const { notificationHour, notificationMinute } = timecalc;
+    const notificationHour = timecalc[0];
+    const notificationMinute = timecalc[1];
+    console.log(notificationHour);
+    console.log(notificationMinute);
 
     setInfoDetail((prev)=>{prev.timecalc=timecalc; return prev});
-    setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
-    setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
+    //setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
+    //setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
 
     
     
-
+    
     console.log('Info///timeCalc///hour:',infoDetail.hour);
     console.log('Info///timeCalc///minute:',infoDetail.minute);
     console.log('Info///timeCalc///timecalc:',timecalc);
-    console.log('Info///timeCalc///notificationHour:',notificationHour);
-    console.log('Info///timeCalc///notificationMinute:',notificationMinute);
-
-
-
+    //console.log('Info///timeCalc///notificationHour:',notificationHour);
+    //console.log('Info///timeCalc///notificationMinute:',notificationMinute);
     props.onSubmit(infoDetail,notificationHour,notificationMinute);
     }
-
-  }
+    setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`});
+    //kamokuItem({...kamokuItem, className:`${infoDetail.className}`,classRoom:`${infoDetail.classRoom}`,memo:`${infoDetail.memo}`,notification:`${infoDetail.notification}`});
+    //console.log('kamokuItemは');
+    //console.log(kamokuItem);
+  };
 
   return (
     <View style={styles.infoDaialog}>
@@ -192,9 +197,28 @@ const TimeTableInfo = (props) => {
             <Text>{infoDetail.notification}</Text>
           </TextInput>
           <Text style={styles.backText}> 分前に通知する</Text>
-        </View >
+        </View>
         <View style={{flexDirection:'row',flex:1,}}>
-          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} onPress={()=>{props.onEventCallBack();setCheck(check*(-1));Submit();setIndata(true);}}><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
+          <TouchableOpacity style={[styles.determinationButton,{backgroundColor:'#D9D9D9'}]} 
+          onPress={()=>{
+            if(kamokuShow == true){
+              navigation.navigate('TimeTable');
+              props.onEventCallBack();
+              setCheck(check*(-1));Submit();setIndata(true);
+              props.onEventCallBack();
+              setCheck(check*(-1));
+              Submit();
+              setIndata(true);
+              setKamokuShow(false);
+            }else{
+              props.onEventCallBack();
+              setCheck(check*(-1));Submit();setIndata(true);
+              props.onEventCallBack();
+              setCheck(check*(-1));
+              Submit();
+              setIndata(true);
+          }}
+          }><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
           <TouchableOpacity style={styles.determinationButton} onPress={()=>{props.onEventCallBack()}}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
     </View>

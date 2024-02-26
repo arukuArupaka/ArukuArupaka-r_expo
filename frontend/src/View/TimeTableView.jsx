@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
 const TimrTableView = ({ navigation }) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -501,9 +501,9 @@ useEffect(() => {
   return (
   <View>
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
-        {/*<View style={{zIndex:300,left:'10%',top:110,}}>
-          {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
-  </View>*/}
+        <View style={{zIndex:300,left:'10%',top:110,}}>
+          {/*{isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} onEventCallBack={()=>{setIsInfoShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}*/}
+        </View>
       <View style={styles.bodys}>
           <View style={styles.classTimeContiner} onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
@@ -535,7 +535,6 @@ useEffect(() => {
                           period={weekTime2.period} 
                           className={weekTime2.className}
                           weekTimeQty={weekTimeQty} 
-                          
                           onEventCallBack={(frameDetail)=>{
                             //console.log(typeof weekTime2.day);
                             //console.log(typeof weekTime2.period);
@@ -551,6 +550,7 @@ useEffect(() => {
                               console.log(weekTime2.day-0);
                               console.log(weekTime2.period-0);
                               console.log(weekTime2);
+                              
                               setPushedClassFrameDetail({
                                 day: weekTime2.day-0,period: weekTime2.period-0
                               });
@@ -560,7 +560,7 @@ useEffect(() => {
                                 day: weekTime2.day-0,period: weekTime2.period-0
                               });
                               setPeriod(weekTime2.period);
-                              const adDay = dayad(weekTime2.day)
+                              const adDay = dayad(weekTime2.day);
                               setDay(adDay);
                               setTime(weekTime2.period+1);
                               navigation.navigate('KomaView');

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'textbook_market',
     'time_table',
     'common_data',
-    'corsheaders'
+    'corsheaders',
+    'weather'
 ]
 
 MIDDLEWARE = [

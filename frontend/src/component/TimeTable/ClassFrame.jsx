@@ -5,12 +5,13 @@ import { useNavigation } from '@react-navigation/native'; // ここに追加
 
 
 const ClassFrame = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange, weekTime } = useTimeTable();
   const navigation = useNavigation();
   const frameDetail={
     day:props.day,
     period:props.period,
-  }
+  };
+  
 
   /* const [timetableclass, setTimetableclass] = useState(True); */
 

@@ -1,13 +1,15 @@
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 import React from 'react';
-import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions, RefreshControl} from 'react-native';
+import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions, RefreshControl, TouchableOpacity} from 'react-native';
 import {useState,useEffect} from 'react'
 import Koma from '../component/TimeTable/Koma';
 import KamokuKoma from '../component/TimeTable/KamokuKoma';
+import TimeTableInfo from '../component/TimeTable/TimeTableInfo';
+import * as Notifications from 'expo-notifications';
 
 const TimeTableClass = ({ navigation }) => {
-    const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, data, setData, kamokuInfo, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime,setWeekTime,indata, setIndata, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
-
+    const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, data, setData, kamokuInfo, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime,setWeekTime,indata, setIndata, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow } = useTimeTable();
+    //const [isInfoShow, setIsInfoShow] = useState(false);
     /*useEffect(() => {
       const kamokudata = weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period];
       setKamokuItem({
@@ -38,6 +40,141 @@ const TimeTableClass = ({ navigation }) => {
       }
     }, []); // 依存配列に weekTime と pushedClassFrameDetail を追加
     
+    const timeCalc = (hour, minute, notification) => {
+      let notificationHour = hour
+      let notificationMinute = minute;
+  
+      if(minute >= notification){
+        notificationHour = hour;
+        notificationMinute = minute - notification;
+      }else if(minute < notification){
+        if(notification <= 60){
+          notificationHour = hour - 1;
+          notificationMinute = 60 - (notification - minute);
+        }else if(minute >= Math.floor(notification%60)){
+          notificationHour = hour - Math.floor(notification/60);
+          notificationMinute = minute - Math.floor(notification%60);
+        }else{
+          notificationHour = hour - Math.floor(notification/60) - 1;
+          notificationMinute = 60 - Math.abs(minute - Math.floor(notification%60));
+        }
+      }
+          //0時、24時の処理
+      if (notificationHour < 0) {
+        notificationHour += 24;
+      }else if (notificationHour >= 24) {
+        notificationHour -= 24;
+      }
+  
+      return {notificationHour,notificationMinute};
+    };
+
+    React.useEffect(() => {
+      requestPermissionsAsync();
+    })
+  
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  
+    const scheduleNotificationAsync = async (classDetail, notificationHour, notificationMinute) => {
+      try{
+        // デバッグ: notificationTime の内容を確認
+        console.log('Scheduling notification:', notificationHour);
+      
+        // 通知をスケジュールする際に数値であることを確認
+        if (typeof notificationHour === 'number' && typeof notificationMinute === 'number') {
+          const trigger = new Date();
+          trigger.setHours(notificationHour);
+          trigger.setMinutes(notificationMinute);
+          console.log('notificationHour:', notificationHour);
+          console.log('notificationMinute:', notificationMinute);
+          console.log('classDetail.day:',classDetail.day);
+          if (classDetail.day == 5){
+            classDetail.day = 0;
+          }
+  
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              body: classDetail.memo,
+              title: classDetail.classRoom + " " + classDetail.className + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
+            },
+            trigger: {
+              weekday: classDetail.day+2,
+              hour: notificationHour,
+              minute: notificationMinute,
+              repeats: true
+            }
+          });
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+  
+    const requestPermissionsAsync = async () => {
+      const { granted } = await Notifications.getPermissionsAsync();
+      if (granted) { return }
+    
+      await Notifications.requestPermissionsAsync();
+    }
+
+  const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
+  setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
+  scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
+  console.log('onSubmit///hour:',notificationHour);
+  console.log('onSubmit///minute:',notificationMinute);
+  
+  };
+
+  const classStartEndTimeUnitList=[
+      {
+        start:"9:00",
+        end:"10:30",
+        hour:9,
+        minute:0
+      },
+      {
+        start:"10:40",
+        end:"12:10",
+        hour:10,
+        minute:40
+      },
+      {
+        start:"13:00",
+        end:"14:30",
+        hour:13,
+        minute:0
+      },
+      {
+        start:"14:40",
+        end:"16:10",
+        hour:14,
+        minute:40
+      },
+      {
+        start:"16:20",
+        end:"17:50",
+        hour:16,
+        minute:20
+      },
+      {
+        start:"18:00",
+        end:"19:30",
+        hour:18,
+        minute:0
+      },
+      {
+        start:"19:40",
+        end:"20:10",
+        hour:19,
+        minute:40
+      },
+    ]
 
     /*useEffect(() => {
       console.log('保存されました');
@@ -83,12 +220,32 @@ const TimeTableClass = ({ navigation }) => {
     }, 2000);
     }, []);
 
+    const styles = StyleSheet.create({
+      koma:{
+        zIndex: 100
+      },
+      margin:{
+        height: 500
+      }
+    });
+
+    
+
   return (
         <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-              <View>
-                {data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> {navigation.navigate('TimeTable'); setIndata(true);  console.log('indataをtrueに変更');setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`});}}/>)}
+              <View style={{zIndex:300,left: 40,top:110,}}>
+                {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
               </View>
+              <View>
+                <TouchableOpacity onPress={() => {setIsInfoShow(true);setKamokuShow(true);}}>
+                  <Text>手入力で追加</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.koma}>
+                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> { console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部を選択していないか、このコマに授業が存在していません'}</Text>)}
+              </View>
+              { data.length > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}
         </ScrollView>
       );
       /*setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`});*/

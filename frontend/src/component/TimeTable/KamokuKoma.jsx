@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTimeTable } from './TimeTableContext'
 
 const KamokuKoma = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, department, setDepartment, data, setData, kamokuInfo, weekTime, setWeekTime, pushedClassFrameDetail, setPushedClassFrameDetail, indata, setIndata } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, department, setDepartment, data, setData, kamokuInfo, weekTime, setWeekTime, pushedClassFrameDetail, setPushedClassFrameDetail, indata, setIndata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const styles = StyleSheet.create({
     body:{
@@ -27,6 +27,7 @@ const KamokuKoma = (props) => {
         console.log('TouchableOpacity pressed');
         //console.log(props.kamokudata.className);
         props.eventPush();
+
         }}>
         <Text style={{
           paddingRight: 30,
