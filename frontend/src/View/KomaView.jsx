@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 //import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
-    const { notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
+    const { notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
 
     const [isShow, setIsShow] = useState(false);
 
@@ -227,11 +227,15 @@ const KomaView = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.notifi}>
-                    <TouchableOpacity onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text>{"設定"}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text>{"編集"}</Text></TouchableOpacity>
                 </View>
                 <View style={styles.notifi}>
                     <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
                 </View>
+                <View style={styles.notifi}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true);}}><Text style={{color: 'red'}}>{"削除"}</Text></TouchableOpacity>
+                </View>
+                
                 
 
         </View>

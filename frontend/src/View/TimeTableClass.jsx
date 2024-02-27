@@ -8,7 +8,7 @@ import TimeTableInfo from '../component/TimeTable/TimeTableInfo';
 import * as Notifications from 'expo-notifications';
 
 const TimeTableClass = ({ navigation }) => {
-    const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, data, setData, kamokuInfo, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime,setWeekTime,indata, setIndata, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow } = useTimeTable();
+    const { searchword, setSearchword, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, data, setData, kamokuInfo, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime,setWeekTime,indata, setIndata, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, deletekoma, setDeletekoma } = useTimeTable();
     //const [isInfoShow, setIsInfoShow] = useState(false);
     /*useEffect(() => {
       const kamokudata = weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period];
@@ -222,10 +222,10 @@ const TimeTableClass = ({ navigation }) => {
 
     const styles = StyleSheet.create({
       koma:{
-        zIndex: 100
+        zIndex: 1
       },
       margin:{
-        height: 500
+        height: 500,
       },
       handle:{
         paddingTop: 30,
@@ -250,32 +250,35 @@ const TimeTableClass = ({ navigation }) => {
         justifyContent: 'center',
         flexDirection: 'row',
         paddingTop: 8
-      }
+      },
     });
 
-    const [searchword, setSearchword] = useState('');
+    useEffect(() => {
+      setSearchword('');
+    },[]);
 
   return (
         <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-              <View style={{zIndex:300,left: 40,top:110,}}>
-                {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
-              </View>
-              <View style={styles.inputview}>
-                <Text style={{paddingRight: 8}}>{'検索'}</Text>
-                <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
-                  <Text>{searchword}</Text>
-                </TextInput>
-              </View>
+                <View style={{ zIndex:900,left: 40,top:110,}}>
+                  {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false); console.log(count);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
+                </View>
+                <View style={styles.inputview}>
+                  <Text style={{paddingRight: 8, borderWidth: 1, alignItems: 'center', paddingLeft: 8, borderRadius: 7}}>{'検索'}</Text>
+                  <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
+                    <Text>{searchword}</Text>
+                  </TextInput>
+                </View>
               <View>
                 <TouchableOpacity style={styles.handle} onPress={() => {setIsInfoShow(true);setKamokuShow(true);}}>
                   <Text>手入力で追加</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.koma}>
-                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} searchword={searchword} eventPush={()=> { console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部を選択していないか、このコマに授業が存在していません'}</Text>)}
+                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> { console.log(`count数は${count}です`); console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部、セメスターを選択していないか、このコマに授業が存在していません'}</Text>)}
               </View>
               { data.length > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}
+              { count > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}
         </ScrollView>
       );
       /*setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`});*/

@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTimeTable } from './TimeTableContext'
 
 const KamokuKoma = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, department, setDepartment, data, setData, kamokuInfo, weekTime, setWeekTime, pushedClassFrameDetail, setPushedClassFrameDetail, indata, setIndata, isInfoShow, setIsInfoShow } = useTimeTable();
+  const { searchword, setSearchword, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, department, setDepartment, data, setData, kamokuInfo, weekTime, setWeekTime, pushedClassFrameDetail, setPushedClassFrameDetail, indata, setIndata, isInfoShow, setIsInfoShow, count, setCount } = useTimeTable();
 
   const styles = StyleSheet.create({
     body:{
@@ -20,11 +20,12 @@ const KamokuKoma = (props) => {
     }
   });
 
-  let index = props.item.kamoku_name.indexOf(props.searchword);
+  let index = props.item.kamoku_name.indexOf(searchword);
 
   return(
     <View>
       {index !== -1 &&
+        
         <TouchableOpacity style={styles.body}
           onPress={() => {
           console.log('TouchableOpacity pressed');

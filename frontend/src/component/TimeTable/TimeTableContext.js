@@ -22,6 +22,9 @@ export const TimeTableProvider = ({ children }) => {
   const [nodata, setNodata] = useState(false);
   const [isInfoShow, setIsInfoShow] = useState(false);
   const [kamokuShow, setKamokuShow] = useState(false);
+  const [count, setCount] = useState(0);
+  const [searchword, setSearchword] = useState('');
+  const [deletekoma, setDeletekoma] = useState(false);
   const [pushedClassFrameDetail,setPushedClassFrameDetail]=useState({
     day: NaN,
     period: NaN,
@@ -113,6 +116,28 @@ export const TimeTableProvider = ({ children }) => {
   }, [dodata]); // dodataが更新されたときに再フェッチ  
 
   useEffect(() => {
+    if(pushedClassFrameDetail.day){
+      const nullKamoku = {
+        day: pushedClassFrameDetail.day,
+        period: pushedClassFrameDetail.period,
+        classRoom: "",
+        className: "",
+        memo: "",
+        notifion: false,
+        notification: "",
+        department: "",
+        unit: "",
+        num: "",
+        resume: "",
+        teacher: "",
+      };
+    
+    setWeekTime((prev) => {prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period]=nullKamoku; return prev});
+    }
+    setDeletekoma(false);
+  },[deletekoma]);
+
+  useEffect(() => {
     const onSubmit = async (pushedClassFrameDetail, classDetail) => {
       setWeekTime((prev) => {
         // 範囲チェックを追加
@@ -140,6 +165,17 @@ export const TimeTableProvider = ({ children }) => {
       //}
     //}
   }, [indata]); 
+
+  useEffect(() => {
+    // 条件に一致するアイテムの数をカウントする
+    const matchingCount = data.reduce((acc, item) => {
+      const index = item.kamoku_name.indexOf(searchword);
+      return index !== -1 ? acc + 1 : acc;
+    }, 0);
+  
+    // カウントをステートに保存
+    setCount(matchingCount);
+  }, [data, searchword]);
 
   // Timesize の計算
   const getTimeSize = (qty) => {
@@ -179,7 +215,7 @@ export const TimeTableProvider = ({ children }) => {
     };
 
   return (
-    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow}}>
+    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma}}>
       { children }
     </TimeTableContext.Provider>
   );

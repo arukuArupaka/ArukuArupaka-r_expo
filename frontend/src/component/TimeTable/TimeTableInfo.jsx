@@ -70,14 +70,6 @@ const styles=StyleSheet.create({
     fontSize:14,
     width:110,
   },
-  Infotoggle:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    right: 70,
-    zIndex: 400,
-    height: 30,
-    paddingBottom: 8
-  }
 });
 
 const pickerSelectStyles = StyleSheet.create({
