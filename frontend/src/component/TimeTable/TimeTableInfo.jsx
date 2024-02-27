@@ -73,7 +73,10 @@ const styles=StyleSheet.create({
   Infotoggle:{
     flexDirection: 'row',
     alignItems: 'center',
-    right: 70
+    right: 70,
+    zIndex: 400,
+    height: 30,
+    paddingBottom: 8
   }
 });
 
@@ -124,30 +127,25 @@ const TimeTableInfo = (props) => {
 
   const Submit = async() => {
     console.log('onSubmitが実行されました');
-    if(nodata){
     const timecalc = props.timeCalc(
     infoDetail.hour , infoDetail.minute,
     infoDetail.notification);
 
-    const notificationHour = timecalc[0];
-    const notificationMinute = timecalc[1];
+    const notificationHour = timecalc.notificationHour;
+    const notificationMinute = timecalc.notificationMinute;
     console.log(notificationHour);
     console.log(notificationMinute);
 
     setInfoDetail((prev)=>{prev.timecalc=timecalc; return prev});
-    //setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
-    //setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
+    setInfoDetail((prev)=>{prev.hour=notificationHour; return prev});
+    setInfoDetail((prev)=>{prev.minute=notificationMinute; return prev});
 
-    
-    
-    
-    console.log('Info///timeCalc///hour:',infoDetail.hour);
-    console.log('Info///timeCalc///minute:',infoDetail.minute);
+    //console.log('Info///timeCalc///hour:',infoDetail.hour);
+    //console.log('Info///timeCalc///minute:',infoDetail.minute);
     console.log('Info///timeCalc///timecalc:',timecalc);
     //console.log('Info///timeCalc///notificationHour:',notificationHour);
     //console.log('Info///timeCalc///notificationMinute:',notificationMinute);
     props.onSubmit(infoDetail,notificationHour,notificationMinute);
-    }
     setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`});
     //kamokuItem({...kamokuItem, className:`${infoDetail.className}`,classRoom:`${infoDetail.classRoom}`,memo:`${infoDetail.memo}`,notification:`${infoDetail.notification}`});
     //console.log('kamokuItemは');
@@ -181,16 +179,16 @@ const TimeTableInfo = (props) => {
           <Text style={styles.backText}></Text>
         </View>
 
-        <View style={styles.Infotoggle}>
+        {/*<View style={styles.Infotoggle}>
           <Text>通知ON</Text>
           <Switch
                     value={nodata}
                     onValueChange={notifiSwitch}
                     trackColor={{ false: '#888888', true: Platform.OS === 'android' ? '#00ff7f' : '#00ff7f' }}
                     thumbColor={'white'}
-                    style={{left: 35}}
+                    //style={{left: 35}}
                 />
-        </View>
+  </View>*/}
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>通知時間</Text>
           <TextInput style={styles.TextInputInfo} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.notification=text; return prev});}}>
@@ -204,22 +202,32 @@ const TimeTableInfo = (props) => {
             if(kamokuShow == true){
               navigation.navigate('TimeTable');
               props.onEventCallBack();
-              setCheck(check*(-1));Submit();setIndata(true);
+              setCheck(check*(-1));
+              setIndata(true);
               props.onEventCallBack();
               setCheck(check*(-1));
               Submit();
+              setKamokuShow(false);
+            }else{
+              props.onEventCallBack();
+              setCheck(check*(-1));
+              Submit();
+              setIndata(true);
+              props.onEventCallBack();
+              setCheck(check*(-1));
+              setKamokuShow(false);
+          }}
+          }><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.determinationButton} onPress={()=>{
+            if(kamokuShow == true){
+              props.onEventCallBack();
+              setKamokuItem({...kamokuItem, className: '', classRoom: '', notifion: '', memo: '', notification: '', department: '', unit: '', num: '', resume: '', teacher: ''});
               setIndata(true);
               setKamokuShow(false);
             }else{
               props.onEventCallBack();
-              setCheck(check*(-1));Submit();setIndata(true);
-              props.onEventCallBack();
-              setCheck(check*(-1));
-              Submit();
-              setIndata(true);
-          }}
-          }><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.determinationButton} onPress={()=>{props.onEventCallBack()}}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
+            }
+            }}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
     </View>
   );

@@ -1,6 +1,6 @@
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 import React from 'react';
-import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions, RefreshControl, TouchableOpacity} from 'react-native';
+import { TextInput, Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions, RefreshControl, TouchableOpacity} from 'react-native';
 import {useState,useEffect} from 'react'
 import Koma from '../component/TimeTable/Koma';
 import KamokuKoma from '../component/TimeTable/KamokuKoma';
@@ -124,10 +124,10 @@ const TimeTableClass = ({ navigation }) => {
     }
 
   const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
-  setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
-  scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
-  console.log('onSubmit///hour:',notificationHour);
-  console.log('onSubmit///minute:',notificationMinute);
+    setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
+    scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
+    console.log('onSubmit///hour:',notificationHour);
+    console.log('onSubmit///minute:',notificationMinute);
   
   };
 
@@ -226,10 +226,34 @@ const TimeTableClass = ({ navigation }) => {
       },
       margin:{
         height: 500
+      },
+      handle:{
+        paddingTop: 30,
+        paddingBottom: 20,
+        alignItems: 'center',
+        borderColor:'#888888',
+        borderBottomWidth:1, 
+      },
+      input:{
+        width: 240,
+        borderBottomWidth: 1,
+        backgroundColor: "#D9D9D9",
+        fontSize:14,
+        height:24,
+        marginTop:0,
+        marginBottom:0,
+        padding:0,
+        paddingLeft:5,
+        alignItems: 'center'
+      },
+      inputview:{
+        justifyContent: 'center',
+        flexDirection: 'row',
+        paddingTop: 8
       }
     });
 
-    
+    const [searchword, setSearchword] = useState('');
 
   return (
         <ScrollView refreshControl={
@@ -237,13 +261,19 @@ const TimeTableClass = ({ navigation }) => {
               <View style={{zIndex:300,left: 40,top:110,}}>
                 {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
               </View>
+              <View style={styles.inputview}>
+                <Text style={{paddingRight: 8}}>{'検索'}</Text>
+                <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
+                  <Text>{searchword}</Text>
+                </TextInput>
+              </View>
               <View>
-                <TouchableOpacity onPress={() => {setIsInfoShow(true);setKamokuShow(true);}}>
+                <TouchableOpacity style={styles.handle} onPress={() => {setIsInfoShow(true);setKamokuShow(true);}}>
                   <Text>手入力で追加</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.koma}>
-                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> { console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部を選択していないか、このコマに授業が存在していません'}</Text>)}
+                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} searchword={searchword} eventPush={()=> { console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部を選択していないか、このコマに授業が存在していません'}</Text>)}
               </View>
               { data.length > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}
         </ScrollView>

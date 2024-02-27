@@ -550,7 +550,7 @@ useEffect(() => {
                               console.log(weekTime2.day-0);
                               console.log(weekTime2.period-0);
                               console.log(weekTime2);
-                              
+                              setIsInfoShow(false);
                               setPushedClassFrameDetail({
                                 day: weekTime2.day-0,period: weekTime2.period-0
                               });

@@ -48,7 +48,8 @@ export const TimeTableProvider = ({ children }) => {
     department: "",
     unit: "",
     num: "",
-    resume: ""
+    resume: "",
+    teacher: "",
   });
 
   const toggleSwitch = () => setSizechange(previousState => !previousState);

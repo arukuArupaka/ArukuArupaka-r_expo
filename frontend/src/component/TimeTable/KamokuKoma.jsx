@@ -20,24 +20,28 @@ const KamokuKoma = (props) => {
     }
   });
 
+  let index = props.item.kamoku_name.indexOf(props.searchword);
+
   return(
     <View>
-      <TouchableOpacity style={styles.body}
-        onPress={() => {
-        console.log('TouchableOpacity pressed');
-        //console.log(props.kamokudata.className);
-        props.eventPush();
+      {index !== -1 &&
+        <TouchableOpacity style={styles.body}
+          onPress={() => {
+          console.log('TouchableOpacity pressed');
+          //console.log(props.kamokudata.className);
+          props.eventPush();
 
-        }}>
-        <Text style={{
-          paddingRight: 30,
-          paddingLeft: 5,
-          fontSize: 16
-        }}>{props.item.kamoku_num+" "}</Text>
-        <Text>{props.item.kamoku_day+" "}</Text>
-        <Text>{props.item.kamoku_time+" "}</Text>
-        <Text>{props.item.kamoku_name}</Text>
-      </TouchableOpacity>
+          }}>
+          <Text style={{
+            paddingRight: 30,
+            paddingLeft: 5,
+            fontSize: 16
+          }}>{props.item.kamoku_num+" "}</Text>
+          <Text>{props.item.kamoku_day+" "}</Text>
+          <Text>{props.item.kamoku_time+" "}</Text>
+          <Text>{props.item.kamoku_name}</Text>
+        </TouchableOpacity>
+      }
     </View>
   );
 };

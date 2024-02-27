@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 //import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
-    const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
+    const { notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
 
     const [isShow, setIsShow] = useState(false);
 
@@ -42,7 +42,7 @@ const KomaView = ({ navigation }) => {
           notificationHour -= 24;
         }
     
-        return [notificationHour,notificationMinute];
+        return {notificationHour,notificationMinute};
       };
 
       React.useEffect(() => {
@@ -192,7 +192,20 @@ const KomaView = ({ navigation }) => {
           borderColor: 'black',
           borderWidth: 1,
           top: 6
-        }
+        },
+        inputAndroid: {
+          fontSize: 16,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
+          borderWidth: 0.5,
+          borderColor: '#789',
+          borderRadius: 8,
+          color: 'black',
+          paddingRight: 30, // to ensure the text is never behind the icon
+          width: 178,
+          marginLeft: 30,
+          backgroundColor: '#fff',
+        },
     });
 
     return (
