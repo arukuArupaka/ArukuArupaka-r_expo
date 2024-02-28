@@ -4,17 +4,32 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Button,
+  Modal,
   Image,
   TouchableOpacity,
 } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
+import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
+import DepartmentPicker2 from "../../../../component/Textbook/DepartmentPicker2";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
 export const CameraCamera = () => {
   const [images, setImages] = useState(Array(4).fill(null));
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedCondition, setSelectedCondition] = useState(null);
+  const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
+  const [conditionModalVisible, setConditionModalVisible] = useState(false);
 
+  const handleDepartmentSelect = (department) => {
+    setSelectedDepartment(department);
+    setDepartmentModalVisible(false);
+  };
+
+  const handleConditionSelect = (condition) => {
+    setSelectedCondition(condition);
+    setConditionModalVisible(false);
+  };
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -91,6 +106,62 @@ export const CameraCamera = () => {
           placeholder="商品名"
         ></TextInput>
       </View>
+      <View style={styles.syousai}>
+        <Text>商品情報</Text>
+        <TouchableOpacity onPress={() => setDepartmentModalVisible(true)}>
+          <View style={{ flexDirection: "row" }}>
+            <Text>使用学部</Text>
+            <Text style={{ marginLeft: "5%" }}>
+              {selectedDepartment || "選択されていません"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={departmentModalVisible}
+          onRequestClose={() => {
+            setDepartmentModalVisible(false);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <DepartmentPicker onSelect={handleDepartmentSelect} />
+          </View>
+        </Modal>
+        <TouchableOpacity onPress={() => setConditionModalVisible(true)}>
+          <View style={{ flexDirection: "row" }}>
+            <Text>商品の状態</Text>
+            <Text style={{ marginLeft: "5%" }}>
+              {selectedCondition || "選択されていません"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={conditionModalVisible}
+          onRequestClose={() => {
+            setConditionModalVisible(false);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <DepartmentPicker2 onSelect={handleConditionSelect} />
+          </View>
+        </Modal>
+        <Text>商品説明</Text>
+        <View
+          style={{
+            width: "90%",
+            height: "70%",
+            marginLeft: "5%",
+            marginBottom: "5%",
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
+        >
+          <TextInput></TextInput>
+        </View>
+      </View>
     </View>
   );
 };
@@ -109,7 +180,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 90,
     width: "95%",
-    height: "15%",
+    height: "8%",
     marginLeft: "2.5%",
     marginTop: "5%",
   },
@@ -137,5 +208,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "gray",
     borderRadius: 5,
+  },
+  syousai: {
+    width: "95%",
+    height: "45%",
+    marginLeft: "2.5%",
+    marginTop: "5%",
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
 });
