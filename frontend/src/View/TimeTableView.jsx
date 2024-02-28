@@ -290,7 +290,7 @@ const TimrTableView = ({ navigation }) => {
         const stringValue = await AsyncStorage.getItem('nodatakey');
         if(stringValue != null){
           const value = JSON.parse(stringValue);
-          setSizechange(value);
+          setNodata(value);
        }
       } catch (e) {
         console.log(e);
@@ -311,6 +311,7 @@ const TimrTableView = ({ navigation }) => {
     };
 
     savenodata();
+    console.log('nodataの保存が実行され、その値は',nodata);
   }, [nodata]);
 
   useEffect(() => {

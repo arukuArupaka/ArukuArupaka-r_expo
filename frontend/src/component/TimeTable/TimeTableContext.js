@@ -19,7 +19,7 @@ export const TimeTableProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [dodata, setDodata] = useState(false);
   const [indata, setIndata] = useState(false);
-  const [nodata, setNodata] = useState(false);
+  const [nodata, setNodata] = useState();
   const [isInfoShow, setIsInfoShow] = useState(false);
   const [kamokuShow, setKamokuShow] = useState(false);
   const [count, setCount] = useState(0);

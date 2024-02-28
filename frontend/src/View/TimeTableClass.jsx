@@ -242,7 +242,7 @@ const TimeTableClass = ({ navigation }) => {
         marginTop:0,
         marginBottom:0,
         padding:0,
-        paddingLeft:5,
+        paddingLeft:9,
         alignItems: 'center',
         borderRadius: 15
       },
@@ -264,7 +264,7 @@ const TimeTableClass = ({ navigation }) => {
                   {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false); console.log(count);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
                 </View>
                 <View style={styles.inputview}>
-                  <Text style={{paddingRight: 8, borderWidth: 1, alignItems: 'center', paddingLeft: 9, borderRadius: 12}}>{'検索'}</Text>
+                  <Text style={{paddingRight: 8, borderWidth: 1,paddingTop: 2, paddingLeft: 9, borderRadius: 12}}>{'検索'}</Text>
                   <View style={{paddingLeft: 2, borderRadius: 15}}>
                     <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
                       <Text>{searchword}</Text>
