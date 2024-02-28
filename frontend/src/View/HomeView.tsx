@@ -15,19 +15,11 @@ import HomeCarousel from "../component/Home/HomeViewCarousel";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
-<<<<<<< HEAD
-import {
-  handleLoginAction,
-  handleLoginNotVerificationEmail,
-} from "../redux/actions/userAction";
-import { useDispatch } from "react-redux";
-=======
 import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject, fetchUserObject } from "../redux/actions/userAction";
 import {useDispatch, useSelector} from 'react-redux';
 import { doc, getDoc } from '@firebase/firestore';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage,db } from "../../firebase";
->>>>>>> ba1da589d8197945b6e3bddad1c7171ae7b12baa
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -134,12 +126,6 @@ const HomeView = (props) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log(user);
-<<<<<<< HEAD
-        dispatch(handleLoginAction(user.emailVerified));
-      } else {
-        dispatch(handleLoginAction(false));
-        dispatch(handleLoginNotVerificationEmail(false));
-=======
         dispatch(handleLoginAction(user.emailVerified))
         dispatch(setUserUUIDAction(user.uid))
         //dispatch(setUserObject(user))
@@ -149,7 +135,6 @@ const HomeView = (props) => {
         dispatch(handleLoginNotVerificationEmail(false))
         dispatch(setUserUUIDAction(""))
         dispatch(setUserObject({}))
->>>>>>> ba1da589d8197945b6e3bddad1c7171ae7b12baa
       }
     });
     return () => unsubscribe();
