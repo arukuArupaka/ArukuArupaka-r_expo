@@ -151,6 +151,7 @@ const HomeView = (props) => {
         <ShowDate></ShowDate>
         <Text style={styles.title}>新着情報</Text>
         <HomeCarousel></HomeCarousel>
+        <Text style={styles.title}>特設サイト</Text>
         <Specialsite></Specialsite>
         <Text style={styles.title}>機能一覧</Text>
         <View style={styles.appListFlex}>
