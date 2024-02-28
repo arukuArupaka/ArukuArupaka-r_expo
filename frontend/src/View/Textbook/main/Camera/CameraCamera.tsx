@@ -162,6 +162,12 @@ export const CameraCamera = () => {
           <TextInput></TextInput>
         </View>
       </View>
+      <TouchableOpacity>
+        <Text>下書きを保存する</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text>出品する</Text>
+      </TouchableOpacity>
     </View>
   );
 };
