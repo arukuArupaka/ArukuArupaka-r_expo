@@ -23,6 +23,7 @@
     "axios": "^1.6.7",
     "clone": "^2.1.2",
     "expo": "~49.0.15",
+    "expo-camera": "~13.4.4",
     "expo-crypto": "~12.4.1",
     "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",

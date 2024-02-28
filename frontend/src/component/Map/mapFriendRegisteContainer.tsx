@@ -4,7 +4,7 @@ import {MaterialIcons} from '@expo/vector-icons';
 import * as Crypto from 'expo-crypto';
 
 
-const MapFriendRegisteContainer = () => {
+const MapFriendRegisteContainer = (props) => {
 
   const [isSettingMyfrendLocation,setIsSettingMyfrendLocation]=useState(false)
 
@@ -16,7 +16,7 @@ const MapFriendRegisteContainer = () => {
             '-' + [array[3].toString(16).substr(0, 4), array[3].toString(16).substr(4, 4)].join('-') +
             '-' + [array[3].toString(16).substr(8)].join('')).toLowerCase();
   }
-  console.log('generateUUID()')
+ // console.log(generateUUID())
   let uuid = Crypto.randomUUID();
 console.log(uuid);
 
@@ -27,7 +27,7 @@ console.log(uuid);
       }}>
       <View style={{flexDirection:'row',marginBottom:10}}>
         <Text style={{fontSize:22,flex:1}}>フレンド</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{props.onCamera()}}>
           <MaterialIcons name="person-add-alt" size={24} color="#C8252B" />
         </TouchableOpacity>
       </View>
