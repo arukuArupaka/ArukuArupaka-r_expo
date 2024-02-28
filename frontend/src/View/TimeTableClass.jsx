@@ -124,7 +124,6 @@ const TimeTableClass = ({ navigation }) => {
     }
 
   const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
-    setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
     scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
     console.log('onSubmit///hour:',notificationHour);
     console.log('onSubmit///minute:',notificationMinute);
@@ -236,7 +235,7 @@ const TimeTableClass = ({ navigation }) => {
       },
       input:{
         width: 240,
-        borderBottomWidth: 1,
+        borderWidth: 1,
         backgroundColor: "#D9D9D9",
         fontSize:14,
         height:24,
@@ -244,12 +243,13 @@ const TimeTableClass = ({ navigation }) => {
         marginBottom:0,
         padding:0,
         paddingLeft:5,
-        alignItems: 'center'
+        alignItems: 'center',
+        borderRadius: 15
       },
       inputview:{
         justifyContent: 'center',
         flexDirection: 'row',
-        paddingTop: 8
+        paddingTop: 8,
       },
     });
 
@@ -264,10 +264,12 @@ const TimeTableClass = ({ navigation }) => {
                   {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false); console.log(count);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
                 </View>
                 <View style={styles.inputview}>
-                  <Text style={{paddingRight: 8, borderWidth: 1, alignItems: 'center', paddingLeft: 8, borderRadius: 7}}>{'検索'}</Text>
-                  <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
-                    <Text>{searchword}</Text>
-                  </TextInput>
+                  <Text style={{paddingRight: 8, borderWidth: 1, alignItems: 'center', paddingLeft: 9, borderRadius: 12}}>{'検索'}</Text>
+                  <View style={{paddingLeft: 2, borderRadius: 15}}>
+                    <TextInput style={styles.input} onChangeText={(text) =>{setSearchword(text);}}>
+                      <Text>{searchword}</Text>
+                    </TextInput>
+                  </View>
                 </View>
               <View>
                 <TouchableOpacity style={styles.handle} onPress={() => {setIsInfoShow(true);setKamokuShow(true);}}>

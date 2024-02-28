@@ -128,7 +128,7 @@ const TimeTableInfo = (props) => {
     hour:props.classStartEndTimeUnitList[props.period].hour,
     minute:props.classStartEndTimeUnitList[props.period].minute,
     //color: weekTime[props.day][props.period].color
-    color: ""
+    color: "",
 
   });
 
@@ -154,8 +154,8 @@ const TimeTableInfo = (props) => {
     console.log('Info///timeCalc///timecalc:',timecalc);
     //console.log('Info///timeCalc///notificationHour:',notificationHour);
     //console.log('Info///timeCalc///notificationMinute:',notificationMinute);
-    //props.onSubmit(infoDetail,notificationHour,notificationMinute);
-    setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`});
+    props.onSubmit(infoDetail,notificationHour,notificationMinute);
+    setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`, teacher: `${weekTime[infoDetail.day][infoDetail.period].teacher}`, unit: `${weekTime[infoDetail.day][infoDetail.period].unit}`, num: `${weekTime[infoDetail.day][infoDetail.period].num}`, color: `${weekTime[infoDetail.day][infoDetail.period].color}`});
     //kamokuItem({...kamokuItem, className:`${infoDetail.className}`,classRoom:`${infoDetail.classRoom}`,memo:`${infoDetail.memo}`,notification:`${infoDetail.notification}`});
     //console.log('kamokuItemは');
     //console.log(kamokuItem);

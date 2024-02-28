@@ -125,38 +125,42 @@ const ClassFrame = (props) => {
   
 
   return (
-    <TouchableOpacity
-      style={{
-        width:'100%',
-        backgroundColor:'white',
-        height: heightsize,
-        lineHeight:35,
-        marginLeft:1,
-        marginRight:1,
-        borderWidth: 2,
-        borderColor: colorKoma,
-        borderRadius: 10, 
-      }}onPress={()=>{props.onEventCallBack(frameDetail);}}>
-      <Text style={{
-                marginTop:8,
+    <View style={{height: heightsize, paddingTop: 2}}>
+      <TouchableOpacity
+        style={{
+          width:'98%',
+          height: '99.9%',
+          backgroundColor:'white',
+          //height: heightsize,
+          lineHeight:35,
+          marginLeft:1,
+          marginRight:1,
+          borderWidth: 2,
+          borderColor: colorKoma,
+          borderRadius: 10, 
+          paddingBottom: 30
+        }}onPress={()=>{props.onEventCallBack(frameDetail);}}>
+        <Text style={{
+                  marginTop:8,
+                  color:'black',
+                  textAlign:'center', 
+                  fontSize: fontTop,
+                  ...Platform.select({
+                    ios: {flexWrap: 'wrap',width: '100%'},
+                    android: {}
+                  }),
+                  height: classnameheight,
+              }}>{props.className}</Text>
+              <Text style={{
+                top:1,
                 color:'black',
-                textAlign:'center', 
-                fontSize: fontTop,
-                ...Platform.select({
-                  ios: {flexWrap: 'wrap',width: '100%'},
-                  android: {}
-                }),
-                height: classnameheight,
-            }}>{props.className}</Text>
-            <Text style={{
-              top:5,
-              color:'black',
-              textAlign:'center',
-              bottom:0,
-              fontSize: fontBottom,
-              height:'100%',
-              }}>{props.TimeTableDate.classRoom}</Text>
-    </TouchableOpacity>
+                textAlign:'center',
+                bottom:0,
+                fontSize: fontBottom,
+                height:'100%',
+                }}>{props.TimeTableDate.classRoom}</Text>
+      </TouchableOpacity>
+      </View>
   );
 };
 export default ClassFrame;

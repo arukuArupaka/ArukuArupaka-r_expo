@@ -100,7 +100,6 @@ const KomaView = ({ navigation }) => {
       }
 
     const onSubmit=(classDetail,notificationHour,notificationMinute)=>{
-      setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
       scheduleNotificationAsync(classDetail,notificationHour,notificationMinute);
       console.log('onSubmit///hour:',notificationHour);
       console.log('onSubmit///minute:',notificationMinute);
@@ -191,7 +190,8 @@ const KomaView = ({ navigation }) => {
           borderRadius: 10,
           borderColor: 'black',
           borderWidth: 1,
-          top: 6
+          top: 6,
+          width: 203,
         },
         inputAndroid: {
           fontSize: 16,
@@ -210,7 +210,7 @@ const KomaView = ({ navigation }) => {
 
     return (
         <View style={styles.body}>
-            <View style={{zIndex:300,right: 157,top:110,}}>
+            <View style={{zIndex:300,right: 157}}>
                 {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false);}} onSubmit={onSubmit} offSubmit={offSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
             </View>
             <View style={styles.title}>
@@ -226,15 +226,22 @@ const KomaView = ({ navigation }) => {
                         <Text style={{fontSize: 17, padding: 5}}>{"メモ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo}</Text>
                     </View>
                 </View>
-                <View style={styles.notifi}>
-                    <TouchableOpacity onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text>{"編集"}</Text></TouchableOpacity>
+                <View style={{paddingBottom: 8, paddingTop: 8}}>
+                  <View style={styles.notifi}>
+                      <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text style={{ width: 30}}>{"編集"}</Text></TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.notifi}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
+                <View style={{paddingBottom: 8}}> 
+                  <View style={styles.notifi}>
+                      <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.notifi}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true);}}><Text style={{color: 'red'}}>{"削除"}</Text></TouchableOpacity>
+                <View style={{paddingBottom: 8}}>
+                  <View style={styles.notifi}>
+                      <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true);}}><Text style={{color: 'red', width: 30}}>{"削除"}</Text></TouchableOpacity>
+                  </View>
                 </View>
+                  
                 
                 
 
