@@ -282,6 +282,37 @@ const TimrTableView = ({ navigation }) => {
     console.log('sizechange:',sizechange);
   },[sizechange]);
 
+  //nodataの保存・読み出し
+
+  useEffect(() => {
+    const loadnodata = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('nodatakey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setSizechange(value);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    loadnodata();
+  }, []);
+
+  useEffect(() => {
+    const savenodata = async () => {
+      try {
+        const stringValue = JSON.stringify(nodata);
+        await AsyncStorage.setItem('nodatakey', stringValue);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    savenodata();
+  }, [nodata]);
+
   useEffect(() => {
     const getDepartmentChange = async () => {
       try {
