@@ -15,15 +15,17 @@ import { handleLoginAfterPageName } from '../redux/actions/commonAction';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
-import { setUserObject } from '../redux/actions/userAction';
+import { UseDispatch } from 'react-redux';
+import { fetchUserObject, setUserObject } from '../redux/actions/userAction';
 
 
 const MAIN_PICTURE_MAX_SIZE:number=10000
 
-const ASetting = (props) => {
+const ASettingToPage = (props) => {
 
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
+  const loginAfterPageName=useSelector((state)=>state.common.loginAfterPageName)
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
   console.log(userUUID)
@@ -35,6 +37,7 @@ const ASetting = (props) => {
   const [grade,setGrade]=useState('')
   const [profile,setProfile]=useState('')
   const [oldDate,setOldData]=useState({})
+  const [effectCounter,setEffectCounter]=useState(0)
 
 
   //ログインしてるかチェックするコード探しに来た人へ　ここから
@@ -43,7 +46,7 @@ const ASetting = (props) => {
   const dispatch: Dispatch = useDispatch();
   const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
   if(!isLogin||isLoginNotVerificationEmail){
-    //dispatch(handleLoginAfterPageName('Home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね
+    //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
     props.navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
   }
 
@@ -139,6 +142,7 @@ const ASetting = (props) => {
               // 保存に成功したらコンテクストにユーザーデータを格納
               console.log('appUser')
             });
+            //dispatch(setUserObject(appUser))
           }
       }
     
@@ -147,17 +151,16 @@ const ASetting = (props) => {
         uploadImageAsync(image)
       }   
       const reduxDate={
-        id: userUUID,
-        userName: userName,
-        faculty:faculty,
-        department:department,
-        grade:grade,
-        profile:profile,
-        userImage:image
-    }
-    console.log('asetting')
-    console.log(reduxDate)
-    dispatch(setUserObject(reduxDate))
+          id: userUUID,
+          userName: userName,
+          faculty:faculty,
+          department:department,
+          grade:grade,
+          profile:profile,
+          userImage:image
+      }
+      dispatch(setUserObject(reduxDate))
+
   }
   const uploadImageAsync = async (uri: string): Promise<string> => {
     console.log('uri:', uri);
@@ -262,19 +265,6 @@ const ASetting = (props) => {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <SafeAreaView>
-        <TouchableOpacity
-          onPress={()=>props.navigation.navigate('Home')}
-          style={{
-            marginTop:0,
-            marginLeft:20,
-            backgroundColor:'#D9D9D9',
-            borderRadius:50,
-            height:40,
-            width:40,
-          }}
-        >
-          <Ionicons name="arrow-back" style={{marginVertical:6,color:'white',textAlign:'center'}} size={24} color="black" />
-        </TouchableOpacity>
         <View style={{height:200}}>
           <View style={{
               backgroundColor:'#D9D9D9',
@@ -366,7 +356,10 @@ const ASetting = (props) => {
             autoCapitalize="none"></TextInput>
             <TouchableOpacity
             onPress={()=>{
+              const pagename=loginAfterPageName
               sendUserDate();
+              dispatch(handleLoginAfterPageName(''))
+              props.navigation.navigate(pagename)
             }}
             style={{
               marginLeft:'80%',
@@ -379,13 +372,13 @@ const ASetting = (props) => {
                 fontSize:20,
                 fontWeight:'400',
                 paddingTop:2,
-              }} >登録</Text></TouchableOpacity>
+              }} >次へ</Text></TouchableOpacity>
         </View>
       </SafeAreaView>
     </ScrollView>
   );
 };
 
-export default ASetting;
+export default ASettingToPage;
 
 

@@ -7,6 +7,8 @@ const initialState : State = {
     isLoginNotVerificationEmail:false,
     isVerificationEmail:false,
     counter:1,
+    userUUID:"",
+    userObject:{},
 }
 
 // 画面でDispatchされたActionから新しいStateを返却する
@@ -27,6 +29,16 @@ const userReducer = (state : State = initialState, action: Action) => {
             return{
                 ...state,
                 isLoginNotVerificationEmail:action.payload
+            }
+        case 'setUserUUIDAction':
+            return{
+                ...state,
+                userUUID:action.payload
+            }
+        case 'setUserObject':
+            return{
+                ...state,
+                userObject:action.payload
             }
         default:
             return state

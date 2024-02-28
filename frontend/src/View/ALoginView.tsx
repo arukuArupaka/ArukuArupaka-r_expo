@@ -22,7 +22,7 @@ const ALoginView = (props) => {
   const [authPass,setAuthPass]=useState('')
 
   const dispatch = useDispatch();
-  const loginAfterPageName:boolean=useSelector((state)=>state.common.loginAfterPageName)
+  const loginAfterPageName=useSelector((state)=>state.common.loginAfterPageName)
 
     const [showCreateAccount,setShowCreateAccount]=useState(false)
 
@@ -88,7 +88,13 @@ const ALoginView = (props) => {
         setUserInfo(user)
         if(await isMailVerified()){
           await dispatch(handleLoginAction(isMailVerified()))
-          await props.navigation.navigate(loginAfterPageName)
+          console.log('ここにだす')
+          console.log(await loginAfterPageName)
+          if(await loginAfterPageName){
+            await props.navigation.navigate('settingsToPage')
+          }else{
+          await props.navigation.navigate('settings')
+          }
         }else{
           pleaseValidateMailDialog()
         }
@@ -124,7 +130,13 @@ const ALoginView = (props) => {
           'メールアドレスを認証できました。', 
           'ありがとうございます。引き続きご利用ください。',
       [
-        {text: 'OK', onPress: () => props.navigation.navigate(loginAfterPageName)},
+        {text: 'OK', onPress: () => {
+          if(loginAfterPageName){
+            props.navigation.navigate('settingsToPage')
+          }else{
+          props.navigation.navigate('settings')
+          }
+        }},
       ]);
     };
 

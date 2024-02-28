@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
+import {Textbook} from './src/View/Textbook/TextbookView';
 import MapView from './src/View/Map/MapMain'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
@@ -17,6 +18,7 @@ import MapLoot from './src/component/Map/MapLoot';
 import TimeTableClass from './src/View/TimeTableClass';
 import { Provider } from 'react-redux'
 import AR_Store from './src/redux/store';
+import ASettingToPage from './src/View/ASettingToPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,7 +42,14 @@ function App() {
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="Map" component={MapLoot}
             options={{headerTitle: (props) => <LogoTitle {...props} />}}/>
-          <Stack.Screen name="settings" component={ASetting} />
+          <Stack.Screen name="textbook" component={Textbook} 
+           options={{
+            headerShown:false
+           }}
+          />
+
+          <Stack.Screen name="settings" component={ASetting} options={{headerShown:false}}/>
+          <Stack.Screen name="settingsToPage" component={ASettingToPage} options={{headerShown:false}}/>
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>

@@ -1,17 +1,11 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp,getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+
 
 const firebaseConfig = {
-
-
-  // apiKey: "AIzaSyD7ZZ9wUJTKE9aN1lWqJLPOYy0GcnfowmM",
-  // authDomain: "arupaka-test.firebaseapp.com",
-  // projectId: "arupaka-test",
-  // storageBucket: "arupaka-test.appspot.com",
-  // messagingSenderId: "139345550217",
-  // appId: "1:139345550217:web:7dd95c3bbe6001f16b5f58",
-  // measurementId: "G-PS0XJNR4QK"
-
   apiKey: "AIzaSyD8Ooc6zNnIK3tm_3mi1e4tzmjVSsNi2Hw",
   authDomain: "arukuarupaka-6e101.firebaseapp.com",
   projectId: "arukuarupaka-6e101",
@@ -19,12 +13,12 @@ const firebaseConfig = {
   messagingSenderId: "345656246915",
   appId: "1:345656246915:web:a57de8a3ad3a85ac7c51b6",
   measurementId: "G-XWS4GZFPNB"
-
 };
 
 const app = initializeApp(firebaseConfig);
-//const db=firebaseApp.fireStore()
 const auth = getAuth(app);
+const db = getFirestore(app);
+const firebaseApp = getApp();
+const storage = getStorage();
 
-
-export {auth}
+export {auth,db,storage}
