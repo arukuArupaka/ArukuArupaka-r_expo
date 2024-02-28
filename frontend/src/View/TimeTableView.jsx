@@ -565,6 +565,8 @@ useEffect(() => {
                               setTime(weekTime2.period+1);
                               navigation.navigate('KomaView');
                               console.log(weekTime2);
+                              console.log('colorは');
+                              console.log(weekTime[0][0].color);
                             }
                             }}
                         />) 

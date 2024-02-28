@@ -260,7 +260,7 @@ const TimeTableClass = ({ navigation }) => {
   return (
         <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-                <View style={{ zIndex:900,left: 40,top:110,}}>
+                <View style={{ zIndex:900,left: 40,top:0,}}>
                   {isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsInfoShow(false); console.log(count);}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
                 </View>
                 <View style={styles.inputview}>
@@ -275,7 +275,17 @@ const TimeTableClass = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.koma}>
-                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> { console.log(`count数は${count}です`); console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部、セメスターを選択していないか、このコマに授業が存在していません'}</Text>)}
+                {data.length > 0 ? data.map((item, index) => <KamokuKoma key={index} item={item} eventPush={()=> { 
+                  if(item.kamoku_unit==1){
+                    kocolor = "deeppink";
+                  }else if(item.kamoku_unit==2){
+                    kocolor = "deepskyblue";
+                  }else if(item.kamoku_unit==3){
+                    kocolor = "yellow";
+                  }else{
+                    kocolor = "#888888";
+                  }
+              console.log(`count数は${count}です`); console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`, color: kocolor});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (<Text>{'学部、セメスターを選択していないか、このコマに授業が存在していません'}</Text>)}
               </View>
               { data.length > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}
               { count > 4 ? (<View></View>) : (<View style={styles.margin}></View>)}

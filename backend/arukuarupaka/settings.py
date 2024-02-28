@@ -138,11 +138,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 
 #CORS_ALLOWED_ORIGINS = "192.168.11.3:8081"
 CORS_ALLOWED_ORIGINS = [
         'http://localhost:3000',
         'http://192.168.11.1:19000',
+        'http://192.168.11.4:8000'
 ]
 

@@ -7,7 +7,7 @@ export default function App() {
     const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata } = useTimeTable();
   return (
     <View style={styles.container}>
-      <WebView source={{uri: `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume}`}}/>
+      <WebView source={{uri: `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume}`}} decelerationRate="normal"/>
     </View>
   );
 }

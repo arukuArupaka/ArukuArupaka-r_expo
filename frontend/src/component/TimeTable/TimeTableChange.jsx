@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TimeTableChange = () => {
 
-    const { timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason } = useTimeTable();
+    const { timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
 
     const pickerSelectStyles = StyleSheet.create({
         inputIOS: {
@@ -46,7 +46,7 @@ const TimeTableChange = () => {
             justifyContent: 'space-around',
             alignItems: 'center',
             alignContent: 'stretch',
-            height: 300
+            height: 400
         },
         Qty:{
             display: 'flex',
@@ -61,7 +61,7 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70
 
         },
         QtySet:{
@@ -82,7 +82,8 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70,
+
         },
         QtySets:{
             display: 'flex',
@@ -90,7 +91,7 @@ const TimeTableChange = () => {
             justifyContent: 'space-between'
         },
         SizeSet:{
-            paddingLeft: '30%'
+            paddingLeft: '30%',
         },
         changebutton:{
             display: 'flex',
@@ -113,10 +114,10 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 75
         },
         picker: {
-            alignItems: 'center'
+            alignItems: 'center',
         },
         season:{
             display: 'flex',
@@ -131,10 +132,10 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70,
         },
         picker2:{
-            alignItems: 'center'
+            alignItems: 'center',
         }
 })
 
@@ -229,6 +230,22 @@ return (
                 <Switch
                     value={sizechange}
                     onValueChange={toggleSwitch}
+                    trackColor={{false: '#888888', true: '#00ff7f'}}
+                    thumbColor={'white'}
+                />
+            </View>
+            <TimeTableQty/>
+        </View>
+        <View style={styles.PageSize}>
+            <Text
+                style = {{
+                    fontSize: 15,
+                }}
+            >{"単位数ごとに自動で色分け"}</Text>
+            <View style={styles.SizeSet}>
+                <Switch
+                    value={nodata}
+                    onValueChange={notifiSwitch}
                     trackColor={{false: '#888888', true: '#00ff7f'}}
                     thumbColor={'white'}
                 />

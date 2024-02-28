@@ -6,12 +6,26 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const styles=StyleSheet.create({
+  entire:{
+    alignItems:'center',
+    zIndex: 100,
+    elevation: Platform.OS === 'android' ? 200 : 0,
+    position:'absolute',
+    width:"80%",
+    //backgroundColor:'F8F8F8',
+    height:320,
+    left:0,
+    borderRadius:4,
+    flexDirection:'column',
+    paddingTop:4,
+
+  },
   infoDaialog:{
     alignItems:'center',
     zIndex: 100,
     elevation: Platform.OS === 'android' ? 100 : 0,
     position:'absolute',
-    width:"80%",
+    width: '100%',
     //backgroundColor:'F8F8F8',
     backgroundColor:'#F8F8F8',
     height:210,
@@ -19,6 +33,7 @@ const styles=StyleSheet.create({
     borderRadius:4,
     flexDirection:'column',
     paddingTop:4,
+    top: 110
   },
   determinationButton:{
     alignItems:'center',
@@ -112,6 +127,8 @@ const TimeTableInfo = (props) => {
     notification: weekTime[props.day][props.period].notification,
     hour:props.classStartEndTimeUnitList[props.period].hour,
     minute:props.classStartEndTimeUnitList[props.period].minute,
+    //color: weekTime[props.day][props.period].color
+    color: ""
 
   });
 
@@ -137,7 +154,7 @@ const TimeTableInfo = (props) => {
     console.log('Info///timeCalc///timecalc:',timecalc);
     //console.log('Info///timeCalc///notificationHour:',notificationHour);
     //console.log('Info///timeCalc///notificationMinute:',notificationMinute);
-    props.onSubmit(infoDetail,notificationHour,notificationMinute);
+    //props.onSubmit(infoDetail,notificationHour,notificationMinute);
     setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`});
     //kamokuItem({...kamokuItem, className:`${infoDetail.className}`,classRoom:`${infoDetail.classRoom}`,memo:`${infoDetail.memo}`,notification:`${infoDetail.notification}`});
     //console.log('kamokuItemは');
@@ -145,7 +162,8 @@ const TimeTableInfo = (props) => {
   };
 
   return (
-    <View style={styles.infoDaialog}>
+    <View style={styles.entire}>
+      <View style={styles.infoDaialog}>
         <View style={styles.InfoText}>
           <Text style={styles.InfoTextTest}>授業</Text>
           <TextInput style={styles.TextInputInfo} autoFocus={true} clearTextOnFocus={true} onChangeText={(text) =>{setInfoDetail((prev)=>{prev.className=text; return prev});}}>
@@ -221,6 +239,7 @@ const TimeTableInfo = (props) => {
             }
             }}><Text style={{color:'#595959'}}>キャンセル</Text></TouchableOpacity>
         </View>
+      </View>
     </View>
   );
 };

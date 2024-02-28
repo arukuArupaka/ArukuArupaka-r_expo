@@ -16,7 +16,7 @@ const KamokuKoma = (props) => {
       borderBottomWidth:1,
       height:80,
       alignItems: 'center',
-      justifyContent: 'flex-start'
+      justifyContent: 'flex-start',
     }
   });
 

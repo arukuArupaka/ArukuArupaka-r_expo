@@ -9,6 +9,7 @@ const ClassTime = (props) => {
                 style={{
                          textAlign:'center',
                          top: '10%', 
+                         color: 'white'
                         // height:'100%',
                         // lineHeight:35,
                         // marginLeft:1,
@@ -20,6 +21,7 @@ const ClassTime = (props) => {
                 style={{
                         textAlign:'center',
                         top: '55%',
+                        color: 'white'
                         // textAlign:'center', 
                         // height:'100%',
                         // lineHeight:35,
@@ -39,6 +41,7 @@ const styles=StyleSheet.create({
                 marginTop:1,
                 marginBottom:1,
                 height:'100%',
+                backgroundColor: 'yellowgreen'
         }
 })
 export default ClassTime;

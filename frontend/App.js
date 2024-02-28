@@ -53,10 +53,10 @@ function App() {
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
-          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
-          <Stack.Screen name="TimeTableClass" component={TimeTableClass} />
-          <Stack.Screen name="KomaView" component={KomaView} />
-          <Stack.Screen name="WebSite" component={WebSite} />
+          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={()=>({title: '',})}/>
+          <Stack.Screen name="TimeTableClass" component={TimeTableClass} options={()=>({title: '',})}/>
+          <Stack.Screen name="KomaView" component={KomaView} options={()=>({title: '',})}/>
+          <Stack.Screen name="WebSite" component={WebSite} options={()=>({title: '',})}/>
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>

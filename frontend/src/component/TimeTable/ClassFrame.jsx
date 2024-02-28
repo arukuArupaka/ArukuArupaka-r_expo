@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'; // ここに追加
 
 
 const ClassFrame = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange, weekTime } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange, weekTime, nodata, setNodata } = useTimeTable();
   const navigation = useNavigation();
   const frameDetail={
     day:props.day,
@@ -112,23 +112,29 @@ const ClassFrame = (props) => {
     fontBottom = fontBottomsize(props.weekTimeQty);
   }else{
     classnameheight = 60;
-    heightsize = '100%';  
-    fontTop = 12;
+    heightsize = '100%'; 
+    fontTop = 10.7;
     fontBottom = 11;
   }
+  
+  if(nodata == true){
+    colorKoma = `${weekTime[frameDetail.day][frameDetail.period].color}`;
+  }else{
+    colorKoma = "#888888";
+  }
+  
 
   return (
     <TouchableOpacity
       style={{
-        color:'black',
         width:'100%',
         backgroundColor:'white',
         height: heightsize,
         lineHeight:35,
         marginLeft:1,
         marginRight:1,
-        borderWidth: 1,
-        borderColor: '#888888',
+        borderWidth: 2,
+        borderColor: colorKoma,
         borderRadius: 10, 
       }}onPress={()=>{props.onEventCallBack(frameDetail);}}>
       <Text style={{
@@ -143,7 +149,7 @@ const ClassFrame = (props) => {
                 height: classnameheight,
             }}>{props.className}</Text>
             <Text style={{
-              top:7,
+              top:5,
               color:'black',
               textAlign:'center',
               bottom:0,
