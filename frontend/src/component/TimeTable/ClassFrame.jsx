@@ -37,13 +37,13 @@ const ClassFrame = (props) => {
 
     switch (size){
       case 5:
-        Height = 60;
+        Height = 66;
         break;
       case 6:
         Height = 41.6;
         break;
       case 7:
-        Height = 46;
+        Height = 55;
         break;
     }
 
@@ -71,13 +71,13 @@ const ClassFrame = (props) => {
     let font = 12;
     switch (qty){
       case 5:
-        font = 12;
+        font = 11;
         break;
       case 6:
         font = 10;
         break;
       case 7:
-        font = 10;
+        font = 9;
         break;
     }
     return font;
@@ -98,11 +98,27 @@ const ClassFrame = (props) => {
     }
     return font;
   };
+  const texttop = (qty) =>{
+    let top = -4;
+    switch (qty){
+      case 5:
+        top = -4;
+        break;
+      case 6:
+        top = 4;
+        break;
+      case 7:
+        top = -7;
+        break;
+    }
+    return top;
+  };
 
   let classnameheight = 60;
   let heightsize = '100%';
   let fontTop = 12;
   let fontBottom = 11;
+  let fonttexttop = -4;
 
 
   if(sizechange === false){
@@ -110,10 +126,11 @@ const ClassFrame = (props) => {
     heightsize = getheight(props.weekTimeQty);
     fontTop = fontTopsize(props.weekTimeQty);
     fontBottom = fontBottomsize(props.weekTimeQty);
+    fonttexttop = texttop(props.weekTimeQty);
   }else{
     classnameheight = 60;
     heightsize = '100%'; 
-    fontTop = 10.7;
+    fontTop = 10.5;
     fontBottom = 11;
   }
   
@@ -122,7 +139,8 @@ const ClassFrame = (props) => {
   }else{
     colorKoma = "#888888";
   }
-  
+
+
 
   return (
     <View style={{height: heightsize, paddingTop: 2}}>
@@ -150,9 +168,10 @@ const ClassFrame = (props) => {
                     android: {}
                   }),
                   height: classnameheight,
+                  top: -3
               }}>{props.className}</Text>
               <Text style={{
-                top:1,
+                top: fonttexttop,
                 color:'black',
                 textAlign:'center',
                 bottom:0,

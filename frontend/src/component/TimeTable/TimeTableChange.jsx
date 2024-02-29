@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TimeTableChange = () => {
 
-    const { timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
+    const { unitSum, setUnitSum, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
 
     const pickerSelectStyles = StyleSheet.create({
         inputIOS: {
@@ -46,7 +46,7 @@ const TimeTableChange = () => {
             justifyContent: 'space-around',
             alignItems: 'center',
             alignContent: 'stretch',
-            height: 400
+            height: 500
         },
         Qty:{
             display: 'flex',
@@ -251,6 +251,10 @@ return (
                 />
             </View>
             <TimeTableQty/>
+        </View>
+        <View style={styles.PageSize}>
+            <Text style={{fontSize: 15}}>{"登録授業の合計単位数"}</Text>
+            <Text style={{fontSize: 15}}>{`${unitSum}`}</Text>
         </View>
     </View>
 );

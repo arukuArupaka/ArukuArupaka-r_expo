@@ -26,17 +26,19 @@ export const TimeTableProvider = ({ children }) => {
   const [searchword, setSearchword] = useState('');
   const [deletekoma, setDeletekoma] = useState(false);
   const [komaborder, setKomaborder] = useState(false);
+  const [unitCalc, setUnitCalc] = useState(false);
+  const [unitSum, setUnitSum] = useState(0);
   const [pushedClassFrameDetail,setPushedClassFrameDetail]=useState({
     day: NaN,
     period: NaN,
   });
 
   const weekTimeSaveData=[
-    [{day:0,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:1,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:2,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:3,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:4,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:"",num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:0,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:1,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:2,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:3,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:4,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
   ]
 
   const [weekTime,setWeekTime]=useState(weekTimeSaveData);
@@ -50,7 +52,7 @@ export const TimeTableProvider = ({ children }) => {
     notifion: false,
     notification: "",
     department: "",
-    unit: "",
+    unit: 0,
     num: "",
     resume: "",
     teacher: "",
@@ -67,188 +69,6 @@ export const TimeTableProvider = ({ children }) => {
     setTimesize(newSize);
     setPadding(newPad);
   }, [sizechange, weekTimeQty]);
-
-  {/*useEffect(() => {
-
-    if(nodata == true){
-      let i = 0;
-      let j = 0;
-      for(j=0;j<5;j++){
-        if (!weekTime[j][i]) weekTime[j][i] = [];
-        for(i=0;i<7;i++){
-          console.log(weekTime[j][i]);
-          if(weekTime[j][i].unit == ""){
-            console.log('コマに授業が存在していないため色分け実行されません');
-          }else{
-            if(weekTime[j][i].unit == 1){
-              const kamokucolor = {
-                day: j,
-                period: i,
-                classRoom: weekTime[j][i].classRoom,
-                className: weekTime[j][i].className,
-                memo: weekTime[j][i].memo,
-                notifion: weekTime[j][i].notifion,
-                notification: weekTime[j][i].notification,
-                department: weekTime[j][i].department,
-                unit: weekTime[j][i].unit,
-                num: weekTime[j][i].num,
-                resume: weekTime[j][i].resume,
-                teacher: weekTime[j][i].teacher,
-                color: 'red'
-              };
-              setWeekTime((prev)=>{prev[j][i] = kamokucolor; return prev;});
-            }else if(weekTime[j][i].unit == 2){
-              const kamokucolor = {
-                day: j,
-                period: i,
-                classRoom: weekTime[j][i].classRoom,
-                className: weekTime[j][i].className,
-                memo: weekTime[j][i].memo,
-                notifion: weekTime[j][i].notifion,
-                notification: weekTime[j][i].notification,
-                department: weekTime[j][i].department,
-                unit: weekTime[j][i].unit,
-                num: weekTime[j][i].num,
-                resume: weekTime[j][i].resume,
-                teacher: weekTime[j][i].teacher,
-                color: 'blue'
-              };
-              setWeekTime((prev)=>{prev[j][i] = kamokucolor; return prev;});
-            }else if(weekTime[j][i].unit == 3){
-              const kamokucolor = {
-                day: j,
-                period: i,
-                classRoom: weekTime[j][i].classRoom,
-                className: weekTime[j][i].className,
-                memo: weekTime[j][i].memo,
-                notifion: weekTime[j][i].notifion,
-                notification: weekTime[j][i].notification,
-                department: weekTime[j][i].department,
-                unit: weekTime[j][i].unit,
-                num: weekTime[j][i].num,
-                resume: weekTime[j][i].resume,
-                teacher: weekTime[j][i].teacher,
-                color: 'yellow'
-              };
-              setWeekTime((prev)=>{prev[j][i] = kamokucolor; return prev;});
-            }else{
-              const kamokucolor = {
-                day: j,
-                period: i,
-                classRoom: weekTime[j][i].classRoom,
-                className: weekTime[j][i].className,
-                memo: weekTime[j][i].memo,
-                notifion: weekTime[j][i].notifion,
-                notification: weekTime[j][i].notification,
-                department: weekTime[j][i].department,
-                unit: weekTime[j][i].unit,
-                num: weekTime[j][i].num,
-                resume: weekTime[j][i].resume,
-                teacher: weekTime[j][i].teacher,
-                color: '#888888'
-              };
-              setWeekTime((prev)=>{prev[j][i] = kamokucolor; return prev;});
-            }
-          }
-        }
-      }
-    }
-    //colorの型が""からいつの間にかundefinedに変わってしまう
-    //7がダメとかよくわからないエラーが発生する
-  },[nodata]); */}
-
-  {/*useEffect (() => {
-    if(isNaN(pushedClassFrameDetail.day)){
-      console.log('初期コンポーネントなので色分け実行されません');
-    }else{
-      console.log('goooooooood');
-      if(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit == ""){
-        console.log('コマに授業が存在していないため色分け実行されません');
-      }else{
-        if(indata  == true){
-          if(kamokuItem.unit == '1'){
-            const nullKamoku = {
-              day: pushedClassFrameDetail.day,
-              period: pushedClassFrameDetail.period,
-              classRoom: "",
-              className: "",
-              memo: "",
-              notifion: false,
-              notification: "",
-              department: "",
-              unit: "",
-              num: "",
-              resume: "",
-              teacher: "",
-              color: "red"
-            };
-            setWeekTime((prev)=>{prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period] = nullKamoku; return prev;});
-            console.log('赤を代入');
-          }else if(kamokuItem.unit == '2'){
-            const nullKamoku = {
-              day: pushedClassFrameDetail.day,
-              period: pushedClassFrameDetail.period,
-              classRoom: "",
-              className: "",
-              memo: "",
-              notifion: false,
-              notification: "",
-              department: "",
-              unit: "",
-              num: "",
-              resume: "",
-              teacher: "",
-              color: "blue"
-            };
-            setWeekTime((prev)=>{prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period] = nullKamoku; return prev;});
-            console.log('青を代入');
-          }else if(kamokuItem.unit == '3'){
-            const nullKamoku = {
-              day: pushedClassFrameDetail.day,
-              period: pushedClassFrameDetail.period,
-              classRoom: "",
-              className: "",
-              memo: "",
-              notifion: false,
-              notification: "",
-              department: "",
-              unit: "",
-              num: "",
-              resume: "",
-              teacher: "",
-              color: "yellow"
-            };
-            setWeekTime((prev)=>{prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period] = nullKamoku; return prev;});
-            console.log('黄色を代入');
-          }else{
-            const nullKamoku = {
-              day: pushedClassFrameDetail.day,
-              period: pushedClassFrameDetail.period,
-              classRoom: "",
-              className: "",
-              memo: "",
-              notifion: false,
-              notification: "",
-              department: "",
-              unit: "",
-              num: "",
-              resume: "",
-              teacher: "",
-              color: "#888888"
-            };
-          setWeekTime((prev)=>{prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period] = nullKamoku; return prev;});
-          console.log('黒を代入');
-          }
-      }else{
-      console.log('indataがfalseなので色分け実行されません');
-    }
-    }
-  }
-  setKomaborder(false);
-  //console.log(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className);
-  //console.log(kamokuItem.unit);
-  console.log(weekTime[0][0].color);
-  },[komaborder]);*/}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -354,6 +174,41 @@ export const TimeTableProvider = ({ children }) => {
   }, [indata]); 
 
   useEffect(() => {
+
+    const onSubmit = async (pushedClassFrameDetail) => {
+        let dayof=0;
+        let periof=0;
+        let sumof = 0;
+      if(isNaN(pushedClassFrameDetail.day)){
+        sumof = 0;
+      }else{
+        for(dayof=0;dayof<5;dayof++){
+          for(periof=0;periof<7;periof++){
+            if(weekTime[dayof][periof].unit != ""){
+              sumof += Number(weekTime[dayof][periof].unit);
+            }
+          }
+        }
+      }
+        return sumof; 
+
+    };
+    
+    const fetchSum = async () => {
+      const sum = await onSubmit(pushedClassFrameDetail);
+      setUnitSum(sum);
+      setUnitCalc(false);
+    };
+    //console.log(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className);
+    //if(pushedClassFrameDetail){
+      //if(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className){
+        //console.log('存在します');
+      //}
+    //}
+    fetchSum();
+  }, [unitCalc]);
+
+  useEffect(() => {
     // 条件に一致するアイテムの数をカウントする
     const matchingCount = data.reduce((acc, item) => {
       const index = item.kamoku_name.indexOf(searchword);
@@ -402,7 +257,7 @@ export const TimeTableProvider = ({ children }) => {
     };
 
   return (
-    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma}}>
+    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma, unitCalc, setUnitCalc, unitSum, setUnitSum}}>
       { children }
     </TimeTableContext.Provider>
   );

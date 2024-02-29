@@ -116,7 +116,7 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const TimeTableInfo = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, notifiSwitch, kamokuShow, setKamokuShow } = useTimeTable();
+  const { unitSum, setUnitSum, unitCalc, setUnitCalc, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, notifiSwitch, kamokuShow, setKamokuShow } = useTimeTable();
   const navigation = useNavigation();
   const [infoDetail, setInfoDetail] = useState({
     day: props.day,
@@ -154,11 +154,18 @@ const TimeTableInfo = (props) => {
     console.log('Info///timeCalc///timecalc:',timecalc);
     //console.log('Info///timeCalc///notificationHour:',notificationHour);
     //console.log('Info///timeCalc///notificationMinute:',notificationMinute);
-    props.onSubmit(infoDetail,notificationHour,notificationMinute);
+    if(infoDetail.notification == ""){
+      console.log('notificationが空です');
+    }else{
+      props.onSubmit(infoDetail,notificationHour,notificationMinute);
+    }
     setKamokuItem({...kamokuItem, className:`${infoDetail.className}`, classRoom:`${infoDetail.classRoom}`, memo:`${infoDetail.memo}`, notification:`${infoDetail.notification}`, teacher: `${weekTime[infoDetail.day][infoDetail.period].teacher}`, unit: `${weekTime[infoDetail.day][infoDetail.period].unit}`, num: `${weekTime[infoDetail.day][infoDetail.period].num}`, color: `${weekTime[infoDetail.day][infoDetail.period].color}`});
     //kamokuItem({...kamokuItem, className:`${infoDetail.className}`,classRoom:`${infoDetail.classRoom}`,memo:`${infoDetail.memo}`,notification:`${infoDetail.notification}`});
     //console.log('kamokuItemは');
     //console.log(kamokuItem);
+    console.log('notification時間前は');
+    console.log(infoDetail.notification);
+    //console.log(notificationMinute);
   };
 
   return (
@@ -218,6 +225,9 @@ const TimeTableInfo = (props) => {
               setCheck(check*(-1));
               Submit();
               setKamokuShow(false);
+              setUnitCalc(true);
+              console.log('unitSumは');
+              console.log(unitSum);
             }else{
               props.onEventCallBack();
               setCheck(check*(-1));
@@ -226,6 +236,9 @@ const TimeTableInfo = (props) => {
               props.onEventCallBack();
               setCheck(check*(-1));
               setKamokuShow(false);
+              setUnitCalc(true);
+              console.log('unitSumは');
+              console.log(unitSum);
           }}
           }><Text style={{color:'#595959',fontSize:18,}}>OK</Text></TouchableOpacity>
           <TouchableOpacity style={styles.determinationButton} onPress={()=>{

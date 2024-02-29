@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 //import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
-    const { notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
+    const { unitCalc, setUnitCalc, unitSum, setUnitSum, notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
 
     const [isShow, setIsShow] = useState(false);
 
@@ -238,7 +238,7 @@ const KomaView = ({ navigation }) => {
                 </View>
                 <View style={{paddingBottom: 8}}>
                   <View style={styles.notifi}>
-                      <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true);}}><Text style={{color: 'red', width: 30}}>{"削除"}</Text></TouchableOpacity>
+                      <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true); setUnitCalc(true);}}><Text style={{color: 'red', width: 30}}>{"削除"}</Text></TouchableOpacity>
                   </View>
                 </View>
                   

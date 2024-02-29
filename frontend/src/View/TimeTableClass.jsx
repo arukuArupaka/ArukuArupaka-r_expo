@@ -101,7 +101,7 @@ const TimeTableClass = ({ navigation }) => {
           await Notifications.scheduleNotificationAsync({
             content: {
               body: classDetail.memo,
-              title: classDetail.classRoom + " " + classDetail.className + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
+              title: classDetail.className + " " + classDetail.classRoom + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
             },
             trigger: {
               weekday: classDetail.day+2,
