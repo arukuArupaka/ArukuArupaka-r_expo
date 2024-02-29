@@ -1,9 +1,7 @@
-import { initializeApp,getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-
-
+import { initializeApp, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8Ooc6zNnIK3tm_3mi1e4tzmjVSsNi2Hw",
@@ -12,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "arukuarupaka-6e101.appspot.com",
   messagingSenderId: "345656246915",
   appId: "1:345656246915:web:a57de8a3ad3a85ac7c51b6",
-  measurementId: "G-XWS4GZFPNB"
+  measurementId: "G-XWS4GZFPNB",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -21,4 +19,4 @@ const db = getFirestore(app);
 const firebaseApp = getApp();
 const storage = getStorage();
 
-export {auth,db,storage}
+export { auth, db, storage, collection, addDoc, ref, uploadBytes };

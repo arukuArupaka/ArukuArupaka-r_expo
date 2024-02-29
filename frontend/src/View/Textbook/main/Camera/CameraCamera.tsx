@@ -13,6 +13,7 @@ import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
 import DepartmentPicker2 from "../../../../component/Textbook/DepartmentPicker2";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { db, collection, addDoc } from "../../../../../firebase";
 
 export const CameraCamera = () => {
   const [images, setImages] = useState(Array(4).fill(null));
@@ -20,7 +21,22 @@ export const CameraCamera = () => {
   const [selectedCondition, setSelectedCondition] = useState(null);
   const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
   const [conditionModalVisible, setConditionModalVisible] = useState(false);
+  const [productName, setproductName] = useState("");
+  const [description, setdescription] = useState("");
 
+  const saveDraft = async (productName, department, condition, description) => {
+    try {
+      const docRef = await addDoc(collection(db, "freeMarket"), {
+        productName,
+        department,
+        condition,
+        description,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
     setDepartmentModalVisible(false);
@@ -104,6 +120,8 @@ export const CameraCamera = () => {
         <TextInput
           style={{ marginLeft: "3%" }}
           placeholder="商品名"
+          value={productName}
+          onChangeText={setproductName}
         ></TextInput>
       </View>
       <View style={styles.syousai}>
@@ -159,10 +177,22 @@ export const CameraCamera = () => {
             borderRadius: 5,
           }}
         >
-          <TextInput></TextInput>
+          <TextInput
+            value={description}
+            onChangeText={setdescription}
+          ></TextInput>
         </View>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          saveDraft(
+            productName,
+            selectedDepartment,
+            selectedCondition,
+            description
+          );
+        }}
+      >
         <Text>下書きを保存する</Text>
       </TouchableOpacity>
       <TouchableOpacity>
