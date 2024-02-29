@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import { db, collection, getDocs } from "../../../../../firebase";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-export const CameraDraw = () => {
+export const CameraDraw = ({}) => {
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
@@ -22,16 +23,33 @@ export const CameraDraw = () => {
   return (
     <View>
       <HeaderforTextbook3 />
-      <View>
+      <View style={styles.draft}>
         {products.map((product) => (
-          <View key={product.id}>
-            <Text>{product.productName}</Text>
-            <Text>{product.department}</Text>
-            <Text>{product.condition}</Text>
-            <Text>{product.description}</Text>
-          </View>
+          <TouchableOpacity key={product.id} style={styles.productContainer}>
+            <View style={styles.productItem}>
+              <Text>商品名：{product.productName}</Text>
+              <Text>使用学科：{product.department}</Text>
+              <Text>商品の状態：{product.condition}</Text>
+              <Text>説明：{product.description}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  draft: {
+    borderWidth: 1,
+  },
+  productContainer: {
+    marginBottom: 10,
+    padding: 10,
+  },
+  productItem: {
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
+  },
+});

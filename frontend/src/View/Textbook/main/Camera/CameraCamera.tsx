@@ -15,7 +15,7 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { db, collection, addDoc } from "../../../../../firebase";
 
-export const CameraCamera = () => {
+export const CameraCamera = ({}) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedCondition, setSelectedCondition] = useState(null);
