@@ -10,16 +10,16 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import HomeCarousel from '../component/Home/HomeViewCarousel';
-import { onAuthStateChanged } from 'firebase/auth';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import HomeCarousel from "../component/Home/HomeViewCarousel";
+import Specialsite from "../component/Home/HomeViewSpecial";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject, fetchUserObject } from "../redux/actions/userAction";
 import {useDispatch, useSelector} from 'react-redux';
 import { doc, getDoc } from '@firebase/firestore';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage,db } from "../../firebase";
-
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -49,27 +49,34 @@ const Headerlist = (props) => {
 //アプリ一覧のコンポーネント
 const AppList = (props) => {
   return (
-    <TouchableOpacity style={{
-      height: 75,
-      width: 160,
-      borderColor: props.color,
-      borderWidth: 2,
-      borderRadius: 10,
-      flexDirection: "row",
-      alignItems: "center",
-      margin: 8,
-      padding: 8,
-      display: "flex",
-    }}
+    <TouchableOpacity
+      style={{
+        height: 75,
+        width: 160,
+        borderColor: props.color,
+        borderWidth: 2,
+        borderRadius: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        margin: 8,
+        padding: 8,
+        display: "flex",
+      }}
       onPress={() => {
         props.test.navigation.navigate(props.jumpPage);
-      }}>
-      <MaterialCommunityIcons name={props.iconName} size={40} color={props.color} />
-      <Text style={{ fontSize: 20, textAlign: "center", flex: 1 }}>{props.appName}</Text>
+      }}
+    >
+      <MaterialCommunityIcons
+        name={props.iconName}
+        size={40}
+        color={props.color}
+      />
+      <Text style={{ fontSize: 20, textAlign: "center", flex: 1 }}>
+        {props.appName}
+      </Text>
     </TouchableOpacity>
   );
 };
-
 
 //日付の取得
 const today = new Date();
@@ -87,7 +94,8 @@ const ShowDate = () => {
           justifyContent: "flex-end",
           alignItems: "flex-end",
           marginRight: 16,
-        }}>
+        }}
+      >
         <Text style={{ fontSize: 24 }}>{month}</Text>
         <Text style={{ fontSize: 20 }}>月</Text>
         <Text style={{ fontSize: 24 }}>{date}</Text>
@@ -111,7 +119,6 @@ const ShowDate = () => {
 
 //実際に描画される部分
 const HomeView = (props) => {
-
   //fireBaseログイン確認
   const dispatch: Dispatch = useDispatch();
 
@@ -186,6 +193,8 @@ const HomeView = (props) => {
         <ShowDate></ShowDate>
         <Text style={styles.title}>新着情報</Text>
         <HomeCarousel></HomeCarousel>
+        <Text style={styles.title}>特設サイト</Text>
+        <Specialsite></Specialsite>
         <Text style={styles.title}>機能一覧</Text>
         <View style={styles.appListFlex}>
           <AppList
@@ -209,7 +218,8 @@ const HomeView = (props) => {
             color="#1BB1E7"
             test={props}
             jumpPage="Map"
-            iconName="map-marker-radius-outline" />
+            iconName="map-marker-radius-outline"
+          />
           <AppList
             appName="時間割"
             color="#00A651"
@@ -232,9 +242,7 @@ const HomeView = (props) => {
             iconName="contacts"
           />
         </View>
-
       </ScrollView>
-
     </SafeAreaView>
   );
 };
@@ -318,63 +326,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeView;
-
-//カルーセルのコンポーネント、だいちさんのバックエンド来たらもう１回使いなおす
-// const Carousel = () => {
-//   const [imageUri, setImageUri] = useState(null);
-
-//   useEffect(() => {
-//     // サーバーから写真のデータを取得するAPIエンドポイントを呼び出す
-//     fetch("http://127.0.0.1:8000/image/photos/favicon_gmjZy5B.png")
-//       .then((response) => {
-//         if (!response.ok) {
-//           throw new Error("Network response was not ok");
-//         }
-//         return response.blob();
-//       })
-//       .then((blob) => {
-//         // BlobオブジェクトからData URIを生成
-//         const reader = new FileReader();
-//         reader.onload = function () {
-//           // 読み込んだデータをstateにセット
-//           setImageUri(reader.result);
-//         };
-//         // Blobデータを読み込む
-//         reader.readAsDataURL(blob);
-//       })
-//       .catch((error) =>
-//         console.error("Error fetching image data:", error.message)
-//       );
-//   }, ['a']);
-//   return (
-//     <View style={{}}>
-//       <View style={{ flexDirection: "row", alignItems: "center" }}>
-//         <View style={styles.carouselMove}></View>
-//         <View style={styles.carousel}>
-//           {imageUri && (
-//             <Image
-//               source={{ uri: imageUri }}
-//               style={{ width: 100, height: 100 }}
-//             />
-//           )}
-//         </View>
-//         <View style={styles.carouselMove}></View>
-//       </View>
-//       <View
-//         style={{
-//           flexDirection: "row",
-//           marginLeft: "auto",
-//           marginRight: "auto",
-//         }}
-//       >
-//         <View style={styles.carouselSequence}></View>
-//         <View
-//           style={[styles.carouselSequence, { backgroundColor: "#30CB89" }]}
-//         ></View>
-//         <View style={styles.carouselSequence}></View>
-//         <View style={styles.carouselSequence}></View>
-//         <View style={styles.carouselSequence}></View>
-//       </View>
-//     </View>
-//   );
-// };
