@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import { db, collection, getDocs } from "../../../../../firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -40,6 +40,13 @@ export const CameraDraw = ({ navigation }) => {
               <Text>商品の状態：{product.condition}</Text>
               <Text>説明：{product.description}</Text>
               <Text>値段：{product.price}</Text>
+              {product.images.map((imageUrl, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: imageUrl }}
+                  style={styles.image}
+                />
+              ))}
             </View>
           </TouchableOpacity>
         ))}
@@ -60,5 +67,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     marginBottom: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
   },
 });

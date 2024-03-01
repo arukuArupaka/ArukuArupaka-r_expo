@@ -7,13 +7,25 @@ import {
   Modal,
   Image,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
 import DepartmentPicker2 from "../../../../component/Textbook/DepartmentPicker2";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { db, collection, addDoc } from "../../../../../firebase";
+import {
+  db,
+  collection,
+  addDoc,
+  ref,
+  uploadBytes,
+  storage,
+  doc,
+  updateDoc,
+} from "../../../../../firebase";
+import { getDownloadURL } from "firebase/storage";
+
 export const CameraCamera = ({}) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
@@ -24,57 +36,6 @@ export const CameraCamera = ({}) => {
   const [description, setdescription] = useState("");
   const [price, setprice] = useState("");
 
-  const saveDraft = async (
-    productName,
-    department,
-    condition,
-    description,
-    price
-  ) => {
-    try {
-      const docRef = await addDoc(collection(db, "freeMarket"), {
-        productName,
-        department,
-        condition,
-        description,
-        price,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
-
-  const exhibit = async (
-    productName,
-    department,
-    condition,
-    description,
-    price
-  ) => {
-    try {
-      const docRef = await addDoc(collection(db, "syuppinn"), {
-        productName,
-        department,
-        condition,
-        description,
-        price,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
-
-  const handleDepartmentSelect = (department) => {
-    setSelectedDepartment(department);
-    setDepartmentModalVisible(false);
-  };
-
-  const handleConditionSelect = (condition) => {
-    setSelectedCondition(condition);
-    setConditionModalVisible(false);
-  };
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -102,6 +63,100 @@ export const CameraCamera = ({}) => {
       newImages[index] = result.uri;
       setImages(newImages);
     }
+  };
+
+  const saveDraft = async (
+    productName,
+    department,
+    condition,
+    description,
+    price
+  ) => {
+    try {
+      const docRef = await addDoc(collection(db, "freeMarket"), {
+        productName,
+        department,
+        condition,
+        description,
+        price,
+      });
+      console.log("Document written with ID: ", docRef.id);
+
+      // 画像をアップロードしてURLを取得し、Firestoreに保存
+      const imageUrls = await Promise.all(
+        images.map(async (image, index) => {
+          if (image) {
+            const blob = await fetch(image).then((response) => response.blob());
+            const storageRef = ref(
+              storage,
+              `syouhin/${docRef.id}/image${index}`
+            );
+            await uploadBytes(storageRef, blob);
+            return getDownloadURL(storageRef);
+          }
+          return null;
+        })
+      );
+
+      // Firestoreに画像のURLを保存
+      await updateDoc(doc(db, "freeMarket", docRef.id), {
+        images: imageUrls.filter((url) => url !== null),
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
+  const exhibit = async (
+    productName,
+    department,
+    condition,
+    description,
+    price
+  ) => {
+    try {
+      const docRef = await addDoc(collection(db, "syuppinn"), {
+        productName,
+        department,
+        condition,
+        description,
+        price,
+      });
+      console.log("Document written with ID: ", docRef.id);
+
+      // 画像をアップロードしてURLを取得し、Firestoreに保存
+      const imageUrls = await Promise.all(
+        images.map(async (image, index) => {
+          if (image) {
+            const blob = await fetch(image).then((response) => response.blob());
+            const storageRef = ref(
+              storage,
+              `syouhin/${docRef.id}/image${index}`
+            );
+            await uploadBytes(storageRef, blob);
+            return getDownloadURL(storageRef);
+          }
+          return null;
+        })
+      );
+
+      // Firestoreに画像のURLを保存
+      await updateDoc(doc(db, "syuppinn", docRef.id), {
+        images: imageUrls.filter((url) => url !== null),
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
+  const handleDepartmentSelect = (department) => {
+    setSelectedDepartment(department);
+    setDepartmentModalVisible(false);
+  };
+
+  const handleConditionSelect = (condition) => {
+    setSelectedCondition(condition);
+    setConditionModalVisible(false);
   };
 
   return (
