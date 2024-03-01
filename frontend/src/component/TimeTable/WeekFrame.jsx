@@ -7,7 +7,7 @@ const WeekFram = (props) => {
       style={{
             // width:'20%',
             textAlign:'center', 
-            backgroundColor:'orange',
+            backgroundColor:'#888888',
             height:'100%',
             lineHeight:35,
             marginLeft:1,

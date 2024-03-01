@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { HeaderforTextbook2 } from '../../../component/Textbook/HeaderforTextbook2';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+//import { TalkRoom } from ''
 
 export const TextbookTalk = () => {
   return (
