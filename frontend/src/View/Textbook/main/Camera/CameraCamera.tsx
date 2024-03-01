@@ -14,8 +14,6 @@ import DepartmentPicker2 from "../../../../component/Textbook/DepartmentPicker2"
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { db, collection, addDoc } from "../../../../../firebase";
-import { useNavigation } from "@react-navigation/native"; // 追加
-
 export const CameraCamera = ({}) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
@@ -25,7 +23,6 @@ export const CameraCamera = ({}) => {
   const [productName, setproductName] = useState("");
   const [description, setdescription] = useState("");
   const [price, setprice] = useState("");
-  const navigation = useNavigation(); // 追加
 
   const saveDraft = async (
     productName,
@@ -47,6 +44,28 @@ export const CameraCamera = ({}) => {
       console.error("Error adding document: ", e);
     }
   };
+
+  const exhibit = async (
+    productName,
+    department,
+    condition,
+    description,
+    price
+  ) => {
+    try {
+      const docRef = await addDoc(collection(db, "syuppinn"), {
+        productName,
+        department,
+        condition,
+        description,
+        price,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
     setDepartmentModalVisible(false);
@@ -223,7 +242,17 @@ export const CameraCamera = ({}) => {
         >
           <Text>下書きを保存する</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            exhibit(
+              productName,
+              selectedDepartment,
+              selectedCondition,
+              description,
+              price
+            );
+          }}
+        >
           <Text>出品する</Text>
         </TouchableOpacity>
       </View>
