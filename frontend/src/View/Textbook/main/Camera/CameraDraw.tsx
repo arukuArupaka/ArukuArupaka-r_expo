@@ -4,7 +4,7 @@ import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforText
 import { db, collection, getDocs } from "../../../../../firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-export const CameraDraw = ({}) => {
+export const CameraDraw = ({ navigation }) => {
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
@@ -20,17 +20,26 @@ export const CameraDraw = ({}) => {
     fetchProducts();
   }, []);
 
+  const handleDraftPress = () => {
+    navigation.navigate("CameraCamera");
+  };
+
   return (
     <View>
       <HeaderforTextbook3 />
       <View style={styles.draft}>
         {products.map((product) => (
-          <TouchableOpacity key={product.id} style={styles.productContainer}>
+          <TouchableOpacity
+            key={product.id}
+            style={styles.productContainer}
+            onPress={handleDraftPress}
+          >
             <View style={styles.productItem}>
               <Text>商品名：{product.productName}</Text>
               <Text>使用学科：{product.department}</Text>
               <Text>商品の状態：{product.condition}</Text>
               <Text>説明：{product.description}</Text>
+              <Text>値段：{product.price}</Text>
             </View>
           </TouchableOpacity>
         ))}

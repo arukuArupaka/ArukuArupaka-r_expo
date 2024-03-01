@@ -14,6 +14,7 @@ import DepartmentPicker2 from "../../../../component/Textbook/DepartmentPicker2"
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { db, collection, addDoc } from "../../../../../firebase";
+import { useNavigation } from "@react-navigation/native"; // 追加
 
 export const CameraCamera = ({}) => {
   const [images, setImages] = useState(Array(4).fill(null));
@@ -23,14 +24,23 @@ export const CameraCamera = ({}) => {
   const [conditionModalVisible, setConditionModalVisible] = useState(false);
   const [productName, setproductName] = useState("");
   const [description, setdescription] = useState("");
+  const [price, setprice] = useState("");
+  const navigation = useNavigation(); // 追加
 
-  const saveDraft = async (productName, department, condition, description) => {
+  const saveDraft = async (
+    productName,
+    department,
+    condition,
+    description,
+    price
+  ) => {
     try {
       const docRef = await addDoc(collection(db, "freeMarket"), {
         productName,
         department,
         condition,
         description,
+        price,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -183,21 +193,40 @@ export const CameraCamera = ({}) => {
           ></TextInput>
         </View>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          saveDraft(
-            productName,
-            selectedDepartment,
-            selectedCondition,
-            description
-          );
-        }}
+      <View
+        style={{ flexDirection: "row", marginTop: "5%", marginLeft: "2.5%" }}
       >
-        <Text>下書きを保存する</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text>出品する</Text>
-      </TouchableOpacity>
+        <Text>値段</Text>
+        <View
+          style={{
+            width: "40%",
+            height: "80%",
+            marginLeft: "5%",
+            borderWidth: 1,
+          }}
+        >
+          <TextInput value={price} onChangeText={setprice}></TextInput>
+        </View>
+        <Text>円</Text>
+      </View>
+      <View style={styles.button}>
+        <TouchableOpacity
+          onPress={() => {
+            saveDraft(
+              productName,
+              selectedDepartment,
+              selectedCondition,
+              description,
+              price
+            );
+          }}
+        >
+          <Text>下書きを保存する</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text>出品する</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -258,5 +287,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+  button: {
+    marginTop: "5%",
   },
 });
