@@ -1,5 +1,5 @@
 import React ,{useEffect, useState} from 'react';
-import {Text, View,StyleSheet,Linking, TouchableOpacity} from 'react-native';
+import {Text, View,StyleSheet,Linking, TouchableOpacity,Image} from 'react-native';
 import MapMyselfContainer from '../../component/Map/MapMyselfContainer';
 import {useSelector,useDispatch} from 'react-redux';
 import { handleLoginAfterPageName } from '../../redux/actions/commonAction';
@@ -8,10 +8,17 @@ import { Camera } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { db } from '../../../firebase';
+import { db ,storage} from '../../../firebase';
+import * as Crypto from 'expo-crypto';
+import { setMapUserObject } from '../../redux/actions/mapUserActions';
+import QRCode from 'react-native-qrcode-svg';
+import {  ref, getDownloadURL } from "firebase/storage";
 
 
 const MapFriendsView = ({ navigation }) => {
+
+  const userObject=useSelector((state)=>state.user.userObject)
+  const mapUserObject =useSelector((state)=>state.map.mapUserObject)
 
   const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
   const dispatch: Dispatch = useDispatch();
@@ -21,47 +28,153 @@ const MapFriendsView = ({ navigation }) => {
     navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
   }
   console.log('A')
+  console.log(isLogin)
 
   const [showCamera,setShowCamera]=useState(false)
+  const [showQR,setShowQR]=useState(false)
+  const [showFriendRegisterDaialog,setShowFriendRegisterDaialog]=useState(false)
+  const [readFriendObject,setReadFriendObject]=useState({})
+  const [friendImage,setFriendImage]=useState('')
+  const [friendRegistUUID,setfriendRegistUUID]=useState('')
 
-  const [hasPermission, setHasPermission] = useState(null);
 //アプリはQRコードをスキャンしたかどうか
-const [scanned, setScanned] = useState(false);
 
-const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
+  const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
 
+  console.log(mapUserObject.QRUUID)
+
+  const showQRCode=async()=>{
+      console.log(await isLogin)
+    if (await isLogin) {
+      // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+      const refFiresrore = doc(db, `mapFriendConvert/${mapUserObject.QRUUID}`);
+      const snap = await getDoc(refFiresrore);
+
+      if (snap.exists()) {
+        setShowQR(true)
+      }else{
+        const mapUser={
+          userUUID:userUUID,
+        }
+        console.log('norExit')
+        setDoc(refFiresrore, mapUser).then(() => {
+          // 保存に成功したらコンテクストにユーザーデータを格納
+          setShowQR(true)
+        });
+      }
+    }
+    
+  }
+
+  const readQRCode=async(data)=>{
+
+
+    if(!showQR&&data.length==36){
+      console.log('if')
+      if(!await showFriendRegisterDaialog){
+        setShowFriendRegisterDaialog(true)
+        console.log('72')
+        const refFiresrore = await doc(db, `mapFriendConvert/${data}`);
+
+        const friendUUID = (await getDoc(refFiresrore)).data().userUUID as string;//appUserがデータベースから取得したオブジェクト
+        console.log('76')
+        setfriendRegistUUID(friendUUID)
+        const refFiresroreMapUser = await doc(db, `mapGPS/${friendUUID}`);
+        const friendObject = (await getDoc(refFiresroreMapUser)).data() ;//appUserがデータベースから取得したオブジェクト
+        console.log('80')
+
+        getDownloadURL(ref(storage, `users/${friendUUID}/mainPicture`)).then((getURI)=>{
+          setFriendImage(getURI)
+        }).
+        catch((e)=>{
+          console.log(e.message)
+        })
+
+        console.log(friendUUID)
+        console.log(friendObject)
+        setReadFriendObject(friendObject)
+        console.log('85')
+
+
+      }else{
+      }
+    }
+  }
 
 useEffect(()=>{//これをホームへ
   console.log('useEffect')
+  console.log(userObject)
+
   const getUserDate=async()=>{
-    console.log('isLogin')
-    if (isLogin) {
+    console.log(await isLogin)
+    if (await isLogin) {
       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-      const refFiresrore = doc(db, `,mapGPS/${userUUID}`);
+      const refFiresrore = doc(db, `mapGPS/${userUUID}`);
       const snap = await getDoc(refFiresrore);
 
       if (snap.exists()) {
         const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
         console.log(appUser)
         console.log('exit!')
+        dispatch(setMapUserObject(appUser))
       }else{
+        const mapUser={
+          userName:userObject.userName,
+          userUUID:userUUID,
+          friends:[],
+          QRUUID:Crypto.randomUUID()
+        }
         console.log('norExit')
-
+        setDoc(refFiresrore, mapUser).then(() => {
+          // 保存に成功したらコンテクストにユーザーデータを格納
+          console.log('mapUser')
+          dispatch(setMapUserObject(mapUser))
+        });
       }
     }
   }
   getUserDate()
-},[])
+},[isLogin])
 
-const handleBarCodeScanned = ({ data }) => {
-  Linking.openURL(data)
-    .then(() => setScanned(true))
-    .catch((err) => {
-      setScanned(true);
-      alert("リンクを開く事ができませんでした。");
-    });
-};
+console.log(mapUserObject.QRUUID)
 
+const friendRegist=async()=>{
+  if (await isLogin) {
+    // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+    const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+      console.log(mapUserObject)
+      console.log(mapUserObject.friends)
+      let newFrends=mapUserObject.friends
+      console.log(newFrends)
+      console.log(newFrends.length)
+      newFrends[newFrends.length]={
+        QRUUID:readFriendObject.QRUUID,
+        userName:readFriendObject.userName,
+        userUUID:readFriendObject.userUUID
+      }
+      console.log(newFrends)
+      const uniqueNewFrends = Array.from(
+        new Map(newFrends.map((user) => [user.id, user])).values()
+      );
+
+      console.log(uniqueNewFrends)
+
+      const mapUser={
+        userName:userObject.userName,
+        userUUID:userUUID,
+        QRUUID:mapUserObject.QRUUID,
+        friends:newFrends
+      }
+      console.log('friendRegist')
+      console.log(mapUser)
+      setDoc(refFiresrore, mapUser).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        console.log('mapUser')
+        dispatch(setMapUserObject(mapUser))
+      });
+    
+  }
+}
   return (
     <View style={{flex:1}}>
       <View
@@ -75,33 +188,59 @@ const handleBarCodeScanned = ({ data }) => {
       </View>
       {showCamera&&
       <View style={{position:'absolute',width:'100%',height:'100%'}}>
-        <TouchableOpacity style={{position:'absolute',top:10,right:10,zIndex:10}} onPress={()=>setShowCamera(false)}>
-          <MaterialIcons name="cancel" size={30} color="white" />
+          <TouchableOpacity style={{position:'absolute',top:10,right:10,zIndex:10}} onPress={()=>setShowCamera(false)}>
+            <MaterialIcons name="cancel" size={30} color="white" />
+            </TouchableOpacity>
+            <Camera
+            style={{height:'100%'}}
+            onBarCodeScanned={({ type, data }) => {
+              readQRCode(data)
+            }}
+          />
+          <View style={{
+            position:'absolute',
+            bottom:20,
+            width:'100%'}}>
+          <TouchableOpacity style={{
+            justifyContent:'center',
+            borderRadius:20,
+            alignItems:'center',
+            width:250,
+            height:40,
+            marginRight:'auto',
+            marginLeft:'auto',
+            backgroundColor:'#C8252B',
+            flexDirection:'row'}}
+            onPress={()=>showQRCode()}>
+            <AntDesign name="qrcode" size={24} color="white" />
+            <Text style={{color:'white'}}>自分のQRコードを表示</Text>
           </TouchableOpacity>
-          <Camera
-          style={{height:'100%'}}
-          onBarCodeScanned={({ type, data }) => {
-            console.log(data);
-          }}
-        />
-        <View style={{
-          position:'absolute',
-          bottom:20,
-          width:'100%'}}>
-        <TouchableOpacity style={{
-          justifyContent:'center',
-          borderRadius:20,
-          alignItems:'center',
-          width:250,
-          height:40,
-          marginRight:'auto',
-          marginLeft:'auto',
-          backgroundColor:'#C8252B',
-          flexDirection:'row'}}>
-          <AntDesign name="qrcode" size={24} color="white" />
-          <Text style={{color:'white'}}>自分のQRコードを表示</Text>
-        </TouchableOpacity>
-        </View>
+          </View>
+          {showFriendRegisterDaialog&&<View style={{position:'absolute',width:'100%',height:'100%',justifyContent:'center'}}>
+              <View style={{backgroundColor:'white',width:270,height:200,paddingTop:5,marginRight:'auto',marginLeft:'auto',borderRadius:10}}>
+                <Image style={{backgroundColor:'#EEEEEE',width:80,height:80,borderRadius:40,marginLeft:'auto',marginRight:'auto',marginTop:10,marginBottom:20}} source={{uri:friendImage}} />
+                <Text style={{textAlign:'center',fontSize:20}}>{readFriendObject.userName?readFriendObject.userName:'ネットワークエラー'}</Text>
+                <View style={{flexDirection:'row',marginTop:25}}>
+                  <TouchableOpacity onPress={()=>{setShowFriendRegisterDaialog(false);setfriendRegistUUID('')}} style={{flex:1,marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'gray'}}>キャンセル</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={()=>friendRegist()} style={{flex:1,backgroundColor:'#C8252B',marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'white'}}>登録</Text></TouchableOpacity>
+                </View>
+              </View>
+            </View>}
+          {showQR&&<View style={{position:'absolute',width:'100%',height:'100%',justifyContent:'center'}}>
+            <View style={{backgroundColor:'white',width:270,height:300,paddingTop:5,marginRight:'auto',marginLeft:'auto',borderRadius:10}}>
+              <TouchableOpacity onPress={()=>setShowQR(false)}>
+                <MaterialIcons style={{textAlign:'right'}} name="cancel" size={30} color="black" />
+              </TouchableOpacity>
+                <View
+                  style={{marginRight:'auto',marginLeft:'auto',marginTop:5}}
+                  >
+                  <QRCode
+                    value={mapUserObject.QRUUID}
+                    size={230}
+                    />
+                </View>
+          </View>
+            </View>}
         </View>}
     </View>
   );

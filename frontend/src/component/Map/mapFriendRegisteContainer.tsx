@@ -8,17 +8,9 @@ const MapFriendRegisteContainer = (props) => {
 
   const [isSettingMyfrendLocation,setIsSettingMyfrendLocation]=useState(false)
 
-  function generateUUID() {
-    var array = new Uint32Array(4);
-    Crypto.getRandomValues(array);
-    return ([array[0].toString(16).padStart(8, '0'), array[1].toString(16).padStart(8, '0')].join('-') +
-            '-' + [array[2].toString(16).substr(0, 4), array[2].toString(16).substr(4, 4)].join('-') +
-            '-' + [array[3].toString(16).substr(0, 4), array[3].toString(16).substr(4, 4)].join('-') +
-            '-' + [array[3].toString(16).substr(8)].join('')).toLowerCase();
-  }
  // console.log(generateUUID())
-  let uuid = Crypto.randomUUID();
-console.log(uuid);
+//   let uuid = Crypto.randomUUID();
+// console.log(uuid);
 
   return (
     <View

@@ -123,6 +123,10 @@ const HomeView = (props) => {
         dispatch(setUserUUIDAction(user.uid))
         //dispatch(setUserObject(user))
         fetchUserObject(user.uid)
+        // if(user.emailVerified){
+        //   dispatch(handleLoginAction(true));
+        //   dispatch(handleLoginNotVerificationEmail(true))
+        // }
       }else{
         dispatch(handleLoginAction(false));
         dispatch(handleLoginNotVerificationEmail(false))

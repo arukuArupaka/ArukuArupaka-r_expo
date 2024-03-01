@@ -87,7 +87,7 @@ const ALoginView = (props) => {
         const user=await signInWithEmailAndPassword(auth, email, password);
         setUserInfo(user)
         if(await isMailVerified()){
-          await dispatch(handleLoginAction(isMailVerified()))
+          await dispatch(handleLoginAction(await isMailVerified()))
           console.log('ここにだす')
           console.log(await loginAfterPageName)
           if(await loginAfterPageName){

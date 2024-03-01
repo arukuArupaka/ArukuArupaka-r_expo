@@ -90,7 +90,7 @@ const Weather = () => {
     const fetchVotes = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.2.125:8000/weather/votes/"
+          "http://127.0.0.1:8000/weather/votes/"
         );
         setVotes(response.data);
       } catch (error) {
@@ -110,12 +110,12 @@ const Weather = () => {
   const vote = async (option) => {
     try {
       await axios.post(
-        "http://192.168.2.125:8000/weather/vote/",
+        "http://127.0.0.1:8000/weather/vote/",
         `option=${option}`
       );
       // 更新された投票結果を再取得
       const response = await axios.get(
-        "http://192.168.2.125:8000/weather/votes/"
+        "http://127.0.0.1:8000/weather/votes/"
       );
       setVotes(response.data);
     } catch (error) {
