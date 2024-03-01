@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
 const TimrTableView = ({ navigation }) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail } = useTimeTable();
+  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -63,9 +63,6 @@ const TimrTableView = ({ navigation }) => {
       console.log(e.message);
     }
   };
-  
-  
-
 
   const requestPermissionsAsync = async () => {
     const { granted } = await Notifications.getPermissionsAsync();
@@ -114,13 +111,6 @@ const TimrTableView = ({ navigation }) => {
 
   //時間割系
   const [isShow,setIsShow]=useState(false)
-  const weekTimeSaveData=[
-    [{day:0,period:0,className:"",classRoom:"",memo:"",notification:""},{day:0,period:1,className:"",classRoom:"",memo:"",notification:""},{day:0,period:2,className:"",classRoom:"",memo:"",notification:""},{day:0,period:3,className:"",classRoom:"",memo:"",notification:""},{day:0,period:4,className:"",classRoom:"",memo:"",notification:""},{day:0,period:5,className:"",classRoom:"",memo:"",notification:""},{day:0,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:1,period:0,className:"",classRoom:"",memo:"",notification:""},{day:1,period:1,className:"",classRoom:"",memo:"",notification:""},{day:1,period:2,className:"",classRoom:"",memo:"",notification:""},{day:1,period:3,className:"",classRoom:"",memo:"",notification:""},{day:1,period:4,className:"",classRoom:"",memo:"",notification:""},{day:1,period:5,className:"",classRoom:"",memo:"",notification:""},{day:1,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:2,period:0,className:"",classRoom:"",memo:"",notification:""},{day:2,period:1,className:"",classRoom:"",memo:"",notification:""},{day:2,period:2,className:"",classRoom:"",memo:"",notification:""},{day:2,period:3,className:"",classRoom:"",memo:"",notification:""},{day:2,period:4,className:"",classRoom:"",memo:"",notification:""},{day:2,period:5,className:"",classRoom:"",memo:"",notification:""},{day:2,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:3,period:0,className:"",classRoom:"",memo:"",notification:""},{day:3,period:1,className:"",classRoom:"",memo:"",notification:""},{day:3,period:2,className:"",classRoom:"",memo:"",notification:""},{day:3,period:3,className:"",classRoom:"",memo:"",notification:""},{day:3,period:4,className:"",classRoom:"",memo:"",notification:""},{day:3,period:5,className:"",classRoom:"",memo:"",notification:""},{day:3,period:6,className:"",classRoom:"",memo:"",notification:""}],
-    [{day:4,period:0,className:"",classRoom:"",memo:"",notification:""},{day:4,period:1,className:"",classRoom:"",memo:"",notification:""},{day:4,period:2,className:"",classRoom:"",memo:"",notification:""},{day:4,period:3,className:"",classRoom:"",memo:"",notification:""},{day:4,period:4,className:"",classRoom:"",memo:"",notification:""},{day:4,period:5,className:"",classRoom:"",memo:"",notification:""},{day:4,period:6,className:"",classRoom:"",memo:"",notification:""}],
-  ]
 
   const classStartEndTimeUnitList=[
     {
@@ -166,7 +156,6 @@ const TimrTableView = ({ navigation }) => {
       minute:40
     },
   ]
-  const [weekTime,setWeekTime]=useState(weekTimeSaveData);
 
   //確認
   /*const scheduleAllNotifications = () => {
@@ -188,9 +177,14 @@ const TimrTableView = ({ navigation }) => {
 
   //保存系
   //weekTimeの行列保存、読み出し
+
+  useEffect(() => {
+    console.log('nodata:',nodata);
+  },[nodata]);
+
   useEffect(()=>{
     getData();
-  },[setIsShow])
+  },[nodata])
 
   useEffect(()=>{
     getData();
@@ -201,8 +195,9 @@ const TimrTableView = ({ navigation }) => {
     try {
       const jsonValue = await AsyncStorage.getItem('timeTableKey');
       jsonValue != null ? setWeekTime((JSON.parse(jsonValue))) : null;
-      console.log('timeTableKey:',jsonValue)
+      //console.log('timeTableKey:',jsonValue)
       console.log('weekTimeQty:',weekTimeQty)
+      //console.log(weekTime)
       console.log('scheduleNotificationAsync:',scheduleNotificationAsync())
     } catch (e) {
       console.log(e)
@@ -286,6 +281,38 @@ const TimrTableView = ({ navigation }) => {
   useEffect(() => {
     console.log('sizechange:',sizechange);
   },[sizechange]);
+
+  //nodataの保存・読み出し
+
+  useEffect(() => {
+    const loadnodata = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('nodatakey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setNodata(value);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    loadnodata();
+  }, []);
+
+  useEffect(() => {
+    const savenodata = async () => {
+      try {
+        const stringValue = JSON.stringify(nodata);
+        await AsyncStorage.setItem('nodatakey', stringValue);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    savenodata();
+    console.log('nodataの保存が実行され、その値は',nodata);
+  }, [nodata]);
 
   useEffect(() => {
     const getDepartmentChange = async () => {
@@ -475,7 +502,7 @@ useEffect(() => {
     console.log('onSubmit///hour:',notificationHour);
     console.log('onSubmit///minute:',notificationMinute);
     
-  }
+  };
 
   const [childSize, setChildSize] = useState({ width: 0, height: 0 });
 
@@ -507,7 +534,7 @@ useEffect(() => {
   <View>
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         <View style={{zIndex:300,left:'10%',top:110,}}>
-          {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
+          {/*{isInfoShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} onEventCallBack={()=>{setIsInfoShow(false)}} onSubmit={onSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}*/}
         </View>
       <View style={styles.bodys}>
           <View style={styles.classTimeContiner} onLayout={(event) => {
@@ -540,25 +567,38 @@ useEffect(() => {
                           period={weekTime2.period} 
                           className={weekTime2.className}
                           weekTimeQty={weekTimeQty} 
-                          
                           onEventCallBack={(frameDetail)=>{
+                            //console.log(typeof weekTime2.day);
+                            //console.log(typeof weekTime2.period);
                             if(weekTime2.className == ""){
                               setShow(true);
+                              setPeriod(weekTime2.period);
                               const adDay = dayad(weekTime2.day)
-                              setDay(adDay)
-                              setTime(weekTime2.period+1)
-                              console.log(weekTime2.period+1);
-                              console.log(weekTime2.day);
-                              console.log(day);
-                              console.log(time);
-                              navigation.navigate('TimeTableClass')
+                              setDay(adDay);
+                              setTime(weekTime2.period+1);
+                              navigation.navigate('TimeTableClass');
                               setDodata(true);
-                              console.log(department);
-                              console.log(season);
-                              setPushedClassFrameDetail(frameDetail);
+                              console.log('Viewのdayとperiod');
+                              console.log(weekTime2.day-0);
+                              console.log(weekTime2.period-0);
+                              console.log(weekTime2);
+                              setIsInfoShow(false);
+                              setPushedClassFrameDetail({
+                                day: weekTime2.day-0,period: weekTime2.period-0
+                              });
                             }else{
                               setIsShow(true);
-                              setPushedClassFrameDetail(frameDetail);
+                              setPushedClassFrameDetail({
+                                day: weekTime2.day-0,period: weekTime2.period-0
+                              });
+                              setPeriod(weekTime2.period);
+                              const adDay = dayad(weekTime2.day);
+                              setDay(adDay);
+                              setTime(weekTime2.period+1);
+                              navigation.navigate('KomaView');
+                              console.log(weekTime2);
+                              console.log('colorは');
+                              console.log(weekTime[0][0].color);
                             }
                             }}
                         />) 
