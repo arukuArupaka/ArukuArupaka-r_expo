@@ -40,13 +40,14 @@ export const CameraDraw = ({ navigation }) => {
               <Text>商品の状態：{product.condition}</Text>
               <Text>説明：{product.description}</Text>
               <Text>値段：{product.price}</Text>
-              {product.images.map((imageUrl, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: imageUrl }}
-                  style={styles.image}
-                />
-              ))}
+              {product.images &&
+                product.images.map((imageUrl, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: imageUrl }}
+                    style={styles.image}
+                  />
+                ))}
             </View>
           </TouchableOpacity>
         ))}
