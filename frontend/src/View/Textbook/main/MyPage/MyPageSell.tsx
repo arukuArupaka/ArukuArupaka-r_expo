@@ -25,22 +25,23 @@ export const MyPageSell = ({}) => {
       <HeaderforTextbook4 />
       <View style={styles.draft}>
         {products.map((product) => (
-          <TouchableOpacity key={product.id} style={styles.productContainer}>
+          <View key={product.id}>
             <View style={styles.productItem}>
               <Text>商品名：{product.productName}</Text>
               <Text>使用学科：{product.department}</Text>
               <Text>商品の状態：{product.condition}</Text>
               <Text>説明：{product.description}</Text>
               <Text>値段：{product.price}</Text>
-              {product.images.map((imageUrl, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: imageUrl }}
-                  style={styles.image}
-                />
-              ))}
+              {product.images &&
+                product.images.map((imageUrl, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: imageUrl }}
+                    style={styles.image}
+                  />
+                ))}
             </View>
-          </TouchableOpacity>
+          </View>
         ))}
       </View>
     </View>

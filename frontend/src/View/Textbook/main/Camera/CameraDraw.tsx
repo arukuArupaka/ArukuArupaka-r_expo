@@ -20,8 +20,8 @@ export const CameraDraw = ({ navigation }) => {
     fetchProducts();
   }, []);
 
-  const handleDraftPress = () => {
-    navigation.navigate("CameraCamera");
+  const handleDraftPress = (product) => {
+    navigation.navigate("出品する", { product });
   };
 
   return (
@@ -32,7 +32,7 @@ export const CameraDraw = ({ navigation }) => {
           <TouchableOpacity
             key={product.id}
             style={styles.productContainer}
-            onPress={handleDraftPress}
+            onPress={() => handleDraftPress(product)}
           >
             <View style={styles.productItem}>
               <Text>商品名：{product.productName}</Text>

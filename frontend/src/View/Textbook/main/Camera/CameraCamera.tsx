@@ -26,7 +26,7 @@ import {
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
 
-export const CameraCamera = ({}) => {
+export const CameraCamera = ({ route }) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedCondition, setSelectedCondition] = useState(null);
@@ -35,6 +35,19 @@ export const CameraCamera = ({}) => {
   const [productName, setproductName] = useState("");
   const [description, setdescription] = useState("");
   const [price, setprice] = useState("");
+
+  const { product } = route.params;
+
+  useEffect(() => {
+    if (product) {
+      setproductName(product.productName);
+      setSelectedDepartment(product.department);
+      setSelectedCondition(product.condition);
+      setdescription(product.description);
+      setprice(product.price);
+      setImages(product.images);
+    }
+  }, [product]);
 
   useEffect(() => {
     (async () => {
