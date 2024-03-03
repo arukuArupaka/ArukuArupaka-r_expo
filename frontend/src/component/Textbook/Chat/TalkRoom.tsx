@@ -1,0 +1,67 @@
+import React from 'react';
+import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions } from 'react-native';
+import {SafeAreaView } from 'react-native';
+import { HeaderforTextbook2 } from '../../../component/Textbook/HeaderforTextbook2';
+import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { useState ,useEffect} from 'react';
+import {TextInput, TouchableOpacity, Image, Settings} from 'react-native';
+import ActionSheet from '@yfuks/react-native-action-sheet';
+import * as ImagePicker from 'expo-image-picker';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth ,db,storage} from '../../../../firebase';
+import { connect } from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux';
+import {Dispatch} from 'redux';
+import State from '../../../redux/states/userState';
+import { handleLoginAfterPageName } from '../../../redux/actions/commonAction';
+import { addDoc, doc, getDoc, setDoc , collection, getDocs } from '@firebase/firestore';
+import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
+import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
+import { UseDispatch } from 'react-redux';
+import { fetchUserObject, setUserObject } from '../../../redux/actions/userAction';
+import { useNavigation } from '@react-navigation/native';
+
+type TalkRoomProps = {
+    chatroom: string;
+    chatid: string;
+    navigation;
+     // または chatroom の実際の型に応じて適切な型を指定します
+  };
+
+const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
+    
+    const navigation = useNavigation();
+    
+    const styles = StyleSheet.create({
+        body:{
+            //backgroundColor: 'blue',
+            height: 80,
+            borderRadius: 20,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }
+    });
+
+    const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
+    const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
+    const dispatch: Dispatch = useDispatch();
+    const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
+    if(!isLogin||isLoginNotVerificationEmail){
+      //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+      console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+    }
+
+    
+
+    return (
+        <TouchableOpacity onPress={()=>{
+            navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1})
+        }}>
+            <View style={styles.body}>
+                <Text style={{fontSize: 20}}>{chatroom}</Text>
+            </View>
+        </TouchableOpacity>
+    )
+};
+export default TalkRoom;

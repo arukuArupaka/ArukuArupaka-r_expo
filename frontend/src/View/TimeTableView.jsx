@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
 const TimrTableView = ({ navigation }) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
+  const { unitCalc, setUnitCalc, unitSum, setUnitSum, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -313,6 +313,41 @@ const TimrTableView = ({ navigation }) => {
     savenodata();
     console.log('nodataの保存が実行され、その値は',nodata);
   }, [nodata]);
+
+  //unitcalcの計算
+  useEffect(() => {
+    const loadunit = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('unitsumkey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          console.log('unitSumの値は');
+          console.log(unitSum);
+          setUnitSum(value);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    loadunit();
+  }, []);
+
+  useEffect(() => {
+    const saveunit = async () => {
+      try {
+        const stringValue = JSON.stringify(unitSum);
+        await AsyncStorage.setItem('unitsumkey', stringValue);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    saveunit();
+    console.log('unitsumの保存が実行され、その値は',unitSum);
+  }, [unitSum]);
+
+  ////////////
 
   useEffect(() => {
     const getDepartmentChange = async () => {

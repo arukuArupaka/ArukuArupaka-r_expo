@@ -1,0 +1,278 @@
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { HeaderforTextbook2 } from '../../../../component/Textbook/HeaderforTextbook2';
+import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+import TalkRoom from '../../../../component/Textbook/Chat/TalkRoom';
+import React, { useState ,useEffect} from 'react';
+import {ScrollView, TextInput, TouchableOpacity, Image,Platform, Settings} from 'react-native';
+import ActionSheet from '@yfuks/react-native-action-sheet';
+import * as ImagePicker from 'expo-image-picker';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth ,db,storage} from '../../../../../firebase';
+import { connect } from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux';
+import {Dispatch} from 'redux';
+import State from '../../../../redux/states/userState';
+import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
+import { addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
+import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
+import { UseDispatch } from 'react-redux';
+import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAction';
+//import { RootState } from './state';
+
+
+export const TextbookTalk = ({navigation}) => {
+  const [image, setImage] = useState(null);
+  const [userName,setUserName]=useState('')
+  const [faculty,setFaculty]=useState('')
+  const [department,setDepartment]=useState('')
+  const [grade,setGrade]=useState('')
+  const [profile,setProfile]=useState('')
+  const [oldDate,setOldData]=useState({})
+  const [chatroom, setChatroom] = useState([]);
+  const [userInfo, setUserInfo] = useState([]);
+  const [userInfoID, setUserInfoID] = useState([]);
+  const [chatdoc, setChatdoc] = useState('');
+  const [chatid, setChatid] = useState([]);
+  const [effectCounter,setEffectCounter]=useState(0)
+  const [isCompress,setIsCompress]=useState(false)
+  const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
+
+  const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
+  
+  const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
+  const dispatch: Dispatch = useDispatch();
+  const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
+  if(!isLogin||isLoginNotVerificationEmail){
+    //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+    console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+  }
+
+  useEffect(()=>{
+    console.log('effict')
+    const getUserDate=async()=>{
+      if (isLogin) {
+        // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+        const refFiresrore = doc(db, `users/${userUUID}`);
+        const snap = await getDoc(refFiresrore);
+        const snapuser = collection(db, "users");
+        const usersINFO = await getDocs(snapuser);
+        //const userstore = doc(db, 'users');
+
+        if (snap.exists()) {
+
+          // 現在ログインしているユーザーのIDを取得
+          const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+          async function fetchAllUserIds() {
+            // usersコレクションへの参照を取得
+            const usersCollectionRef = collection(db, "users");
+            
+            // コレクションからすべてのドキュメントを取得
+            const querySnapshot = await getDocs(usersCollectionRef);
+            
+            // 各ドキュメントのIDを反復処理して表示
+            if(userInfo.length === 0 ){
+              querySnapshot.forEach(doc => {
+                          if(doc.id !== currentUserId){
+                            console.log(`User Name: ${doc.data().userName}`);
+                            setUserInfo(prev=>[...prev, doc.data().userName]);
+                            console.log(`User ID: ${doc.id}`);
+                            setUserInfoID(prev=>[...prev, doc.id]);   
+                          }
+
+                          });
+            }
+            
+          }
+          
+          // 関数を呼び出してusersコレクション内のドキュメントIDを取得
+          fetchAllUserIds();
+          // ユーザーデータを取得して格納
+          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          //const usersApp = (await getDoc(userstore)).data() as User;
+          setUserName(appUser.userName)
+          setFaculty(appUser.faculty)
+          setDepartment(appUser.department)
+          setGrade(appUser.grade)
+          setProfile(appUser.profile)
+          
+          const count = appUser.chatroomID.length;
+          let i = 0;
+          {/*for(i=0;i<count;i++){
+            setChatroom(prev=>[...prev, appUser.chatroomID[i]]);
+          }*/}
+          //setChatroom(appUser.chatroomID);
+
+          const oldSettingdata= {
+            id: appUser.id,
+            userName: appUser.userName,
+            faculty:appUser.faculty,
+            department:appUser.department,
+            grade:appUser.grade,
+            profile:appUser.profile,
+          };
+          setOldData(oldSettingdata)
+
+          getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)).then((getURI)=>{
+            setImage(getURI)
+            setIsCompress(true)
+          }).
+          catch((e)=>{
+            console.log(e.message)
+
+            switch (e.message){
+              case `Firebase Storage: Object 'users/${userUUID}/mainPicture' does not exist. (storage/object-not-found)`:
+                setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
+                setIsCompress(false)
+            }
+          })
+          console.log(await getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)))
+        } else {
+         setUserName('未登録')
+         setFaculty('未登録')
+         setDepartment('未登録')
+         setGrade('未登録')
+         setProfile('未登録')
+         setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
+         setIsCompress(false)
+        }
+      } else {
+      }
+    }
+    getUserDate();
+
+    const currentUserId = auth.currentUser.uid;
+    const refFiresrore = doc(db, `users/${userUUID}`);
+
+    const chatroomsRef = collection(db, 'chat');
+    getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
+    // 各chatroomについて処理
+    for (const doc of snapshot.docs) { 
+    // 各chatroomのusersサブコレクションに対するクエリを実行
+    const usersRef = collection(db, `chat/${doc.id}/users`);
+    const q = query(usersRef, where('id', '==', currentUserId));
+    const userSnapshot = await getDocs(q);
+    const notq = query(usersRef, where('id', '!=', currentUserId));
+    const notuserSnapshot = await getDocs(notq);
+
+    if (!userSnapshot.empty) {
+      notuserSnapshot.forEach((userDoc) => {
+        const username = userDoc.data().name; // ユーザー名の取得
+        console.log(`User name in chat: ${username}`);
+      if(chatroom.length === 0){
+          setChatroom(prev=>[...prev, username]);
+          setChatid(prev=>[...prev, doc.id]);
+      }
+    });
+    }
+    }
+    }).catch(error => {
+      console.error("Error getting chatrooms:", error);
+    });
+
+      // このコンポーネントが不要になったら監視を終了する
+  }, [userUUID]);
+
+
+
+
+  async function createChatroomStructure(anotherName:string, anotherID:string) {
+
+    const currentUserId = auth.currentUser.uid;
+
+    // chatroomsコレクションに新しいドキュメントを追加し、IDを自動生成させる
+    const chatroomRef = await addDoc(collection(db, "chat"), { name: "Chatroom" });
+    
+    /*setChatroom(prevChatrooms => [...prevChatrooms, {
+      id: chatroomRef.id,
+      name: "Chatroom", // ここで適切なチャットルーム名を設定
+    }]);*/
+
+    console.log("Chatroom created with ID: ", chatroomRef.id);
+  
+
+    
+    const refFiresrore = doc(db, `users/${userUUID}`);
+    const snap = await getDoc(refFiresrore);
+    const snapuser = collection(db, "users");
+    const usersINFO = await getDocs(snapuser);
+
+    const appUser = (await getDoc(refFiresrore)).data() as User;
+    
+    // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
+    //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
+    //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
+
+      await setDoc(doc(db, `chat/${chatroomRef.id}/users`, currentUserId), {
+        name: appUser.userName, // 現在のユーザー名
+        id: currentUserId // 現在のユーザーID
+      });
+
+      await setDoc(doc(db, `chat/${chatroomRef.id}/users`, anotherID), {
+        name: anotherName, // もう一方のユーザー名
+        id: anotherID // もう一方のユーザーID
+      });
+
+    console.log("Chatroom structure created");
+
+    setChatroom(prev => [ ...prev, anotherName]);
+    setChatid(prev => [...prev, chatroomRef.id]);
+    setChatdoc(chatroomRef.id);
+    console.log("引き渡す前のidの値は",chatroomRef.id);
+    const iduser = chatroomRef.id;
+
+    return iduser;
+
+  };
+      
+  return (
+    <ScrollView>
+      <View>
+        <HeaderforTextbook2 />
+          <View style={styles.List}>
+            { userInfo.map((info, index) => 
+            <TouchableOpacity key={index} style={styles.userList}
+              onPress={async() => {
+                const idcode = await createChatroomStructure(info, userInfoID[index]);
+                console.log("引き渡すまじの直前のid",idcode);
+                navigation.navigate('チャットルーム', {id:idcode, name: info, a:0});
+            }}><Text>{info+"さんに連絡する"}</Text>
+            </TouchableOpacity>)}
+          </View>
+          <View>
+            <Text>{userName + "さんのチャット欄"}</Text>
+          </View>
+          <View style={styles.talkroom}>
+            {chatroom.map((chatroomindi, index) => 
+            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} navigation={navigation}/>)}
+          </View>
+
+
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+
+  talkroom: {
+    height:'100%',
+    paddingTop: 5
+    // backgroundColor: 'red',
+    // justifyContent: 'flex-end', // Align content vertically in the center
+    // alignItems: 'center', // Align content horizontally in the center
+  },
+  userList:{
+    paddingTop: 5,
+    backgroundColor: 'skyblue',
+    borderRadius: 10,
+    borderWidth: 1,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  List:{
+    height: 500
+  }
+});
