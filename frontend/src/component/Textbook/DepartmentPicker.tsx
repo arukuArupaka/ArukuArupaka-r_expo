@@ -80,6 +80,24 @@ const DepartmentPicker = ({ onSelect }) => {
       >
         <Text>理工学部：建築都市デザイン学科</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("生命科学部：応用科学科")}>
+        <Text>生命科学部：応用科学科</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("生命科学部：生物工学科")}>
+        <Text>生命科学部：生物工学科</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("生命科学部：生命情報学科")}>
+        <Text>生命科学部：生命情報学科</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("生命科学部：生命医科学科")}>
+        <Text>生命科学部：生命医科学科</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("薬学部：薬学科")}>
+        <Text>薬学部：薬学科</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("薬学部：創薬科学科")}>
+        <Text>薬学部：創薬科学科</Text>
+      </TouchableOpacity>
     </View>
   );
 };
