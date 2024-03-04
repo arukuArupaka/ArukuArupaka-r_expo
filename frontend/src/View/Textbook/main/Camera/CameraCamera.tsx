@@ -23,6 +23,7 @@ import {
   storage,
   doc,
   updateDoc,
+  docRef,
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
 
@@ -45,9 +46,15 @@ export const CameraCamera = ({ route }) => {
       setSelectedCondition(product.condition);
       setdescription(product.description);
       setprice(product.price);
-      setImages(product.images);
+      setImages(product.images || Array(4).fill(null));
     }
   }, [product]);
+
+  useEffect(() => {
+    if (product && images.every((image) => image === null)) {
+      setImages(product.images || Array(4).fill(null));
+    }
+  }, [product, images]);
 
   useEffect(() => {
     (async () => {
@@ -86,14 +93,24 @@ export const CameraCamera = ({ route }) => {
     price
   ) => {
     try {
-      const docRef = await addDoc(collection(db, "freeMarket"), {
-        productName,
-        department,
-        condition,
-        description,
-        price,
-      });
-      console.log("Document written with ID: ", docRef.id);
+      if (product) {
+        await updateDoc(doc(db, "freeMarket", product.id), {
+          productName,
+          department,
+          condition,
+          description,
+          price,
+        });
+      } else {
+        const docRef = await addDoc(collection(db, "freeMarket"), {
+          productName,
+          department,
+          condition,
+          description,
+          price,
+        });
+        console.log("Document written with ID: ", docRef.id);
+      }
 
       // 画像をアップロードしてURLを取得し、Firestoreに保存
       const imageUrls = await Promise.all(
@@ -102,7 +119,7 @@ export const CameraCamera = ({ route }) => {
             const blob = await fetch(image).then((response) => response.blob());
             const storageRef = ref(
               storage,
-              `syouhin/${docRef.id}/image${index}`
+              `syouhin/${product ? product.id : docRef.id}/image${index}`
             );
             await uploadBytes(storageRef, blob);
             return getDownloadURL(storageRef);
@@ -112,7 +129,7 @@ export const CameraCamera = ({ route }) => {
       );
 
       // Firestoreに画像のURLを保存
-      await updateDoc(doc(db, "freeMarket", docRef.id), {
+      await updateDoc(doc(db, "freeMarket", product ? product.id : docRef.id), {
         images: imageUrls.filter((url) => url !== null),
       });
     } catch (e) {
