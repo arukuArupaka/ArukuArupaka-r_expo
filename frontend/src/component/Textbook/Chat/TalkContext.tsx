@@ -1,5 +1,6 @@
 // TimeTableContext.js
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { useRef, createContext, useState, useContext, useEffect } from 'react';
+import { ScrollView, View, Button } from 'react-native';
 
 const TalkContext = createContext();
 

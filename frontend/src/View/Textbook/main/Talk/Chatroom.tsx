@@ -2,8 +2,8 @@ import { KeyboardAvoidingView, View, Text, StyleSheet, SafeAreaView } from 'reac
 import { HeaderforTextbook5 } from '../../../../component/Textbook/HeaderforTextbook5';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import TalkRoom from '../../../../component/Textbook/Chat/TalkRoom';
-import React, { useState ,useEffect} from 'react';
-import {ScrollView, TextInput, TouchableOpacity, Image,Platform, Settings} from 'react-native';
+import React, { useState ,useEffect, useRef} from 'react';
+import {Keyboard, ScrollView, TextInput, TouchableOpacity, Image,Platform, Settings} from 'react-native';
 import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { deleteDoc, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -97,12 +97,40 @@ export const Chatroom=({route, navigation})=>{
   useEffect(()=>{
 
     const chatroomsRef = collection(db, 'chat');
-    getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
+    //getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
     // 各chatroomについて処理
     // 各chatroomのusersサブコレクションに対するクエリを実行
     const usersRef = collection(db, `chat/${id}/messages`);
-    const q = query(usersRef, orderBy("sentAt", "asc")); // 昇順で並べ替え
-    const querySnapshot = await getDocs(q);
+    const q = query(usersRef, orderBy("sentAt", "asc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const messagesuser = querySnapshot.docs.map(doc => {
+            const docData = doc.data();
+            const date = docData.sentAt.toDate();
+                    // 時間、分、秒を取得
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // 時間の文字列を HH:mm:ss 形式でフォーマット
+            // ゼロ埋め（.toString().padStart(2, '0')）を使って、常に2桁で表示する
+            const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+        return {
+            name: docData.name,
+            content: docData.content,
+            sentAt: timeStr // 時間のみの文字列を使用
+        };
+        });
+        //if(chatmessage.length == 0){
+            setChatmessage(messagesuser);
+            console.log('保存されました');
+            console.log(chatmessage);
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        //}
+    });
+    
+    return () => unsubscribe();
+    
+    /*const querySnapshot = await getDocs(q);
     //const userSnapshot = await getDocs(usersRef);
     setChatmessage([]);
 
@@ -120,26 +148,60 @@ export const Chatroom=({route, navigation})=>{
     }
     }).catch(error => {
       console.error("Error getting chatrooms:", error);
-    });
-
-
+    });*/
 
     },[]);
 
+    /*useEffect(()=>{
+        const deleteDocument = async (collectionName, documentId) => {
+            try {
+            await deleteDoc(doc(db, collectionName, documentId));
+            console.log("ドキュメントを削除しました");
+            } catch (error) {
+            console.error("ドキュメントの削除に失敗しました:", error);
+            }
+        };
+      // 使用例: 'users' コレクションから 'userId' のドキュメントを削除
+      deleteDocument('users', 'userId');
+    },[])*/
+    
+
+      
 
 
+    const scrollViewRef = useRef();
+
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        'keyboardDidShow',
+        () => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }
+      );
+  
+      return () => {
+        keyboardDidShowListener.remove();
+      };
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 1000); // 100ミリ秒後に実行
+      }, []);
+      
 
 
     return(
         <KeyboardAvoidingView
-        style={{ flex: 1, paddingBottom: 100 }}
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
-            <View>
+            <View style={{flex: 1}}>
                 <HeaderforTextbook5 />
                 {/*<SafeAreaView style={{ flex: 5 }}>*/}
-                    <ScrollView style={{ paddingBottom: 300 }}>
+                    <ScrollView ref={scrollViewRef}>
                         <View style={styles.box}>
                         {chatmessage.map((message:any, index:number) => (
                             <View style={{
@@ -147,12 +209,19 @@ export const Chatroom=({route, navigation})=>{
                                 justifyContent: 'center',
                                 //alignItems: 'center',
                                 flexDirection: 'column',
-                                paddingBottom: 15,
+                                paddingBottom: 10,
                                 alignItems: message.name == nameuser ? 'flex-end' : 'flex-start',
                             }} key={index}>
-                                <View style={styles.message}>
+                                <View style={{
+                                    backgroundColor: message.name == nameuser ? 'blue' : '#888888',
+                                    padding: 8,
+                                    borderRadius: 20,
+                                    paddingBottom: 10,
+                                    maxWidth: '80%'
+                                }}>
                                     <Text style={{color: 'white', fontSize: 15}}>{message.content}</Text>
                                 </View>
+                                <Text>{message.sentAt}</Text>
                             </View>  
                         ))}
                         </View>
@@ -170,18 +239,12 @@ const styles=StyleSheet.create({
     body: {
         height: '100%'
     },
-    message:{
-        backgroundColor: 'blue',
-        padding: 8,
-        borderRadius: 20,
-        paddingBottom: 10,
-    },
     box: {
         paddingTop: 50,
         paddingLeft: 5,
         paddingRight: 5,
         height: '100%',
-        paddingBottom: 40
+        paddingBottom: 40,
     },
     inbox: {
         flex: 1,

@@ -1,8 +1,8 @@
-import { KeyboardAvoidingView, View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { HeaderforTextbook2 } from '../../../../component/Textbook/HeaderforTextbook2';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import TalkRoom from '../../../../component/Textbook/Chat/TalkRoom';
-import React, { useState ,useEffect} from 'react';
+import React, { useState ,useEffect, useRef} from 'react';
 import {ScrollView, TextInput, TouchableOpacity, Image,Platform, Settings} from 'react-native';
 import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,6 +32,7 @@ export const RootTalk = ({id, name}) => {
     console.log("RootTalk内のidは",id);
     const { chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
+    const [add, setAdd] = useState(false);
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
     const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
@@ -71,28 +72,29 @@ export const RootTalk = ({id, name}) => {
         const name = appUser.userName;
         const info = {name, content};
     
-        setChatmessage(prev=>[...prev, info]);
+        //setChatmessage(prev=>[...prev, info]);
         console.log(info);
+        
+        setInputValue('');
     
       };
-
 
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"} 
       style={styles.keyboardAvoidingView}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}
+     // keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}
     >
       <View style={styles.body}>
         <TextInput 
           style={styles.input} 
           placeholder="メッセージを入力"
-          clearTextOnFocus={true}
+          value={inputValue}
           onChangeText={(text)=>{setInputValue(text);}}
         />
         <View style={styles.button}>
           <TouchableOpacity 
-          onPress={() => {createChatroomStructure(inputValue)}}
+          onPress={() => {createChatroomStructure(inputValue); Keyboard.dismiss();}}
           >
             <Text>送信</Text>
           </TouchableOpacity>
@@ -104,16 +106,14 @@ export const RootTalk = ({id, name}) => {
 
 const styles = StyleSheet.create({
   keyboardAvoidingView: {
-    flex: 1,
-    borderRadius: 20
+    width: '100%'
   },
   body: {
-    height: 40,
+    height: 50,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: 20,
     flexDirection: 'row',
     backgroundColor: 'white', // 背景色を追加して視覚的にわかりやすくする
   },
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     width: 250,
     paddingLeft: 5,
     marginRight: 10, // ボタンとの間隔を開ける
+    height: '80%'
   },
   button: {
     borderRadius: 20,
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 2,
-    paddingBottom: 2
+    paddingBottom: 2,
+    height: '80%'
   },
 });
