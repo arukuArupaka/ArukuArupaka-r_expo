@@ -24,6 +24,7 @@ import {
   doc,
   updateDoc,
   docRef,
+  deleteDoc,
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
 
@@ -37,7 +38,7 @@ export const CameraCamera = ({ route }) => {
   const [description, setdescription] = useState("");
   const [price, setprice] = useState("");
 
-  const { product } = route.params;
+  const { product } = route.params || {};
 
   useEffect(() => {
     if (product) {
@@ -176,6 +177,11 @@ export const CameraCamera = ({ route }) => {
       });
     } catch (e) {
       console.error("Error adding document: ", e);
+    }
+
+    // Delete the document from the freeMarket collection
+    if (product) {
+      await deleteDoc(doc(db, "freeMarket", product.id));
     }
   };
 

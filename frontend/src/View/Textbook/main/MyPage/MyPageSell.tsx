@@ -44,19 +44,20 @@ export const MyPageSell = ({}) => {
         {products.map((product) => (
           <TouchableOpacity key={product.id} onPress={() => openModal(product)}>
             <View style={styles.productItem}>
-              <Text>商品名：{product.productName}</Text>
-              <Text>使用学科：{product.department}</Text>
-              <Text>商品の状態：{product.condition}</Text>
-              <Text>説明：{product.description}</Text>
-              <Text>値段：{product.price}</Text>
-              {product.images &&
-                product.images.map((imageUrl, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: imageUrl }}
-                    style={styles.image}
-                  />
-                ))}
+              <View style={{ flexDirection: "row" }}>
+                {product.images &&
+                  product.images.map((imageUrl, index) => (
+                    <Image
+                      key={index}
+                      source={{ uri: imageUrl }}
+                      style={styles.image}
+                    />
+                  ))}
+              </View>
+              <View>
+                <Text>商品名：{product.productName}</Text>
+                <Text>値段：{product.price}円</Text>
+              </View>
             </View>
           </TouchableOpacity>
         ))}
