@@ -3,7 +3,7 @@ import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,SafeAr
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { MaterialIcons,MaterialCommunityIcons ,Ionicons,AntDesign,FontAwesome, Feather  } from '@expo/vector-icons';
-
+import { useTalkContext } from './Chat/TalkContext'
 
 
 export const HeaderforTextbook5 = () => {
@@ -13,6 +13,7 @@ export const HeaderforTextbook5 = () => {
   const SE_WIDTH = 375;
   const SE_HEIGHT = 667;
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
+  const {chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const toggleModal = () => {
     setshowModal(!showModal);
@@ -31,7 +32,7 @@ export const HeaderforTextbook5 = () => {
       <View style={styles.header}>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('トークルーム')}
+          onPress={() => {navigation.navigate('トークルーム'); console.log('chatroomの中身は',chatroom); console.log('chatidの中身は',chatid)}}
         >
           {Platform.OS === 'android'&& <Ionicons name="arrow-back-sharp" size={26} color="black" 
           style={[styles.back,{marginLeft:16,paddingTop:14}]}/>}

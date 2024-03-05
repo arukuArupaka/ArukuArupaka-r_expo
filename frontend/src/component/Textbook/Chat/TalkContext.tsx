@@ -9,9 +9,11 @@ export const useTalkContext = () => useContext(TalkContext);
 export const TalkProvider = ({ children }) => {
   
     const [chatmessage, setChatmessage] = useState([]);
+    const [chatid, setChatid] = useState([]);
+    const [chatroom, setChatroom] = useState([]);
 
   return (
-    <TalkContext.Provider value={{chatmessage, setChatmessage}}>
+    <TalkContext.Provider value={{ chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage}}>
       { children }
     </TalkContext.Provider>
   );

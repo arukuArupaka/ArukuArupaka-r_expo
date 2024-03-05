@@ -14,7 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../redux/actions/commonAction';
-import { addDoc, doc, getDoc, setDoc , collection, getDocs } from '@firebase/firestore';
+import { Timestamp, addDoc, doc, getDoc, setDoc , collection, getDocs } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -51,7 +51,6 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
       console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
     }
-
     
 
     return (

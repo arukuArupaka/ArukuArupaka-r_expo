@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, MatrixTransform } from 'react-native';
 import { HeaderforTextbook2 } from '../../../../component/Textbook/HeaderforTextbook2';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import TalkRoom from '../../../../component/Textbook/Chat/TalkRoom';
@@ -13,12 +13,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { Timestamp, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
 import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAction';
 //import { RootState } from './state';
+import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
 
 
 export const TextbookTalk = ({navigation}) => {
@@ -29,14 +30,17 @@ export const TextbookTalk = ({navigation}) => {
   const [grade,setGrade]=useState('')
   const [profile,setProfile]=useState('')
   const [oldDate,setOldData]=useState({})
-  const [chatroom, setChatroom] = useState([]);
+  //const [chatroom, setChatroom] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
   const [userInfoID, setUserInfoID] = useState([]);
   const [chatdoc, setChatdoc] = useState('');
-  const [chatid, setChatid] = useState([]);
+  //const [chatid, setChatid] = useState([]);
   const [effectCounter,setEffectCounter]=useState(0)
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
+  const [showno, setShowno] = useState(false)
+
+  const {chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
   
@@ -46,9 +50,8 @@ export const TextbookTalk = ({navigation}) => {
   if(!isLogin||isLoginNotVerificationEmail){
     //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
     console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
-  }
-
-  useEffect(()=>{
+  }else{
+      useEffect(()=>{
     console.log('effict')
     const getUserDate=async()=>{
       if (isLogin) {
@@ -161,8 +164,8 @@ export const TextbookTalk = ({navigation}) => {
         const username = userDoc.data().name; // ユーザー名の取得
         console.log(`User name in chat: ${username}`);
       if(chatroom.length === 0){
-          setChatroom(prev=>[...prev, username]);
-          setChatid(prev=>[...prev, doc.id]);
+          //setChatroom(prev=>[...prev, username]);
+          //setChatid(prev=>[...prev, doc.id]);
       }
     });
     }
@@ -174,15 +177,14 @@ export const TextbookTalk = ({navigation}) => {
       // このコンポーネントが不要になったら監視を終了する
   }, [userUUID]);
 
-
-
+  }
 
   async function createChatroomStructure(anotherName:string, anotherID:string) {
 
     const currentUserId = auth.currentUser.uid;
 
     // chatroomsコレクションに新しいドキュメントを追加し、IDを自動生成させる
-    const chatroomRef = await addDoc(collection(db, "chat"), { name: "Chatroom" });
+    const chatroomRef = await addDoc(collection(db, "chat"), { creationTime: Timestamp.now() });
     
     /*setChatroom(prevChatrooms => [...prevChatrooms, {
       id: chatroomRef.id,
@@ -216,8 +218,8 @@ export const TextbookTalk = ({navigation}) => {
 
     console.log("Chatroom structure created");
 
-    setChatroom(prev => [ ...prev, anotherName]);
-    setChatid(prev => [...prev, chatroomRef.id]);
+    //setChatroom(prev => [ ...prev, anotherName]);
+    //setChatid(prev => [...prev, chatroomRef.id]);
     setChatdoc(chatroomRef.id);
     console.log("引き渡す前のidの値は",chatroomRef.id);
     const iduser = chatroomRef.id;
@@ -225,6 +227,91 @@ export const TextbookTalk = ({navigation}) => {
     return iduser;
 
   };
+
+  useEffect(()=>{
+
+    const usersRef = collection(db, 'chat');
+    const q = query(usersRef, orderBy("creationTime", "desc"));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      console.log('onSnap内が実行されました');
+      console.log('ステートフックが初期化されました');
+      setChatroom([]);
+      setChatid([]);
+      //let arrayid = new Set();
+      let array = [];
+      let arrayid = [];
+      
+        const messagesuser = querySnapshot.docs.map(doc => {
+          const contentmess = doc.data().name;
+          const idl = doc.id;
+          console.log('messagesuserが呼び出されました。');
+        return idl;
+        });
+
+        const contentname = async(roomid:any) => {
+          console.log('contentnameが呼び出されました');
+          const currentUserId = auth.currentUser.uid;
+          const lg = roomid.length;
+          console.log('roomidの値',roomid);
+          console.log('lgの値',lg);
+          let i = 0;
+          for(i=0;i<lg;i++){
+            let ids = roomid[i];
+            const usersRef = collection(db, `chat/${ids}/users`);
+            const q = query(usersRef, where('id', '==', currentUserId));
+            const userSnapshot = await getDocs(q);
+            const iduser = await getDocs(usersRef);
+
+            if(!userSnapshot.empty){//自分が所属するchatroom発見
+              
+              const usersRef = collection(db, `chat/${ids}/users`);
+              const iduser = await getDocs(usersRef);
+              iduser.forEach((doci) => {
+
+              const usid = doci.id;
+              const usname = doci.data().name;
+
+              
+              //let cap = array.length;
+
+              if(usid != currentUserId){
+                array = [...array, usname];
+                setChatid(prev=>[...prev, ids]);
+                
+                /*for(j;j<cap;j++){
+                  if(j == 0 && cap == 1){
+                    console.log('見つけたユーザーのid',usid);
+                    console.log('見つけたユーザーの名前',usname);
+                    setChatid(prev=>[...prev, ids]);
+                    setChatroom(prev=>[...prev, usname]);
+                  }else if(array[j-1] != usid){
+                    console.log('見つけたユーザーのid',usid);
+                    console.log('見つけたユーザーの名前',usname);
+                    setChatid(prev=>[...prev, ids]);
+                    setChatroom(prev=>[...prev, usname]);
+                    console.log('arrayの中身:',array);
+                    break;
+                  }
+                }*/
+              }
+              
+        })
+            }
+
+          }
+          
+          setChatroom(array);
+        };
+        contentname(messagesuser);
+
+        return () => unsubscribe();
+    });
+  },[]);
+
+
+
+
       
   return (
     <ScrollView>

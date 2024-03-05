@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { deleteDoc, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { updateDoc, Timestamp, deleteDoc, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -21,23 +21,45 @@ import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAc
 //import { FooterChat } from '../../../../component/Textbook/FooterChat'
 import { RootTalk } from './RootTalk';
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Chatroom=({route, navigation})=>{
     const { chatmessage, setChatmessage  } = useTalkContext();
     const {id, name, a} = route.params;
     console.log("chatroom内のidは",id);
     const [nameuser, setNameuser] = useState('');
+    const key = `${id}`;
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
     const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
     const dispatch: Dispatch = useDispatch();
     const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
+    const scrollViewRef = useRef();
     if(!isLogin||isLoginNotVerificationEmail){
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
       console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
-    }
+      
+
+      useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow',
+          () => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }
+        );
     
-    const getdata = async() =>{
+        return () => {
+          keyboardDidShowListener.remove();
+        };
+      }, []);
+  
+      useEffect(() => {
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }, 1000); // 100ミリ秒後に実行
+        }, []);
+    }else{
+      const getdata = async() =>{
         const currentUserId = auth.currentUser.uid;
         const refFiresrore = doc(db, `users/${userUUID}`);
         const snap = await getDoc(refFiresrore);
@@ -121,10 +143,28 @@ export const Chatroom=({route, navigation})=>{
         };
         });
         //if(chatmessage.length == 0){
+            const currentUserId = auth.currentUser.uid;
             setChatmessage(messagesuser);
-            console.log('保存されました');
             console.log(chatmessage);
             scrollViewRef.current?.scrollToEnd({ animated: true });
+            const savemessage = async () => {
+              try {
+                const stringValue = JSON.stringify(messagesuser);
+                await AsyncStorage.setItem(key, stringValue);
+                console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+              } catch (e) {
+                console.log(e);
+              }
+            };
+        
+            savemessage();
+            console.log('新着メッセージの保存が実行され、その値は',messagesuser);
+            const asyncChange = async(id:string) => {
+              await updateDoc(doc(db, 'chat', id), {
+                  creationTime: Timestamp.now()
+            });
+          };
+            asyncChange(id);
         //}
     });
     
@@ -189,6 +229,9 @@ export const Chatroom=({route, navigation})=>{
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 1000); // 100ミリ秒後に実行
       }, []);
+    }
+    
+    
       
 
 

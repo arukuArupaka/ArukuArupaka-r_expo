@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { Timestamp, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { updateDoc, Timestamp, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -71,6 +71,12 @@ export const RootTalk = ({id, name}) => {
     
         const name = appUser.userName;
         const info = {name, content};
+
+        /*const col = doc(db, "chat",`${id}`);
+        await updateDoc(col, {
+          creationTime: Timestamp.now(), // 更新したいフィールド名と新しい値
+          // 複数のフィールドを更新することも可能
+        });*/
     
         //setChatmessage(prev=>[...prev, info]);
         console.log(info);
