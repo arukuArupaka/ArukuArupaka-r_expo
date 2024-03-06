@@ -98,6 +98,9 @@ const DepartmentPicker = ({ onSelect }) => {
       <TouchableOpacity onPress={() => onSelect("薬学部：創薬科学科")}>
         <Text>薬学部：創薬科学科</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => onSelect("教養科目")}>
+        <Text>教養科目</Text>
+      </TouchableOpacity>
     </View>
   );
 };

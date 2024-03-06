@@ -145,6 +145,11 @@ export const CameraCamera = ({ route }) => {
     description,
     price
   ) => {
+    // 全ての項目が入力されているか確認する
+    if (!productName || !department || !condition || !description || !price) {
+      alert("全ての項目を入力してください");
+      return; // 出品を中止する
+    }
     try {
       const docRef = await addDoc(collection(db, "syuppinn"), {
         productName,
