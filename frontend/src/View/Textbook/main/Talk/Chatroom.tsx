@@ -309,7 +309,7 @@ export const Chatroom=({route, navigation})=>{
         <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 50}
         >
             <View style={{flex: 1}}>
                 <HeaderforTextbook5 />
@@ -325,8 +325,13 @@ export const Chatroom=({route, navigation})=>{
                                 paddingBottom: 10,
                                 alignItems: message.id == iduser ? 'flex-end' : 'flex-start',
                             }} key={index}>
+                              <View style={{flexDirection: 'row'}}>
+                                <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
+                                  <Text>{""}</Text>
+                                  { message.id == iduser ? <Text>{message.sentAt}</Text> : <View></View>}
+                                </View>
                                 <View style={{
-                                    backgroundColor: message.id == iduser ? 'blue' : '#888888',
+                                    backgroundColor: message.id == iduser ? 'dodgerblue' : '#888888',
                                     padding: 8,
                                     borderRadius: 20,
                                     paddingBottom: 10,
@@ -334,7 +339,12 @@ export const Chatroom=({route, navigation})=>{
                                 }}>
                                     <Text style={{color: 'white', fontSize: 15}}>{message.content}</Text>
                                 </View>
-                                <Text>{message.sentAt}</Text>
+                                <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
+                                  <Text>{""}</Text>
+                                  { message.id == iduser ? <View></View> : <Text>{message.sentAt}</Text>}
+                                </View>
+                              </View>
+                                
                             </View>  
                         ))}
                         </View>

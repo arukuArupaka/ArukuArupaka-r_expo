@@ -211,6 +211,7 @@ export const TextbookTalk = ({navigation}) => {
       // このコンポーネントが不要になったら監視を終了する
   }, [userUUID]);
 
+
   }
 
   async function createChatroomStructure(anotherName:string, anotherID:string) {
@@ -431,6 +432,7 @@ export const TextbookTalk = ({navigation}) => {
               onPress={async() => {
                 const idcode = await createChatroomStructure(info, userInfoID[index]);
                 console.log("引き渡すまじの直前のid",idcode);
+                setNameindi(info);
                 navigation.navigate('チャットルーム', {id:idcode, name: info, a:0});
             }}><Text>{info+"さんに連絡する"}</Text>
             </TouchableOpacity>)}

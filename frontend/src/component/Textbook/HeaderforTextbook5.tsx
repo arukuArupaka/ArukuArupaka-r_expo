@@ -4,20 +4,41 @@ import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { MaterialIcons,MaterialCommunityIcons ,Ionicons,AntDesign,FontAwesome, Feather  } from '@expo/vector-icons';
 import { useTalkContext } from './Chat/TalkContext'
+import { auth ,db,storage} from '../../../firebase';
+import { deleteDoc,Timestamp, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 
 
 export const HeaderforTextbook5 = () => {
 
   const navigation = useNavigation();
   const [showModal, setshowModal] = useState(false);
+  const [detc, setDetc] = useState(false);
   const SE_WIDTH = 375;
   const SE_HEIGHT = 667;
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
-  const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { click, setClick, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const toggleModal = () => {
     setshowModal(!showModal);
   };
+
+  /*async function deleteChatIfMessagesEmpty(chatId:string) {
+    // `messages` サブコレクションへの参照を取得
+    const messagesRef = collection(db, `chat/${chatId}/messages`);
+    
+    // サブコレクション内のドキュメントを取得
+    const messagesSnap = await getDocs(messagesRef);
+  
+    // `messages` サブコレクションが空の場合、親の `chat` ドキュメントを削除
+    if (messagesSnap.empty) {
+      const chatDocRef = doc(db, `chat/${chatId}`);
+      await deleteDoc(chatDocRef);
+      console.log(`Chat document with id ${chatId} has been deleted because its messages subcollection was empty.`);
+    } else {
+      console.log(`Chat document with id ${chatId} will not be deleted because its messages subcollection is not empty.`);
+    }
+  };*/
 
   return (
     <View>
@@ -32,7 +53,12 @@ export const HeaderforTextbook5 = () => {
       <View style={styles.header}>
 
         <TouchableOpacity
-          onPress={() => {navigation.navigate('トークルーム'); console.log('chatroomの中身は',chatroom); console.log('chatidの中身は',chatid)}}
+          onPress={() => {navigation.navigate('トークルーム'); 
+          console.log('chatroomの中身は',chatroom);
+          console.log('chatidの中身は',chatid);
+          //console.log('clickの値は',click);
+          //deleteChatIfMessagesEmpty(click);
+          }}
         >
           {Platform.OS === 'android'&& <Ionicons name="arrow-back-sharp" size={26} color="black" 
           style={[styles.back,{marginLeft:16,paddingTop:14}]}/>}
@@ -46,7 +72,7 @@ export const HeaderforTextbook5 = () => {
         </TouchableOpacity>*/}
 
         <View>
-          <Text style={{fontSize: 24}}>{nameindi}</Text>
+          <Text style={{fontSize: 20}}>{nameindi}</Text>
         </View>
 
         <TouchableOpacity

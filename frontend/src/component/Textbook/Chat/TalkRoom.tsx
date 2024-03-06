@@ -30,7 +30,7 @@ type TalkRoomProps = {
   };
 
 const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
-    const { nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+    const { click, setClick, nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
     
     const navigation = useNavigation();
     
@@ -58,6 +58,8 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
     return (
         <TouchableOpacity onPress={()=>{
             setNameindi(chatroom);
+            setClick(chatid);
+            console.log('引き渡す前のclickid',chatid);
             navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1})
         }}>
             <View style={styles.body}>

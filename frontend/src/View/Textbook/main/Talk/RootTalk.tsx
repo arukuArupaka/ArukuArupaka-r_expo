@@ -30,7 +30,7 @@ type TalkRoomProps = {
 
 export const RootTalk = ({id, name}) => {
     console.log("RootTalk内のidは",id);
-    const { chatmessage, setChatmessage  } = useTalkContext();
+    const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
     const [add, setAdd] = useState(false);
 
