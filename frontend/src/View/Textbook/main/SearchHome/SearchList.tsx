@@ -15,6 +15,7 @@ import { Eating_management } from './Faculty/Eating_management';
 import { Science_and_Engineering } from './Faculty/Science_and_Engineering';
 import { Life_Sciences } from './Faculty/Life_Sciences';
 import { Medical } from './Faculty/Medical';
+import { Liberal_Arts } from './Faculty/Liberal_Arts';
 import {Dimensions} from 'react-native';
 
 const Tab = createMaterialTopTabNavigator();
@@ -51,6 +52,7 @@ export const SearchList = () => {
         <Tab.Screen name='理工学部' component={Science_and_Engineering}></Tab.Screen>
         <Tab.Screen name='生命科学部' component={Life_Sciences}></Tab.Screen>
         <Tab.Screen name='薬学部' component={Medical}></Tab.Screen>
+        <Tab.Screen name='教養科目' component={Liberal_Arts}></Tab.Screen>
     </Tab.Navigator>
   )
 }

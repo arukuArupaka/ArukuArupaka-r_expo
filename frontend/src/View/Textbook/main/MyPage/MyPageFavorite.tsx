@@ -1,14 +1,15 @@
-import {View,Text} from 'react-native'
-import { HeaderforTextbook4 } from '../../../../component/Textbook/HeaderforTextbook4'
+import { View, Text } from 'react-native';
 
-export const MyPageFavorite = () => {
-  return(
+export const MyPageFavorite = (props) => {
+  const favorites = props.favorite;
+
+  return (
     <View>
-      <HeaderforTextbook4/>
-      <Text>
-      マイページお気に入りだよ
-      </Text>
+      <View>
+        {Array.isArray(favorites) && favorites.map((item, index) => (
+          <Text key={index}>{item}</Text>
+        ))}
+      </View>
     </View>
-  )
-
-}
+  );
+};

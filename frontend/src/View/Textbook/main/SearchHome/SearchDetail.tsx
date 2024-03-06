@@ -1,10 +1,10 @@
-import { Text, View, ScrollView, StyleSheet,TouchableOpacity,Platform,Alert} from "react-native";
-import { Poster } from '../../../../component/Textbook/Poster';
+import { Text, View, ScrollView, StyleSheet,TouchableOpacity,Platform,Alert,SafeAreaView} from "react-native";
+import { Poster_Detail } from '../../../../component/Textbook/Poster_Detail';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const SearchDetail = (props,{navigation}) => {
   const { news } = props.route.params; // パラメータから news を取得
-  const { poster_path, name, overview, price,classname } = news; // news の各プロパティを取得
+  const { poster_path, name, overview, price,classname, } = news; // news の各プロパティを取得
   const handlePress = () => {
     Alert.alert(
       '確認',
@@ -29,28 +29,30 @@ export const SearchDetail = (props,{navigation}) => {
     return (
         <ScrollView style={styles.container} >
 
-            <Poster posterPath={poster_path} imageWidth={780} imageHeight={480}>
-            </Poster>
+            <Poster_Detail posterPath={poster_path} imageWidth={780} imageHeight={480} price={price}>
+            </Poster_Detail>
 
             <View style={{margin:8}}>
                 <Text style={styles.title}>{name}</Text>
                 <Text style={styles.classtitle}>#{classname}</Text>
-                <View style={{borderRadius:10,backgroundColor:'#777',width:'30%',marginVertical:4}}>
+                <View style={{borderRadius:10,backgroundColor:'#888',width:'30%',marginVertical:4}}>
                         <Text numberOfLines={1} style={styles.BookPrice}>￥{price}</Text>
                 </View>
                 <Text style={styles.overview}>{overview}</Text>
             </View>
 
-            <View style={{height:'100%',flexDirection:'row-reverse',marginTop:10}}>
+            <View style={{height:100,flexDirection:'row-reverse',marginTop:10}}>
                 <TouchableOpacity 
                     style={styles.decideButton}
                     onPress={handlePress}
                 >
                     <MaterialCommunityIcons name="hand-pointing-right" size={24} color="#027aff" />
                     <Text style={styles.decideButtonText}>出品者と購入手続き</Text>
-                </TouchableOpacity>
-                <View style={{height:100}}></View>
+                </TouchableOpacity> 
+                
             </View>
+
+            <View style={{height:100}}></View>
    
         </ScrollView>
     );
@@ -84,15 +86,16 @@ const styles = StyleSheet.create({
         textAlign:'center',
         paddingTop:Platform.OS==='android' ? '2%':'4%',
         paddingBottom:Platform.OS==='android' ? '6%':'4%',
+        
     },
     decideButton:{
         backgroundColor:'orange',
-        width:'60%',
-        height:'4%',
+        width:220,
+        height:44,
         borderRadius:20,
         justifyContent:'center',
         flexDirection:'row',
-        paddingTop:Platform.OS==='android' ? 10:11,
+        paddingTop:Platform.OS==='android' ? 8:11,
         // paddingBottom:Platform.OS==='android' ? 6:4,
     },
     decideButtonText:{
