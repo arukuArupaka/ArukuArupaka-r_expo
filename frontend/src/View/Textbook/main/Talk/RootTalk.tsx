@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { updateDoc, Timestamp, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { arrayUnion, updateDoc, Timestamp, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -61,12 +61,24 @@ export const RootTalk = ({id, name}) => {
         //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
         //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
     
-        const messageDocRef = await addDoc(collection(db, `chat/${id}/messages`), {
-            name: appUser.userName, // 現在のユーザー名
-            content: content, // 現在のユーザーID
-            sentAt: Timestamp.now(),
-            id: currentUserId
+        const check = doc(db, `chat/${id}`);
+        const checkdoc = await getDoc(check);
+        const checkmes = checkdoc.data();
+        const timestamp = Timestamp.now(); // Firestoreの現在のタイムスタンプを取得
+        const date = timestamp.toDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const formattedHours = hours.toString(); // 時間を文字列に変換
+        const formattedMinutes = minutes < 10 ? "0" + minutes.toString() : minutes.toString(); // 分が10未満の場合は先頭に0を追加
+
+        const timeString = `${formattedHours}:${formattedMinutes}`; // "時間:分"の形式の文字列を生成
+
+
+
+          await updateDoc(check, {
+            messages: arrayUnion({name: appUser.userName,content: content, sentAt: Timestamp.now().toDate().toLocaleString(),id: currentUserId,  time:timeString})
           });
+
           console.log("現在時刻は",Timestamp.now()) ;
         console.log("Chatroom structure created");
     

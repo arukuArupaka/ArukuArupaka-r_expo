@@ -178,62 +178,72 @@ export const Chatroom=({route, navigation})=>{
   }, [navigation]);
 
   useEffect(()=>{
+    setChatmessage([]);
 
     const chatroomsRef = collection(db, 'chat');
     //getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
     // 各chatroomについて処理
     // 各chatroomのusersサブコレクションに対するクエリを実行
-    const usersRef = collection(db, `chat/${id}/messages`);
-    const q = query(usersRef, orderBy("sentAt", "asc"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const messagesuser = querySnapshot.docs.map(doc => {
-            const docData = doc.data();
-            const date = docData.sentAt.toDate();
+    const usersRef = collection(db, `chat`);
+    //const q = query(usersRef, orderBy("createTime", "asc"));
+    const docume = doc(db, `chat/${id}`);
+    const unsubscribe = onSnapshot(docume, (querySnapshot) => {
+        //querySnapshot.docs.map(doc => {
+            const docData = querySnapshot.data();
+            let array = [];
+            //const date = docData.sentAt.toDate();
                     // 時間、分、秒を取得
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
+          if("messages" in docData){
+                        const messInfo = docData.messages;
 
+            messInfo.map((indi, index)=>{
+              //const hours = indi.sentAt.getHours();
+              //const minutes = indi.sentAt.getMinutes();
+              //const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+              const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time};
+              array = [...array, ar];
+            });
+            setChatmessage(array);
             // 時間の文字列を HH:mm:ss 形式でフォーマット
             // ゼロ埋め（.toString().padStart(2, '0')）を使って、常に2桁で表示する
-            const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-
-        return {
-            name: docData.name,
-            content: docData.content,
-            sentAt: timeStr, // 時間のみの文字列を使用
-            id: docData.id
-        };
-        });
-        //if(chatmessage.length == 0){
-            const currentUserId = auth.currentUser.uid;
-            setChatmessage(messagesuser);
-            console.log(chatmessage);
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-
-            const removeStoragemess = async (key:string) => {
-              try {
-                await AsyncStorage.removeItem(key);
-                console.log('Storage item removed successfully');
-              } catch (error) {
-                console.error('Error removing storage item: ', error);
-              }
-            };
+              const currentUserId = auth.currentUser.uid;
             
-            // 使用例
-            removeStoragemess(key);
+              //console.log(chatmessage);
+              scrollViewRef.current?.scrollToEnd({ animated: true });
 
-            const savemessage = async (key:string) => {
-              try {
-                const stringValue = JSON.stringify(messagesuser);
-                await AsyncStorage.setItem(key, stringValue);
-                console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
-              } catch (e) {
-                console.log(e);
-              }
-            };
-        
+              const removeStoragemess = async (key:string) => {
+                try {
+                  await AsyncStorage.removeItem(key);
+                  console.log('Storage item removed successfully');
+                } catch (error) {
+                  console.error('Error removing storage item: ', error);
+                }
+              };
+              
+              // 使用例
+              removeStoragemess(key);
+
+              const savemessage = async (key:string) => {
+                try {
+                  const stringValue = JSON.stringify(array);
+                  await AsyncStorage.setItem(key, stringValue);
+                  console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+                } catch (e) {
+                  console.log(e);
+                }
+              };
             savemessage(key);
-            console.log('新着メッセージの保存が実行され、その値は',messagesuser);
+            console.log('新着メッセージの保存が実行され、その値は');
+          }else{
+            console.log('存在しないので実行できませんでした');
+          }
+
+
+        //});
+        //if(chatmessage.length == 0){
+
+        
+
         //}
     });
     
@@ -328,7 +338,7 @@ export const Chatroom=({route, navigation})=>{
                               <View style={{flexDirection: 'row'}}>
                                 <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
                                   <Text>{""}</Text>
-                                  { message.id == iduser ? <Text>{message.sentAt}</Text> : <View></View>}
+                                  { message.id == iduser ? <Text style={{paddingRight: 3}}>{message.time}</Text> : <View></View>}
                                 </View>
                                 <View style={{
                                     backgroundColor: message.id == iduser ? 'dodgerblue' : '#888888',
@@ -341,7 +351,7 @@ export const Chatroom=({route, navigation})=>{
                                 </View>
                                 <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
                                   <Text>{""}</Text>
-                                  { message.id == iduser ? <View></View> : <Text>{message.sentAt}</Text>}
+                                  { message.id == iduser ? <View></View> : <Text style={{paddingLeft: 3}}>{message.time}</Text>}
                                 </View>
                               </View>
                                 
