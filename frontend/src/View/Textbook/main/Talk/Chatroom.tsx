@@ -27,7 +27,7 @@ export const Chatroom=({route, navigation})=>{
     const { chatmessage, setChatmessage  } = useTalkContext();
     const {id, name, a} = route.params;
     console.log("chatroom内のidは",id);
-    const [nameuser, setNameuser] = useState('');
+    const [iduser, setIduser] = useState('');
     const key = `${id}`;
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
@@ -41,6 +41,7 @@ export const Chatroom=({route, navigation})=>{
       
 
       useEffect(() => {
+        
         const keyboardDidShowListener = Keyboard.addListener(
           'keyboardDidShow',
           () => {
@@ -58,8 +59,44 @@ export const Chatroom=({route, navigation})=>{
             scrollViewRef.current?.scrollToEnd({ animated: true });
           }, 1000); // 100ミリ秒後に実行
         }, []);
+
+      useEffect(()=>{
+        const loadmess = async (key:string) => {
+          try {
+            const stringValue = await AsyncStorage.getItem(key);
+            if(stringValue != null){
+              const value = JSON.parse(stringValue);
+              setChatmessage(value);
+              console.log('messageは取得できました');
+          }
+          } catch (e) {
+            console.log(e);
+          }
+        };
+  
+        loadmess(key);
+
+        const loaduserid = async () => {
+          try {
+            const stringValue = await AsyncStorage.getItem('currentid');
+            if(stringValue != null){
+              const value = JSON.parse(stringValue);
+              setIduser(value);
+              console.log('useridは',value);
+          }
+          } catch (e) {
+            console.log(e);
+            console.log('取得できません!');
+          }
+        };
+  
+        loaduserid();
+
+      },[]);
+
     }else{
-      const getdata = async() =>{
+
+      /*const getdata = async() =>{
         const currentUserId = auth.currentUser.uid;
         const refFiresrore = doc(db, `users/${userUUID}`);
         const snap = await getDoc(refFiresrore);
@@ -70,8 +107,34 @@ export const Chatroom=({route, navigation})=>{
 
         const name=appUser.userName;
 
-        return name;
+        try {
+          const stringValue = JSON.stringify(name);
+          await AsyncStorage.setItem('currentname', stringValue);
+        } catch (e) {
+          console.log(e);
+        }
+        console.log('ルームidの情報の保存が実行され、その値は',name);
     };
+      
+      getdata();*/
+  useEffect(()=>{
+    const loaduserid = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('currentid');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setIduser(value);
+          console.log('useridは',value);
+      }
+      } catch (e) {
+        console.log(e);
+        console.log('取得できません!');
+      }
+    };
+
+    loaduserid();
+  },[]);
+
 
   useEffect(() => {
 
@@ -86,7 +149,7 @@ export const Chatroom=({route, navigation})=>{
 
         const name=appUser.userName;
 
-        setNameuser(name);
+        //setNameuser(name);
 
         //console.log("名前は",name);
 
@@ -94,8 +157,6 @@ export const Chatroom=({route, navigation})=>{
     };
 
     getdata();
-
-    console.log('名前は',nameuser);
 
     // コンポーネントがマウントされた時に実行
     const unsubscribe = navigation.addListener('focus', () => {
@@ -139,7 +200,8 @@ export const Chatroom=({route, navigation})=>{
         return {
             name: docData.name,
             content: docData.content,
-            sentAt: timeStr // 時間のみの文字列を使用
+            sentAt: timeStr, // 時間のみの文字列を使用
+            id: docData.id
         };
         });
         //if(chatmessage.length == 0){
@@ -147,7 +209,20 @@ export const Chatroom=({route, navigation})=>{
             setChatmessage(messagesuser);
             console.log(chatmessage);
             scrollViewRef.current?.scrollToEnd({ animated: true });
-            const savemessage = async () => {
+
+            const removeStoragemess = async (key:string) => {
+              try {
+                await AsyncStorage.removeItem(key);
+                console.log('Storage item removed successfully');
+              } catch (error) {
+                console.error('Error removing storage item: ', error);
+              }
+            };
+            
+            // 使用例
+            removeStoragemess(key);
+
+            const savemessage = async (key:string) => {
               try {
                 const stringValue = JSON.stringify(messagesuser);
                 await AsyncStorage.setItem(key, stringValue);
@@ -157,14 +232,8 @@ export const Chatroom=({route, navigation})=>{
               }
             };
         
-            savemessage();
+            savemessage(key);
             console.log('新着メッセージの保存が実行され、その値は',messagesuser);
-            const asyncChange = async(id:string) => {
-              await updateDoc(doc(db, 'chat', id), {
-                  creationTime: Timestamp.now()
-            });
-          };
-            asyncChange(id);
         //}
     });
     
@@ -234,7 +303,8 @@ export const Chatroom=({route, navigation})=>{
     
       
 
-
+    console.log('iduserの値は',iduser);
+    //console.log('messageの作成者は',chatmessage[0].id);
     return(
         <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -253,10 +323,10 @@ export const Chatroom=({route, navigation})=>{
                                 //alignItems: 'center',
                                 flexDirection: 'column',
                                 paddingBottom: 10,
-                                alignItems: message.name == nameuser ? 'flex-end' : 'flex-start',
+                                alignItems: message.id == iduser ? 'flex-end' : 'flex-start',
                             }} key={index}>
                                 <View style={{
-                                    backgroundColor: message.name == nameuser ? 'blue' : '#888888',
+                                    backgroundColor: message.id == iduser ? 'blue' : '#888888',
                                     padding: 8,
                                     borderRadius: 20,
                                     paddingBottom: 10,

@@ -20,6 +20,7 @@ import { UseDispatch } from 'react-redux';
 import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAction';
 //import { RootState } from './state';
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const TextbookTalk = ({navigation}) => {
@@ -40,16 +41,49 @@ export const TextbookTalk = ({navigation}) => {
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
   const [showno, setShowno] = useState(false)
 
-  const {chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
+  let arrayid = [];
   
   const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
   const dispatch: Dispatch = useDispatch();
   const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
   if(!isLogin||isLoginNotVerificationEmail){
-    //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
-    console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+    useEffect(() =>{
+          //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+      console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+
+      const loadid = async () => {
+        try {
+          const stringValue = await AsyncStorage.getItem('roomidkey');
+          if(stringValue != null){
+            const value = JSON.parse(stringValue);
+            setChatid(value);
+        }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+
+      loadid();
+
+      const loadname = async () => {
+        try {
+          const stringValue = await AsyncStorage.getItem('roomnamekey');
+          if(stringValue != null){
+            const value = JSON.parse(stringValue);
+            setChatroom(value);
+        }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+
+      loadname();
+
+    },[]);
+
   }else{
       useEffect(()=>{
     console.log('effict')
@@ -240,7 +274,6 @@ export const TextbookTalk = ({navigation}) => {
       setChatid([]);
       //let arrayid = new Set();
       let array = [];
-      let arrayid = [];
       
         const messagesuser = querySnapshot.docs.map(doc => {
           const contentmess = doc.data().name;
@@ -278,7 +311,8 @@ export const TextbookTalk = ({navigation}) => {
               if(usid != currentUserId){
                 array = [...array, usname];
                 setChatid(prev=>[...prev, ids]);
-                
+                arrayid = [...arrayid, ids];
+
                 /*for(j;j<cap;j++){
                   if(j == 0 && cap == 1){
                     console.log('見つけたユーザーのid',usid);
@@ -302,6 +336,80 @@ export const TextbookTalk = ({navigation}) => {
           }
           
           setChatroom(array);
+
+          //const key = currentUserId;
+
+          //idの保存
+          const removeStorageid = async () => {
+            try {
+              await AsyncStorage.removeItem('roomidkey');
+              console.log('Storage item removed successfully');
+            } catch (error) {
+              console.error('Error removing storage item: ', error);
+            }
+          };
+          
+          // 使用例
+          removeStorageid();
+
+          
+          
+          const saveroomid = async () => {
+            try {
+              const stringValue = JSON.stringify(arrayid);
+              await AsyncStorage.setItem('roomidkey', stringValue);
+              console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+            } catch (e) {
+              console.log(e);
+            }
+          };
+        
+            saveroomid();
+            console.log('ルームidの情報の保存が実行され、その値は',arrayid);
+
+
+            //roomnameの保存
+            const removeStoragename = async () => {
+              try {
+                await AsyncStorage.removeItem('roomnamekey');
+                console.log('Storage item removed successfully');
+              } catch (error) {
+                console.error('Error removing storage item: ', error);
+              }
+            };
+            
+            // 使用例
+            removeStoragename();
+  
+            
+            
+            const saveroomname = async () => {
+              try {
+                const stringValue = JSON.stringify(array);
+                await AsyncStorage.setItem('roomnamekey', stringValue);
+                console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+              } catch (e) {
+                console.log(e);
+              }
+            };
+          
+              saveroomname();
+              console.log('ルームidの情報の保存が実行され、その値は',array);
+
+
+              const savecurrentid = async (currentUserId:string) => {
+                try {
+                  const stringValue = JSON.stringify(currentUserId);
+                  await AsyncStorage.setItem('currentid', stringValue);
+                  console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+                } catch (e) {
+                  console.log(e);
+                }
+              };
+            
+                savecurrentid(currentUserId);
+          
+
         };
         contentname(messagesuser);
 

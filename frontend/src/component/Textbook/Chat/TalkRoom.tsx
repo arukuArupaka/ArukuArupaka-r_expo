@@ -20,6 +20,7 @@ import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
 import { fetchUserObject, setUserObject } from '../../../redux/actions/userAction';
 import { useNavigation } from '@react-navigation/native';
+import { useTalkContext } from './TalkContext'
 
 type TalkRoomProps = {
     chatroom: string;
@@ -29,6 +30,7 @@ type TalkRoomProps = {
   };
 
 const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
+    const { nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
     
     const navigation = useNavigation();
     
@@ -55,6 +57,7 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
 
     return (
         <TouchableOpacity onPress={()=>{
+            setNameindi(chatroom);
             navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1})
         }}>
             <View style={styles.body}>

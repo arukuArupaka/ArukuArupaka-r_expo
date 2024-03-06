@@ -65,6 +65,7 @@ export const RootTalk = ({id, name}) => {
             name: appUser.userName, // 現在のユーザー名
             content: content, // 現在のユーザーID
             sentAt: Timestamp.now(),
+            id: currentUserId
           });
           console.log("現在時刻は",Timestamp.now()) ;
         console.log("Chatroom structure created");
@@ -100,7 +101,14 @@ export const RootTalk = ({id, name}) => {
         />
         <View style={styles.button}>
           <TouchableOpacity 
-          onPress={() => {createChatroomStructure(inputValue); Keyboard.dismiss();}}
+          onPress={() => {createChatroomStructure(inputValue); Keyboard.dismiss();            
+           const asyncChange = async(id:string) => {
+            await updateDoc(doc(db, 'chat', id), {
+                creationTime: Timestamp.now()
+          });
+        };
+        asyncChange(id);
+        }}
           >
             <Text>送信</Text>
           </TouchableOpacity>

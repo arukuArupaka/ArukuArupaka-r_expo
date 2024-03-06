@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,SafeAreaView,Button,StatusBar,Dimensions } from 'react-native';
+import { Text, View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight,SafeAreaView,Button,StatusBar,Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { MaterialIcons,MaterialCommunityIcons ,Ionicons,AntDesign,FontAwesome, Feather  } from '@expo/vector-icons';
@@ -13,7 +13,7 @@ export const HeaderforTextbook5 = () => {
   const SE_WIDTH = 375;
   const SE_HEIGHT = 667;
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
-  const {chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const toggleModal = () => {
     setshowModal(!showModal);
@@ -41,9 +41,13 @@ export const HeaderforTextbook5 = () => {
           style={[styles.back,{color:'#027aff',marginLeft:10,paddingTop:10}]}/>}
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        {/*<TouchableOpacity>
           <Feather name="shopping-cart" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
+
+        <View>
+          <Text style={{fontSize: 24}}>{nameindi}</Text>
+        </View>
 
         <TouchableOpacity
         style={{marginRight:Platform.OS === 'ios' ? 10 : 16}}
