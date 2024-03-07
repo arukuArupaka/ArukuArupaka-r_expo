@@ -39,7 +39,7 @@ export const TextbookTalk = ({navigation}) => {
   const [effectCounter,setEffectCounter]=useState(0)
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
-  const [showno, setShowno] = useState(false)
+  const [showno, setShowno] = useState(false);
 
   const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
@@ -270,6 +270,17 @@ export const TextbookTalk = ({navigation}) => {
         querySnapshot.docs.map(doc => {
           const contentname = doc.data().username;
           const contentids = doc.data().userid;
+          const messent = doc.data().messages;
+          const messle = messent.length;
+          const messsender = messent[messle-1].id;
+          const messStatus = messent[messle-1].read;
+          if(messStatus == false){
+            if(messsender != currentUserId){
+              setShowno(true);
+            }
+          }else{
+            setShowno(false);
+          }
           const contentid = doc.id;
           arrayid = [...arrayid, contentid];
           contentname.map((nm, index) =>{
@@ -397,7 +408,7 @@ export const TextbookTalk = ({navigation}) => {
           </View>
           <View style={styles.talkroom}>
             {chatroom.map((chatroomindi, index) => 
-            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} ids={image[index]} navigation={navigation}/>)}
+            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} ids={image[index]} navigation={navigation} status={showno}/>)}
           </View>
 
 

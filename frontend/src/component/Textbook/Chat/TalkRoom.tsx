@@ -26,11 +26,12 @@ type TalkRoomProps = {
     chatroom: string;
     chatid: string;
     ids: string;
+    status: boolean;
     navigation;
      // または chatroom の実際の型に応じて適切な型を指定します
   };
 
-const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids }) => {
+const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status }) => {
     const { click, setClick, nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
     
     const navigation = useNavigation();
@@ -69,6 +70,7 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids }) => {
             <View style={styles.body}>
                 <View style={{flexDirection: 'row'}}>
                     <View>
+                        {status && <MaterialCommunityIcons name="new-box" size={24} color="red"/>}
                     </View>
                     <View style={{flexDirection: 'column'}}>
                         <Text style={{fontSize: 15}}>{chatroom}</Text>
