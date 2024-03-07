@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const TextbookTalk = ({navigation}) => {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState([]);
   const [userName,setUserName]=useState('')
   const [faculty,setFaculty]=useState('')
   const [department,setDepartment]=useState('')
@@ -151,20 +151,6 @@ export const TextbookTalk = ({navigation}) => {
           };
           setOldData(oldSettingdata)
 
-          getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)).then((getURI)=>{
-            setImage(getURI)
-            setIsCompress(true)
-          }).
-          catch((e)=>{
-            console.log(e.message)
-
-            switch (e.message){
-              case `Firebase Storage: Object 'users/${userUUID}/mainPicture' does not exist. (storage/object-not-found)`:
-                setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
-                setIsCompress(false)
-            }
-          })
-          console.log(await getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)))
         } else {
          setUserName('未登録')
          setFaculty('未登録')
@@ -198,8 +184,8 @@ export const TextbookTalk = ({navigation}) => {
         const username = userDoc.data().name; // ユーザー名の取得
         console.log(`User name in chat: ${username}`);
       if(chatroom.length === 0){
-          //setChatroom(prev=>[...prev, username]);
-          //setChatid(prev=>[...prev, doc.id]);
+          setChatroom(prev=>[...prev, username]);
+          setChatid(prev=>[...prev, doc.id]);
       }
     });
     }
@@ -272,13 +258,14 @@ export const TextbookTalk = ({navigation}) => {
     const q2 = query(usersRef, where("userid", "array-contains", currentUserId),orderBy("creationTime", "desc"));
 
     const unsubscribe = onSnapshot(q2, (querySnapshot) => {
-      console.log('onSnap内が実行されました');
+      console.log('onSnapが実行されました');
       console.log('ステートフックが初期化されました');
       setChatroom([]);
       setChatid([]);
       //let arrayid = new Set();
       let array = [];
       let arrayid = [];
+      let arrayids = [];
       
         querySnapshot.docs.map(doc => {
           const contentname = doc.data().username;
@@ -288,6 +275,7 @@ export const TextbookTalk = ({navigation}) => {
           contentname.map((nm, index) =>{
             if(contentids[index] != currentUserId){
               array = [...array, nm];
+              arrayids = [...arrayids, contentids[index]];
             }
           })
         });
@@ -299,6 +287,8 @@ export const TextbookTalk = ({navigation}) => {
 
           
           setChatroom(array);
+          setImage(arrayids);
+          console.log('imageは',arrayids);
 
           //const key = currentUserId;
 
@@ -377,6 +367,7 @@ export const TextbookTalk = ({navigation}) => {
         contentname();
         setChatroom(array);
         setChatid(arrayid);
+        setImage(arrayids);
 
         return () => unsubscribe();
     });
@@ -406,7 +397,7 @@ export const TextbookTalk = ({navigation}) => {
           </View>
           <View style={styles.talkroom}>
             {chatroom.map((chatroomindi, index) => 
-            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} navigation={navigation}/>)}
+            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} ids={image[index]} navigation={navigation}/>)}
           </View>
 
 

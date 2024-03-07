@@ -76,7 +76,7 @@ export const RootTalk = ({id, name}) => {
 
 
           await updateDoc(check, {
-            messages: arrayUnion({name: appUser.userName,content: content, sentAt: Timestamp.now().toDate().toLocaleString(),id: currentUserId,  time:timeString})
+            messages: arrayUnion({name: appUser.userName,content: content, sentAt: Timestamp.now().toDate().toLocaleString(),id: currentUserId,  time:timeString, read: false})
           });
 
           console.log("現在時刻は",Timestamp.now()) ;

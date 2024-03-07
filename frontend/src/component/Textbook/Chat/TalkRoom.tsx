@@ -20,16 +20,17 @@ import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
 import { fetchUserObject, setUserObject } from '../../../redux/actions/userAction';
 import { useNavigation } from '@react-navigation/native';
-import { useTalkContext } from './TalkContext'
+import { useTalkContext } from './TalkContext';
 
 type TalkRoomProps = {
     chatroom: string;
     chatid: string;
+    ids: string;
     navigation;
      // または chatroom の実際の型に応じて適切な型を指定します
   };
 
-const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
+const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids }) => {
     const { click, setClick, nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
     
     const navigation = useNavigation();
@@ -37,14 +38,16 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
     const styles = StyleSheet.create({
         body:{
             //backgroundColor: 'blue',
-            height: 80,
-            borderRadius: 20,
-            borderWidth: 1,
+            height: 60,
+            //borderRadius: 20,
+            borderBottomWidth: 0.5,
+            borderTopWidth: 0.5,
             alignItems: 'center',
             justifyContent: 'center'
         }
     });
 
+    const [image, setImage] = useState('');
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
     const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
     const dispatch: Dispatch = useDispatch();
@@ -53,7 +56,8 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
       console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
     }
-    
+
+    console.log('idsの値は',ids);
 
     return (
         <TouchableOpacity onPress={()=>{
@@ -63,7 +67,14 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid }) => {
             navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1})
         }}>
             <View style={styles.body}>
-                <Text style={{fontSize: 20}}>{chatroom}</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <View>
+                    </View>
+                    <View style={{flexDirection: 'column'}}>
+                        <Text style={{fontSize: 15}}>{chatroom}</Text>
+                    </View>
+                </View>
+                
             </View>
         </TouchableOpacity>
     )

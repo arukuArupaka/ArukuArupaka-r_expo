@@ -178,7 +178,7 @@ export const Chatroom=({route, navigation})=>{
   }, [navigation]);
 
   useEffect(()=>{
-    setChatmessage([]);
+    setChatmessage([]); 
 
     const chatroomsRef = collection(db, 'chat');
     //getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
@@ -194,19 +194,38 @@ export const Chatroom=({route, navigation})=>{
             //const date = docData.sentAt.toDate();
                     // 時間、分、秒を取得
           if("messages" in docData){
-                        const messInfo = docData.messages;
+            const currentUserId = auth.currentUser.uid;
+              const messInfo = docData.messages;
+              console.log('currentuserIdは',currentUserId);
 
             messInfo.map((indi, index)=>{
               //const hours = indi.sentAt.getHours();
               //const minutes = indi.sentAt.getMinutes();
               //const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-              const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time};
-              array = [...array, ar];
+              if(indi.id != currentUserId){
+                const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time, read: true};
+                array = [...array, ar];
+              }else{
+                const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time, read: indi.read};
+                array = [...array, ar];
+              }
+              
+            })
+
+            const asyncChange = async(array:any) =>{
+              updateDoc(docume, {
+                messages: array
+              });
+            };
+
+            asyncChange(array).then(()=>{
+              setChatmessage(array);
             });
-            setChatmessage(array);
+            
+            //setChatmessage(array);
             // 時間の文字列を HH:mm:ss 形式でフォーマット
             // ゼロ埋め（.toString().padStart(2, '0')）を使って、常に2桁で表示する
-              const currentUserId = auth.currentUser.uid;
+              //const currentUserId = auth.currentUser.uid;
             
               //console.log(chatmessage);
               scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -290,6 +309,11 @@ export const Chatroom=({route, navigation})=>{
 
     const scrollViewRef = useRef();
 
+
+
+
+    }
+
     useEffect(() => {
       const keyboardDidShowListener = Keyboard.addListener(
         'keyboardDidShow',
@@ -302,15 +326,12 @@ export const Chatroom=({route, navigation})=>{
         keyboardDidShowListener.remove();
       };
     }, []);
-
+    
     useEffect(() => {
         setTimeout(() => {
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 1000); // 100ミリ秒後に実行
       }, []);
-    }
-    
-    
       
 
     console.log('iduserの値は',iduser);
@@ -336,8 +357,8 @@ export const Chatroom=({route, navigation})=>{
                                 alignItems: message.id == iduser ? 'flex-end' : 'flex-start',
                             }} key={index}>
                               <View style={{flexDirection: 'row'}}>
-                                <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
-                                  <Text>{""}</Text>
+                                <View style={{flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                  { message.id == iduser ? (message.read == false ? <View></View> : <Text>{"既読"}</Text>) : <View></View>}
                                   { message.id == iduser ? <Text style={{paddingRight: 3}}>{message.time}</Text> : <View></View>}
                                 </View>
                                 <View style={{
@@ -350,7 +371,6 @@ export const Chatroom=({route, navigation})=>{
                                     <Text style={{color: 'white', fontSize: 15}}>{message.content}</Text>
                                 </View>
                                 <View style={{flexDirection: 'column', justifyContent: 'flex-end'}}>
-                                  <Text>{""}</Text>
                                   { message.id == iduser ? <View></View> : <Text style={{paddingLeft: 3}}>{message.time}</Text>}
                                 </View>
                               </View>
