@@ -40,6 +40,8 @@ export const TextbookTalk = ({navigation}) => {
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
   const [showno, setShowno] = useState(false);
+  const [status, setStatus] = useState([]);
+  const [latest, setLatest] = useState([]);
 
   const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
@@ -85,6 +87,11 @@ export const TextbookTalk = ({navigation}) => {
     },[]);
 
   }else{
+
+    useEffect(()=>{
+
+    })
+
       useEffect(()=>{
     console.log('effict')
     const getUserDate=async()=>{
@@ -134,7 +141,7 @@ export const TextbookTalk = ({navigation}) => {
           setGrade(appUser.grade)
           setProfile(appUser.profile)
           
-          const count = appUser.chatroomID.length;
+          //const count = appUser.chatroomID.length;
           let i = 0;
           {/*for(i=0;i<count;i++){
             setChatroom(prev=>[...prev, appUser.chatroomID[i]]);
@@ -183,10 +190,10 @@ export const TextbookTalk = ({navigation}) => {
       notuserSnapshot.forEach((userDoc) => {
         const username = userDoc.data().name; // ユーザー名の取得
         console.log(`User name in chat: ${username}`);
-      if(chatroom.length === 0){
+      //if(chatroom.length === 0){
           setChatroom(prev=>[...prev, username]);
           setChatid(prev=>[...prev, doc.id]);
-      }
+      //}
     });
     }
     }
@@ -262,33 +269,49 @@ export const TextbookTalk = ({navigation}) => {
       console.log('ステートフックが初期化されました');
       setChatroom([]);
       setChatid([]);
+      setStatus([]);
+      setLatest([]);
       //let arrayid = new Set();
       let array = [];
       let arrayid = [];
       let arrayids = [];
+      let arraystatus = [];
+      let arraylatest = [];
       
         querySnapshot.docs.map(doc => {
-          const contentname = doc.data().username;
-          const contentids = doc.data().userid;
-          const messent = doc.data().messages;
-          const messle = messent.length;
-          const messsender = messent[messle-1].id;
-          const messStatus = messent[messle-1].read;
-          if(messStatus == false){
-            if(messsender != currentUserId){
-              setShowno(true);
+          const docData = doc.data();
+          if("messages" in docData){
+            console.log('メッセージフィールドが存在します');
+            const contentname = doc.data().username;
+            const contentids = doc.data().userid;
+            const messent = doc.data().messages;
+            const messle = messent.length;
+            console.log('messagesの長さは',messle);
+            const messsender = messent[messle-1].id;
+            const messStatus = messent[messle-1].read;
+            const latestmessage = messent[messle-1].content;
+            arraylatest = [...arraylatest, latestmessage];
+            if(messStatus == false){
+              if(messsender != currentUserId){
+                setShowno(true);
+                arraystatus = [...arraystatus, messStatus];
+              }
+            }else{
+              setShowno(false);
+              arraystatus = [...arraystatus, messStatus];
             }
+            const contentid = doc.id;
+            arrayid = [...arrayid, contentid];
+            contentname.map((nm, index) =>{
+              if(contentids[index] != currentUserId){
+                array = [...array, nm];
+                arrayids = [...arrayids, contentids[index]];
+                
+              }
+            });
           }else{
-            setShowno(false);
+            console.log('メッセージフィールドが存在しません');
           }
-          const contentid = doc.id;
-          arrayid = [...arrayid, contentid];
-          contentname.map((nm, index) =>{
-            if(contentids[index] != currentUserId){
-              array = [...array, nm];
-              arrayids = [...arrayids, contentids[index]];
-            }
-          })
         });
 
         const contentname = async() => {
@@ -299,7 +322,11 @@ export const TextbookTalk = ({navigation}) => {
           
           setChatroom(array);
           setImage(arrayids);
+          setStatus(arraystatus);
+          setLatest(arraylatest);
           console.log('imageは',arrayids);
+          console.log('statusは',arraystatus);
+          console.log('latestmessagesは',arraylatest);
 
           //const key = currentUserId;
 
@@ -379,6 +406,8 @@ export const TextbookTalk = ({navigation}) => {
         setChatroom(array);
         setChatid(arrayid);
         setImage(arrayids);
+        setStatus(arraystatus);
+        setLatest(arraylatest);
 
         return () => unsubscribe();
     });
@@ -399,7 +428,7 @@ export const TextbookTalk = ({navigation}) => {
                 const idcode = await createChatroomStructure(info, userInfoID[index]);
                 console.log("引き渡すまじの直前のid",idcode);
                 setNameindi(info);
-                navigation.navigate('チャットルーム', {id:idcode, name: info, a:0});
+                navigation.navigate('チャットルーム', {id:idcode, name: info, a:0, ids: image[index]});
             }}><Text>{info+"さんに連絡する"}</Text>
             </TouchableOpacity>)}
           </View>
@@ -408,7 +437,7 @@ export const TextbookTalk = ({navigation}) => {
           </View>
           <View style={styles.talkroom}>
             {chatroom.map((chatroomindi, index) => 
-            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} ids={image[index]} navigation={navigation} status={showno}/>)}
+            <TalkRoom key={index} chatroom={chatroomindi} chatid={chatid[index]} ids={image[index]} navigation={navigation} status={status[index]} latest={latest[index]}/>)}
           </View>
 
 

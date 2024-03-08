@@ -25,9 +25,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Chatroom=({route, navigation})=>{
     const { chatmessage, setChatmessage  } = useTalkContext();
-    const {id, name, a} = route.params;
+    const {id, name, a, ids} = route.params;
     console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
+    const [image, setImage] = useState('djJgmj1rweZiL3aORlpYW3OAOYN2');
+    const [check, setCheck] = useState(false);
+    const [urli, setUrli] = useState('');
     const key = `${id}`;
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
@@ -117,6 +120,38 @@ export const Chatroom=({route, navigation})=>{
     };
       
       getdata();*/
+
+      useEffect(()=>{
+        setUrli(ids);
+    },[]);
+
+    useEffect(()=>{
+    console.log('idsの値は',ids);
+        if(ids == '1qkYVAZr1ke2OdH5srFoBUKbfiK2'){
+            //const url = 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture';
+            getDownloadURL(ref(storage, 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture.jpg')).then((getURI)=>{
+                    setImage(getURI)//ここに画像のurlが入ります。
+                }).
+                catch((e)=>{
+                    console.log(e.message)
+                    console.log('マグロさんです');
+                }).then(()=>{
+                    setCheck(true);
+                })
+        }else{
+            console.log('マグロさんじゃありません');
+            getDownloadURL(ref(storage, `users/${ids}/mainPicture`)).then((getURI)=>{
+                    setImage(getURI)//ここに画像のurlが入ります。
+                }).
+                catch((e)=>{
+                    console.log(e.message)
+                }).then(()=>{
+                    setCheck(true);
+                })
+        }
+
+    },[urli])
+    
   useEffect(()=>{
     const loaduserid = async () => {
       try {
@@ -357,8 +392,11 @@ export const Chatroom=({route, navigation})=>{
                                 alignItems: message.id == iduser ? 'flex-end' : 'flex-start',
                             }} key={index}>
                               <View style={{flexDirection: 'row'}}>
+                                { message.id != iduser ? <View style={{paddingRight: 3}}>
+                                  { check == true ? <View style={{height: 40, width: 40, borderRadius: 200, backgroundColor: '#888888'}}><Image source={{uri: image}} style={{height: 40, width: 40, borderRadius: 200}}/></View> : <View style={{height: 40, width: 40, borderRadius: 200, backgroundColor: '#888888'}}></View>}
+                                </View> : <View></View>}
                                 <View style={{flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center'}}>
-                                  { message.id == iduser ? (message.read == false ? <View></View> : <Text>{"既読"}</Text>) : <View></View>}
+                                  { message.id == iduser ? (message.read == false ? <View></View> : <AntDesign name="check" size={18} color="dodgerblue" />) : <View></View>}
                                   { message.id == iduser ? <Text style={{paddingRight: 3}}>{message.time}</Text> : <View></View>}
                                 </View>
                                 <View style={{
@@ -366,7 +404,8 @@ export const Chatroom=({route, navigation})=>{
                                     padding: 8,
                                     borderRadius: 20,
                                     paddingBottom: 10,
-                                    maxWidth: '80%'
+                                    maxWidth: '80%',
+                                    justifyContent: 'center'
                                 }}>
                                     <Text style={{color: 'white', fontSize: 15}}>{message.content}</Text>
                                 </View>
