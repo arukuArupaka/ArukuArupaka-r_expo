@@ -44,7 +44,6 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
             height: 60,
             //borderRadius: 20,
             borderBottomWidth: 0.5,
-            borderTopWidth: 0.5,
             //alignItems: 'center',
             justifyContent: 'center'
         }
@@ -70,7 +69,7 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
     },[]);
 
     useEffect(()=>{
-    console.log('idsの値は',ids);
+    //console.log('idsの値は',ids);
         if(ids == '1qkYVAZr1ke2OdH5srFoBUKbfiK2'){
             //const url = 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture';
             getDownloadURL(ref(storage, 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture.jpg')).then((getURI)=>{
@@ -78,12 +77,12 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
                 }).
                 catch((e)=>{
                     console.log(e.message)
-                    console.log('マグロさんです');
+                    //console.log('マグロさんです');
                 }).then(()=>{
                     setCheck(true);
                 })
         }else{
-            console.log('マグロさんじゃありません');
+            //console.log('マグロさんじゃありません');
             getDownloadURL(ref(storage, `users/${ids}/mainPicture`)).then((getURI)=>{
                     setImage(getURI)//ここに画像のurlが入ります。
                 }).
@@ -101,7 +100,7 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
         <TouchableOpacity onPress={()=>{
             setNameindi(chatroom);
             setClick(chatid);
-            console.log('引き渡す前のclickid',chatid);
+            //console.log('引き渡す前のclickid',chatid);
             navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1, ids: ids})
         }}>
             <View style={styles.body}>

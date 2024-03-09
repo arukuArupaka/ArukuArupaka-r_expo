@@ -93,7 +93,7 @@ export const TextbookTalk = ({navigation}) => {
     })
 
       useEffect(()=>{
-    console.log('effict')
+    //console.log('effict')
     const getUserDate=async()=>{
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
@@ -119,9 +119,9 @@ export const TextbookTalk = ({navigation}) => {
             if(userInfo.length === 0 ){
               querySnapshot.forEach(doc => {
                           if(doc.id !== currentUserId){
-                            console.log(`User Name: ${doc.data().userName}`);
+                            //console.log(`User Name: ${doc.data().userName}`);
                             setUserInfo(prev=>[...prev, doc.data().userName]);
-                            console.log(`User ID: ${doc.id}`);
+                            //console.log(`User ID: ${doc.id}`);
                             setUserInfoID(prev=>[...prev, doc.id]);   
                           }
 
@@ -189,7 +189,7 @@ export const TextbookTalk = ({navigation}) => {
     if (!userSnapshot.empty) {
       notuserSnapshot.forEach((userDoc) => {
         const username = userDoc.data().name; // ユーザー名の取得
-        console.log(`User name in chat: ${username}`);
+        //console.log(`User name in chat: ${username}`);
       //if(chatroom.length === 0){
           setChatroom(prev=>[...prev, username]);
           setChatid(prev=>[...prev, doc.id]);
@@ -221,7 +221,7 @@ export const TextbookTalk = ({navigation}) => {
       name: "Chatroom", // ここで適切なチャットルーム名を設定
     }]);*/
 
-    console.log("Chatroom created with ID: ", chatroomRef.id);
+    //console.log("Chatroom created with ID: ", chatroomRef.id);
   
 
     
@@ -246,12 +246,12 @@ export const TextbookTalk = ({navigation}) => {
         //id: anotherID // もう一方のユーザーID
       //});
 
-    console.log("Chatroom structure created");
+    //console.log("Chatroom structure created");
 
     //setChatroom(prev => [ ...prev, anotherName]);
     //setChatid(prev => [...prev, chatroomRef.id]);
     setChatdoc(chatroomRef.id);
-    console.log("引き渡す前のidの値は",chatroomRef.id);
+    //console.log("引き渡す前のidの値は",chatroomRef.id);
     const iduser = chatroomRef.id;
 
     return iduser;
@@ -259,14 +259,17 @@ export const TextbookTalk = ({navigation}) => {
   };
 
   useEffect(()=>{
+    if(!isLogin||isLoginNotVerificationEmail){
+
+    }else{
     const currentUserId = auth.currentUser.uid;
     const usersRef = collection(db, 'chat');
     //const q = query(usersRef, orderBy("creationTime", "desc"));
     const q2 = query(usersRef, where("userid", "array-contains", currentUserId),orderBy("creationTime", "desc"));
 
     const unsubscribe = onSnapshot(q2, (querySnapshot) => {
-      console.log('onSnapが実行されました');
-      console.log('ステートフックが初期化されました');
+      //console.log('onSnapが実行されました');
+      //console.log('ステートフックが初期化されました');
       setChatroom([]);
       setChatid([]);
       setStatus([]);
@@ -281,24 +284,29 @@ export const TextbookTalk = ({navigation}) => {
         querySnapshot.docs.map(doc => {
           const docData = doc.data();
           if("messages" in docData){
-            console.log('メッセージフィールドが存在します');
+            //console.log('メッセージフィールドが存在します');
             const contentname = doc.data().username;
             const contentids = doc.data().userid;
             const messent = doc.data().messages;
             const messle = messent.length;
-            console.log('messagesの長さは',messle);
+            //console.log('messagesの長さは',messle);
             const messsender = messent[messle-1].id;
             const messStatus = messent[messle-1].read;
+            if(messsender != currentUserId){
+              arraystatus = [...arraystatus, messStatus];
+            }else{
+              arraystatus = [...arraystatus, true];
+            }
             const latestmessage = messent[messle-1].content;
             arraylatest = [...arraylatest, latestmessage];
             if(messStatus == false){
               if(messsender != currentUserId){
                 setShowno(true);
-                arraystatus = [...arraystatus, messStatus];
+                //arraystatus = [...arraystatus, messStatus];
               }
             }else{
               setShowno(false);
-              arraystatus = [...arraystatus, messStatus];
+              //arraystatus = [...arraystatus, messStatus];
             }
             const contentid = doc.id;
             arrayid = [...arrayid, contentid];
@@ -310,12 +318,12 @@ export const TextbookTalk = ({navigation}) => {
               }
             });
           }else{
-            console.log('メッセージフィールドが存在しません');
+            //console.log('メッセージフィールドが存在しません');
           }
         });
 
         const contentname = async() => {
-          console.log('contentnameが呼び出されました');
+          //console.log('contentnameが呼び出されました');
           const currentUserId = auth.currentUser.uid;
           let i = 0;
 
@@ -324,9 +332,9 @@ export const TextbookTalk = ({navigation}) => {
           setImage(arrayids);
           setStatus(arraystatus);
           setLatest(arraylatest);
-          console.log('imageは',arrayids);
-          console.log('statusは',arraystatus);
-          console.log('latestmessagesは',arraylatest);
+          //console.log('imageは',arrayids);
+          //console.log('statusは',arraystatus);
+          //console.log('latestmessagesは',arraylatest);
 
           //const key = currentUserId;
 
@@ -334,7 +342,7 @@ export const TextbookTalk = ({navigation}) => {
           const removeStorageid = async () => {
             try {
               await AsyncStorage.removeItem('roomidkey');
-              console.log('Storage item removed successfully');
+              //console.log('Storage item removed successfully');
             } catch (error) {
               console.error('Error removing storage item: ', error);
             }
@@ -349,21 +357,21 @@ export const TextbookTalk = ({navigation}) => {
             try {
               const stringValue = JSON.stringify(arrayid);
               await AsyncStorage.setItem('roomidkey', stringValue);
-              console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+              //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
             } catch (e) {
               console.log(e);
             }
           };
         
             saveroomid();
-            console.log('ルームidの情報の保存が実行され、その値は',arrayid);
+            //console.log('ルームidの情報の保存が実行され、その値は',arrayid);
 
 
             //roomnameの保存
             const removeStoragename = async () => {
               try {
                 await AsyncStorage.removeItem('roomnamekey');
-                console.log('Storage item removed successfully');
+                //console.log('Storage item removed successfully');
               } catch (error) {
                 console.error('Error removing storage item: ', error);
               }
@@ -378,21 +386,21 @@ export const TextbookTalk = ({navigation}) => {
               try {
                 const stringValue = JSON.stringify(array);
                 await AsyncStorage.setItem('roomnamekey', stringValue);
-                console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+                //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
               } catch (e) {
                 console.log(e);
               }
             };
           
               saveroomname();
-              console.log('ルームidの情報の保存が実行され、その値は',array);
+              //console.log('ルームidの情報の保存が実行され、その値は',array);
 
 
               const savecurrentid = async (currentUserId:string) => {
                 try {
                   const stringValue = JSON.stringify(currentUserId);
                   await AsyncStorage.setItem('currentid', stringValue);
-                  console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+                  //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
                 } catch (e) {
                   console.log(e);
                 }
@@ -411,6 +419,7 @@ export const TextbookTalk = ({navigation}) => {
 
         return () => unsubscribe();
     });
+  }
   },[]);
 
 
@@ -426,7 +435,7 @@ export const TextbookTalk = ({navigation}) => {
             <TouchableOpacity key={index} style={styles.userList}
               onPress={async() => {
                 const idcode = await createChatroomStructure(info, userInfoID[index]);
-                console.log("引き渡すまじの直前のid",idcode);
+                //console.log("引き渡すまじの直前のid",idcode);
                 setNameindi(info);
                 navigation.navigate('チャットルーム', {id:idcode, name: info, a:0, ids: image[index]});
             }}><Text>{info+"さんに連絡する"}</Text>

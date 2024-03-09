@@ -29,7 +29,7 @@ type TalkRoomProps = {
   };
 
 export const RootTalk = ({id, name}) => {
-    console.log("RootTalk内のidは",id);
+    //console.log("RootTalk内のidは",id);
     const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
     const [add, setAdd] = useState(false);
@@ -40,7 +40,7 @@ export const RootTalk = ({id, name}) => {
     const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
     if(!isLogin||isLoginNotVerificationEmail){
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
-      console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+      //console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
     }
 
 
@@ -79,8 +79,8 @@ export const RootTalk = ({id, name}) => {
             messages: arrayUnion({name: appUser.userName,content: content, sentAt: Timestamp.now().toDate().toLocaleString(),id: currentUserId,  time:timeString, read: false})
           });
 
-          console.log("現在時刻は",Timestamp.now()) ;
-        console.log("Chatroom structure created");
+          //console.log("現在時刻は",Timestamp.now()) ;
+        //console.log("Chatroom structure created");
     
         const name = appUser.userName;
         const info = {name, content};
@@ -92,7 +92,7 @@ export const RootTalk = ({id, name}) => {
         });*/
     
         //setChatmessage(prev=>[...prev, info]);
-        console.log(info);
+        //console.log(info);
         
         setInputValue('');
     

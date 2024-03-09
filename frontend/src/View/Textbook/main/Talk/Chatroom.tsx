@@ -26,12 +26,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const Chatroom=({route, navigation})=>{
     const { chatmessage, setChatmessage  } = useTalkContext();
     const {id, name, a, ids} = route.params;
-    console.log("chatroom内のidは",id);
+    //console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
     const [image, setImage] = useState('djJgmj1rweZiL3aORlpYW3OAOYN2');
     const [check, setCheck] = useState(false);
     const [urli, setUrli] = useState('');
     const key = `${id}`;
+    console.log('key',key);
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
     const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
@@ -70,7 +71,7 @@ export const Chatroom=({route, navigation})=>{
             if(stringValue != null){
               const value = JSON.parse(stringValue);
               setChatmessage(value);
-              console.log('messageは取得できました');
+              //console.log('messageは取得できました');
           }
           } catch (e) {
             console.log(e);
@@ -85,11 +86,11 @@ export const Chatroom=({route, navigation})=>{
             if(stringValue != null){
               const value = JSON.parse(stringValue);
               setIduser(value);
-              console.log('useridは',value);
+              //console.log('useridは',value);
           }
           } catch (e) {
             console.log(e);
-            console.log('取得できません!');
+            //console.log('取得できません!');
           }
         };
   
@@ -126,25 +127,25 @@ export const Chatroom=({route, navigation})=>{
     },[]);
 
     useEffect(()=>{
-    console.log('idsの値は',ids);
+    //console.log('idsの値は',ids);
         if(ids == '1qkYVAZr1ke2OdH5srFoBUKbfiK2'){
             //const url = 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture';
             getDownloadURL(ref(storage, 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture.jpg')).then((getURI)=>{
                     setImage(getURI)//ここに画像のurlが入ります。
                 }).
                 catch((e)=>{
-                    console.log(e.message)
-                    console.log('マグロさんです');
+                    //console.log(e.message)
+                    //console.log('マグロさんです');
                 }).then(()=>{
                     setCheck(true);
                 })
         }else{
-            console.log('マグロさんじゃありません');
+            //console.log('マグロさんじゃありません');
             getDownloadURL(ref(storage, `users/${ids}/mainPicture`)).then((getURI)=>{
                     setImage(getURI)//ここに画像のurlが入ります。
                 }).
                 catch((e)=>{
-                    console.log(e.message)
+                    //console.log(e.message)
                 }).then(()=>{
                     setCheck(true);
                 })
@@ -159,11 +160,11 @@ export const Chatroom=({route, navigation})=>{
         if(stringValue != null){
           const value = JSON.parse(stringValue);
           setIduser(value);
-          console.log('useridは',value);
+          //console.log('useridは',value);
       }
       } catch (e) {
         console.log(e);
-        console.log('取得できません!');
+        //console.log('取得できません!');
       }
     };
 
@@ -231,7 +232,7 @@ export const Chatroom=({route, navigation})=>{
           if("messages" in docData){
             const currentUserId = auth.currentUser.uid;
               const messInfo = docData.messages;
-              console.log('currentuserIdは',currentUserId);
+              //console.log('currentuserIdは',currentUserId);
 
             messInfo.map((indi, index)=>{
               //const hours = indi.sentAt.getHours();
@@ -268,7 +269,7 @@ export const Chatroom=({route, navigation})=>{
               const removeStoragemess = async (key:string) => {
                 try {
                   await AsyncStorage.removeItem(key);
-                  console.log('Storage item removed successfully');
+                  //console.log('Storage item removed successfully');
                 } catch (error) {
                   console.error('Error removing storage item: ', error);
                 }
@@ -281,15 +282,15 @@ export const Chatroom=({route, navigation})=>{
                 try {
                   const stringValue = JSON.stringify(array);
                   await AsyncStorage.setItem(key, stringValue);
-                  console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+                  //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
                 } catch (e) {
                   console.log(e);
                 }
               };
             savemessage(key);
-            console.log('新着メッセージの保存が実行され、その値は');
+            //console.log('新着メッセージの保存が実行され、その値は');
           }else{
-            console.log('存在しないので実行できませんでした');
+            //console.log('存在しないので実行できませんでした');
           }
 
 
@@ -367,9 +368,15 @@ export const Chatroom=({route, navigation})=>{
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 1000); // 100ミリ秒後に実行
       }, []);
+
+      useEffect(() => {
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 1000); // 100ミリ秒後に実行
+      }, [chatmessage]);
       
 
-    console.log('iduserの値は',iduser);
+    //console.log('iduserの値は',iduser);
     //console.log('messageの作成者は',chatmessage[0].id);
     return(
         <KeyboardAvoidingView

@@ -179,6 +179,9 @@ export const TimeTableProvider = ({ children }) => {
         let dayof=0;
         let periof=0;
         let sumof = 0;
+        let ids = [];
+        let redu = 0;
+        let res = 0;
       if(isNaN(pushedClassFrameDetail.day)){
         sumof = 0;
       }else{
@@ -186,11 +189,22 @@ export const TimeTableProvider = ({ children }) => {
           for(periof=0;periof<7;periof++){
             if(weekTime[dayof][periof].unit != ""){
               sumof += Number(weekTime[dayof][periof].unit);
+              if(ids.length > 0){
+                ids.map((id, index) => {
+                  if(id == weekTime[dayof][periof].num){
+                    redu += Number(weekTime[dayof][periof].unit);
+                  }
+                });
+                ids = [...ids, weekTime[dayof][periof].num]
+              }else{
+                ids = [...ids, weekTime[dayof][periof].num];
+              }
             }
           }
         }
+        res = sumof - redu;
       }
-        return sumof; 
+        return res; 
 
     };
     
