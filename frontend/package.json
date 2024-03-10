@@ -23,6 +23,8 @@
     "axios": "^1.6.7",
     "clone": "^2.1.2",
     "expo": "~49.0.15",
+    "expo-constants": "~14.4.2",
+    "expo-device": "~5.4.0",
     "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",
     "expo-notifications": "~0.20.1",

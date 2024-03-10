@@ -21,7 +21,7 @@ import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAc
 //import { RootState } from './state';
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import TokenCheck from '../../../../component/Textbook/Chat/TokenCheck';
 
 export const TextbookTalk = ({navigation}) => {
   const [image, setImage] = useState([]);
@@ -429,6 +429,7 @@ export const TextbookTalk = ({navigation}) => {
   return (
     <ScrollView>
       <View>
+        <TokenCheck/>
         <HeaderforTextbook2 />
           <View style={styles.List}>
             { userInfo.map((info, index) => 
