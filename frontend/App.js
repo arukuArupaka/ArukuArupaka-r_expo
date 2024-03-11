@@ -1,5 +1,5 @@
 import HomeView from './src/View/HomeView'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
@@ -21,14 +21,45 @@ import WebSite from './src/View/WebSite';
 import { Provider } from 'react-redux'
 import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
+import * as Notifications from 'expo-notifications';
+import React from 'react';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
+  const navigationRef = useNavigationContainerRef();
+
+  React.useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+
+      const { id , name, type, ids } = response.notification.request.content.data;
+      if (navigationRef.isReady()) {
+        // 最上位のスタックナビゲーターから、目的のスクリーンまでのパスを指定
+        navigationRef.navigate('textbook', { // 最上位のスタックナビゲーター内のスクリーン
+          screen: '本画面', // 'textbook' スタック内のスクリーン
+          params: {
+            screen: 'トーク',
+            /*params: {
+              screen: 'チャットルーム',
+              params: {
+                id: id,
+                name: name,
+                type: type,
+                ids: ids,
+              }
+            }*/
+          }
+        });
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   return (
     <Provider store={AR_Store}>
     <TimeTableProvider>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name="Home" component={HomeView} options={{ headerShown: false }}/>
           <Stack.Screen name="TimeTable" component={TimeTable}

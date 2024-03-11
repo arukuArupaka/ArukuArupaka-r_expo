@@ -24,7 +24,7 @@ import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Chatroom=({route, navigation})=>{
-    const { chatmessage, setChatmessage  } = useTalkContext();
+    const { nameindi, setNameindi, chatmessage, setChatmessage  } = useTalkContext();
     const {id, name, type, ids} = route.params;
     //console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
@@ -124,6 +124,10 @@ export const Chatroom=({route, navigation})=>{
 
       useEffect(()=>{
         setUrli(ids);
+    },[]);
+
+    useEffect(()=>{
+      setNameindi(name);
     },[]);
 
     useEffect(()=>{
@@ -426,7 +430,7 @@ export const Chatroom=({route, navigation})=>{
                         </View>
                     </ScrollView>
                     <View style={{zIndex: 200}}>
-                        <RootTalk id={id} type={type}/>
+                        <RootTalk id={id} type={type} ids={ids}/>
                     </View>
                 {/*</SafeAreaView>*/}
             </View>

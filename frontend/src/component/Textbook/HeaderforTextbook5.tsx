@@ -72,15 +72,15 @@ export const HeaderforTextbook5 = () => {
         </TouchableOpacity>*/}
 
         <View>
-          <Text style={{fontSize: 20}}>{nameindi}</Text>
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}>{nameindi}</Text>
         </View>
 
-        <TouchableOpacity
+        <View
         style={{marginRight:Platform.OS === 'ios' ? 10 : 16}}
-        onPress={() => setshowModal(true)}
+        //onPress={() => setshowModal(true)}
         >
-          <FontAwesome name="question-circle-o" size={28} color="black" style={styles.question} />
-        </TouchableOpacity>
+          {/*<FontAwesome name="question-circle-o" size={28} color="black" style={styles.question} />*/}
+      </View>
 
         <Modal
           isVisible={showModal}

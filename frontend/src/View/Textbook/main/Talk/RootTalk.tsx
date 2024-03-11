@@ -29,9 +29,10 @@ type TalkRoomProps = {
     id:string;
     name:string;
     type:string;
+    ids:any;
   };
 
-export const RootTalk = ({id, name, type}) => {
+export const RootTalk = ({id, name, type, ids}) => {
     //console.log("RootTalk内のidは",id);
     const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
@@ -49,7 +50,7 @@ export const RootTalk = ({id, name, type}) => {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: false,
+        shouldPlaySound: true,
         shouldSetBadge: false,
       }),
     });
@@ -173,6 +174,7 @@ export const RootTalk = ({id, name, type}) => {
         useridi.map((ids, index) => {
           if(currentUserId != ids){
             usrid = ids;
+          }else{
             usrnames = username[index];
           }
         });
@@ -189,14 +191,16 @@ export const RootTalk = ({id, name, type}) => {
           title: `${usrnames}`,
           body: `${content}`,
           data: {
-            screen: 'チャットルーム', // ユーザーが通知をタップしたときに遷移する画面
-            chatId: `${id}`, // チャットルームのID
-          }
+            parentScreen: 'textbook', // 親の Stack Navigator 名
+            screen: 'トーク',
+            //nestedscreen: 'チャットルーム', // 目的の画面（子の Stack Navigator 内）
+            id: `${id}`,
+            name: usrnames,
+            type: 'chat',
+            ids: ids
+          },
         }));
   
-  
-          
-        
           try{
           const response = await fetch('https://exp.host/--/api/v2/push/send', {
             method: 'POST',
