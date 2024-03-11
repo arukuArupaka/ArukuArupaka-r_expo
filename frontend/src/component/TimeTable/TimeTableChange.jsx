@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TimeTableChange = () => {
 
-    const { timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason } = useTimeTable();
+    const { unitSum, setUnitSum, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
 
     const pickerSelectStyles = StyleSheet.create({
         inputIOS: {
@@ -46,7 +46,7 @@ const TimeTableChange = () => {
             justifyContent: 'space-around',
             alignItems: 'center',
             alignContent: 'stretch',
-            height: 300
+            height: 500
         },
         Qty:{
             display: 'flex',
@@ -61,7 +61,7 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70
 
         },
         QtySet:{
@@ -82,7 +82,8 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70,
+
         },
         QtySets:{
             display: 'flex',
@@ -90,7 +91,7 @@ const TimeTableChange = () => {
             justifyContent: 'space-between'
         },
         SizeSet:{
-            paddingLeft: '30%'
+            paddingLeft: '30%',
         },
         changebutton:{
             display: 'flex',
@@ -113,10 +114,10 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 75
         },
         picker: {
-            alignItems: 'center'
+            alignItems: 'center',
         },
         season:{
             display: 'flex',
@@ -131,10 +132,10 @@ const TimeTableChange = () => {
             borderRadius: 8,
             borderColor: 'black',
             width: '90%',
-            height: '25%'
+            height: 70,
         },
         picker2:{
-            alignItems: 'center'
+            alignItems: 'center',
         }
 })
 
@@ -151,22 +152,22 @@ return (
             <RNPickerSelect
             onValueChange={(value) => setDepartment(value)}
             items={[
-                { label: '法学部', value: '法学部' },
-                { label: '経済学部', value: '経済学部' },
-                { label: '経営学部', value: '経営学部' },
-                { label: '産業社会学部', value: '産業社会学部' },
-                { label: '国際関係学部', value: '国際関係学部' },
-                { label: '政策科学部', value: '政策科学部' },
-                { label: '文学部', value: '文学部' },
-                { label: '映像学部', value: '映像学部' },
-                { label: '総合心理学部', value: '総合心理学部' },
-                { label: '理工学部', value: '理工学部'},
-                { label: 'グローバル教養学部', value: 'グローバル教養学部' },
-                { label: '食マネジメント学部', value: '食マネジメント学部' },
-                { label: '情報理工学部', value: '情報理工学部' },
-                { label: '生命科学部', value: '生命科学部' },
-                { label: '薬学部', value: '薬学部' },
-                { label: 'スポーツ健康学部', value: 'スポーツ健康学部' }
+                { label: '法学部', value: '法学部', key: 'hougaku' },
+                { label: '経済学部', value: '経済学部', key: 'keizai' },
+                { label: '経営学部', value: '経営学部', key: 'keiei' },
+                { label: '産業社会学部', value: '産業社会学部', key: 'sansha' },
+                { label: '国際関係学部', value: '国際関係学部', key: 'kokusai' },
+                { label: '政策科学部', value: '政策科学部', key: 'seisaku' },
+                { label: '文学部', value: '文学部', key: 'bun' },
+                { label: '映像学部', value: '映像学部', key: 'eizou' },
+                { label: '総合心理学部', value: '総合心理学部', key: 'sougou' },
+                { label: '理工学部', value: '理工学部', key: 'rikou' },
+                { label: 'グローバル教養学部', value: 'グローバル教養学部', key: 'gurokyou' },
+                { label: '食マネジメント学部', value: '食マネジメント学部', key: 'shokumane' },
+                { label: '情報理工学部', value: '情報理工学部', key: 'jouri' },
+                { label: '生命科学部', value: '生命科学部', key: 'seimei' },
+                { label: '薬学部', value: '薬学部', key: 'yakugaku' },
+                { label: 'スポーツ健康学部', value: 'スポーツ健康学部', key: 'supoken' }
             ]}
             style={pickerSelectStyles}
             placeholder={{ label: department, value: department }}
@@ -184,8 +185,8 @@ return (
                 <RNPickerSelect
                 onValueChange={(value) => setSeason(value)}
                 items={[
-                    { label: '秋セメスター', value: '秋セメスター' },
-                    { label: '春セメスター', value: '春セメスター' }
+                    { label: '秋セメスター', value: '秋セメスター' , key: 'fall'},
+                    { label: '春セメスター', value: '春セメスター' , key: 'spring'}
                 ]}
                 style={pickerSelectStyles}
                 placeholder={{ label: season, value: season }}
@@ -234,6 +235,26 @@ return (
                 />
             </View>
             <TimeTableQty/>
+        </View>
+        <View style={styles.PageSize}>
+            <Text
+                style = {{
+                    fontSize: 15,
+                }}
+            >{"単位数ごとに自動で色分け"}</Text>
+            <View style={styles.SizeSet}>
+                <Switch
+                    value={nodata}
+                    onValueChange={notifiSwitch}
+                    trackColor={{false: '#888888', true: '#00ff7f'}}
+                    thumbColor={'white'}
+                />
+            </View>
+            <TimeTableQty/>
+        </View>
+        <View style={styles.PageSize}>
+            <Text style={{fontSize: 15}}>{"登録授業の合計単位数"}</Text>
+            <Text style={{fontSize: 15}}>{`${unitSum}`}</Text>
         </View>
     </View>
 );

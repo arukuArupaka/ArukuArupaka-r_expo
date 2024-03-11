@@ -4,6 +4,7 @@ import { HeaderforTextbook2 } from '../../../../component/Textbook/HeaderforText
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const MyPageHome = ({navigation}) => {
+  
   return(
     <View>
       <HeaderforTextbook2/>
@@ -40,8 +41,8 @@ const ThreeBox = (props) => {
 const styles = StyleSheet.create({
 
   main:{
-    height:Platform.OS==='ios'?'88%':'92%',
-    backgroundColor:'#eee',
+    height:Platform.OS==='ios'?'90%':'93%',
+    // backgroundColor:'#eee',
     justifyContent: 'center',
     alignItems: 'center'
   },
