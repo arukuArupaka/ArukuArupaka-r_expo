@@ -20,7 +20,9 @@ import { UseDispatch } from 'react-redux';
 import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAction';
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext';
 //import { Timestamp } from 'firebase-admin/firestore';
-
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 //import { RootState } from './state';
 
 type TalkRoomProps = {
@@ -42,6 +44,83 @@ export const RootTalk = ({id, name}) => {
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
       //console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
     }
+
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+    
+    
+    // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
+    /*async function sendPushNotification(idi:string, body:string) {
+      const check = doc(db, `chat/${idi}`);
+      const checkdoc = await getDoc(check);
+      const useridi = checkdoc.data().userid;
+      const username = checkdoc.data().username;
+      const currentUserId = auth.currentUser.uid;
+      let usrid = "";
+      let usrnames = "";
+
+      useridi.map((ids, index) => {
+        if(currentUserId != ids){
+          usrid = ids;
+          usrnames = username[index];
+        }
+      });
+
+      console.log('ids:',usrid);
+
+      const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
+      const usertoken = tokendocu.data().token;
+      console.log('token', usertoken);
+
+      const messages = usertoken.map(token => ({
+        to: `${token}`,
+        sound: 'default',
+        title: `${usrnames}`,
+        body: `${body}`,
+        data: { someData: 'goes here' },
+      }));
+
+
+        
+      
+        try{
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(messages),
+        });
+        const responseJson = await response.json();
+      
+          // レスポンスからエラーをチェック
+          if (responseJson.data && responseJson.data.status === 'error') {
+            console.log('Error sending notification:', responseJson.data.message);
+            
+            // ここに無効なトークンに対する処理を追加
+            if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
+              // トークンが無効であることを示す処理
+              console.log('This token is no longer registered. Removing from database...');
+              // トークンをデータベースから削除するロジックをここに追加
+            }
+          } else {
+            // 通知が成功した場合の処理
+            console.log('Notification sent successfully:', responseJson);
+          }
+        } catch (error) {
+          console.error('Error sending notification:', error);
+        }
+
+        setInputValue('');
+
+    }*/
 
 
     async function createChatroomStructure(content:string) {
@@ -85,16 +164,66 @@ export const RootTalk = ({id, name}) => {
         const name = appUser.userName;
         const info = {name, content};
 
-        /*const col = doc(db, "chat",`${id}`);
-        await updateDoc(col, {
-          creationTime: Timestamp.now(), // 更新したいフィールド名と新しい値
-          // 複数のフィールドを更新することも可能
-        });*/
-    
-        //setChatmessage(prev=>[...prev, info]);
-        //console.log(info);
+        const useridi = checkdoc.data().userid;
+        const username = checkdoc.data().username;
+        let usrid = "";
+        let usrnames = "";
+  
+        useridi.map((ids, index) => {
+          if(currentUserId != ids){
+            usrid = ids;
+            usrnames = username[index];
+          }
+        });
+  
+        console.log('ids:',usrid);
+  
+        const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
+        const usertoken = tokendocu.data().token;
+        console.log('token', usertoken);
+  
+        const messages = usertoken.map(token => ({
+          to: `${token}`,
+          sound: 'default',
+          title: `${usrnames}`,
+          body: `${content}`,
+          data: { someData: 'goes here' },
+        }));
+  
+  
+          
         
-        setInputValue('');
+          try{
+          const response = await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Accept-encoding': 'gzip, deflate',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messages),
+          });
+          const responseJson = await response.json();
+        
+            // レスポンスからエラーをチェック
+            if (responseJson.data && responseJson.data.status === 'error') {
+              console.log('Error sending notification:', responseJson.data.message);
+              
+              // ここに無効なトークンに対する処理を追加
+              if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
+                // トークンが無効であることを示す処理
+                console.log('This token is no longer registered. Removing from database...');
+                // トークンをデータベースから削除するロジックをここに追加
+              }
+            } else {
+              // 通知が成功した場合の処理
+              console.log('Notification sent successfully:', responseJson);
+            }
+          } catch (error) {
+            console.error('Error sending notification:', error);
+          }
+  
+          setInputValue('');
     
       };
 

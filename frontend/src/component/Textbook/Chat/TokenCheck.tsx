@@ -1,4 +1,4 @@
-/*import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Text, View, Button, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -15,16 +15,17 @@ Notifications.setNotificationHandler({
 
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
+async function sendPushNotification() {
   const message = {
-    to: expoPushToken,
+    to: 'ExponentPushToken[-qdNQaLKhH_86HYGblY_bC]',
     sound: 'default',
     title: 'Original Title',
     body: 'And here is the body!',
     data: { someData: 'goes here' },
   };
 
-  await fetch('https://exp.host/--/api/v2/push/send', {
+  try{
+  const response = await fetch('https://exp.host/--/api/v2/push/send', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -33,6 +34,25 @@ async function sendPushNotification(expoPushToken) {
     },
     body: JSON.stringify(message),
   });
+  const responseJson = await response.json();
+
+    // レスポンスからエラーをチェック
+    if (responseJson.data && responseJson.data.status === 'error') {
+      console.log('Error sending notification:', responseJson.data.message);
+      
+      // ここに無効なトークンに対する処理を追加
+      if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
+        // トークンが無効であることを示す処理
+        console.log('This token is no longer registered. Removing from database...');
+        // トークンをデータベースから削除するロジックをここに追加
+      }
+    } else {
+      // 通知が成功した場合の処理
+      console.log('Notification sent successfully:', responseJson);
+    }
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
 }
 
 async function registerForPushNotificationsAsync() {
@@ -103,68 +123,11 @@ export default function App() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification(expoPushToken);
+          await sendPushNotification();
         }}
       />
     </View>
   );
-}*/
-
-
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
-export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState('');
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-  }, []);
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync({
-        experienceId: Constants.manifest.id, // Managed workflowの場合
-        projectId: Constants.expoConfig?.projectId, // EAS Buildの場合
-      })).data;
-
-    return token;
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={{height: 300}}>Your Expo Push Token: {expoPushToken}</Text>
-      <Button title="Request Permissions" onPress={registerForPushNotificationsAsync} />
-    </View>
-  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 

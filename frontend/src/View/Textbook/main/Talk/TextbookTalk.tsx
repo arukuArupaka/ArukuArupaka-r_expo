@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { Timestamp, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { arrayUnion, updateDoc, Timestamp, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -22,6 +22,11 @@ import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAc
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TokenCheck from '../../../../component/Textbook/Chat/TokenCheck';
+import {useRef } from 'react';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
 
 export const TextbookTalk = ({navigation}) => {
   const [image, setImage] = useState([]);
@@ -88,13 +93,80 @@ export const TextbookTalk = ({navigation}) => {
 
   }else{
 
-    useEffect(()=>{
+    async function registerForPushNotificationsAsync() {
+      let token;
+    
+      if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+    
+      if (Device.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
+        token = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig.extra.eas.projectId,
+        });
+        console.log(token);
+      } else {
+        alert('Must use physical device for Push Notifications');
+      }
+    
+      return token.data;
+    }
 
-    })
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+  
+    useEffect(() => {
+      const tokenset = async() =>{
+        const currentUserId = auth.currentUser.uid;
+        const tokendocs = doc(db, `tokens/${currentUserId}`);
+        const tokendoc = await getDoc(tokendocs);
+        const currentToken = await registerForPushNotificationsAsync();
+        let tok = false;
+        console.log('tokenドキュメント作成開始');
+
+        if(tokendoc.exists()){
+          console.log('tokens内にドキュメントが存在します');
+          const tokendocument = tokendoc.data().token;
+          tokendocument.map((tk, index) => {
+            if(tk != currentToken){
+              console.log('tokenがまだ存在しないので保存します');
+              tok = true;
+            }
+          });
+          await updateDoc(tokendocs, {
+            token: arrayUnion(currentToken)
+          })
+        }else{
+          console.log('tokenドキュメントが存在しません');
+          await setDoc(tokendocs, {
+            token: arrayUnion(currentToken),
+            userid: currentUserId
+          })
+        }
+      }
+      tokenset();
+    }, []);
 
       useEffect(()=>{
-    //console.log('effict')
-    const getUserDate=async()=>{
+      //console.log('effict')
+      const getUserDate=async()=>{
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
         const refFiresrore = doc(db, `users/${userUUID}`);
@@ -429,7 +501,6 @@ export const TextbookTalk = ({navigation}) => {
   return (
     <ScrollView>
       <View>
-        <TokenCheck/>
         <HeaderforTextbook2 />
           <View style={styles.List}>
             { userInfo.map((info, index) => 
