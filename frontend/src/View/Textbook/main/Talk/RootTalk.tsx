@@ -28,9 +28,10 @@ import Constants from 'expo-constants';
 type TalkRoomProps = {
     id:string;
     name:string;
+    type:string;
   };
 
-export const RootTalk = ({id, name}) => {
+export const RootTalk = ({id, name, type}) => {
     //console.log("RootTalk内のidは",id);
     const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
@@ -140,7 +141,7 @@ export const RootTalk = ({id, name}) => {
         //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
         //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
     
-        const check = doc(db, `chat/${id}`);
+        const check = doc(db, `${type}/${id}`);
         const checkdoc = await getDoc(check);
         const checkmes = checkdoc.data();
         const timestamp = Timestamp.now(); // Firestoreの現在のタイムスタンプを取得
@@ -187,7 +188,10 @@ export const RootTalk = ({id, name}) => {
           sound: 'default',
           title: `${usrnames}`,
           body: `${content}`,
-          data: { someData: 'goes here' },
+          data: {
+            screen: 'チャットルーム', // ユーザーが通知をタップしたときに遷移する画面
+            chatId: `${id}`, // チャットルームのID
+          }
         }));
   
   
@@ -244,7 +248,7 @@ export const RootTalk = ({id, name}) => {
           <TouchableOpacity 
           onPress={() => {createChatroomStructure(inputValue); Keyboard.dismiss();            
            const asyncChange = async(id:string) => {
-            await updateDoc(doc(db, 'chat', id), {
+            await updateDoc(doc(db, `${type}`, id), {
                 creationTime: Timestamp.now()
           });
         };

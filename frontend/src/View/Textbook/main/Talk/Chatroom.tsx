@@ -25,7 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Chatroom=({route, navigation})=>{
     const { chatmessage, setChatmessage  } = useTalkContext();
-    const {id, name, a, ids} = route.params;
+    const {id, name, type, ids} = route.params;
     //console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
     const [image, setImage] = useState('djJgmj1rweZiL3aORlpYW3OAOYN2');
@@ -216,13 +216,13 @@ export const Chatroom=({route, navigation})=>{
   useEffect(()=>{
     setChatmessage([]); 
 
-    const chatroomsRef = collection(db, 'chat');
+    const chatroomsRef = collection(db, `${type}`);
     //getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
     // 各chatroomについて処理
     // 各chatroomのusersサブコレクションに対するクエリを実行
-    const usersRef = collection(db, `chat`);
+    const usersRef = collection(db, `${type}`);
     //const q = query(usersRef, orderBy("createTime", "asc"));
-    const docume = doc(db, `chat/${id}`);
+    const docume = doc(db, `${type}/${id}`);
     const unsubscribe = onSnapshot(docume, (querySnapshot) => {
         //querySnapshot.docs.map(doc => {
             const docData = querySnapshot.data();
@@ -426,7 +426,7 @@ export const Chatroom=({route, navigation})=>{
                         </View>
                     </ScrollView>
                     <View style={{zIndex: 200}}>
-                        <RootTalk id={id} />
+                        <RootTalk id={id} type={type}/>
                     </View>
                 {/*</SafeAreaView>*/}
             </View>

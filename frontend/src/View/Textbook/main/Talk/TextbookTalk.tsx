@@ -509,7 +509,7 @@ export const TextbookTalk = ({navigation}) => {
                 const idcode = await createChatroomStructure(info, userInfoID[index]);
                 //console.log("引き渡すまじの直前のid",idcode);
                 setNameindi(info);
-                navigation.navigate('チャットルーム', {id:idcode, name: info, a:0, ids: image[index]});
+                navigation.navigate('チャットルーム', {id:idcode, name: info, type:'chat', ids: image[index]});
             }}><Text>{info+"さんに連絡する"}</Text>
             </TouchableOpacity>)}
           </View>

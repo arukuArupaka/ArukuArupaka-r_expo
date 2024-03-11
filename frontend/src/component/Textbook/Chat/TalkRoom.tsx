@@ -101,7 +101,7 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
             setNameindi(chatroom);
             setClick(chatid);
             //console.log('引き渡す前のclickid',chatid);
-            navigation.navigate('チャットルーム', {id:chatid, name: chatroom, a: 1, ids: ids})
+            navigation.navigate('チャットルーム', {id:chatid, name: chatroom, type: 'chat', ids: ids})
         }}>
             <View style={styles.body}>
                 <View style={{flexDirection: 'row', paddingLeft: 8}}>
