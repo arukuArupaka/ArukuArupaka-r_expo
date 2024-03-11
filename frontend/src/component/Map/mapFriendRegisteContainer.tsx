@@ -1,16 +1,98 @@
-import React, { useState } from 'react';
-import {Text, TouchableOpacity, View,TextInput} from 'react-native';
+import React, { useState ,useRef} from 'react';
+import {Text, TouchableOpacity, View,TextInput,ScrollView} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import * as Crypto from 'expo-crypto';
-
+import MapFriendListItem from './mapFriendListItem';
+import { doc, updateDoc } from '@firebase/firestore';
+import { db } from '../../../firebase';
+import {useSelector,useDispatch} from 'react-redux';
+import { setMapUserObject } from '../../redux/actions/mapUserActions';
+import { getDownloadURL,ref } from 'firebase/storage';
+import { storage } from '../../../firebase';
 
 const MapFriendRegisteContainer = (props) => {
 
+  const MapFriendListItemRef = useRef()
+
+
+  const dispatch  = useDispatch();
+
   const [isSettingMyfrendLocation,setIsSettingMyfrendLocation]=useState(false)
+
+  const mapUserObject =useSelector((state)=>state.map.mapUserObject)
+  const userUUID=useSelector((state:State)=>state.user.userUUID||"") 
+
+  console.log('container')
+  console.log(props.mapUserObject)
 
  // console.log(generateUUID())
 //   let uuid = Crypto.randomUUID();
 // console.log(uuid);
+
+const onONChangeSwitch=(UUID)=>{
+  if(isSettingMyfrendLocation){
+
+    const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+
+    let newMapUserObject={...mapUserObject}
+
+    newMapUserObject.locationSharingFriends[newMapUserObject.locationSharingFriends.length]=UUID
+
+    updateDoc(refFiresrore, {locationSharingFriends:newMapUserObject.locationSharingFriends}).then(() => {
+      // 保存に成功したらコンテクストにユーザーデータを格納
+      dispatch(setMapUserObject(newMapUserObject))
+    });
+
+  }else{
+    
+      const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+
+      let newMapUserObject={...mapUserObject}
+  
+      newMapUserObject.mapShowFriends[newMapUserObject.mapShowFriends.length]=UUID
+  
+      updateDoc(refFiresrore, {mapShowFriends:newMapUserObject.mapShowFriends}).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        dispatch(setMapUserObject(newMapUserObject))
+      });
+  }
+}
+
+const onOFFChangeSwitch=(UUID)=>{
+  if(isSettingMyfrendLocation){
+
+    const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+
+    //const result = array.filter((num) => num != 1)
+    console.log('off')
+    let newMapUserObject={...mapUserObject}
+
+    newMapUserObject.locationSharingFriends=newMapUserObject.locationSharingFriends.filter((friendID) => friendID != UUID)
+
+      console.log(newMapUserObject)
+
+      updateDoc(refFiresrore, {locationSharingFriends:newMapUserObject.locationSharingFriends}).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        dispatch(setMapUserObject(newMapUserObject))
+      });
+
+  }else{
+    const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+
+    //const result = array.filter((num) => num != 1)
+    console.log('off')
+    let newMapUserObject={...mapUserObject}
+
+    newMapUserObject.mapShowFriends=newMapUserObject.mapShowFriends.filter((friendID) => friendID != UUID)
+
+      console.log(newMapUserObject)
+
+      updateDoc(refFiresrore, {mapShowFriends:newMapUserObject.mapShowFriends}).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        dispatch(setMapUserObject(newMapUserObject))
+      });
+  }
+}
 
   return (
     <View
@@ -24,10 +106,14 @@ const MapFriendRegisteContainer = (props) => {
         </TouchableOpacity>
       </View>
       <TextInput style={{backgroundColor:'#EEEEEE',height:25,borderRadius:15,marginBottom:10}}></TextInput>
-      <View style={{flexDirection:'row'}}>
+      <View style={{flexDirection:'row',marginBottom:15}}>
         <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:'white',fontWeight:'500'}}>マップ上に表示する人</Text></TouchableOpacity>
         <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:!isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:'white',fontWeight:'500'}}>自分の位置を共有</Text></TouchableOpacity>
       </View>
+      {props.mapUserObject.friends&&
+      <ScrollView style={{paddingHorizontal:10}}>
+        {props.mapUserObject.friends.map((friend,index)=><MapFriendListItem ref={MapFriendListItemRef} key={index} friend={friend} locationSharingFriends={props.mapUserObject.locationSharingFriends} mapShowFriends={mapUserObject.mapShowFriends} isSettingMyfrendLocation={isSettingMyfrendLocation} onONChangeSwitch={(UUID)=>onONChangeSwitch(UUID)} onOFFChangeSwitch={(UUID)=>onOFFChangeSwitch(UUID)}/>)}
+      </ScrollView>}
     </View>
   );
 };

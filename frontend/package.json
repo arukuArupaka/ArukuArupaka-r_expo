@@ -27,6 +27,7 @@
     "expo-crypto": "~12.4.1",
     "expo-image-manipulator": "~11.3.0",
     "expo-image-picker": "~14.3.2",
+    "expo-location": "~16.1.0",
     "expo-notifications": "~0.20.1",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.8.0",

@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import {Text, View,Image,Switch} from 'react-native';
 import {useSelector,useDispatch} from 'react-redux';
+import { doc, setDoc } from '@firebase/firestore';
+import { db } from '../../../firebase';
 
 const MapMyselfContainer = () => {
 
-  const [userName,setUserName]=useState('')
-  const [isShowMyLocation,setIsShowMyLocation]=useState(false)
+  const mapUserObject =useSelector((state)=>state.map.mapUserObject)
+  const userUUID=useSelector((state:State)=>state.user.userUUID||"") 
 
-  const toggleSwitch = () => setIsShowMyLocation(previousState => !previousState);
+
+  const [userName,setUserName]=useState('')
+  const [isShowMyLocation,setIsShowMyLocation]=useState(mapUserObject.isLocationShare)
+
+  const toggleSwitch = () => {
+
+    const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+
+    let isShareLoactionObject=mapUserObject
+
+    isShareLoactionObject.isLocationShare=!isShowMyLocation
+    //console.log(isShareLoactionObject)
+
+      setDoc(refFiresrore, isShareLoactionObject).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        setIsShowMyLocation(isShareLoactionObject.isLocationShare)
+      });
+
+  };
 
   const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
   //setUserName(useSelector((state)=>{state.user.userObject}).userName)

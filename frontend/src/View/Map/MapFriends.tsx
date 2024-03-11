@@ -7,7 +7,7 @@ import MapFriendRegisteContainer from '../../component/Map/mapFriendRegisteConta
 import { Camera } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { doc, getDoc, setDoc,updateDoc } from '@firebase/firestore';
 import { db ,storage} from '../../../firebase';
 import * as Crypto from 'expo-crypto';
 import { setMapUserObject } from '../../redux/actions/mapUserActions';
@@ -27,8 +27,7 @@ const MapFriendsView = ({ navigation }) => {
     dispatch(handleLoginAfterPageName('Map',{ screen: 'friends' }))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる
     navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
   }
-  console.log('A')
-  console.log(isLogin)
+
 
   const [showCamera,setShowCamera]=useState(false)
   const [showQR,setShowQR]=useState(false)
@@ -41,10 +40,8 @@ const MapFriendsView = ({ navigation }) => {
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
 
-  console.log(mapUserObject.QRUUID)
 
   const showQRCode=async()=>{
-      console.log(await isLogin)
     if (await isLogin) {
       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
       const refFiresrore = doc(db, `mapFriendConvert/${mapUserObject.QRUUID}`);
@@ -56,7 +53,6 @@ const MapFriendsView = ({ navigation }) => {
         const mapUser={
           userUUID:userUUID,
         }
-        console.log('norExit')
         setDoc(refFiresrore, mapUser).then(() => {
           // 保存に成功したらコンテクストにユーザーデータを格納
           setShowQR(true)
@@ -70,18 +66,14 @@ const MapFriendsView = ({ navigation }) => {
 
 
     if(!showQR&&data.length==36){
-      console.log('if')
       if(!await showFriendRegisterDaialog){
         setShowFriendRegisterDaialog(true)
-        console.log('72')
         const refFiresrore = await doc(db, `mapFriendConvert/${data}`);
 
         const friendUUID = (await getDoc(refFiresrore)).data().userUUID as string;//appUserがデータベースから取得したオブジェクト
-        console.log('76')
         setfriendRegistUUID(friendUUID)
         const refFiresroreMapUser = await doc(db, `mapGPS/${friendUUID}`);
         const friendObject = (await getDoc(refFiresroreMapUser)).data() ;//appUserがデータベースから取得したオブジェクト
-        console.log('80')
 
         getDownloadURL(ref(storage, `users/${friendUUID}/mainPicture`)).then((getURI)=>{
           setFriendImage(getURI)
@@ -90,10 +82,8 @@ const MapFriendsView = ({ navigation }) => {
           console.log(e.message)
         })
 
-        console.log(friendUUID)
-        console.log(friendObject)
         setReadFriendObject(friendObject)
-        console.log('85')
+        //console.log('85')
 
 
       }else{
@@ -102,8 +92,7 @@ const MapFriendsView = ({ navigation }) => {
   }
 
 useEffect(()=>{//これをホームへ
-  console.log('useEffect')
-  console.log(userObject)
+
 
   const getUserDate=async()=>{
     console.log(await isLogin)
@@ -119,9 +108,12 @@ useEffect(()=>{//これをホームへ
         dispatch(setMapUserObject(appUser))
       }else{
         const mapUser={
+          isLocationShare:true,
           userName:userObject.userName,
           userUUID:userUUID,
           friends:[],
+          mapShowFriends:[],
+          locationSharingFriends:[],
           QRUUID:Crypto.randomUUID()
         }
         console.log('norExit')
@@ -142,35 +134,37 @@ const friendRegist=async()=>{
   if (await isLogin) {
     // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-      console.log(mapUserObject)
-      console.log(mapUserObject.friends)
+
       let newFrends=mapUserObject.friends
-      console.log(newFrends)
-      console.log(newFrends.length)
+
       newFrends[newFrends.length]={
         QRUUID:readFriendObject.QRUUID,
+        imageURI:friendImage,
         userName:readFriendObject.userName,
         userUUID:readFriendObject.userUUID
       }
       console.log(newFrends)
       const uniqueNewFrends = Array.from(
-        new Map(newFrends.map((user) => [user.id, user])).values()
+        new Map(newFrends.map((user) => [user.userUUID, user])).values()
       );
+      //newFrends=mapUserObject.friends
+      mapUserObject.friends=newFrends
 
-      console.log(uniqueNewFrends)
+      // const mapUser={
+      //   userName:userObject.userName,
+      //   userUUID:userUUID,
+      //   QRUUID:mapUserObject.QRUUID,
+      //   friends:uniqueNewFrends
+      // }
 
-      const mapUser={
-        userName:userObject.userName,
-        userUUID:userUUID,
-        QRUUID:mapUserObject.QRUUID,
-        friends:newFrends
-      }
-      console.log('friendRegist')
-      console.log(mapUser)
-      setDoc(refFiresrore, mapUser).then(() => {
+      updateDoc(refFiresrore, {friends:uniqueNewFrends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
         console.log('mapUser')
-        dispatch(setMapUserObject(mapUser))
+        dispatch(setMapUserObject(mapUserObject))
+        setShowFriendRegisterDaialog(false)
+        setFriendImage('')
+        setfriendRegistUUID('')
+        setReadFriendObject({})
       });
     
   }
@@ -184,7 +178,7 @@ const friendRegist=async()=>{
           backgroundColor:'#FFFFFF'
         }}>
         <MapMyselfContainer/>
-        <MapFriendRegisteContainer onCamera={()=>{setShowCamera(true);}}/>
+        <MapFriendRegisteContainer mapUserObject={mapUserObject} onCamera={()=>{setShowCamera(true);}}/>
       </View>
       {showCamera&&
       <View style={{position:'absolute',width:'100%',height:'100%'}}>
@@ -221,7 +215,7 @@ const friendRegist=async()=>{
                 <Image style={{backgroundColor:'#EEEEEE',width:80,height:80,borderRadius:40,marginLeft:'auto',marginRight:'auto',marginTop:10,marginBottom:20}} source={{uri:friendImage}} />
                 <Text style={{textAlign:'center',fontSize:20}}>{readFriendObject.userName?readFriendObject.userName:'ネットワークエラー'}</Text>
                 <View style={{flexDirection:'row',marginTop:25}}>
-                  <TouchableOpacity onPress={()=>{setShowFriendRegisterDaialog(false);setfriendRegistUUID('')}} style={{flex:1,marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'gray'}}>キャンセル</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{setShowFriendRegisterDaialog(false);setfriendRegistUUID(''),setFriendImage('')}} style={{flex:1,marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'gray'}}>キャンセル</Text></TouchableOpacity>
                   <TouchableOpacity onPress={()=>friendRegist()} style={{flex:1,backgroundColor:'#C8252B',marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'white'}}>登録</Text></TouchableOpacity>
                 </View>
               </View>
