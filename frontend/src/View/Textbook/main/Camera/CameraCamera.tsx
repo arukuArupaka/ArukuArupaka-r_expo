@@ -25,6 +25,7 @@ import {
   updateDoc,
   docRef,
   deleteDoc,
+  auth,
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
 
@@ -145,11 +146,21 @@ export const CameraCamera = ({ route }) => {
     description,
     price
   ) => {
+    // ユーザーのログイン状態を確認する
+    if (!auth.currentUser) {
+      // ユーザーがログインしていない場合は、ログインページにリダイレクトするなどの処理を行う
+      return;
+    }
+
+    // ユーザーのuidを取得する
+    const userId = auth.currentUser.uid;
+
     // 全ての項目が入力されているか確認する
     if (!productName || !department || !condition || !description || !price) {
       alert("全ての項目を入力してください");
       return; // 出品を中止する
     }
+
     try {
       const docRef = await addDoc(collection(db, "syuppinn"), {
         productName,
@@ -157,6 +168,7 @@ export const CameraCamera = ({ route }) => {
         condition,
         description,
         price,
+        userId: userId, // ユーザーのuidを保存する
       });
       console.log("Document written with ID: ", docRef.id);
 
