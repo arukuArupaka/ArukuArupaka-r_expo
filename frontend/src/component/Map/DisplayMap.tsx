@@ -7,12 +7,14 @@ import { useSelector } from 'react-redux';
 import { doc, updateDoc } from '@firebase/firestore';
 import { db } from '../../../firebase';
 import MapFriendIconContainer from './mapFriendIconConteiner';
+import userReducer from '../../redux/reducers/userReducers';
 
 const DisplayMap = () => {
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
   const userObject=useSelector((state)=>state.user.userObject)
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
+  const isLogin=useSelector((state)=>state.user.isLogin)
   console.log(mapUserObject)
 
 
@@ -79,7 +81,7 @@ const DisplayMap = () => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
         })
-        if(true){
+        if(isLogin){
           const refFiresrore = doc(db, `mapGPS/${userUUID}`);
           updateDoc(refFiresrore, {myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}}).then(() => {
           })
