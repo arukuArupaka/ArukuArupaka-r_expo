@@ -165,7 +165,7 @@ class ImageScrollComponent extends Component {
         >
           <Image
             source={require("./map.png")}
-            style={{ width: 1453, height: 454, marginTop: "-80" }}
+            style={{ width: 1453, height: 454, marginTop: "-70" }}
           />
 
           <TouchableOpacity
@@ -191,30 +191,9 @@ class ImageScrollComponent extends Component {
             )}
           </TouchableOpacity>
         </ScrollView>
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              marginRight: "80%",
-              bottom: "465%",
-              transform: [{ rotate: "90deg" }],
-            }}
-          >
-            瀬田方面
-          </Text>
-          <Text
-            style={{
-              fontSize: 20,
-              marginLeft: "80.4%",
-              bottom: "515%",
-              transform: [{ rotate: "90deg" }],
-            }}
-          >
-            守山方面
-          </Text>
-        </View>
+
         <View style={{ marginLeft: "45%" }}>
-          <Text style={{ fontSize: 25, bottom: "1540%" }}>南草津駅</Text>
+          <Text style={{ fontSize: 25, bottom: "1350%" }}>南草津駅</Text>
         </View>
         <View style={{ marginLeft: "50%", bottom: "18%" }}>
           <Text style={{ fontSize: 25 }}>大学</Text>
