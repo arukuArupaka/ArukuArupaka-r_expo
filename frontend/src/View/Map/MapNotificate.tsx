@@ -137,7 +137,7 @@ const MapNotificateView = () => {
               <Text style={{ fontWeight: "bold", fontSize: 15 }}>
                 {notification.subject}
               </Text>
-              <Text>{notification.message}</Text>
+              <Text numberOfLines={1}>{notification.message}</Text>
             </View>
           </TouchableOpacity>
         ))}
