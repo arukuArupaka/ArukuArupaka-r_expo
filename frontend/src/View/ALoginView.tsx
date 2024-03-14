@@ -4,9 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,onAuthStateChanged,signOut,sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebase';
-import Dialog from "react-native-dialog";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { handleLoginAction,handleLoginNotVerificationEmail } from "../redux/actions/userAction";
+import { handleLoginAction } from "../redux/actions/userAction";
 import { useDispatch ,useSelector} from "react-redux";
 
 const ALoginView = (props) => {
@@ -87,7 +85,7 @@ const ALoginView = (props) => {
         const user=await signInWithEmailAndPassword(auth, email, password);
         setUserInfo(user)
         if(await isMailVerified()){
-          await dispatch(handleLoginAction(isMailVerified()))
+          await dispatch(handleLoginAction(await isMailVerified()))
           console.log('ここにだす')
           console.log(await loginAfterPageName)
           if(await loginAfterPageName){
