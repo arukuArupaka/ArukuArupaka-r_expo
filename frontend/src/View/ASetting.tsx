@@ -1,5 +1,5 @@
 import React, { useState ,useEffect} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, Settings} from 'react-native';
+import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, StyleSheet} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
@@ -16,7 +16,7 @@ import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { setUserObject } from '../redux/actions/userAction';
-
+import RNPickerSelect from 'react-native-picker-select';
 
 const MAIN_PICTURE_MAX_SIZE:number=10000
 
@@ -35,6 +35,7 @@ const ASetting = (props) => {
   const [grade,setGrade]=useState('')
   const [profile,setProfile]=useState('')
   const [oldDate,setOldData]=useState({})
+  const [campus,setCanpus]=useState('')
 
   //ログインしてるかチェックするコード探しに来た人へ　ここから
 
@@ -59,14 +60,19 @@ const ASetting = (props) => {
         if (snap.exists()) {
           // ユーザーデータを取得して格納
           const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          console.log(appUser)
+
           setUserName(appUser.userName)
           setFaculty(appUser.faculty)
           setDepartment(appUser.department)
           setGrade(appUser.grade)
           setProfile(appUser.profile)
+          setCanpus(appUser.campus)
 
           const oldSettingdata= {
             id: appUser.id,
+            school:'立命館大学',
+            campus:campus,
             userName: appUser.userName,
             faculty:appUser.faculty,
             department:appUser.department,
@@ -90,6 +96,7 @@ const ASetting = (props) => {
           })
           console.log(await getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`)))
         } else {
+         setCanpus('')
          setUserName('未登録')
          setFaculty('未登録')
          setDepartment('未登録')
@@ -113,6 +120,8 @@ const ASetting = (props) => {
 
           const appUser: User = {
             id: userUUID,
+            school:'立命館大学',
+            campus:campus,
             userName: userName,
             faculty:faculty,
             department:department,
@@ -122,6 +131,8 @@ const ASetting = (props) => {
           };
           const compareDate={
             id: userUUID,
+            school:'立命館大学',
+            campus:campus,
             userName: userName,
             faculty:faculty,
             department:department,
@@ -146,6 +157,8 @@ const ASetting = (props) => {
       }   
       const reduxDate={
         id: userUUID,
+        school:'立命館大学',
+        campus:campus,
         userName: userName,
         faculty:faculty,
         department:department,
@@ -188,7 +201,7 @@ const ASetting = (props) => {
        const resizedImage = await manipulateAsync(uri, [
         {
           resize: { 
-            width: 200,
+            width:  200,
             height: 200,
           },}
        ], {
@@ -213,8 +226,8 @@ const ASetting = (props) => {
         setIsCompress(true)
         console.log('圧縮後'+resizeBlob.size)
         setImage(resizedImage.uri)
-            uploadBytes(storageRef, resizeBlob).then((snapshot) => {
-              setIsPictureUpLoad(true)
+        uploadBytes(storageRef, resizeBlob).then((snapshot) => {
+        setIsPictureUpLoad(true)
     });
     }
     blob.close();
@@ -303,6 +316,31 @@ const ASetting = (props) => {
           </View>
         </View>
         <View style={{marginHorizontal:10,marginTop:40,}}>
+          <Text>学校名</Text>
+          <RNPickerSelect
+          value={campus}
+          onValueChange={(value) => console.log(value)}
+          items={[
+            { label: '立命館大学', value: '立命館大学' },
+          ]}
+          style={pickerSelectStyles}
+          placeholder={{ label: '立命館大学', value: '立命館大学' }}
+          disabled={true}
+          Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789'}}>▼</Text>)}
+        />
+          <Text>キャンパス</Text>
+          <RNPickerSelect
+          value={campus}
+          onValueChange={(value) => setCanpus(value)}
+          items={[
+            { label: 'KIC', value: 'KIC' },
+            { label: 'BKC', value: 'BKC' },
+            { label: 'OIC', value: 'OIC' },
+          ]}
+          style={pickerSelectStyles}
+          placeholder={{ label: '選択してください', value: 'notSelectCanpans' }}
+          Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789'}}>▼</Text>)}
+        />
           <Text>ユーザーネーム</Text>
           <TextInput style={{
             marginTop:5,
@@ -316,7 +354,32 @@ const ASetting = (props) => {
             autoCapitalize="none"
             ></TextInput>
             <Text>学部</Text>
-            <TextInput style={{
+            <RNPickerSelect
+            value={faculty}
+            onValueChange={(value) => setFaculty(value)}
+            items={[
+                { label: '法学部', value: '法学部', key: 'hougaku' },
+                { label: '経済学部', value: '経済学部', key: 'keizai' },
+                { label: '経営学部', value: '経営学部', key: 'keiei' },
+                { label: '産業社会学部', value: '産業社会学部', key: 'sansha' },
+                { label: '国際関係学部', value: '国際関係学部', key: 'kokusai' },
+                { label: '政策科学部', value: '政策科学部', key: 'seisaku' },
+                { label: '文学部', value: '文学部', key: 'bun' },
+                { label: '映像学部', value: '映像学部', key: 'eizou' },
+                { label: '総合心理学部', value: '総合心理学部', key: 'sougou' },
+                { label: '理工学部', value: '理工学部', key: 'rikou' },
+                { label: 'グローバル教養学部', value: 'グローバル教養学部', key: 'gurokyou' },
+                { label: '食マネジメント学部', value: '食マネジメント学部', key: 'shokumane' },
+                { label: '情報理工学部', value: '情報理工学部', key: 'jouri' },
+                { label: '生命科学部', value: '生命科学部', key: 'seimei' },
+                { label: '薬学部', value: '薬学部', key: 'yakugaku' },
+                { label: 'スポーツ健康学部', value: 'スポーツ健康学部', key: 'supoken' }
+            ]}
+            style={pickerSelectStyles}
+            placeholder={{ label: '選択してください', value: 'notSelectCanpans' }}
+            Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789'}}>▼</Text>)}
+            />
+            {/* <TextInput style={{
             marginTop:5,
             borderRadius:5,
             fontSize:20,
@@ -325,7 +388,7 @@ const ASetting = (props) => {
             value={faculty}
             onChangeText={setFaculty}
             autoCorrect={false}
-            autoCapitalize="none"></TextInput>
+            autoCapitalize="none"></TextInput> */}
             <Text>学科・専攻</Text>
             <TextInput style={{
             marginTop:5,
@@ -383,6 +446,29 @@ const ASetting = (props) => {
     </ScrollView>
   );
 };
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    marginTop:5,
+    borderRadius:5,
+    fontSize:20,
+    backgroundColor:'#D9D9D9',
+    marginBottom:20,
+    width:'100%'
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: '#789',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+    width: 280,
+    marginLeft: 30,
+    backgroundColor:'#eee'
+  },
+});
 
 export default ASetting;
 
