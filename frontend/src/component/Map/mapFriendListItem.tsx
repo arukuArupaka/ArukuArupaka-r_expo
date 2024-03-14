@@ -5,50 +5,41 @@ import { useSelector } from 'react-redux';
 
 const MapFriendListItem = (props) => {
 
-    
     const [isONSwitch,setIsONSwitch]=useState(false)
     const mapUserObject =useSelector((state)=>state.map.mapUserObject)
 
     const fetchFriendsList=async(mapObject)=>{
 
-        console.log(mapObject)
-
         if(await props.isSettingMyfrendLocation){
 
             if(await mapObject.locationSharingFriends.length){
-                console.log('locationSharingFriends')
-                console.log(mapObject.locationSharingFriends)
+
                 setIsONSwitch(false)
 
                 await mapObject.locationSharingFriends.forEach(element => {
-                    // setIsONSwitch(element===props.friend.userUUID)
-                    // console.log(element)
+
                     if(element===props.friend.userUUID) {
                         setIsONSwitch(true)
                         return
                     }
                 });
             }else{
-                console.log('props.locationSharingFriends is undefind')
                 setIsONSwitch(false)
             }
 
         }else{
 
             if(await mapObject.mapShowFriends.length){
-                console.log('mapShowFriends')
                 setIsONSwitch(false)
 
                 await mapObject.mapShowFriends.forEach(element => {
-                    // setIsONSwitch(element===props.friend.userUUID)
-                    // console.log(element)
+                    
                     if(element===props.friend.userUUID) {
                         setIsONSwitch(true)
                         return
                     }
                 });
             }else{
-                console.log('props.mapShowFriends is undefind')
                 setIsONSwitch(false)
             }
         }
@@ -57,16 +48,7 @@ const MapFriendListItem = (props) => {
     useEffect(()=>{
         console.log('effects')
         fetchFriendsList(mapUserObject)
-    },[props.isSettingMyfrendLocation])
-
-    useEffect(()=>{
-        console.log('これが出たら最高')
-        fetchFriendsList(mapUserObject)
-    },[mapUserObject])
-
-    console.log('props')
-    console.log(mapUserObject)
-    
+    },[props.isSettingMyfrendLocation,mapUserObject])    
 
   return (
     <View

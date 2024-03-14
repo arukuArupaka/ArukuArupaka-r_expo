@@ -147,15 +147,7 @@ const friendRegist=async()=>{
       const uniqueNewFrends = Array.from(
         new Map(newFrends.map((user) => [user.userUUID, user])).values()
       );
-      //newFrends=mapUserObject.friends
       mapUserObject.friends=newFrends
-
-      // const mapUser={
-      //   userName:userObject.userName,
-      //   userUUID:userUUID,
-      //   QRUUID:mapUserObject.QRUUID,
-      //   friends:uniqueNewFrends
-      // }
 
       updateDoc(refFiresrore, {friends:uniqueNewFrends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納

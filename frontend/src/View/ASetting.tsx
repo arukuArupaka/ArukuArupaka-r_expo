@@ -36,7 +36,6 @@ const ASetting = (props) => {
   const [profile,setProfile]=useState('')
   const [oldDate,setOldData]=useState({})
 
-
   //ログインしてるかチェックするコード探しに来た人へ　ここから
 
   const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
@@ -49,9 +48,8 @@ const ASetting = (props) => {
 
   //ここまでコピーしてね
 
-
   useEffect(()=>{
-    console.log('effict')
+    console.log('effect')
     const getUserDate=async()=>{
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照

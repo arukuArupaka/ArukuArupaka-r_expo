@@ -1,5 +1,5 @@
 import React, { useState ,useRef} from 'react';
-import {Text, TouchableOpacity, View,TextInput,ScrollView} from 'react-native';
+import {Text, TouchableOpacity, View,TextInput,ScrollView,Alert} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import * as Crypto from 'expo-crypto';
 import MapFriendListItem from './mapFriendListItem';
@@ -13,21 +13,11 @@ import { storage } from '../../../firebase';
 const MapFriendRegisteContainer = (props) => {
 
   const MapFriendListItemRef = useRef()
-
-
   const dispatch  = useDispatch();
 
   const [isSettingMyfrendLocation,setIsSettingMyfrendLocation]=useState(false)
-
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
   const userUUID=useSelector((state:State)=>state.user.userUUID||"") 
-
-  console.log('container')
-  console.log(props.mapUserObject)
-
- // console.log(generateUUID())
-//   let uuid = Crypto.randomUUID();
-// console.log(uuid);
 
 const onONChangeSwitch=(UUID)=>{
   if(isSettingMyfrendLocation){
@@ -36,25 +26,42 @@ const onONChangeSwitch=(UUID)=>{
 
     let newMapUserObject={...mapUserObject}
 
-    newMapUserObject.locationSharingFriends[newMapUserObject.locationSharingFriends.length]=UUID
+    if(newMapUserObject.locationSharingFriends.length<=2){
 
-    updateDoc(refFiresrore, {locationSharingFriends:newMapUserObject.locationSharingFriends}).then(() => {
-      // 保存に成功したらコンテクストにユーザーデータを格納
-      dispatch(setMapUserObject(newMapUserObject))
-    });
+      newMapUserObject.locationSharingFriends[newMapUserObject.locationSharingFriends.length]=UUID
+
+      updateDoc(refFiresrore, {locationSharingFriends:newMapUserObject.locationSharingFriends}).then(() => {
+        // 保存に成功したらコンテクストにユーザーデータを格納
+        dispatch(setMapUserObject(newMapUserObject))
+      });
+    }else{
+      Alert.alert(
+        '人数が多すぎます。', 
+        '位置を共有する人を3人以下にしてください。',
+      );
+    }
 
   }else{
     
       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
       let newMapUserObject={...mapUserObject}
+
+      if(newMapUserObject.mapShowFriends.length<=2){
   
-      newMapUserObject.mapShowFriends[newMapUserObject.mapShowFriends.length]=UUID
-  
-      updateDoc(refFiresrore, {mapShowFriends:newMapUserObject.mapShowFriends}).then(() => {
-        // 保存に成功したらコンテクストにユーザーデータを格納
-        dispatch(setMapUserObject(newMapUserObject))
-      });
+        newMapUserObject.mapShowFriends[newMapUserObject.mapShowFriends.length]=UUID
+    
+        updateDoc(refFiresrore, {mapShowFriends:newMapUserObject.mapShowFriends}).then(() => {
+          // 保存に成功したらコンテクストにユーザーデータを格納
+          dispatch(setMapUserObject(newMapUserObject))
+        });
+
+      }else{
+        Alert.alert(
+          '人数が多すぎます。', 
+          'マップ上に表示する人を3人以下にしてください。',
+        );
+      }
   }
 }
 
@@ -69,8 +76,6 @@ const onOFFChangeSwitch=(UUID)=>{
 
     newMapUserObject.locationSharingFriends=newMapUserObject.locationSharingFriends.filter((friendID) => friendID != UUID)
 
-      console.log(newMapUserObject)
-
       updateDoc(refFiresrore, {locationSharingFriends:newMapUserObject.locationSharingFriends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
         dispatch(setMapUserObject(newMapUserObject))
@@ -80,12 +85,9 @@ const onOFFChangeSwitch=(UUID)=>{
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
     //const result = array.filter((num) => num != 1)
-    console.log('off')
     let newMapUserObject={...mapUserObject}
 
     newMapUserObject.mapShowFriends=newMapUserObject.mapShowFriends.filter((friendID) => friendID != UUID)
-
-      console.log(newMapUserObject)
 
       updateDoc(refFiresrore, {mapShowFriends:newMapUserObject.mapShowFriends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
