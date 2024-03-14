@@ -24,6 +24,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 //import { RootState } from './state';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TalkRoomProps = {
     id:string;
@@ -131,20 +132,21 @@ export const RootTalk = ({id, name, type, ids}) => {
 
         // chatroomsコレクションに新しいドキュメントを追加し、IDを自動生成させる
 
-        const refFiresrore = doc(db, `users/${userUUID}`);
-        const snap = await getDoc(refFiresrore);
-        const snapuser = collection(db, "users");
-        const usersINFO = await getDocs(snapuser);
+        //const refFiresrore = doc(db, `users/${userUUID}`);
+        //const snap = await getDoc(refFiresrore);
+        //const snapuser = collection(db, "users");
+        //const usersINFO = await getDocs(snapuser);
     
-        const appUser = (await getDoc(refFiresrore)).data() as User;
+        //const appUser = (await getDoc(refFiresrore)).data() as User;
         
         // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
         //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
         //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
     
-        const check = doc(db, `${type}/${id}`);
-        const checkdoc = await getDoc(check);
-        const checkmes = checkdoc.data();
+        const check = collection(db, `${type}/${id}/messages`);
+        const checkd = doc(db, `${type}/${id}`)
+        const checkdoc = await getDoc(checkd);
+        //const checkmes = checkdoc.data();
         const timestamp = Timestamp.now(); // Firestoreの現在のタイムスタンプを取得
         const date = timestamp.toDate();
         const hours = date.getHours();
@@ -153,17 +155,24 @@ export const RootTalk = ({id, name, type, ids}) => {
         const formattedMinutes = minutes < 10 ? "0" + minutes.toString() : minutes.toString(); // 分が10未満の場合は先頭に0を追加
 
         const timeString = `${formattedHours}:${formattedMinutes}`; // "時間:分"の形式の文字列を生成
+        let stname = "";
+        const stkey = `${currentUserId}Name`;
 
+        const loadname = async () => {
+          try {
+            const stringValue = await AsyncStorage.getItem(stkey);
+            if(stringValue != null){
+              const value = JSON.parse(stringValue);
+              stname = value;
+          }
+          } catch (e) {
+            console.log(e);
+          }
+        };
+  
+        loadname(); 
 
-
-          await updateDoc(check, {
-            messages: arrayUnion({name: appUser.userName,content: content, sentAt: Timestamp.now().toDate().toLocaleString(),id: currentUserId,  time:timeString, read: false})
-          });
-
-          //console.log("現在時刻は",Timestamp.now()) ;
-        //console.log("Chatroom structure created");
-    
-        const name = appUser.userName;
+        const name = stname;
         const info = {name, content};
 
         const useridi = checkdoc.data().userid;
@@ -178,12 +187,21 @@ export const RootTalk = ({id, name, type, ids}) => {
             usrnames = username[index];
           }
         });
+
+
+          await addDoc(check, {
+            name: stname,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, usrid]
+          });
+
+          //console.log("現在時刻は",Timestamp.now()) ;
+        //console.log("Chatroom structure created");
+
   
-        console.log('ids:',usrid);
+        //console.log('ids:',usrid);
   
         const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
         const usertoken = tokendocu.data().token;
-        console.log('token', usertoken);
+        //console.log('token', usertoken);
   
         const messages = usertoken.map(token => ({
           to: `${token}`,

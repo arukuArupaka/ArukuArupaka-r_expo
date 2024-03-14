@@ -22,6 +22,7 @@ import { fetchUserObject, setUserObject } from '../../../redux/actions/userActio
 import { useNavigation } from '@react-navigation/native';
 import { useTalkContext } from './TalkContext';
 import { Foundation } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TalkRoomProps = {
     chatroom: string;
@@ -34,7 +35,7 @@ type TalkRoomProps = {
   };
 
 const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, latest }) => {
-    const { click, setClick, nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+    const { click, setClick, nameindi, setNameindi, setChatid, setChatroom, chatmessage, setChatmessage, lasttime, setLasttime} = useTalkContext();
     
     const navigation = useNavigation();
     
@@ -99,13 +100,68 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
         }
 
 
-    },[urli])
+    },[urli]);
+
+    const generatetime = async() => {
+        if(!isLogin||isLoginNotVerificationEmail){
+            //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+            console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+          }else{
+            const key = `${chatid}`;
+            const timekey = `${ids}time`;
+            const currentUserId = auth.currentUser.uid;
+            const timestamp = Timestamp.now();
+            const timestampString = timestamp.toDate().toISOString();
+          }
+    }
 
 
     return (
-        <TouchableOpacity onPress={()=>{
+        <TouchableOpacity onPress={async()=>{
             setNameindi(chatroom);
             setClick(chatid);
+            generatetime();
+            const timekey = `${chatid}time`;
+                const timestamp = Timestamp.now();
+                const timestampString = timestamp.toDate().toISOString();
+
+            const saveTimestamp = async () => {
+                try {
+                    await AsyncStorage.setItem(timekey, timestampString);
+                } catch (e) {
+                    // 保存エラーの処理
+                    console.error("Error saving timestamp", e);
+                }
+                };
+    
+                await saveTimestamp();
+            
+            const loadTimestamp = async () => {
+                console.log('uuuuuuuu')
+                try {
+                  const timestampString = await AsyncStorage.getItem(timekey);
+                  if (timestampString !== null) {
+                    console.log('nullでないです');
+                    // 文字列をDateオブジェクトに変換
+                    const date = new Date(timestampString);
+                    
+                    // 必要に応じてFirestoreのTimestampに変換
+                    // const timestamp = Timestamp.fromDate(date);
+                    console.log('setLasttime',setLasttime);
+                    setLasttime(date);
+                    
+                  }else{
+                    setLasttime(0);
+                    console.log('nullです');
+                  }
+                } catch (e) {
+                  // 読み込みエラーの処理
+                  console.error("Error loading timestamp", e);
+                }
+                console.log('エラー処理は行われませんでした');
+              };
+          
+              await loadTimestamp();
             //console.log('引き渡す前のclickid',chatid);
             navigation.navigate('チャットルーム', {id:chatid, name: chatroom, type: 'chat', ids: ids})
         }}>

@@ -48,7 +48,7 @@ export const TextbookTalk = ({navigation}) => {
   const [status, setStatus] = useState([]);
   const [latest, setLatest] = useState([]);
 
-  const { nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { lasttime, setLasttime, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
   //let arrayid = [];
@@ -92,6 +92,51 @@ export const TextbookTalk = ({navigation}) => {
     },[]);
 
   }else{
+
+    useEffect(() => {
+      const currentUserId = auth.currentUser.uid;
+      let stname = "";
+      const stkey = `${currentUserId}Name`;
+
+      const loadname = async () => {
+        try {
+          const stringValue = await AsyncStorage.getItem(stkey);
+          if(stringValue != null){
+            const value = JSON.parse(stringValue);
+            stname = value;
+        }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+
+      loadname();
+
+      if(stname == null){
+        const asyncsave = async() => {
+          const refFiresrore = doc(db, `users/${userUUID}`);
+          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          const namest = appUser.userName;
+
+          const saveroomid = async () => {
+            try {
+              const stringValue = JSON.stringify(namest);
+              await AsyncStorage.setItem(stkey, stringValue);
+              //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+            } catch (e) {
+              console.log(e);
+            }
+          };
+      
+          saveroomid();
+          };
+
+          asyncsave();
+
+      }
+      
+
+    },[]);
 
     async function registerForPushNotificationsAsync() {
       let token;
@@ -298,11 +343,11 @@ export const TextbookTalk = ({navigation}) => {
 
     
     const refFiresrore = doc(db, `users/${userUUID}`);
-    const snap = await getDoc(refFiresrore);
+    //const snap = await getDoc(refFiresrore);
     const snapuser = collection(db, "users");
-    const usersINFO = await getDocs(snapuser);
+    //const usersINFO = await getDocs(snapuser);
 
-    const appUser = (await getDoc(refFiresrore)).data() as User;
+    //const appUser = (await getDoc(refFiresrore)).data() as User;
     
     // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
     //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
@@ -340,6 +385,7 @@ export const TextbookTalk = ({navigation}) => {
     const q2 = query(usersRef, where("userid", "array-contains", currentUserId),orderBy("creationTime", "desc"));
 
     const unsubscribe = onSnapshot(q2, (querySnapshot) => {
+      console.log('オン砂実行');
       //console.log('onSnapが実行されました');
       //console.log('ステートフックが初期化されました');
       setChatroom([]);
@@ -355,31 +401,30 @@ export const TextbookTalk = ({navigation}) => {
       
         querySnapshot.docs.map(doc => {
           const docData = doc.data();
-          if("messages" in docData){
             //console.log('メッセージフィールドが存在します');
             const contentname = doc.data().username;
             const contentids = doc.data().userid;
-            const messent = doc.data().messages;
-            const messle = messent.length;
+            //const messent = doc.data().messages;
+            //const messle = messent.length;
             //console.log('messagesの長さは',messle);
-            const messsender = messent[messle-1].id;
-            const messStatus = messent[messle-1].read;
-            if(messsender != currentUserId){
-              arraystatus = [...arraystatus, messStatus];
-            }else{
-              arraystatus = [...arraystatus, true];
-            }
-            const latestmessage = messent[messle-1].content;
-            arraylatest = [...arraylatest, latestmessage];
-            if(messStatus == false){
-              if(messsender != currentUserId){
-                setShowno(true);
-                //arraystatus = [...arraystatus, messStatus];
-              }
-            }else{
-              setShowno(false);
+            //const messsender = messent[messle-1].id;
+            //const messStatus = messent[messle-1].read;
+            //if(messsender != currentUserId){
               //arraystatus = [...arraystatus, messStatus];
-            }
+            //}else{
+              //arraystatus = [...arraystatus, true];
+            //}
+            //const latestmessage = messent[messle-1].content;
+            //arraylatest = [...arraylatest, latestmessage];
+            //if(messStatus == false){
+              //if(messsender != currentUserId){
+                //setShowno(true);
+                //arraystatus = [...arraystatus, messStatus];
+              //}
+            //}else{
+              //setShowno(false);
+              //arraystatus = [...arraystatus, messStatus];
+            //}
             const contentid = doc.id;
             arrayid = [...arrayid, contentid];
             contentname.map((nm, index) =>{
@@ -389,9 +434,6 @@ export const TextbookTalk = ({navigation}) => {
                 
               }
             });
-          }else{
-            //console.log('メッセージフィールドが存在しません');
-          }
         });
 
         const contentname = async() => {
@@ -506,9 +548,54 @@ export const TextbookTalk = ({navigation}) => {
             { userInfo.map((info, index) => 
             <TouchableOpacity key={index} style={styles.userList}
               onPress={async() => {
+                
                 const idcode = await createChatroomStructure(info, userInfoID[index]);
                 //console.log("引き渡すまじの直前のid",idcode);
                 setNameindi(info);
+                const timekey = `${idcode}time`;
+                const timestamp = Timestamp.now();
+                const timestampString = timestamp.toDate().toISOString();
+    
+                // async-storageに保存
+                const saveTimestamp = async () => {
+                try {
+                    await AsyncStorage.setItem(timekey, timestampString);
+                } catch (e) {
+                    // 保存エラーの処理
+                    console.error("Error saving timestamp", e);
+                }
+                };
+    
+                await saveTimestamp();
+
+                const loadTimestamp = async () => {
+                  console.log('uuuuuuuu')
+                  try {
+                    const timestampString = await AsyncStorage.getItem(timekey);
+                    if (timestampString !== null) {
+                      console.log('nullでないです');
+                      // 文字列をDateオブジェクトに変換
+                      const date = new Date(timestampString);
+                      
+                      // 必要に応じてFirestoreのTimestampに変換
+                      // const timestamp = Timestamp.fromDate(date);
+                      console.log('setLasttime',setLasttime);
+                      setLasttime(date);
+                      
+                    }else{
+                      setLasttime(0);
+                      console.log('nullです');
+                    }
+                  } catch (e) {
+                    // 読み込みエラーの処理
+                    console.error("Error loading timestamp", e);
+                  }
+                  console.log('エラー処理は行われませんでした');
+                };
+            
+                await loadTimestamp();
+
+
                 navigation.navigate('チャットルーム', {id:idcode, name: info, type:'chat', ids: image[index]});
             }}><Text>{info+"さんに連絡する"}</Text>
             </TouchableOpacity>)}

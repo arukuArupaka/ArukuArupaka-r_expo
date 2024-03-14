@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../../../../redux/states/userState';
 import { handleLoginAfterPageName } from '../../../../redux/actions/commonAction';
-import { updateDoc, Timestamp, deleteDoc, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
+import { arrayUnion, arrayRemove, updateDoc, Timestamp, deleteDoc, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
 import { UseDispatch } from 'react-redux';
@@ -22,17 +22,23 @@ import { fetchUserObject, setUserObject } from '../../../../redux/actions/userAc
 import { RootTalk } from './RootTalk';
 import { useTalkContext } from '../../../../component/Textbook/Chat/TalkContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { writeBatch } from "firebase/firestore";
+
+// 既にある db インスタンスを使用してバッチを作成
+const batch = writeBatch(db);
 
 export const Chatroom=({route, navigation})=>{
-    const { nameindi, setNameindi, chatmessage, setChatmessage  } = useTalkContext();
+    const { nameindi, setNameindi, chatmessage, setChatmessage, lasttime, setLasttime  } = useTalkContext();
     const {id, name, type, ids} = route.params;
     //console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
     const [image, setImage] = useState('djJgmj1rweZiL3aORlpYW3OAOYN2');
     const [check, setCheck] = useState(false);
     const [urli, setUrli] = useState('');
+    const [newmessage, setNewmessage] = useState([]);
+    const [doccheck, setDoccheck] = useState(false);
     const key = `${id}`;
-    console.log('key',key);
+    //console.log('key',key);
 
     const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
     const isLogin:boolean=useSelector((state:State)=>state.user.isLogin||false) //import {useSelector,useDispatch} from 'react-redux'; でimport してね
@@ -181,9 +187,9 @@ export const Chatroom=({route, navigation})=>{
     const getdata = async() =>{
         const currentUserId = auth.currentUser.uid;
         const refFiresrore = doc(db, `users/${userUUID}`);
-        const snap = await getDoc(refFiresrore);
+        //const snap = await getDoc(refFiresrore);
         const snapuser = collection(db, "users");
-        const usersINFO = await getDocs(snapuser);
+        //const usersINFO = await getDocs(snapuser);
 
         const appUser = (await getDoc(refFiresrore)).data() as User;
 
@@ -217,118 +223,78 @@ export const Chatroom=({route, navigation})=>{
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(()=>{
-    setChatmessage([]); 
+  useEffect(() => {
+    setChatmessage([]);
+    const loadmess = async (key:string) => {
+      try {
+        const stringValue = await AsyncStorage.getItem(key);
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setChatmessage(value);
+          console.log('valueの値は',value);
+          //console.log('messageは取得できました');
+      }
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
-    const chatroomsRef = collection(db, `${type}`);
-    //getDocs(chatroomsRef).then(async snapshot => {//ここからエラー発生
-    // 各chatroomについて処理
-    // 各chatroomのusersサブコレクションに対するクエリを実行
-    const usersRef = collection(db, `${type}`);
-    //const q = query(usersRef, orderBy("createTime", "asc"));
-    const docume = doc(db, `${type}/${id}`);
-    const unsubscribe = onSnapshot(docume, (querySnapshot) => {
-        //querySnapshot.docs.map(doc => {
-            const docData = querySnapshot.data();
-            let array = [];
-            //const date = docData.sentAt.toDate();
-                    // 時間、分、秒を取得
-          if("messages" in docData){
-            const currentUserId = auth.currentUser.uid;
-              const messInfo = docData.messages;
-              //console.log('currentuserIdは',currentUserId);
-
-            messInfo.map((indi, index)=>{
-              //const hours = indi.sentAt.getHours();
-              //const minutes = indi.sentAt.getMinutes();
-              //const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-              if(indi.id != currentUserId){
-                const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time, read: true};
-                array = [...array, ar];
-              }else{
-                const ar = {name: indi.name, id: indi.id, content: indi.content, sentAt: indi.sentAt, time: indi.time, read: indi.read};
-                array = [...array, ar];
-              }
-              
-            })
-
-            const asyncChange = async(array:any) =>{
-              updateDoc(docume, {
-                messages: array
-              });
-            };
-
-            asyncChange(array).then(()=>{
-              setChatmessage(array);
-            });
-            
-            //setChatmessage(array);
-            // 時間の文字列を HH:mm:ss 形式でフォーマット
-            // ゼロ埋め（.toString().padStart(2, '0')）を使って、常に2桁で表示する
-              //const currentUserId = auth.currentUser.uid;
-            
-              //console.log(chatmessage);
-              scrollViewRef.current?.scrollToEnd({ animated: true });
-
-              const removeStoragemess = async (key:string) => {
-                try {
-                  await AsyncStorage.removeItem(key);
-                  //console.log('Storage item removed successfully');
-                } catch (error) {
-                  console.error('Error removing storage item: ', error);
-                }
-              };
-              
-              // 使用例
-              removeStoragemess(key);
-
-              const savemessage = async (key:string) => {
-                try {
-                  const stringValue = JSON.stringify(array);
-                  await AsyncStorage.setItem(key, stringValue);
-                  //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
-                } catch (e) {
-                  console.log(e);
-                }
-              };
-            savemessage(key);
-            //console.log('新着メッセージの保存が実行され、その値は');
-          }else{
-            //console.log('存在しないので実行できませんでした');
+    loadmess(key);
+    const currentUserId = auth.currentUser.uid;
+    const documet = collection(db, `${type}/${id}/messages`);
+    const docume = query(documet, where("unreaduser", "array-contains", currentUserId), orderBy("sentAt", "asc"));
+    
+    const unsubscribe = onSnapshot(docume, async (querySnapshot) => {
+      console.log(`${currentUserId}個数は`,querySnapshot.size);
+      
+      if (!querySnapshot.empty) {
+        const batch = writeBatch(db); // バッチの初期化
+        let messages = [];
+  
+        querySnapshot.forEach((doc) => {
+          const contentData = doc.data();
+          const newMessage = contentData.unreaduser.filter(id => id !== currentUserId);
+          const booleanCheck = contentData.unreaduser.includes(currentUserId);
+          if(booleanCheck == true){
+            messages.push({...contentData, unreaduser: newMessage});
+            batch.update(doc.ref, {unreaduser: arrayRemove(currentUserId)});
           }
 
-
-        //});
-        //if(chatmessage.length == 0){
-
+          
+        });
         
+                  // AsyncStorage に保存
+          const savemessage = async (key:string) => {
+            try {
+              const stringValue = JSON.stringify(chatmessage);
+              await AsyncStorage.setItem(key, stringValue);
+              console.log('保存が実行されました');
+              //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+            } catch (e) {
+              console.log(e);
+            }
+          };
 
-        //}
+        savemessage(key);
+        
+        // 状態の更新
+        setChatmessage(prevMessages => [...prevMessages, ...messages]);
+  
+        // バッチ処理のコミット
+        try {
+          await batch.commit();
+          console.log('All documents updated successfully');
+
+        } catch (error) {
+          console.error('Error updating documents or saving to AsyncStorage:', error);
+        }
+      }
     });
-    
+  
     return () => unsubscribe();
-    
-    /*const querySnapshot = await getDocs(q);
-    //const userSnapshot = await getDocs(usersRef);
-    setChatmessage([]);
+  }, []);
+  
 
-    if (!querySnapshot.empty) {
-        querySnapshot.forEach((userDoc) => {
-        const name = userDoc.data().name;
-        const content = userDoc.data().content;
-        const messageInfo = {name, content}; // ユーザー名の取得
-        console.log(`User name in chat: ${name}`);
-        setChatmessage(prev => [...prev, messageInfo]);
-        console.log('chatmessageの中身はないので実行されます');
-    });
-    }else{
-        setChatmessage([]);
-    }
-    }).catch(error => {
-      console.error("Error getting chatrooms:", error);
-    });*/
-
-    },[]);
 
     /*useEffect(()=>{
         const deleteDocument = async (collectionName, documentId) => {
@@ -389,7 +355,7 @@ export const Chatroom=({route, navigation})=>{
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 50}
         >
             <View style={{flex: 1}}>
-                <HeaderforTextbook5 />
+                <HeaderforTextbook5 ids={ids}/>
                 {/*<SafeAreaView style={{ flex: 5 }}>*/}
                     <ScrollView ref={scrollViewRef}>
                         <View style={styles.box}>

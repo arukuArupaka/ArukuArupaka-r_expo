@@ -7,9 +7,14 @@ import { useTalkContext } from './Chat/TalkContext'
 import { auth ,db,storage} from '../../../firebase';
 import { deleteDoc,Timestamp, onSnapshot, orderBy, addDoc, doc, getDoc, setDoc , collection, getDocs, getFirestore, query, where } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export const HeaderforTextbook5 = () => {
+type ChatroomProps = {
+  ids:any;
+};
+
+export const HeaderforTextbook5 = ({ids}) => {
 
   const navigation = useNavigation();
   const [showModal, setshowModal] = useState(false);
@@ -17,7 +22,7 @@ export const HeaderforTextbook5 = () => {
   const SE_WIDTH = 375;
   const SE_HEIGHT = 667;
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
-  const { click, setClick, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { lasttime, setLasttime, click, setClick, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const toggleModal = () => {
     setshowModal(!showModal);
@@ -58,6 +63,50 @@ export const HeaderforTextbook5 = () => {
           console.log('chatidの中身は',chatid);
           //console.log('clickの値は',click);
           //deleteChatIfMessagesEmpty(click);
+          const timekey = `${ids}time`;
+          const timestamp = Timestamp.now();
+          const timestampString = timestamp.toDate().toISOString();
+    
+          const syncdoc = async() => {
+            const saveTimestamp = async () => {
+              try {
+                  await AsyncStorage.setItem(timekey, timestampString);
+                  console.log('タイムスタンプが更新されました');
+              } catch (e) {
+                  // 保存エラーの処理
+                  console.error("Error saving timestamp", e);
+              }
+              };
+    
+              const loadTimestamp = async () => {
+                console.log('uuuuuuuu')
+                try {
+                  const timestampString = await AsyncStorage.getItem(timekey);
+                  if (timestampString !== null) {
+                    console.log('nullでないです');
+                    // 文字列をDateオブジェクトに変換
+                    const date = new Date(timestampString);
+                    
+                    // 必要に応じてFirestoreのTimestampに変換
+                    // const timestamp = Timestamp.fromDate(date);
+                    console.log('setLasttime',setLasttime);
+                    setLasttime(date);
+                    
+                  }else{
+                    setLasttime(0);
+                    console.log('nullです');
+                  }
+                } catch (e) {
+                  // 読み込みエラーの処理
+                  console.error("Error loading timestamp", e);
+                }
+                console.log('エラー処理は行われませんでした');
+              };
+            await saveTimestamp();
+            await loadTimestamp();
+          };
+    
+          syncdoc();
           }}
         >
           {Platform.OS === 'android'&& <Ionicons name="arrow-back-sharp" size={26} color="black" 
