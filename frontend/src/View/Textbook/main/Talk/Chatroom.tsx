@@ -224,14 +224,19 @@ export const Chatroom=({route, navigation})=>{
   }, [navigation]);
 
   useEffect(() => {
+    
+    const key = `${id}`;
+    console.log('key', key);
     setChatmessage([]);
+    let almes = [];
     const loadmess = async (key:string) => {
       try {
         const stringValue = await AsyncStorage.getItem(key);
         if(stringValue != null){
           const value = JSON.parse(stringValue);
           setChatmessage(value);
-          console.log('valueの値は',value);
+          almes = value;
+          //console.log('valueの値は',value);
           //console.log('messageは取得できました');
       }
       } catch (e) {
@@ -243,7 +248,7 @@ export const Chatroom=({route, navigation})=>{
     const currentUserId = auth.currentUser.uid;
     const documet = collection(db, `${type}/${id}/messages`);
     const docume = query(documet, where("unreaduser", "array-contains", currentUserId), orderBy("sentAt", "asc"));
-    
+    let messageid = [];
     const unsubscribe = onSnapshot(docume, async (querySnapshot) => {
       console.log(`${currentUserId}個数は`,querySnapshot.size);
       
@@ -253,20 +258,35 @@ export const Chatroom=({route, navigation})=>{
   
         querySnapshot.forEach((doc) => {
           const contentData = doc.data();
+          const messagecon = contentData.content;
+          const messagesid = contentData.id;
+          const messagename = contentData.name;
+          const messageread = contentData.read;
+          const messagesentat = contentData.sentat;
+          const messagetime = contentData.time;
           const newMessage = contentData.unreaduser.filter(id => id !== currentUserId);
-          const booleanCheck = contentData.unreaduser.includes(currentUserId);
-          if(booleanCheck == true){
-            messages.push({...contentData, unreaduser: newMessage});
+          const booleanCheck1 = contentData.unreaduser.includes(currentUserId);
+          //const readindex = contentData.unreaduser.length;
+          //let messagelength = messages.length;
+          let boolid = messageid.includes(doc.id);
+          if(booleanCheck1 == true && boolid == false){
+            messageid = [...messageid, doc.id];
+            console.log('messageidは',messageid);
+            messages.push({content: messagecon, id: messagesid, name: messagename, read: true, sentAt: messagesentat, time: messagetime});
             batch.update(doc.ref, {unreaduser: arrayRemove(currentUserId)});
           }
 
           
         });
-        
+
+        setChatmessage(prevMessages => [...prevMessages, ...messages]);
+        almes = [...almes, ...messages];
+        console.log(`${currentUserId}newmess:`,almes);
+        console.log('key2', key);
                   // AsyncStorage に保存
           const savemessage = async (key:string) => {
             try {
-              const stringValue = JSON.stringify(chatmessage);
+              const stringValue = JSON.stringify(almes);
               await AsyncStorage.setItem(key, stringValue);
               console.log('保存が実行されました');
               //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
@@ -274,11 +294,10 @@ export const Chatroom=({route, navigation})=>{
               console.log(e);
             }
           };
-
         savemessage(key);
         
         // 状態の更新
-        setChatmessage(prevMessages => [...prevMessages, ...messages]);
+        
   
         // バッチ処理のコミット
         try {
@@ -373,7 +392,7 @@ export const Chatroom=({route, navigation})=>{
                                   { check == true ? <View style={{height: 40, width: 40, borderRadius: 200, backgroundColor: '#888888'}}><Image source={{uri: image}} style={{height: 40, width: 40, borderRadius: 200}}/></View> : <View style={{height: 40, width: 40, borderRadius: 200, backgroundColor: '#888888'}}></View>}
                                 </View> : <View></View>}
                                 <View style={{flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center'}}>
-                                  { message.id == iduser ? (message.read == false ? <View></View> : <AntDesign name="check" size={18} color="dodgerblue" />) : <View></View>}
+                                  <View></View>
                                   { message.id == iduser ? <Text style={{paddingRight: 3}}>{message.time}</Text> : <View></View>}
                                 </View>
                                 <View style={{

@@ -376,9 +376,6 @@ export const TextbookTalk = ({navigation}) => {
   };
 
   useEffect(()=>{
-    if(!isLogin||isLoginNotVerificationEmail){
-
-    }else{
     const currentUserId = auth.currentUser.uid;
     const usersRef = collection(db, 'chat');
     //const q = query(usersRef, orderBy("creationTime", "desc"));
@@ -531,9 +528,9 @@ export const TextbookTalk = ({navigation}) => {
         setStatus(arraystatus);
         setLatest(arraylatest);
 
-        return () => unsubscribe();
+        
     });
-  }
+    return () => unsubscribe();
   },[]);
 
 

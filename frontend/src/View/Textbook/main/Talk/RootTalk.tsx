@@ -190,7 +190,7 @@ export const RootTalk = ({id, name, type, ids}) => {
 
 
           await addDoc(check, {
-            name: stname,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, usrid]
+            name: stname,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, usrid], read: false
           });
 
           //console.log("現在時刻は",Timestamp.now()) ;
@@ -200,57 +200,60 @@ export const RootTalk = ({id, name, type, ids}) => {
         //console.log('ids:',usrid);
   
         const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
-        const usertoken = tokendocu.data().token;
-        //console.log('token', usertoken);
-  
-        const messages = usertoken.map(token => ({
-          to: `${token}`,
-          sound: 'default',
-          title: `${usrnames}`,
-          body: `${content}`,
-          data: {
-            parentScreen: 'textbook', // 親の Stack Navigator 名
-            screen: 'トーク',
-            //nestedscreen: 'チャットルーム', // 目的の画面（子の Stack Navigator 内）
-            id: `${id}`,
-            name: usrnames,
-            type: 'chat',
-            ids: ids
-          },
-        }));
-  
-          try{
-          const response = await fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Accept-encoding': 'gzip, deflate',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(messages),
-          });
-          const responseJson = await response.json();
-        
-            // レスポンスからエラーをチェック
-            if (responseJson.data && responseJson.data.status === 'error') {
-              console.log('Error sending notification:', responseJson.data.message);
-              
-              // ここに無効なトークンに対する処理を追加
-              if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
-                // トークンが無効であることを示す処理
-                console.log('This token is no longer registered. Removing from database...');
-                // トークンをデータベースから削除するロジックをここに追加
-              }
-            } else {
-              // 通知が成功した場合の処理
-              console.log('Notification sent successfully:', responseJson);
-            }
-          } catch (error) {
-            console.error('Error sending notification:', error);
-          }
-  
-          setInputValue('');
+        if(tokendocu.exists()){
+          const usertoken = tokendocu.data().token;
+          //console.log('token', usertoken);
     
+          const messages = usertoken.map(token => ({
+            to: `${token}`,
+            sound: 'default',
+            title: `${usrnames}`,
+            body: `${content}`,
+            data: {
+              parentScreen: 'textbook', // 親の Stack Navigator 名
+              screen: 'トーク',
+              //nestedscreen: 'チャットルーム', // 目的の画面（子の Stack Navigator 内）
+              id: `${id}`,
+              name: usrnames,
+              type: 'chat',
+              ids: ids
+            },
+          }));
+    
+            try{
+            const response = await fetch('https://exp.host/--/api/v2/push/send', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Accept-encoding': 'gzip, deflate',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(messages),
+            });
+            const responseJson = await response.json();
+          
+              // レスポンスからエラーをチェック
+              if (responseJson.data && responseJson.data.status === 'error') {
+                console.log('Error sending notification:', responseJson.data.message);
+                
+                // ここに無効なトークンに対する処理を追加
+                if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
+                  // トークンが無効であることを示す処理
+                  console.log('This token is no longer registered. Removing from database...');
+                  // トークンをデータベースから削除するロジックをここに追加
+                }
+              } else {
+                // 通知が成功した場合の処理
+                console.log('Notification sent successfully:', responseJson);
+              }
+            } catch (error) {
+              console.error('Error sending notification:', error);
+            }
+    
+            
+        }
+
+        setInputValue('');
       };
 
   return (
