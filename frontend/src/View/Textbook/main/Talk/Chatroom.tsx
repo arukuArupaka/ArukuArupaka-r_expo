@@ -37,6 +37,7 @@ export const Chatroom=({route, navigation})=>{
     const [urli, setUrli] = useState('');
     const [newmessage, setNewmessage] = useState([]);
     const [doccheck, setDoccheck] = useState(false);
+    const [me, setMe] = useState('');
     const key = `${id}`;
     //console.log('key',key);
 
@@ -199,7 +200,7 @@ export const Chatroom=({route, navigation})=>{
 
         //console.log("名前は",name);
 
-        return name;
+        setMe(name);
     };
 
     getdata();
@@ -226,7 +227,7 @@ export const Chatroom=({route, navigation})=>{
   useEffect(() => {
     
     const key = `${id}`;
-    console.log('key', key);
+    //console.log('key', key);
     setChatmessage([]);
     let almes = [];
     const loadmess = async (key:string) => {
@@ -250,7 +251,8 @@ export const Chatroom=({route, navigation})=>{
     const docume = query(documet, where("unreaduser", "array-contains", currentUserId), orderBy("sentAt", "asc"));
     let messageid = [];
     const unsubscribe = onSnapshot(docume, async (querySnapshot) => {
-      console.log(`${currentUserId}個数は`,querySnapshot.size);
+      //console.log(`${currentUserId}個数は`,querySnapshot.size);
+      console.log('onsnapshot実行');
       
       if (!querySnapshot.empty) {
         const batch = writeBatch(db); // バッチの初期化
@@ -271,7 +273,7 @@ export const Chatroom=({route, navigation})=>{
           let boolid = messageid.includes(doc.id);
           if(booleanCheck1 == true && boolid == false){
             messageid = [...messageid, doc.id];
-            console.log('messageidは',messageid);
+            //console.log('messageidは',messageid);
             messages.push({content: messagecon, id: messagesid, name: messagename, read: true, sentAt: messagesentat, time: messagetime});
             batch.update(doc.ref, {unreaduser: arrayRemove(currentUserId)});
           }
@@ -281,14 +283,14 @@ export const Chatroom=({route, navigation})=>{
 
         setChatmessage(prevMessages => [...prevMessages, ...messages]);
         almes = [...almes, ...messages];
-        console.log(`${currentUserId}newmess:`,almes);
-        console.log('key2', key);
+        //console.log(`${currentUserId}newmess:`,almes);
+        //console.log('key2', key);
                   // AsyncStorage に保存
           const savemessage = async (key:string) => {
             try {
               const stringValue = JSON.stringify(almes);
               await AsyncStorage.setItem(key, stringValue);
-              console.log('保存が実行されました');
+              //console.log('保存が実行されました');
               //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
             } catch (e) {
               console.log(e);
@@ -415,7 +417,7 @@ export const Chatroom=({route, navigation})=>{
                         </View>
                     </ScrollView>
                     <View style={{zIndex: 200}}>
-                        <RootTalk id={id} type={type} ids={ids}/>
+                        <RootTalk id={id} type={type} ids={ids} me={me}/>
                     </View>
                 {/*</SafeAreaView>*/}
             </View>

@@ -31,9 +31,10 @@ type TalkRoomProps = {
     name:string;
     type:string;
     ids:any;
+    me:string;
   };
 
-export const RootTalk = ({id, name, type, ids}) => {
+export const RootTalk = ({id, name, type, ids, me}) => {
     //console.log("RootTalk内のidは",id);
     const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
@@ -142,10 +143,9 @@ export const RootTalk = ({id, name, type, ids}) => {
         // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
         //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
         //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
-    
+        //Keyboard.dismiss();
         const check = collection(db, `${type}/${id}/messages`);
         const checkd = doc(db, `${type}/${id}`)
-        const checkdoc = await getDoc(checkd);
         //const checkmes = checkdoc.data();
         const timestamp = Timestamp.now(); // Firestoreの現在のタイムスタンプを取得
         const date = timestamp.toDate();
@@ -172,25 +172,9 @@ export const RootTalk = ({id, name, type, ids}) => {
   
         loadname(); 
 
-        const name = stname;
-        const info = {name, content};
-
-        const useridi = checkdoc.data().userid;
-        const username = checkdoc.data().username;
-        let usrid = "";
-        let usrnames = "";
-  
-        useridi.map((ids, index) => {
-          if(currentUserId != ids){
-            usrid = ids;
-          }else{
-            usrnames = username[index];
-          }
-        });
-
-
+        console.log('メッセージ作成');
           await addDoc(check, {
-            name: stname,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, usrid], read: false
+            name: me,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, ids], read: false
           });
 
           //console.log("現在時刻は",Timestamp.now()) ;
@@ -198,8 +182,8 @@ export const RootTalk = ({id, name, type, ids}) => {
 
   
         //console.log('ids:',usrid);
-  
-        const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
+        console.log('トークン取得');
+        const tokendocu = await getDoc(doc(db, `tokens/${ids}`));
         if(tokendocu.exists()){
           const usertoken = tokendocu.data().token;
           //console.log('token', usertoken);
@@ -207,14 +191,14 @@ export const RootTalk = ({id, name, type, ids}) => {
           const messages = usertoken.map(token => ({
             to: `${token}`,
             sound: 'default',
-            title: `${usrnames}`,
+            title: `${me}`,
             body: `${content}`,
             data: {
               parentScreen: 'textbook', // 親の Stack Navigator 名
               screen: 'トーク',
               //nestedscreen: 'チャットルーム', // 目的の画面（子の Stack Navigator 内）
               id: `${id}`,
-              name: usrnames,
+              name: me,
               type: 'chat',
               ids: ids
             },
@@ -244,7 +228,7 @@ export const RootTalk = ({id, name, type, ids}) => {
                 }
               } else {
                 // 通知が成功した場合の処理
-                console.log('Notification sent successfully:', responseJson);
+                //console.log('Notification sent successfully:', responseJson);
               }
             } catch (error) {
               console.error('Error sending notification:', error);
@@ -271,7 +255,8 @@ export const RootTalk = ({id, name, type, ids}) => {
         />
         <View style={styles.button}>
           <TouchableOpacity 
-          onPress={() => {createChatroomStructure(inputValue); Keyboard.dismiss();            
+          onPress={() => {createChatroomStructure(inputValue);   
+           console.log('最終更新時間を更新');         
            const asyncChange = async(id:string) => {
             await updateDoc(doc(db, `${type}`, id), {
                 creationTime: Timestamp.now()

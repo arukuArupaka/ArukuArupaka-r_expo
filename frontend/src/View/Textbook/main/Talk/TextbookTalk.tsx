@@ -217,7 +217,7 @@ export const TextbookTalk = ({navigation}) => {
         const refFiresrore = doc(db, `users/${userUUID}`);
         const snap = await getDoc(refFiresrore);
         const snapuser = collection(db, "users");
-        const usersINFO = await getDocs(snapuser);
+        //const usersINFO = await getDocs(snapuser);
         //const userstore = doc(db, 'users');
 
         if (snap.exists()) {
