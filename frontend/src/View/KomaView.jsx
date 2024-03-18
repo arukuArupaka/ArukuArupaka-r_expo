@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 //import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
-    const { unitCalc, setUnitCalc, unitSum, setUnitSum, notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
+    const { colorset, setColorset, multicolor, setMulticolor, unitCalc, setUnitCalc, unitSum, setUnitSum, notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
 
     const [isShow, setIsShow] = useState(false);
 
@@ -110,6 +110,14 @@ const KomaView = ({ navigation }) => {
       setWeekTime((prev)=>{prev[classDetail.day][classDetail.period]=classDetail; return prev});
     };
 
+    let colorKoma = "#888888";
+
+    if(nodata == true){
+      colorKoma = `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].color}`;
+    }else if(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].mulcolor != "#888888"){
+      colorKoma = `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].mulcolor}`;
+    }
+
     const classStartEndTimeUnitList=[
         {
           start:"9:00",
@@ -175,8 +183,8 @@ const KomaView = ({ navigation }) => {
         info: {
             backgroundColor: '#ffffff',
             borderRadius: 10,
-            borderColor: 'black',
-            borderWidth: 1
+            borderColor: colorKoma,
+            borderWidth: 2
         },
         list: {
             width: '80%',
@@ -192,6 +200,7 @@ const KomaView = ({ navigation }) => {
           borderWidth: 1,
           top: 6,
           width: 203,
+          flexDirection: 'column'
         },
         inputAndroid: {
           fontSize: 16,
@@ -236,6 +245,25 @@ const KomaView = ({ navigation }) => {
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
                   </View>
                 </View>
+                {!nodata && 
+                <View style={{paddingBottom: 8}}> 
+                  <View style={styles.notifi}>
+                      <View style={{alignItems: 'center', paddingBottom: 7}}onPress={() => {}}><Text>{"色を設定する"}</Text></View>
+                      <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 3}}>
+                        <TouchableOpacity style={{backgroundColor: 'lightskyblue', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('lightskyblue');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'aqua', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('aqua');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'palegreen', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('palegreen');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'gold', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('gold');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                      </View>
+                      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                        <TouchableOpacity style={{backgroundColor: 'darkorange', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('darkorange');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'indianred', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('indianred');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'red', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('red');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor: 'deeppink', height: 30, width: 30, borderRadius: 10}}onPress={()=>{setMulticolor('deeppink');setColorset(true);navigation.navigate('TimeTable');}}><Text>{""}</Text></TouchableOpacity>
+                      </View>
+                  </View>
+                </View>
+                }
                 <View style={{paddingBottom: 8}}>
                   <View style={styles.notifi}>
                       <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {navigation.navigate('TimeTable'); setDeletekoma(true); setUnitCalc(true);}}><Text style={{color: 'red', width: 30}}>{"削除"}</Text></TouchableOpacity>

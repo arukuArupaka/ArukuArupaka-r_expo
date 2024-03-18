@@ -28,17 +28,19 @@ export const TimeTableProvider = ({ children }) => {
   const [komaborder, setKomaborder] = useState(false);
   const [unitCalc, setUnitCalc] = useState(false);
   const [unitSum, setUnitSum] = useState(0);
+  const [multicolor, setMulticolor] = useState('#888888');
+  const [colorset, setColorset] = useState(false);
   const [pushedClassFrameDetail,setPushedClassFrameDetail]=useState({
     day: NaN,
     period: NaN,
   });
 
   const weekTimeSaveData=[
-    [{day:0,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:0,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:1,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:1,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:2,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:2,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:3,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:3,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
-    [{day:4,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"},{day:4,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888"}],
+    [{day:0,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:0,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"}],
+    [{day:1,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:1,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"}],
+    [{day:2,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:2,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"}],
+    [{day:3,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:3,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"}],
+    [{day:4,period:0,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:1,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:2,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:3,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:4,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:5,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"},{day:4,period:6,className:"",classRoom:"",memo:"",notifion:false,notification:"",department:"",unit:0,num:"",resume:"",teacher:"",color:"#888888",mulcolor:"#888888"}],
   ]
 
   const [weekTime,setWeekTime]=useState(weekTimeSaveData);
@@ -56,7 +58,8 @@ export const TimeTableProvider = ({ children }) => {
     num: "",
     resume: "",
     teacher: "",
-    color: "#888888"
+    color: "#888888",
+    mulcolor: "#888888"
   });
 
   const toggleSwitch = () => setSizechange(previousState => !previousState);
@@ -132,7 +135,8 @@ export const TimeTableProvider = ({ children }) => {
         num: "",
         resume: "",
         teacher: "",
-        color: "#888888"
+        color: "#888888",
+        mulcolor: "#888888"
       };
     
     setWeekTime((prev) => {prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period]=nullKamoku; return prev});
@@ -233,6 +237,33 @@ export const TimeTableProvider = ({ children }) => {
     setCount(matchingCount);
   }, [data, searchword]);
 
+  useEffect(()=>{
+    if(isNaN(pushedClassFrameDetail.day)){
+      console.log('初期コンポーネントマウントです');
+    }else{
+      console.log('色変えが実行されたよ');
+      const nullKamoku = {
+        day: pushedClassFrameDetail.day,
+        period: pushedClassFrameDetail.period,
+        classRoom: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].classRoom,
+        className: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className,
+        memo: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo,
+        notifion: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].notifion,
+        notification: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].notification,
+        department: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].department,
+        unit: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit,
+        num: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num,
+        resume: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume,
+        teacher: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].teacher,
+        color: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].color,
+        mulcolor: `${multicolor}`
+      };
+      setWeekTime((prev) => {prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period]=nullKamoku; return prev});
+      setColorset(false);
+    }
+
+  },[colorset]);
+
   // Timesize の計算
   const getTimeSize = (qty) => {
     let top = 625.5;
@@ -271,7 +302,7 @@ export const TimeTableProvider = ({ children }) => {
     };
 
   return (
-    <TimeTableContext.Provider value={{ timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma, unitCalc, setUnitCalc, unitSum, setUnitSum}}>
+    <TimeTableContext.Provider value={{ colorset, setColorset, multicolor, setMulticolor, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma, unitCalc, setUnitCalc, unitSum, setUnitSum}}>
       { children }
     </TimeTableContext.Provider>
   );

@@ -119,6 +119,7 @@ const ClassFrame = (props) => {
   let fontTop = 12;
   let fontBottom = 11;
   let fonttexttop = -4;
+  let colorKoma = "#888888";
 
 
   if(sizechange === false){
@@ -136,11 +137,11 @@ const ClassFrame = (props) => {
   
   if(nodata == true){
     colorKoma = `${weekTime[frameDetail.day][frameDetail.period].color}`;
-  }else{
-    colorKoma = "#888888";
+  }else if(weekTime[frameDetail.day][frameDetail.period].mulcolor != "#888888"){
+    colorKoma = `${weekTime[frameDetail.day][frameDetail.period].mulcolor}`;
   }
 
-
+  //console.log('color', colorKoma);
 
   return (
     <View style={{height: heightsize, paddingTop: 2}}>
