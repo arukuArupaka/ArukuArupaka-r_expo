@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'; // ここに追加
 
 
 const ClassFrame = (props) => {
-  const { weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange, weekTime, nodata, setNodata } = useTimeTable();
+  const { kamokuStatus, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange, weekTime, nodata, setNodata } = useTimeTable();
   const navigation = useNavigation();
   const frameDetail={
     day:props.day,
@@ -137,6 +137,8 @@ const ClassFrame = (props) => {
   
   if(nodata == true){
     colorKoma = `${weekTime[frameDetail.day][frameDetail.period].color}`;
+  }else if(kamokuStatus == true){
+    colorKoma = `${weekTime[frameDetail.day][frameDetail.period].statuscolor}`;
   }else if(weekTime[frameDetail.day][frameDetail.period].mulcolor != "#888888"){
     colorKoma = `${weekTime[frameDetail.day][frameDetail.period].mulcolor}`;
   }

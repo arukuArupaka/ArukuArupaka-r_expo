@@ -23,6 +23,7 @@ from selenium.common.exceptions import NoSuchElementException
 from .in_database import class_in_database
 from .day_time import day_time
 from .change_sentence import change
+from .kamoku_status import kamoku_status
 
 # Chromeオプションを設定する
 
@@ -237,7 +238,10 @@ async def web_search(url, select_season, select_time, select_day, select_departm
                                         url = "https://ct.ritsumei.ac.jp"+resume
                                         urls.append(url)
                                         #classroom = syllabus(url)
-                                        await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season)
+                                        status = None
+                                        if d==11:
+                                            status = await sync_to_async(kamoku_status)(num)
+                                        await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season, status)
                                 else:
                                     num_name_split = num_name(kamoku)
                                     num = num_name_split[0]
@@ -245,7 +249,10 @@ async def web_search(url, select_season, select_time, select_day, select_departm
                                     url = "https://ct.ritsumei.ac.jp"+resume
                                     urls.append(url)
                                     #classroom = syllabus(url)
-                                    await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season)
+                                    status = None
+                                    if d==11:
+                                        status = await sync_to_async(kamoku_status)(num)
+                                    await sync_to_async(kamoku_in_database)(int(num), name, teacher, url, ad_day, c+1, ad_dep, int(unit), season, status)
                                     
                         kamoku_qty = await sync_to_async(Kamoku.objects.all().count)()
                         

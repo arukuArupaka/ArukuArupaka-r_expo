@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 //import { WebView } from 'react-native-webview';
 
 const KomaView = ({ navigation }) => {
-    const { colorset, setColorset, multicolor, setMulticolor, unitCalc, setUnitCalc, unitSum, setUnitSum, notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
+    const { kamokuStatus, setKamokuStatus, colorset, setColorset, multicolor, setMulticolor, unitCalc, setUnitCalc, unitSum, setUnitSum, notifiSwitch, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, deletekoma, setDeletekoma } = useTimeTable();
 
     const [isShow, setIsShow] = useState(false);
 
@@ -114,6 +114,8 @@ const KomaView = ({ navigation }) => {
 
     if(nodata == true){
       colorKoma = `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].color}`;
+    }else if(kamokuStatus == true){
+      colorKoma = `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].statuscolor}`;
     }else if(weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].mulcolor != "#888888"){
       colorKoma = `${weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].mulcolor}`;
     }
@@ -231,6 +233,7 @@ const KomaView = ({ navigation }) => {
                         <Text style={{fontSize: 17, padding: 5}}>{"教室名：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].classRoom}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"教授：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].teacher}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"単位数：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit}</Text>
+                        <Text style={{fontSize: 17, padding: 5}}>{"科目：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].status}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"授業コード：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num}</Text>
                         <Text style={{fontSize: 17, padding: 5}}>{"メモ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo}</Text>
                     </View>
@@ -245,7 +248,7 @@ const KomaView = ({ navigation }) => {
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
                   </View>
                 </View>
-                {!nodata && 
+                {!nodata && !kamokuStatus && 
                 <View style={{paddingBottom: 8}}> 
                   <View style={styles.notifi}>
                       <View style={{alignItems: 'center', paddingBottom: 7}}onPress={() => {}}><Text>{"色を設定する"}</Text></View>

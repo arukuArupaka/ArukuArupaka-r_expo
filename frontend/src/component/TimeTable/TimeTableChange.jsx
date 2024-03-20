@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TimeTableChange = () => {
 
-    const { unitSum, setUnitSum, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
+    const { kamokuStatus, setKamokuStatus, statusSwitch, unitSum, setUnitSum, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, department, setDepartment,season, setSeason, nodata, notifiSwitch } = useTimeTable();
 
     const pickerSelectStyles = StyleSheet.create({
         inputIOS: {
@@ -77,7 +77,7 @@ const TimeTableChange = () => {
             alignContent: 'center',
             textAlign: 'center',
             paddingLeft: '5%',
-            paddingRight:'5%',
+            paddingRight: 30,
             borderWidth: 1,
             borderRadius: 8,
             borderColor: 'black',
@@ -92,6 +92,9 @@ const TimeTableChange = () => {
         },
         SizeSet:{
             paddingLeft: '30%',
+        },
+        SizeSet2:{
+            paddingLeft: '20%',
         },
         changebutton:{
             display: 'flex',
@@ -236,7 +239,7 @@ return (
             </View>
             <TimeTableQty/>
         </View>
-        <View style={styles.PageSize}>
+        {!kamokuStatus &&<View style={styles.PageSize}>
             <Text
                 style = {{
                     fontSize: 15,
@@ -251,7 +254,23 @@ return (
                 />
             </View>
             <TimeTableQty/>
-        </View>
+            </View>}
+        {!nodata &&<View style={styles.PageSize}>
+            <Text
+                style = {{
+                    fontSize: 15,
+                }}
+            >{"科目の種類ごとに自動で色分け"}</Text>
+            <View style={styles.SizeSet2}>
+                <Switch
+                    value={kamokuStatus}
+                    onValueChange={statusSwitch}
+                    trackColor={{false: '#888888', true: '#00ff7f'}}
+                    thumbColor={'white'}
+                />
+            </View>
+            <TimeTableQty/>
+        </View>}
         <View style={styles.PageSize}>
             <Text style={{fontSize: 15}}>{"登録授業の合計単位数"}</Text>
             <Text style={{fontSize: 15}}>{`${unitSum}`}</Text>

@@ -12,7 +12,7 @@ import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 
 
 const TimrTableView = ({ navigation }) => {
-  const { unitCalc, setUnitCalc, unitSum, setUnitSum, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
+  const { kamokuStatus, setKamokuStatus, unitCalc, setUnitCalc, unitSum, setUnitSum, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -184,7 +184,15 @@ const TimrTableView = ({ navigation }) => {
 
   useEffect(()=>{
     getData();
-  },[nodata])
+  },[nodata]);
+
+  useEffect(() => {
+    console.log('kamokuStatus:',kamokuStatus);
+  },[kamokuStatus]);
+
+  useEffect(()=>{
+    getData();
+  },[kamokuStatus]);
 
   useEffect(()=>{
     getData();
@@ -313,6 +321,38 @@ const TimrTableView = ({ navigation }) => {
     savenodata();
     console.log('nodataの保存が実行され、その値は',nodata);
   }, [nodata]);
+
+  //kamokuStatusの保存、読み込み
+
+  useEffect(() => {
+    const loadkamokuStatus = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem('kamokuStatuskey');
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          setKamokuStatus(value);
+       }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    loadkamokuStatus();
+  }, []);
+
+  useEffect(() => {
+    const savekamokuStatus = async () => {
+      try {
+        const stringValue = JSON.stringify(kamokuStatus);
+        await AsyncStorage.setItem('kamokuStatuskey', stringValue);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    savekamokuStatus();
+    console.log('kamokuStatusの保存が実行され、その値は',kamokuStatus);
+  }, [kamokuStatus]);
 
   //unitcalcの計算
   useEffect(() => {
