@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,8 @@ import {
   Image,
   TouchableOpacity,
   Switch,
-} from 'react-native';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class ImageScrollComponent extends Component {
   constructor(props) {
@@ -19,17 +20,104 @@ class ImageScrollComponent extends Component {
     this.scrollViewRef = React.createRef();
   }
 
-  handleImageClick = event => {
-    if (!this.state.disableChangePosition) {
-      const {locationX, locationY} = event.nativeEvent;
-      const {width: imageWidth, height: imageHeight} =
-        this.getImageDimensions();
-      const clickXOnImage =
-        (locationX * imageWidth) / this.getScrollViewWidth();
-      const clickYOnImage =
-        (locationY * imageHeight) / this.getScrollViewHeight();
-      this.setState({clickX: clickXOnImage, clickY: clickYOnImage});
+  // Django APIからファイル情報を取得するメソッド
+  fetchFileData = async () => {
+    try {
+      const response = await fetch("http://your-django-api-url/api/files/");
+      if (!response.ok) {
+        throw new Error("ファイル情報の取得に失敗しました");
+      }
+
+      const fileData = await response.json();
+      // 取得したファイル情報を表示
+      console.log("取得したファイル情報:", fileData);
+
+      // ここで取得したファイル情報をAPIに送り返す処理を追加
+      this.sendFileDataToAnotherAPI(fileData);
+    } catch (error) {
+      console.error("ファイル情報の取得エラー:", error);
     }
+  };
+
+  // コンポーネントのマウント時にAsyncStorageから保存された位置情報を読み込む
+  componentDidMount() {
+    this.loadSavedPositions();
+  }
+
+  // 位置情報が変更されたときにAsyncStorageに保存する
+  savePositions = () => {
+    const { clickX, clickY, disableChangePosition } = this.state;
+    const scrollY = this.scrollViewRef.current
+      ? this.scrollViewRef.current.contentOffset
+      : 0;
+
+    const positionsToSave = {
+      clickX,
+      clickY,
+      disableChangePosition,
+      scrollY,
+    };
+
+    AsyncStorage.setItem(
+      "imageScrollPositions",
+      JSON.stringify(positionsToSave)
+    ).catch((error) => console.error("位置情報の保存エラー:", error));
+  };
+
+  // Async storage からデータを読み込み、表示する位置にスクロールする
+  loadSavedPositions = async () => {
+    try {
+      const savedPositionsJson = await AsyncStorage.getItem(
+        "imageScrollPositions"
+      );
+      if (savedPositionsJson) {
+        const savedPositions = JSON.parse(savedPositionsJson);
+        this.setState(
+          {
+            clickX: savedPositions.clickX,
+            clickY: savedPositions.clickY,
+            disableChangePosition: savedPositions.disableChangePosition,
+          },
+          () => {
+            // ロード後にアイコンを設定
+            this.scrollToClickPosition();
+          }
+        );
+        this.scrollToPosition(savedPositions.scrollY);
+      }
+    } catch (error) {
+      console.error("保存された位置情報の読み込みエラー:", error);
+    }
+  };
+
+  // 画面が切り替えられた際に呼ばれるメソッド
+  handleScreenChange = () => {
+    // アイコンの位置をAsyncStorageから読み込んで表示
+    this.loadSavedPositions();
+  };
+
+  // コンポーネントがアンマウントされる際に呼ばれるメソッド
+  componentWillUnmount() {
+    // アイコンの位置を保存
+    this.savePositions();
+  }
+
+  handleImageClick = (event) => {
+    const { disableChangePosition } = this.state;
+    const { locationX, locationY } = event.nativeEvent;
+
+    // クリック位置が既にセットされている場合は処理しない
+    if (disableChangePosition) {
+      return;
+    }
+
+    const { width: imageWidth, height: imageHeight } =
+      this.getImageDimensions();
+    const clickXOnImage = (locationX * imageWidth) / this.getScrollViewWidth();
+    const clickYOnImage =
+      (locationY * imageHeight) / this.getScrollViewHeight();
+
+    this.setState({ clickX: clickXOnImage, clickY: clickYOnImage });
   };
 
   getScrollViewWidth = () => {
@@ -41,257 +129,250 @@ class ImageScrollComponent extends Component {
   };
 
   getImageDimensions = () => {
-    return {width: 1453, height: 454}; // 大きな画像の幅と高さ
+    return { width: 1453, height: 454 }; // 大きな画像の幅と高さ
   };
 
-  scrollToPosition = yPosition => {
-    this.scrollViewRef.current.scrollTo({y: yPosition, animated: true});
+  scrollToPosition = (yPosition) => {
+    this.scrollViewRef.current.scrollTo({ y: yPosition, animated: true });
   };
 
   toggleChangePosition = () => {
     // クリックしたときに表示する画像の位置変更可能性を切り替える
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       disableChangePosition: !prevState.disableChangePosition,
     }));
   };
 
   scrollToClickPosition = () => {
     // クリックした位置にスクロール
-    const {clickX, clickY} = this.state;
+    const { clickX, clickY } = this.state;
     if (clickX !== null && clickY !== null) {
       const scrollX =
         (clickX * this.getScrollViewWidth()) / this.getImageDimensions().width -
         200;
       this.scrollToPosition(scrollX);
-      // スクロールが水平方向の場合
-      // this.scrollToPosition(scrollY); // スクロールが垂直方向の場合
     }
   };
 
   render() {
+    const { clickX, clickY } = this.state;
     return (
       <View>
         <ScrollView
           ref={this.scrollViewRef}
           horizontal={true}
-          style={{width: '100%', height: 454, marginTop: 11}}>
+          style={{ width: "100%", height: 454, marginTop: "5%" }}
+        >
           <Image
-            source={require('./map.png')}
-            style={{width: 1453, height: 454, marginTop: '-80'}}
+            source={require("./map.png")}
+            style={{ width: 1453, height: 454, marginTop: "-70" }}
           />
 
           <TouchableOpacity
             onPress={this.handleImageClick}
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
+              position: "absolute",
               width: this.getScrollViewWidth(),
               height: this.getScrollViewHeight(),
-            }}>
+            }}
+          >
             {/* クリックした位置で画像を表示 */}
-            {this.state.clickX !== null && this.state.clickY !== null && (
+            {clickX !== null && clickY !== null && (
               <Image
-                source={require('./bike20.png')}
+                source={require("./bike20.png")}
                 style={{
-                  width: 50,
-                  height: 50,
-                  top: this.state.clickY - 25,
-                  left: this.state.clickX - 25,
-                  position: 'absolute',
+                  width: "3%",
+                  height: "6%",
+                  top: clickY - 25,
+                  left: clickX - 25,
+                  position: "absolute",
                 }}
               />
             )}
           </TouchableOpacity>
         </ScrollView>
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              marginRight: 330,
-              bottom: 260,
-              transform: [{rotate: '90deg'}],
-            }}>
-            瀬田方面
-          </Text>
-          <Text
-            style={{
-              fontSize: 20,
-              marginLeft: 330,
-              bottom: 285,
-              transform: [{rotate: '90deg'}],
-            }}>
-            守山方面
-          </Text>
+
+        <View style={{ marginLeft: "45%" }}>
+          <Text style={{ fontSize: 25, bottom: "1350%" }}>南草津駅</Text>
         </View>
-        <View style={{marginLeft: '45%'}}>
-          <Text style={{fontSize: 25, bottom: 515}}>南草津駅</Text>
-        </View>
-        <View style={{marginLeft: '50%', bottom: 150}}>
-          <Text style={{fontSize: 25}}>大学</Text>
+        <View style={{ marginLeft: "50%", bottom: "18%" }}>
+          <Text style={{ fontSize: 25 }}>大学</Text>
         </View>
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#30CB89',
-            width: 183,
-            height: 46,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#30CB89",
+            width: "40%",
+            height: "6%",
             borderRadius: 66,
-            bottom: 95,
-            marginLeft: 188,
-          }}>
-          <View style={{flexDirection: 'row'}}>
+            bottom: "28%",
+            marginLeft: "57%",
+          }}
+        >
+          <View style={{ flexDirection: "row" }}>
             <Image
-              source={require('./push_pin.png')}
-              style={{marginLeft: 10}}
+              source={require("./push_pin.png")}
+              style={{ marginLeft: "12%" }}
             />
             <Text
               style={{
-                marginRight: 5,
-                color: 'white',
+                marginRight: "1%",
+                color: "white",
                 fontSize: 16,
                 fontWeight: 400,
-              }}>
-              {' '}
+              }}
+            >
+              {" "}
               固定する
             </Text>
           </View>
           <Switch
             value={this.state.disableChangePosition}
             onValueChange={this.toggleChangePosition}
-            trackColor={{false: '#767577', true: '#81b0ff'}}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={
-              this.state.disableChangePosition ? '#f5dd4b' : '#f4f3f4'
+              this.state.disableChangePosition ? "#f5dd4b" : "#f4f3f4"
             }
           />
         </View>
-        <View style={{flexDirection: 'row', flexWrap: 'wrap', bottom: 62}}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", bottom: "25%" }}>
           <TouchableOpacity
             onPress={() => this.scrollToPosition(0)}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#ffa081',
-              paddingLeft: 18,
+              borderColor: "#ffa081",
+              paddingLeft: "4%",
               borderRadius: 4,
-              marginLeft: 46,
-            }}>
+              marginLeft: "11.5%",
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
-                paddingLeft: 6.5,
-                paddingTop: 2,
+                paddingLeft: "15%",
+                paddingTop: "10%",
                 fontWeight: 400,
-                color: '#010101',
-              }}>
+                color: "#010101",
+              }}
+            >
               A
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.scrollToPosition(200)}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#fd97bc',
-              paddingLeft: 18,
+              borderColor: "#fd97bc",
+              paddingLeft: "4%",
               borderRadius: 4,
-              marginLeft: 41,
-            }}>
+              marginLeft: "11.5%",
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
-                paddingLeft: 6.5,
-                paddingTop: 2,
+                paddingLeft: "15%",
+                paddingTop: "10%",
                 fontWeight: 400,
-                color: '#010101',
-              }}>
+                color: "#010101",
+              }}
+            >
               B
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.scrollToPosition(530)}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#384cfe',
-              paddingLeft: 18,
+              borderColor: "#384cfe",
+              paddingLeft: "4%",
               borderRadius: 4,
-              marginLeft: 41,
-            }}>
+              marginLeft: "11.5%",
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
-                paddingLeft: 6.5,
-                paddingTop: 2,
+                paddingLeft: "15%",
+                paddingTop: "10%",
                 fontWeight: 400,
-                color: '#010101',
-              }}>
+                color: "#010101",
+              }}
+            >
               C
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.scrollToPosition(900)}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#ff74b7',
-              paddingLeft: 18,
+              borderColor: "#ff74b7",
+              paddingLeft: "4%",
               borderRadius: 4,
-              marginTop: 12,
-              marginLeft: 46,
-            }}>
+              marginLeft: "11.5%",
+              marginTop: "3%",
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
-                paddingLeft: 6.5,
-                paddingTop: 2,
+                paddingLeft: "15%",
+                paddingTop: "10%",
                 fontWeight: 400,
-                color: '#010101',
-              }}>
+                color: "#010101",
+              }}
+            >
               D
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.scrollToPosition(1453)}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#2EDF60',
-              paddingLeft: 18,
+              borderColor: "#2EDF60",
+              paddingLeft: "4%",
               borderRadius: 4,
-              marginTop: 12,
-              marginLeft: 41,
-            }}>
+              marginLeft: "11.5%",
+              marginTop: "3%",
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
-                paddingLeft: 6.5,
-                color: '#010101',
-                paddingTop: 2,
+                paddingLeft: "15%",
+                paddingTop: "10%",
                 fontWeight: 400,
-              }}>
+                color: "#010101",
+              }}
+            >
               E
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.scrollToClickPosition}
             style={{
-              height: 52,
-              width: 72,
+              height: "45%",
+              width: "17%",
               borderWidth: 3,
-              borderColor: '#000',
+              borderColor: "#000",
+              paddingLeft: "-12%",
               borderRadius: 4,
-              paddingTop: 0,
-              marginTop: 12,
-              marginLeft: 41,
-            }}>
-            <Image source={require('./bike20.png')} />
+              marginLeft: "11.5%",
+              marginTop: "3%",
+            }}
+          >
+            <Image source={require("./bike20.png")} />
           </TouchableOpacity>
         </View>
       </View>
