@@ -31,12 +31,12 @@ type TalkRoomProps = {
     name:string;
     type:string;
     ids:any;
-    me:string;
+    //me:string;
   };
 
-export const RootTalk = ({id, name, type, ids, me}) => {
+export const RootTalk = ({id, name, type, ids}) => {
     //console.log("RootTalk内のidは",id);
-    const { click, setClick,chatmessage, setChatmessage  } = useTalkContext();
+    const { me, setMe, click, setClick,chatmessage, setChatmessage  } = useTalkContext();
     const [inputValue, setInputValue] = useState('');
     const [add, setAdd] = useState(false);
 
@@ -74,26 +74,12 @@ export const RootTalk = ({id, name, type, ids, me}) => {
         const formattedMinutes = minutes < 10 ? "0" + minutes.toString() : minutes.toString(); // 分が10未満の場合は先頭に0を追加
 
         const timeString = `${formattedHours}:${formattedMinutes}`; // "時間:分"の形式の文字列を生成
-        let stname = "";
-        const stkey = `${currentUserId}appuser`;
-
-        const loadname = async () => {
-          try {
-            const stringValue = await AsyncStorage.getItem(stkey);
-            if(stringValue != null){
-              const value = JSON.parse(stringValue);
-              stname = value;
-          }
-          } catch (e) {
-            console.log(e);
-          }
-        };
-  
-        loadname(); 
+        let stname;
+        //const stkey = `${currentUserId}appuser`;
 
         console.log('メッセージ作成');
           await addDoc(check, {
-            name: me,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, ids], read: false
+            name:me,content: content, sentAt: Timestamp.now(), id: currentUserId,  time:timeString, unreaduser: [currentUserId, ids], read: false
           });
 
           //console.log("現在時刻は",Timestamp.now()) ;

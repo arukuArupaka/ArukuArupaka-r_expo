@@ -48,7 +48,7 @@ export const TextbookTalk = ({navigation}) => {
   const [status, setStatus] = useState([]);
   const [latest, setLatest] = useState([]);
 
-  const { lasttime, setLasttime, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
+  const { me, setMe, lasttime, setLasttime, nameindi, setNameindi, chatid, setChatid, chatroom, setChatroom, chatmessage, setChatmessage} = useTalkContext();
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
   //let arrayid = [];
@@ -94,47 +94,60 @@ export const TextbookTalk = ({navigation}) => {
   }else{
 
     useEffect(() => {
-      const currentUserId = auth.currentUser.uid;
-      let stuser = "";
-      const stkey = `${currentUserId}appUser`;
+      const asyncCheck = async() => {
+        const currentUserId = auth.currentUser.uid;
+        let stuser;
+        //const "appUserkey" = appUserkey;
 
-      const loadname = async () => {
-        try {
-          const stringValue = await AsyncStorage.getItem(stkey);
-          if(stringValue != null){
-            const value = JSON.parse(stringValue);
-            stuser = value;
-        }
-        } catch (e) {
-          console.log(e);
-        }
-      };
+        const loadname = async () => {
+          try {
+            const stringValue = await AsyncStorage.getItem("appUserkey");
+            if(stringValue != null){
+              const value = JSON.parse(stringValue);
+              stuser = value;
+          }
+          } catch (e) {
+            console.log(e);
+          }
+        };
 
-      loadname();
+        await loadname();
 
-      if(stuser != ""){
-        const asyncsave = async() => {
-          const refFiresrore = doc(db, `users/${userUUID}`);
-          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-
-          const saveroomid = async () => {
+        if(stuser == null){
+          
+          console.log('stnameがnullです');
+          const asyncSave = async () => {
             try {
+              const refFirestore = doc(db, `users/${userUUID}`);
+              const docSnapshot = await getDoc(refFirestore);
+              
+              if (!docSnapshot.exists()) {
+                console.log('ドキュメントが存在しません。');
+                return;
+              }
+          
+              const appUser = docSnapshot.data(); // appUserがデータベースから取得したオブジェクト
               const stringValue = JSON.stringify(appUser);
-              await AsyncStorage.setItem(stkey, stringValue);
-              //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
+              console.log('appuser',stringValue);
+          
+              await AsyncStorage.setItem("appUserkey", stringValue);
+              console.log(`データが${userUUID}さんのローカルに保存されました。`);
             } catch (e) {
-              console.log(e);
+              console.error('データの保存中にエラーが発生しました:', e);
             }
           };
-      
-          saveroomid();
-          };
+          
+          asyncSave();
+          
 
-          asyncsave();
-
-      }
-      
-
+        }else{
+          console.log('stuserがnullではありません');
+          console.log(stuser);
+          setMe(stuser.userName);
+        }
+        
+    };
+    asyncCheck();
     },[]);
 
     async function registerForPushNotificationsAsync() {
@@ -219,11 +232,11 @@ export const TextbookTalk = ({navigation}) => {
       const getUserDate=async()=>{
       if (isLogin) {
         let stuser;
-        const stkey = `${currentUserId}appUser`;
+        //const "appUserkey" = `${currentUserId}appUser`;
   
         const loadname = async () => {
           try {
-            const stringValue = await AsyncStorage.getItem(stkey);
+            const stringValue = await AsyncStorage.getItem("appUserkey");
             if(stringValue != null){
               const value = JSON.parse(stringValue);
               stuser = value;
@@ -346,11 +359,11 @@ export const TextbookTalk = ({navigation}) => {
 
     const currentUserId = auth.currentUser.uid;
     let stuser;
-    const stkey = `${currentUserId}appUser`;
+    //const "appUserkey" = `${currentUserId}appUser`;
 
     const loadname = async () => {
       try {
-        const stringValue = await AsyncStorage.getItem(stkey);
+        const stringValue = await AsyncStorage.getItem("appUserkey");
         if(stringValue != null){
           const value = JSON.parse(stringValue);
           stuser = value;
