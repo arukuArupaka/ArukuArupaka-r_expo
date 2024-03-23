@@ -4,9 +4,10 @@ import React from 'react';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { MaterialIcons,MaterialCommunityIcons ,Ionicons,Entypo } from '@expo/vector-icons';
 import { TextbookHome } from './main/TextbookHome';
-import { TextbookTalk } from './main/TextbookTalk';
+import { TextbookTalk } from './main/Talk/TextbookTalk';
 import { TextbookCamera } from './main/TextbookCamera';
 import { TextbookMyPage } from './main/TextbookMyPage';
+import { TextbookTalkView } from './main/TextbookTalkView';
 
 // const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,14 +42,14 @@ export const Textbookmain = () => {
 
         </Tab.Screen>
 
-        <Tab.Screen name='トーク' component={TextbookTalk}
+        <Tab.Screen name='トーク' component={TextbookTalkView}
          options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (<Ionicons name="chatbubble-ellipses" size={36} color={focused ? '#027aff':'black'} /> 
           )
         }} 
         >
-        </Tab.Screen>
+      </Tab.Screen>
         
         <Tab.Screen name='マイページ' component={TextbookMyPage}
          options={{

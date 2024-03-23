@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -14,11 +15,12 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeCarousel from '../component/Home/HomeViewCarousel';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
-import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject, fetchUserObject } from "../redux/actions/userAction";
+import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject } from "../redux/actions/userAction";
 import {useDispatch, useSelector} from 'react-redux';
 import { doc, getDoc } from '@firebase/firestore';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage,db } from "../../firebase";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,signOut,sendPasswordResetEmail } from 'firebase/auth';
 
 
 //右上アクションボタンのコンポーネント

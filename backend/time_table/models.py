@@ -13,6 +13,6 @@ class Kamoku(models.Model):
     kamoku_department = models.CharField(max_length=100)
     kamoku_unit = models.IntegerField()
     kamoku_season = models.CharField(max_length=100)
-    
+    kamoku_status = models.CharField(max_length=100, null=True)
     def __str__(self):
-        return f'{self.kamoku_name} - {self.kamoku_class} - {self.kamoku_teacher} - {self.kamoku_resume} - {self.kamoku_day} - {self.kamoku_department} - {self.kamoku_season}'
+        return f'{self.kamoku_name} - {self.kamoku_class} - {self.kamoku_teacher} - {self.kamoku_resume} - {self.kamoku_day} - {self.kamoku_department} - {self.kamoku_season} - {self.kamoku_status}'

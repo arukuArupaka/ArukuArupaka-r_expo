@@ -41,7 +41,7 @@ const styles=StyleSheet.create({
                 marginTop:1,
                 marginBottom:1,
                 height:'100%',
-                backgroundColor: 'white'
+                //backgroundColor: 'white'
         }
 })
 export default ClassTime;

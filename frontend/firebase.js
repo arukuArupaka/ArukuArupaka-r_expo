@@ -2,6 +2,8 @@ import { initializeApp,getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 
 
@@ -22,3 +24,7 @@ const firebaseApp = getApp();
 const storage = getStorage();
 
 export {auth,db,storage}
+
+
+// Firebase を初期化
+

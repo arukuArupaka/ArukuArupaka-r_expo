@@ -129,7 +129,8 @@ const TimeTableInfo = (props) => {
     minute:props.classStartEndTimeUnitList[props.period].minute,
     //color: weekTime[props.day][props.period].color
     color: "",
-
+    mulcolor: "#888888",
+    statuscolor: "#888888"
   });
 
   const [check, setCheck] = useState(1);
