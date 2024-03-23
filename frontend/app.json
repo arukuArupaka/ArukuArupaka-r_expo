@@ -21,7 +21,15 @@
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
-        }
+        },
+        "versionCode": 1,
+        "package": "com.miraiyamaneko.samplepackagename",
+        "googleServicesFile": "./google-services.json",
+        "permissions": [
+          "CAMERA",
+          "WRITE_EXTERNAL_STORAGE",
+          "CAMERA_ROLL"
+        ]
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

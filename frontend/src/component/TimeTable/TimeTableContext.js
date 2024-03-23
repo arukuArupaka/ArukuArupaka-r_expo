@@ -73,7 +73,7 @@ export const TimeTableProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://192.168.11.4:8000/time_table/get/all/search/?kamoku_department=${department}&kamoku_day=${day}&kamoku_time=${time}&kamoku_season=${season}`);
+        const response = await fetch(`http://127.0.0.1:8000/time_table/get/all/search/?kamoku_department=${department}&kamoku_day=${day}&kamoku_time=${time}&kamoku_season=${season}`);
         if (!response.ok) {
           console.log('HTTP status code:', response.status);
           throw new Error('Network response was not ok');
