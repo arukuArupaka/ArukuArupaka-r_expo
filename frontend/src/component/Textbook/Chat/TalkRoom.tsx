@@ -70,34 +70,39 @@ const TalkRoom: React.FC<TalkRoomProps> = ({ chatroom, chatid, ids, status, late
     },[]);
 
     useEffect(()=>{
-    //console.log('idsの値は',ids);
-        if(!isLogin||isLoginNotVerificationEmail){
-            //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
-            console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
-        }else{
-            if(ids == '1qkYVAZr1ke2OdH5srFoBUKbfiK2'){
-                //const url = 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture';
-                getDownloadURL(ref(storage, 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture.jpg')).then((getURI)=>{
-                        setImage(getURI)//ここに画像のurlが入ります。
-                    }).
-                    catch((e)=>{
-                        console.log(e.message)
-                        //console.log('マグロさんです');
-                    }).then(()=>{
-                        setCheck(true);
-                    })
+        if(urli!=''){
+            if(!isLogin||isLoginNotVerificationEmail){
+                //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+                console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
             }else{
-                //console.log('マグロさんじゃありません');
-                getDownloadURL(ref(storage, `users/${ids}/mainPicture`)).then((getURI)=>{
-                        setImage(getURI)//ここに画像のurlが入ります。
-                    }).
-                    catch((e)=>{
-                        console.log(e.message)
-                    }).then(()=>{
-                        setCheck(true);
-                    })
+                if(ids == '1qkYVAZr1ke2OdH5srFoBUKbfiK2'){
+                    //const url = 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture';
+                    getDownloadURL(ref(storage, 'users/1qkYVAZr1ke2OdH5srFoBUKbfiK2/mainPicture.jpg')).then((getURI)=>{
+                            setImage(getURI)//ここに画像のurlが入ります。
+                            console.log('url',getURI);
+                            console.log(`${ids}さん成功`);
+                        }).
+                        catch((e)=>{
+                            console.log(e.message)
+                            console.log('マグロさんエラー');
+                        }).then(()=>{
+                            setCheck(true);
+                        })
+                }else{
+                    //console.log('マグロさんじゃありません');
+                    getDownloadURL(ref(storage, `users/${ids}/mainPicture`)).then((getURI)=>{
+                            setImage(getURI)//ここに画像のurlが入ります。
+                        }).
+                        catch((e)=>{
+                            console.log(e.message)
+                            console.log(`${ids}さんエラー`);
+                        }).then(()=>{
+                            setCheck(true);
+                        })
+                }
             }
         }
+
 
 
     },[urli]);

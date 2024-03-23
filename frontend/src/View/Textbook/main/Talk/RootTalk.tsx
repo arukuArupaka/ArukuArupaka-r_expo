@@ -56,94 +56,13 @@ export const RootTalk = ({id, name, type, ids, me}) => {
         shouldSetBadge: false,
       }),
     });
-    
-    
-    // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-    /*async function sendPushNotification(idi:string, body:string) {
-      const check = doc(db, `chat/${idi}`);
-      const checkdoc = await getDoc(check);
-      const useridi = checkdoc.data().userid;
-      const username = checkdoc.data().username;
-      const currentUserId = auth.currentUser.uid;
-      let usrid = "";
-      let usrnames = "";
 
-      useridi.map((ids, index) => {
-        if(currentUserId != ids){
-          usrid = ids;
-          usrnames = username[index];
-        }
-      });
-
-      console.log('ids:',usrid);
-
-      const tokendocu = await getDoc(doc(db, `tokens/${usrid}`));
-      const usertoken = tokendocu.data().token;
-      console.log('token', usertoken);
-
-      const messages = usertoken.map(token => ({
-        to: `${token}`,
-        sound: 'default',
-        title: `${usrnames}`,
-        body: `${body}`,
-        data: { someData: 'goes here' },
-      }));
-
-
-        
-      
-        try{
-        const response = await fetch('https://exp.host/--/api/v2/push/send', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(messages),
-        });
-        const responseJson = await response.json();
-      
-          // レスポンスからエラーをチェック
-          if (responseJson.data && responseJson.data.status === 'error') {
-            console.log('Error sending notification:', responseJson.data.message);
-            
-            // ここに無効なトークンに対する処理を追加
-            if (responseJson.data.details && responseJson.data.details.error === 'DeviceNotRegistered') {
-              // トークンが無効であることを示す処理
-              console.log('This token is no longer registered. Removing from database...');
-              // トークンをデータベースから削除するロジックをここに追加
-            }
-          } else {
-            // 通知が成功した場合の処理
-            console.log('Notification sent successfully:', responseJson);
-          }
-        } catch (error) {
-          console.error('Error sending notification:', error);
-        }
-
-        setInputValue('');
-
-    }*/
 
 
     async function createChatroomStructure(content:string) {
-
+        setInputValue('');
         const currentUserId = auth.currentUser.uid;
 
-        // chatroomsコレクションに新しいドキュメントを追加し、IDを自動生成させる
-
-        //const refFiresrore = doc(db, `users/${userUUID}`);
-        //const snap = await getDoc(refFiresrore);
-        //const snapuser = collection(db, "users");
-        //const usersINFO = await getDocs(snapuser);
-    
-        //const appUser = (await getDoc(refFiresrore)).data() as User;
-        
-        // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
-        //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
-        //await addDoc(collection(chatroomRef, "users"), { name: anotherName, id:  anotherID});
-        //Keyboard.dismiss();
         const check = collection(db, `${type}/${id}/messages`);
         const checkd = doc(db, `${type}/${id}`)
         //const checkmes = checkdoc.data();
@@ -156,7 +75,7 @@ export const RootTalk = ({id, name, type, ids, me}) => {
 
         const timeString = `${formattedHours}:${formattedMinutes}`; // "時間:分"の形式の文字列を生成
         let stname = "";
-        const stkey = `${currentUserId}Name`;
+        const stkey = `${currentUserId}appuser`;
 
         const loadname = async () => {
           try {
@@ -214,6 +133,7 @@ export const RootTalk = ({id, name, type, ids, me}) => {
               },
               body: JSON.stringify(messages),
             });
+            
             const responseJson = await response.json();
           
               // レスポンスからエラーをチェック
@@ -237,7 +157,7 @@ export const RootTalk = ({id, name, type, ids, me}) => {
             
         }
 
-        setInputValue('');
+        
       };
 
   return (

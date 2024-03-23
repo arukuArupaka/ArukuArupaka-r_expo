@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -15,11 +16,12 @@ import HomeCarousel from "../component/Home/HomeViewCarousel";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
-import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject, fetchUserObject } from "../redux/actions/userAction";
+import { handleLoginAction,handleLoginNotVerificationEmail,setUserUUIDAction,setUserObject } from "../redux/actions/userAction";
 import {useDispatch, useSelector} from 'react-redux';
 import { doc, getDoc } from '@firebase/firestore';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage,db } from "../../firebase";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,deleteUser,signOut,sendPasswordResetEmail } from 'firebase/auth';
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -119,6 +121,75 @@ const ShowDate = () => {
 
 //実際に描画される部分
 const HomeView = (props) => {
+  // const [userInfo,setUserInfo]=useState()
+  // const [errorMessage,setErrorMessage]=useState('')
+  // const loginAfterPageName=useSelector((state)=>state.common.loginAfterPageName)
+
+  // useEffect(()=>{
+
+  //   const isMailVerified=async()=>{
+  //     let result
+  //     const unsubscribe = await onAuthStateChanged(auth, (user) => {
+  //       result=user.emailVerified
+  //     });
+  //     unsubscribe();
+  //     return result
+  //   };
+
+  //   const setdRegisterMail=async()=>{
+  //     //console.log(userInfo)
+  //     if(userInfo.user){
+  //       await sendEmailVerification(userInfo.user);
+  //     }else{
+        
+  //     }
+
+  //   }
+
+  //   const pleaseValidateMailDialog = () => {
+  //     Alert.alert(
+  //         'まだアカウントは作成されていません。', 
+  //         'メールに送付されたリンクをクリックしてください。メールが届かない場合は再送信してください。',
+  //     [
+  //       {text: 'OK', onPress: () =>{}},
+  //       {text:'メールを再送信',onPress:()=>setdRegisterMail()}
+  //     ]);
+  //   };
+
+  //   const handleLogin = async () => {
+  //     try {
+  //       const user=await signInWithEmailAndPassword(auth, email, password);
+  //       setUserInfo(user)
+  //       if(await isMailVerified()){
+  //         await dispatch(handleLoginAction(isMailVerified()))
+  //         console.log('ここにだす')
+  //         console.log(await loginAfterPageName)
+  //         if(await loginAfterPageName){
+  //           await props.navigation.navigate('settingsToPage')
+  //         }else{
+  //         await props.navigation.navigate('settings')
+  //         }
+  //       }else{
+  //         pleaseValidateMailDialog()
+  //       }
+  //     } catch (error) {
+  //       console.log(error.message);
+  //       switch (error.message){
+  //         case "Firebase: Error (auth/email-already-in-use).":
+  //           setErrorMessage("このアカウントは登録されいます。ログインしてください。")
+  //           break;
+  //         case "Firebase: Error (auth/invalid-credential).":
+  //           setErrorMessage("メールアドレスまたはパスワードが間違えています。")
+  //           break;
+  //         case "Firebase: Error (auth/invalid-email).":
+  //           setErrorMessage("メールアドレスを入力してください。")
+  //         default:
+  //           break
+  //       }
+  //     }
+  //   };
+  // },[]);
+
   //fireBaseログイン確認
   const dispatch: Dispatch = useDispatch();
 

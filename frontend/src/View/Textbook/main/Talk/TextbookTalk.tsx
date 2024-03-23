@@ -95,15 +95,15 @@ export const TextbookTalk = ({navigation}) => {
 
     useEffect(() => {
       const currentUserId = auth.currentUser.uid;
-      let stname = "";
-      const stkey = `${currentUserId}Name`;
+      let stuser = "";
+      const stkey = `${currentUserId}appUser`;
 
       const loadname = async () => {
         try {
           const stringValue = await AsyncStorage.getItem(stkey);
           if(stringValue != null){
             const value = JSON.parse(stringValue);
-            stname = value;
+            stuser = value;
         }
         } catch (e) {
           console.log(e);
@@ -112,15 +112,14 @@ export const TextbookTalk = ({navigation}) => {
 
       loadname();
 
-      if(stname == null){
+      if(stuser != ""){
         const asyncsave = async() => {
           const refFiresrore = doc(db, `users/${userUUID}`);
           const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-          const namest = appUser.userName;
 
           const saveroomid = async () => {
             try {
-              const stringValue = JSON.stringify(namest);
+              const stringValue = JSON.stringify(appUser);
               await AsyncStorage.setItem(stkey, stringValue);
               //console.log(`メッセージが${currentUserId}さんのローカルに保存されました`);
             } catch (e) {
@@ -169,7 +168,13 @@ export const TextbookTalk = ({navigation}) => {
         alert('Must use physical device for Push Notifications');
       }
     
-      return token.data;
+            // token および token.data の存在をチェック
+      if (token && token.data) {
+        return token.data;
+      }
+
+      // token.dataが存在しない場合はここで何も返さない、または適切な値を返す
+      return null; // または undefined、もしくは何も書かない
     }
 
     const [expoPushToken, setExpoPushToken] = useState('');
@@ -213,14 +218,29 @@ export const TextbookTalk = ({navigation}) => {
       //console.log('effict')
       const getUserDate=async()=>{
       if (isLogin) {
-        // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-        const refFiresrore = doc(db, `users/${userUUID}`);
-        const snap = await getDoc(refFiresrore);
-        const snapuser = collection(db, "users");
-        //const usersINFO = await getDocs(snapuser);
-        //const userstore = doc(db, 'users');
+        let stuser;
+        const stkey = `${currentUserId}appUser`;
+  
+        const loadname = async () => {
+          try {
+            const stringValue = await AsyncStorage.getItem(stkey);
+            if(stringValue != null){
+              const value = JSON.parse(stringValue);
+              stuser = value;
+              console.log('value',stuser);
+            }else{
+              console.log("例外処理");
+            }
+          } catch (e) {
+            console.log(e);
+            console.log('eroor!!');
+          }
+        };
+  
+        loadname();
 
-        if (snap.exists()) {
+        if (stuser != "") {
+          console.log('userinfo',stuser);
 
           // 現在ログインしているユーザーのIDを取得
           const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
@@ -250,30 +270,28 @@ export const TextbookTalk = ({navigation}) => {
           // 関数を呼び出してusersコレクション内のドキュメントIDを取得
           fetchAllUserIds();
           // ユーザーデータを取得して格納
-          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-          //const usersApp = (await getDoc(userstore)).data() as User;
-          setUserName(appUser.userName)
-          setFaculty(appUser.faculty)
-          setDepartment(appUser.department)
-          setGrade(appUser.grade)
-          setProfile(appUser.profile)
+          //setUserName(stuser.userName)
+          // setFaculty(stuser.faculty)
+          // setDepartment(stuser.department)
+          // setGrade(stuser.grade)
+          // setProfile(stuser.profile)
           
-          //const count = appUser.chatroomID.length;
+          //const count = stuser.chatroomID.length;
           let i = 0;
           {/*for(i=0;i<count;i++){
-            setChatroom(prev=>[...prev, appUser.chatroomID[i]]);
+            setChatroom(prev=>[...prev, stuser.chatroomID[i]]);
           }*/}
-          //setChatroom(appUser.chatroomID);
+          //setChatroom(stuser.chatroomID);
 
-          const oldSettingdata= {
-            id: appUser.id,
-            userName: appUser.userName,
-            faculty:appUser.faculty,
-            department:appUser.department,
-            grade:appUser.grade,
-            profile:appUser.profile,
-          };
-          setOldData(oldSettingdata)
+          // const oldSettingdata= {
+          //   id: stuser.id,
+          //   userName: stuser.userName,
+          //   faculty:stuser.faculty,
+          //   department:stuser.department,
+          //   grade:stuser.grade,
+          //   profile:stuser.profile,
+          // };
+          // setOldData(oldSettingdata)
 
         } else {
          setUserName('未登録')
@@ -281,7 +299,7 @@ export const TextbookTalk = ({navigation}) => {
          setDepartment('未登録')
          setGrade('未登録')
          setProfile('未登録')
-         setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
+         //setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
          setIsCompress(false)
         }
       } else {
@@ -327,8 +345,27 @@ export const TextbookTalk = ({navigation}) => {
   async function createChatroomStructure(anotherName:string, anotherID:string) {
 
     const currentUserId = auth.currentUser.uid;
-    const doccon = await getDoc(doc(db, `users/${currentUserId}`));
-    const docc = doccon.data().userName;
+    let stuser;
+    const stkey = `${currentUserId}appUser`;
+
+    const loadname = async () => {
+      try {
+        const stringValue = await AsyncStorage.getItem(stkey);
+        if(stringValue != null){
+          const value = JSON.parse(stringValue);
+          stuser = value;
+          console.log('value',stuser);
+        }else{
+          console.log("例外処理");
+        }
+      } catch (e) {
+        console.log(e);
+        console.log('eroor!!');
+      }
+    };
+
+    loadname();
+    const docc = stuser.userName;
 
     // chatroomsコレクションに新しいドキュメントを追加し、IDを自動生成させる
     const chatroomRef = await addDoc(collection(db, "chat"), { creationTime: Timestamp.now(), userid: [currentUserId,anotherID], username: [docc, anotherName]  });
@@ -343,11 +380,7 @@ export const TextbookTalk = ({navigation}) => {
 
     
     const refFiresrore = doc(db, `users/${userUUID}`);
-    //const snap = await getDoc(refFiresrore);
     const snapuser = collection(db, "users");
-    //const usersINFO = await getDocs(snapuser);
-
-    //const appUser = (await getDoc(refFiresrore)).data() as User;
     
     // chatroomのusersサブコレクションにドキュメントを追加し、IDを自動生成させる
     //await addDoc(collection(chatroomRef, "users"), { name: appUser.userName, id: currentUserId });
@@ -376,7 +409,8 @@ export const TextbookTalk = ({navigation}) => {
   };
 
   useEffect(()=>{
-    const currentUserId = auth.currentUser.uid;
+    if(isLogin){
+          const currentUserId = auth.currentUser.uid;
     const usersRef = collection(db, 'chat');
     //const q = query(usersRef, orderBy("creationTime", "desc"));
     const q2 = query(usersRef, where("userid", "array-contains", currentUserId),orderBy("creationTime", "desc"));
@@ -401,27 +435,6 @@ export const TextbookTalk = ({navigation}) => {
             //console.log('メッセージフィールドが存在します');
             const contentname = doc.data().username;
             const contentids = doc.data().userid;
-            //const messent = doc.data().messages;
-            //const messle = messent.length;
-            //console.log('messagesの長さは',messle);
-            //const messsender = messent[messle-1].id;
-            //const messStatus = messent[messle-1].read;
-            //if(messsender != currentUserId){
-              //arraystatus = [...arraystatus, messStatus];
-            //}else{
-              //arraystatus = [...arraystatus, true];
-            //}
-            //const latestmessage = messent[messle-1].content;
-            //arraylatest = [...arraylatest, latestmessage];
-            //if(messStatus == false){
-              //if(messsender != currentUserId){
-                //setShowno(true);
-                //arraystatus = [...arraystatus, messStatus];
-              //}
-            //}else{
-              //setShowno(false);
-              //arraystatus = [...arraystatus, messStatus];
-            //}
             const contentid = doc.id;
             arrayid = [...arrayid, contentid];
             contentname.map((nm, index) =>{
@@ -437,8 +450,7 @@ export const TextbookTalk = ({navigation}) => {
           //console.log('contentnameが呼び出されました');
           const currentUserId = auth.currentUser.uid;
           let i = 0;
-
-          
+          console.log('ids',arrayids);          
           setChatroom(array);
           setImage(arrayids);
           setStatus(arraystatus);
@@ -531,6 +543,8 @@ export const TextbookTalk = ({navigation}) => {
         
     });
     return () => unsubscribe();
+    }
+    
   },[]);
 
 

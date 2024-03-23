@@ -50,6 +50,26 @@ export const Chatroom=({route, navigation})=>{
       //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
       console.log('ログインしていません');//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
       
+      useEffect(() => {
+    
+        // コンポーネントがマウントされた時に実行
+        const unsubscribe = navigation.addListener('focus', () => {
+          // この画面がフォーカスされた時にタブバーを非表示にする
+          navigation.getParent()?.setOptions({ tabBarStyle: { display: 'none' } });
+        });
+    
+        return unsubscribe;
+      }, []);
+    
+      useEffect(() => {
+        // コンポーネントがアンマウントされる時に実行
+        const unsubscribe = navigation.addListener('blur', () => {
+          // この画面から離れる時にタブバーを再表示する
+          navigation.getParent()?.setOptions({ tabBarStyle: { display: 'flex' } });
+        });
+    
+        return unsubscribe;
+      }, [navigation]);
 
       useEffect(() => {
         
@@ -107,28 +127,6 @@ export const Chatroom=({route, navigation})=>{
 
     }else{
 
-      /*const getdata = async() =>{
-        const currentUserId = auth.currentUser.uid;
-        const refFiresrore = doc(db, `users/${userUUID}`);
-        const snap = await getDoc(refFiresrore);
-        const snapuser = collection(db, "users");
-        const usersINFO = await getDocs(snapuser);
-
-        const appUser = (await getDoc(refFiresrore)).data() as User;
-
-        const name=appUser.userName;
-
-        try {
-          const stringValue = JSON.stringify(name);
-          await AsyncStorage.setItem('currentname', stringValue);
-        } catch (e) {
-          console.log(e);
-        }
-        console.log('ルームidの情報の保存が実行され、その値は',name);
-    };
-      
-      getdata();*/
-
       useEffect(()=>{
         setUrli(ids);
     },[]);
@@ -184,26 +182,6 @@ export const Chatroom=({route, navigation})=>{
 
 
   useEffect(() => {
-
-    const getdata = async() =>{
-        const currentUserId = auth.currentUser.uid;
-        const refFiresrore = doc(db, `users/${userUUID}`);
-        //const snap = await getDoc(refFiresrore);
-        const snapuser = collection(db, "users");
-        //const usersINFO = await getDocs(snapuser);
-
-        const appUser = (await getDoc(refFiresrore)).data() as User;
-
-        const name=appUser.userName;
-
-        //setNameuser(name);
-
-        //console.log("名前は",name);
-
-        setMe(name);
-    };
-
-    getdata();
 
     // コンポーネントがマウントされた時に実行
     const unsubscribe = navigation.addListener('focus', () => {
