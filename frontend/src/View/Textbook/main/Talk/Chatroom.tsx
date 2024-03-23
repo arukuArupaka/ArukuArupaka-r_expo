@@ -28,7 +28,7 @@ import { writeBatch } from "firebase/firestore";
 const batch = writeBatch(db);
 
 export const Chatroom=({route, navigation})=>{
-    const { nameindi, setNameindi, chatmessage, setChatmessage, lasttime, setLasttime  } = useTalkContext();
+    const { me, setMe, nameindi, setNameindi, chatmessage, setChatmessage, lasttime, setLasttime  } = useTalkContext();
     const {id, name, type, ids} = route.params;
     //console.log("chatroom内のidは",id);
     const [iduser, setIduser] = useState('');
@@ -37,7 +37,6 @@ export const Chatroom=({route, navigation})=>{
     const [urli, setUrli] = useState('');
     const [newmessage, setNewmessage] = useState([]);
     const [doccheck, setDoccheck] = useState(false);
-    const [me, setMe] = useState('');
     const key = `${id}`;
     //console.log('key',key);
 
@@ -395,7 +394,7 @@ export const Chatroom=({route, navigation})=>{
                         </View>
                     </ScrollView>
                     <View style={{zIndex: 200}}>
-                        <RootTalk id={id} type={type} ids={ids} me={me}/>
+                        <RootTalk id={id} type={type} ids={ids}/>
                     </View>
                 {/*</SafeAreaView>*/}
             </View>
