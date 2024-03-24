@@ -158,14 +158,17 @@ class ImageScrollComponent extends Component {
     const { clickX, clickY } = this.state;
     return (
       <View>
+        <View style={{ alignItems: "center", marginTop: "1%" }}>
+          <Text style={{ fontSize: 20 }}>南草津駅</Text>
+        </View>
         <ScrollView
           ref={this.scrollViewRef}
           horizontal={true}
-          style={{ width: "100%", height: 454, marginTop: "5%" }}
+          style={{ width: "100%", height: 404 }}
         >
           <Image
-            source={require("./map.png")}
-            style={{ width: 1453, height: 454, marginTop: "-70" }}
+            source={require("../BikeImage/map.jpg")}
+            style={{ width: 1453, height: "120%", marginTop: "-70" }}
           />
 
           <TouchableOpacity
@@ -179,7 +182,7 @@ class ImageScrollComponent extends Component {
             {/* クリックした位置で画像を表示 */}
             {clickX !== null && clickY !== null && (
               <Image
-                source={require("./bike20.png")}
+                source={require("../BikeImage/bike20.png")}
                 style={{
                   width: "3%",
                   height: "6%",
@@ -192,10 +195,7 @@ class ImageScrollComponent extends Component {
           </TouchableOpacity>
         </ScrollView>
 
-        <View style={{ marginLeft: "45%" }}>
-          <Text style={{ fontSize: 25, bottom: "1350%" }}>南草津駅</Text>
-        </View>
-        <View style={{ marginLeft: "50%", bottom: "18%" }}>
+        <View style={{ marginLeft: "50%" }}>
           <Text style={{ fontSize: 25 }}>大学</Text>
         </View>
         <View
@@ -206,13 +206,12 @@ class ImageScrollComponent extends Component {
             width: "40%",
             height: "6%",
             borderRadius: 66,
-            bottom: "28%",
             marginLeft: "57%",
           }}
         >
           <View style={{ flexDirection: "row" }}>
             <Image
-              source={require("./push_pin.png")}
+              source={require("../BikeImage/push_pin.png")}
               style={{ marginLeft: "12%" }}
             />
             <Text
@@ -236,7 +235,9 @@ class ImageScrollComponent extends Component {
             }
           />
         </View>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", bottom: "25%" }}>
+        <View
+          style={{ flexDirection: "row", flexWrap: "wrap", marginTop: "1%" }}
+        >
           <TouchableOpacity
             onPress={() => this.scrollToPosition(0)}
             style={{
@@ -372,7 +373,7 @@ class ImageScrollComponent extends Component {
               marginTop: "3%",
             }}
           >
-            <Image source={require("./bike20.png")} />
+            <Image source={require("../BikeImage/bike20.png")} />
           </TouchableOpacity>
         </View>
       </View>
