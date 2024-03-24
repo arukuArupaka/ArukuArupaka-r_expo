@@ -1,6 +1,6 @@
 from .models import Kamoku
 
-def kamoku_in_database(num, name, teacher, url, ad_day, select_time, ad_dep, unit, season):
+def kamoku_in_database(num, name, teacher, url, ad_day, select_time, ad_dep, unit, season, status):
     kamoku = Kamoku(
         kamoku_num=num,
         kamoku_name=name,
@@ -10,6 +10,7 @@ def kamoku_in_database(num, name, teacher, url, ad_day, select_time, ad_dep, uni
         kamoku_time=select_time,
         kamoku_department=ad_dep,
         kamoku_unit=unit,
-        kamoku_season=season
+        kamoku_season=season,
+        kamoku_status=status
     )
     kamoku.save()

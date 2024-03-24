@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # 追加
 ]
 
 ROOT_URLCONF = 'arukuarupaka.urls'
@@ -89,6 +92,7 @@ DATABASES = {
     }
 }
 
+default_dburl = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -139,12 +143,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 
 CORS_ALLOW_CREDENTIALS = True
 
-#CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 #CORS_ALLOWED_ORIGINS = "192.168.11.3:8081"
-CORS_ALLOWED_ORIGINS = [
-        'http://localhost:3000',
-        'http://192.168.11.1:19000',
-        'http://192.168.11.4:8000'
-]
+# CORS_ALLOWED_ORIGINS = [
+#         'http://localhost:3000',
+#         'http://192.168.11.1:19000',
+#         'http://192.168.11.4:8000'
+
+# ]
 
