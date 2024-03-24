@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware', # 追加
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 ROOT_URLCONF = 'arukuarupaka.urls'
 
 TEMPLATES = [
