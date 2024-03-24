@@ -205,7 +205,7 @@ const HomeView = (props) => {
             appName="天気予報"
             color="#EB3637"
             test={props}
-            jumpPage="weather"
+            jumpPage="Weather"
             iconName="weather-partly-cloudy"
           />
         </View>

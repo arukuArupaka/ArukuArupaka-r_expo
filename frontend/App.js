@@ -28,7 +28,7 @@ import { NavigationContainer, useNavigationContainerRef } from '@react-navigatio
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
-import WeatherView from './src/View/weather'
+import WeatherView from './src/View/Weather'
 import {Textbook} from './src/View/Textbook/TextbookView';
 import MapView from './src/View/Map/MapMain'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
@@ -140,7 +140,7 @@ function App() {
               ),
             })} />
           <Stack.Screen name="Bike" component={BikeView}/>
-          <Stack.Screen name="weather" component={WeatherView}/>
+          <Stack.Screen name="Weather" component={WeatherView}/>
           <Stack.Screen name="Map" component={MapLoot}
             options={{headerTitle: (props) => <LogoTitle {...props} />}}/>
           <Stack.Screen name="textbook" component={Textbook} 
