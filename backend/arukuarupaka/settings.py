@@ -16,6 +16,11 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# プロジェクトのベースディレクトリを取得
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 静的ファイルを集めるディレクトリのパスを指定
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Quick-start development settings - unsuitable for production
@@ -90,7 +95,11 @@ WSGI_APPLICATION = 'arukuarupaka.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'django_render_db',
+        'USER': 'django_user',
+        'PASSWORD': '6GVYujoRCMqU2ymEQh02NjWvE31GqQW8',
+        'HOST': 'dpg-cnsttdfjbltc73evk220-a',
+        'PORT': '5432',
     }
 }
 
