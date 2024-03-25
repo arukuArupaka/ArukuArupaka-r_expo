@@ -95,11 +95,12 @@ WSGI_APPLICATION = 'arukuarupaka.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'django_render_db',
-        'USER': 'django_user',
-        'PASSWORD': '6GVYujoRCMqU2ymEQh02NjWvE31GqQW8',
-        'HOST': 'dpg-cnsttdfjbltc73evk220-a',
-        'PORT': '5432',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': 'django_render_db',
+        # 'USER': 'django_user',
+        # 'PASSWORD': '6GVYujoRCMqU2ymEQh02NjWvE31GqQW8',
+        # 'HOST': 'dpg-cnsttdfjbltc73evk220-a',
+        # 'PORT': '5432',
     }
 }
 
