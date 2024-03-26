@@ -96,10 +96,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         #'NAME': BASE_DIR / 'db.sqlite3',
-        'NAME': 'render_test_database',
+        'NAME': 'kamoku',
         'USER': 'kamoku_user',
         'PASSWORD': 'jomIPTDpMlvkSXPHX4jnwj5sdxRTTqip',
-        'HOST': 'DPG-CO15R95JM4ES73A8TBLG-A',
+        'HOST': 'dpg-co15r95jm4es73a8tblg-a.singapore-postgres.render.com',
         'PORT': '5432',
     }
 }
