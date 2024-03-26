@@ -43,7 +43,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "305c486b-9c0e-4413-9402-1e31193e3d59"
+       // "projectId": "305c486b-9c0e-4413-9402-1e31193e3d59"
       }
     },
     "owner": "arupaka"
