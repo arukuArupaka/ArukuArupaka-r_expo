@@ -43,7 +43,7 @@ function App() {
           <Stack.Screen name="Bike" component={BikeView}/>
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="Map" component={MapLoot}
-            options={{headerTitle: (props) => <LogoTitle {...props} />}}/>
+            options={{headerShown:false}}/>
           <Stack.Screen name="textbook" component={Textbook} 
            options={{
             headerShown:false

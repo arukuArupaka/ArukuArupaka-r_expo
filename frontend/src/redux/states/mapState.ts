@@ -10,6 +10,7 @@ type mapUserObject = {
 
 type mapState={
     mapUserObject:mapUserObject
+    mapSearchWord:string,
 }
 
 export default mapState;

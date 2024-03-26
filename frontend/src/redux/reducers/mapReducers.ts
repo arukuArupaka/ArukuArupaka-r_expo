@@ -10,7 +10,8 @@ const initialState:mapState = {
         mapShowFriends:[],
         locationSharingFriends:[],
         QRUUID:""
-    }
+    },
+    mapSearchWord:"",
 }
 
 // 画面でDispatchされたActionから新しいStateを返却する
@@ -21,6 +22,11 @@ const mapRededucer = (state = initialState, action: Action) => {
             return {
                 ...state,
                 mapUserObject: action.payload
+            }
+        case "setMapSearchWord":
+            return{
+                ...state,
+                mapSearchWord:action.payload
             }
         default:
             return state

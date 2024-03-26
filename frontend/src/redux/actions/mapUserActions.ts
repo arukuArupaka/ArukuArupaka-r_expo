@@ -4,3 +4,10 @@ export const setMapUserObject = (res) => {
       payload:res
     }
   }
+
+export const setMapSearchWord = (res) => {
+    return {
+      type: 'setMapSearchWord',
+      payload:res
+    }
+  }

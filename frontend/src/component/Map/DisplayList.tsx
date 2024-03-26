@@ -1,11 +1,112 @@
-import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, TouchableOpacity,ScrollView, Alert } from 'react-native';
+import MapBuildingListItem from './MapBuildingListItem';
+import Dialog from 'react-native-dialog';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../firebase';
 
-const DisplayList = () => {
+
+const DisplayList = (props) => {
+
+    const [showBuildingConfirm,setShowBuildingConfirm]=useState(false)
+    const [selectBuilding,setSelectBuilding]=useState({})
+    const [dialogTextInput,setDialogTextInput]=useState("")
+
+    const delateBuilding=()=>{
+
+        const firebaseDelateBuilding=async(buildingID)=>{
+            const refFiresrore = doc(db, `mapBuildings/${props.campusID}`);
+
+            await getDoc(refFiresrore).then((data)=>{
+              console.log(data.data().cloneArray)
+              
+            }).catch(error => console.log(error));
+        }
+
+        console.log(selectBuilding)
+        if(dialogTextInput===selectBuilding.buildingName){
+            setShowBuildingConfirm(false)
+            if(Math.floor(Math.random()*5)<6){
+
+            firebaseDelateBuilding(selectBuilding.buildingID)
+
+            }else{
+                Alert.alert("時間をあけてから操作してください。")
+            }
+            
+
+        }else{
+            Alert.alert("建物の名前が違います。")
+            setShowBuildingConfirm(false)
+        }
+
+
+
+    }
+
+    const editBuilding=()=>{
+        console.log(selectBuilding)
+        if(dialogTextInput===selectBuilding.buildingName){
+            setShowBuildingConfirm(false)
+
+            if(Math.floor(Math.random()*5)===1){
+
+            }else{
+                Alert.alert("時間をあけてから操作してください。")
+            }
+
+
+        }else{
+            Alert.alert("建物の名前が違います。")
+            setShowBuildingConfirm(false)
+        }
+
+    }
+
+    if(!props.campusBuildingsArray.length){
+        return (
+            <View style={{
+                height:'100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+                <Text>建物が登録されていません。</Text>
+                <TouchableOpacity 
+                onPress={()=>props.openMap()}
+                style={{
+                    marginTop:50,
+                    backgroundColor:'#EB3637',
+                    height:30,
+                    width:180,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius:10,}}>
+                    <Text style={{color:'white',fontWeight:'700'}}>マップを開く</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
+
     return (
-        <View style={{width: "100%",height: "100%"}}>
-            <Text style={{ fontSize: 30 }}>右下のボタンでリストとマップを切り替え</Text>
-        </View>
+        <ScrollView
+        style={{
+            width: "100%",
+            height: "100%",
+            paddingTop:20,
+            paddingHorizontal:20,
+            }}>
+            {props.campusBuildingsArray.map((buildingData)=><TouchableOpacity onLongPress={()=>{setShowBuildingConfirm(true);setSelectBuilding(buildingData)}}><MapBuildingListItem buildingData={buildingData}/></TouchableOpacity>)}
+            <Dialog.Container visible={showBuildingConfirm}>
+                <Dialog.Title>編集する建物の名前を入力</Dialog.Title>
+                <Dialog.Input onChangeText={setDialogTextInput}/>
+                <View>
+                    <Dialog.Button label="建物を削除" onPress={()=>{delateBuilding()}} />
+                    <Dialog.Button label="建物情報を編集" onPress={()=>{editBuilding()}} />
+                    <Dialog.Button label="キャンセル" onPress={()=>setShowBuildingConfirm(false)} />
+                </View>
+            </Dialog.Container>
+        </ScrollView>
     );
 };
 
