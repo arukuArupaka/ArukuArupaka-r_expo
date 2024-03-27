@@ -3,14 +3,14 @@ import axios from "axios";
 import { View, Image, TouchableOpacity, Text, Linking } from "react-native";
 import { WebView } from "react-native-webview";
 
-const Specialsite = () => {
+const Specialsite = ({navigation}) => {
   const [specials, setSpecials] = useState([]);
   const [selectedUrl, setSelectedUrl] = useState(null);
 
   useEffect(() => {
     // Django APIからデータを取得
     axios
-      .get("http://192.168.2.125:8000/special/specials/")
+      .get("https://render-test-db-h83h.onrender.com/special/specials/")
       .then((response) => {
         setSpecials(response.data);
       });
@@ -18,29 +18,32 @@ const Specialsite = () => {
 
   return (
     <View>
-      {selectedUrl ? (
-        <WebView source={{ uri: selectedUrl }} />
-      ) : (
         <View>
-          <View style={{ flexDirection: "row" }}>
-            {specials.map((special) => (
+          <View style={{ flexDirection: "row", justifyContent: 'space-between', flexWrap: 'wrap'}}>
+            {specials.map((special,index) => (
               <TouchableOpacity
-                key={special.id}
+                key={index}
                 style={{
-                  width: "35%",
-                  marginLeft: "5%",
-                  borderWidth: 1,
+                  width: 160,
+                  minHeight: 65,
+                  //marginLeft: "5%",
+                  borderWidth: 2,
                   borderColor: special.frame_color,
-                  borderRadius: 5,
+                  borderRadius: 10,
+                  justifyContent: 'center',
+                  marginBottom: 20,
                 }}
-                onPress={() => setSelectedUrl(special.destination_url)}
+                onPress={() => {
+                  console.log('url',special.destination_url);
+                  navigation.navigate("HomeWebSite", {uri: special.destination_url})}
+                }
               >
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", alignItems: 'center', paddingLeft: 10}}>
                   <Image
                     source={{ uri: special.icon_image_url }}
-                    style={{ width: 10, height: 10 }}
+                    style={{ width: 30, height: 30}}
                   />
-                  <Text style={{ paddingLeft: "10%", paddingBottom: "5%" }}>
+                  <Text style={{ paddingLeft: "10%", paddingBottom: "5%", alignItems: 'center', fontSize: 17, width: 110}}>
                     {special.page_name}
                   </Text>
                 </View>
@@ -48,7 +51,6 @@ const Specialsite = () => {
             ))}
           </View>
         </View>
-      )}
     </View>
   );
 };

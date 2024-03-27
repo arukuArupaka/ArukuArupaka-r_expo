@@ -23,6 +23,7 @@ import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
 import * as Notifications from 'expo-notifications';
 import React from 'react';
+import HomeWebSite from './src/View/HomeWebSite';
 
 const Stack = createNativeStackNavigator();
 
@@ -133,6 +134,11 @@ function App() {
             <Stack.Screen
               name="WebSite"
               component={WebSite}
+              options={() => ({ title: "" })}
+            />
+            <Stack.Screen
+              name="HomeWebSite"
+              component={HomeWebSite}
               options={() => ({ title: "" })}
             />
           </Stack.Navigator>

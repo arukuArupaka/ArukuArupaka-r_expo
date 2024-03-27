@@ -23,14 +23,14 @@ const HomeCarousel = () => {
     return (
       <Image
         source={{ uri: item.image }}
-        style={{ height: 200, width: 300 }}
+        style={{ height: 200, width: 300, borderRadius: 10, borderWidth: 0.9, borderColor: 'black' }}
       ></Image>
     );
   };
 
   return (
     <View>
-      <View style={{ position: "relative" }}>
+      <View style={{ position: "relative",alignItems: 'center' }}>
         <Carousel
           ref={_carousel}
           data={images}
@@ -91,7 +91,7 @@ const HomeCarousel = () => {
       <Pagination
         carouselRef={_carousel}
         activeDotIndex={activeDotIndex}
-        dotsLength={5}
+        dotsLength={images.length}
         inactiveDotStyle={{ backgroundColor: "#BBBBBB" }}
         dotStyle={{ backgroundColor: "#30CB89" }}
       ></Pagination>
