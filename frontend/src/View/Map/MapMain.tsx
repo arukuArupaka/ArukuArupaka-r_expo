@@ -309,9 +309,10 @@ const MapMainView = () => {
         await getDoc(refFiresrore).then((data)=>{
           //console.log(data.data().cloneArray)
           const getbuildingData=data.data().cloneArray
+          console.log(getbuildingData)
           setCampusBuildingArray(getbuildingData)
           dispatch(setcampusBuildingDataAction(getbuildingData))
-        }).catch(error => console.log(error));
+        }).catch(error => {console.log(error);dispatch(setcampusBuildingDataAction([]))});
       }
       if(campusData.id){
         getCampusBuildingData()

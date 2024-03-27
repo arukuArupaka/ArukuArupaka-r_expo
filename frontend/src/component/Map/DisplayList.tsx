@@ -106,7 +106,7 @@ const DisplayList = (props) => {
             paddingTop:20,
             paddingHorizontal:20,
             }}>
-            {campusBuildingsArray.map((buildingData)=><TouchableOpacity onLongPress={()=>{setShowBuildingConfirm(true);setSelectBuilding(buildingData)}}><MapBuildingListItem buildingData={buildingData}/></TouchableOpacity>)}
+            {campusBuildingsArray&&campusBuildingsArray.map((buildingData)=><TouchableOpacity onLongPress={()=>{setShowBuildingConfirm(true);setSelectBuilding(buildingData)}}><MapBuildingListItem buildingData={buildingData}/></TouchableOpacity>)}
             <Dialog.Container visible={showBuildingConfirm}>
                 <Dialog.Title>編集する建物の名前を入力</Dialog.Title>
                 <Dialog.Input onChangeText={setDialogTextInput}/>
