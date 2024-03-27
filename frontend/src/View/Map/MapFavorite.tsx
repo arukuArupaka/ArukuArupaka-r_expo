@@ -6,7 +6,6 @@ import DisplayList from '../../component/Map/DisplayList';
 
 export default function App() {
   return (
-    <View></View>
-    // <DisplayList campusBuildingsArray={campusBuildingsArray} openMap={()=>toggleComponent()} campusID={campusData.id}/> : <DisplayMap campusBuildingsArray={campusBuildingsArray} campusData={campusData} isEditBuilding={showEditBuilding} onPickLongitudeLatitude={(event)=>{pickBuildinglocation(event);}}></DisplayList>
+    <DisplayList campusBuildingsArray={campusBuildingsArray} openMap={()=>toggleComponent()} campusID={campusData.id}/> : <DisplayMap campusBuildingsArray={campusBuildingsArray} campusData={campusData} isEditBuilding={showEditBuilding} onPickLongitudeLatitude={(event)=>{pickBuildinglocation(event);}}></DisplayList>
   );
 }
