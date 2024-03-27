@@ -1,5 +1,6 @@
 import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight, TextInput, Button, SafeAreaView, StatusBar, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SearchBox } from './SearchBox';
 
 export const New_headerTextbook = () => {
 
@@ -14,9 +15,9 @@ export const New_headerTextbook = () => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      
+
   }}>
-      <TextInput placeholder="なにかお探しですか？"></TextInput>
+      <SearchBox  />
       <Ionicons name='search' size={20}></Ionicons>
   </View>
   );

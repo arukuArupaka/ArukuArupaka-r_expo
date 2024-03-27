@@ -25,7 +25,7 @@ const ASetting = (props) => {
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
 
-  const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"") 
+  const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"")
   console.log(userUUID)
 
   const [image, setImage] = useState(null);
@@ -107,7 +107,7 @@ const ASetting = (props) => {
 
       // このコンポーネントが不要になったら監視を終了する
   }, [userUUID]);
-  
+
   const sendUserDate=async()=>{
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
@@ -141,11 +141,11 @@ const ASetting = (props) => {
             });
           }
       }
-    
+
       // 画像ファイルが選択された場合
       if (image) {
         uploadImageAsync(image)
-      }   
+      }
       const reduxDate={
         id: userUUID,
         userName: userName,
@@ -161,7 +161,7 @@ const ASetting = (props) => {
   }
   const uploadImageAsync = async (uri: string): Promise<string> => {
     console.log('uri:', uri);
-  
+
     const blob: any = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -189,7 +189,7 @@ const ASetting = (props) => {
 
        const resizedImage = await manipulateAsync(uri, [
         {
-          resize: { 
+          resize: {
             width: 200,
             height: 200,
           },}

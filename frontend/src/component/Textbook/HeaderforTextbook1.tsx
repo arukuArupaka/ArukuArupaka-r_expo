@@ -1,10 +1,33 @@
-import React, { useState, useEffect } from 'react';
+//このファイル使ってないわ。3/20 22:00後藤
+
+
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Platform, StyleSheet, TouchableOpacity, TouchableHighlight, TextInput, Button, SafeAreaView, StatusBar, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { useSearchBox } from 'react-instantsearch-core';
+import algoliasearch from 'algoliasearch/lite';
+import { InstantSearch } from 'react-instantsearch-core';
 
-export const HeaderforTextbook1 = () => {
+import { SearchBox } from './SearchBox';
+
+
+export const HeaderforTextbook1 = (props) => {
+
+
+  //algolia
+  const { query, refine } = useSearchBox(props);
+  const [inputValue, setInputValue] = useState(query);
+  const inputRef = useRef(null);
+  function setQuery(newQuery) {
+    setInputValue(newQuery);
+    refine(newQuery);
+  }
+  if (query !== inputValue && !inputRef.current?.isFocused()) {
+    setInputValue(query);
+  }
+
 
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
@@ -23,11 +46,12 @@ export const HeaderforTextbook1 = () => {
 
     <View>
       <StatusBar backgroundColor='#F36F21' />
-      {Platform.OS === 'ios' && 
-      <View style={{
-                    backgroundColor: '#F36F21',
-                    height: Platform.OS === 'ios' && (windowWidth === SE_WIDTH && windowHeight === SE_HEIGHT) ? 20 : 59}}>
-      </View>
+      {Platform.OS === 'ios' &&
+        <View style={{
+          backgroundColor: '#F36F21',
+          height: Platform.OS === 'ios' && (windowWidth === SE_WIDTH && windowHeight === SE_HEIGHT) ? 20 : 59
+        }}>
+        </View>
       }
 
       <View style={styles.header}>
@@ -43,7 +67,7 @@ export const HeaderforTextbook1 = () => {
         </TouchableOpacity>
 
         <View style={styles.input}>
-          <TextInput placeholder="なにかお探しですか？"></TextInput>
+            <SearchBox />
           <Ionicons name='search' size={26} style={{ height: 30 }}></Ionicons>
         </View>
 
