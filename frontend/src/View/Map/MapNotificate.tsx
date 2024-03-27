@@ -72,7 +72,6 @@ const MapNotificateView = () => {
               <View
                 style={{
                   marginTop: "50%",
-                  borderBottomWidth: 1,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -85,19 +84,23 @@ const MapNotificateView = () => {
                   </Text>
                   <View style={{ flexDirection: "row" }}>
                     <View
-                      style={{ backgroundColor: "#00ff7f", marginLeft: "4%" }}
+                      style={{ backgroundColor: "#00ff7f", marginLeft: "10%" }}
                     >
-                      <Text style={{ marginLeft: "5%" }}>
+                      <Text style={{ marginLeft: "10%" }}>
                         {notification.selectedDepartment}
                       </Text>
                     </View>
-                    <Text>:{notification.username}</Text>
+                    <Text style={{ marginLeft: "10%" }}>
+                      :{notification.username}
+                    </Text>
                   </View>
                 </View>
-                <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 15, marginTop: "5%" }}
+                >
                   {notification.subject}
                 </Text>
-                <Text>{notification.message}</Text>
+                <Text style={{ marginTop: "5%" }}>{notification.message}</Text>
               </View>
             </ScrollView>
           )}
@@ -108,17 +111,19 @@ const MapNotificateView = () => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <Text style={{ fontSize: 30, borderBottomWidth: 1 }}>お知らせ</Text>
-      <View style={{ alignContent: "center", marginTop: "5%" }}>
+    <View style={{ flex: 1 }}>
+      <View style={{ borderBottomWidth: 1 }}>
+        <Text style={{ fontSize: 30, marginLeft: "35%" }}>お知らせ</Text>
+      </View>
+      <View style={{ marginTop: "10%" }}>
         {notifications.map((notification, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleNotificationPress(notification)}
           >
-            <View style={{ marginTop: 10, borderBottomWidth: 1 }}>
+            <View style={{ marginTop: "5%", borderBottomWidth: 1 }}>
               <View style={{ flexDirection: "row" }}>
-                <Text>
+                <Text style={{ marginLeft: "3%" }}>
                   {notification.createdAt instanceof Date
                     ? notification.createdAt.toLocaleDateString()
                     : "Invalid Date"}
@@ -134,10 +139,22 @@ const MapNotificateView = () => {
                   <Text>:{notification.username}</Text>
                 </View>
               </View>
-              <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 15,
+                  marginLeft: "3%",
+                  marginTop: "1%",
+                }}
+              >
                 {notification.subject}
               </Text>
-              <Text numberOfLines={1}>{notification.message}</Text>
+              <Text
+                numberOfLines={1}
+                style={{ marginLeft: "3%", marginTop: "1%" }}
+              >
+                {notification.message}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}

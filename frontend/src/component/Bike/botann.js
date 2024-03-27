@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome5 } from "@expo/vector-icons"; // @expo/vector-iconsからFontAwesome5をインポート
 
 const Bottan = () => {
   const [selectedAlphabet, setSelectedAlphabet] = useState(null);
@@ -225,7 +226,6 @@ const Bottan = () => {
       >
         <View
           style={{
-            marginTop: "48%",
             marginLeft: "-25%",
             flex: 1,
             flexDirection: "column",
@@ -267,7 +267,6 @@ const Bottan = () => {
         </View>
         <View
           style={{
-            paddingTop: "5%",
             marginLeft: "-35%",
             flex: 1,
             flexDirection: "column",
@@ -337,15 +336,7 @@ const Bottan = () => {
                       ]}
                     >
                       {/* ここに小さい画像の要素を追加 */}
-                      {/* 例: <Image source={require('./smallImage.png')} style={styles.smallImage} /> */}
-                      <Image
-                        source={require("../BikeImage/bike20.png")}
-                        style={{
-                          position: "absolute",
-                          width: 50,
-                          height: 50,
-                        }}
-                      />
+                      <FontAwesome5 name="biking" size={24} color="#FF0000" />
                     </View>
                   )}
               </View>
