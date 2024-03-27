@@ -3,11 +3,12 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TouchableOpacity,
   Switch,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome5 } from "@expo/vector-icons"; // @expo/vector-iconsからFontAwesome5をインポート
 
 class ImageScrollComponent extends Component {
   constructor(props) {
@@ -19,25 +20,6 @@ class ImageScrollComponent extends Component {
     };
     this.scrollViewRef = React.createRef();
   }
-
-  // Django APIからファイル情報を取得するメソッド
-  fetchFileData = async () => {
-    try {
-      const response = await fetch("http://your-django-api-url/api/files/");
-      if (!response.ok) {
-        throw new Error("ファイル情報の取得に失敗しました");
-      }
-
-      const fileData = await response.json();
-      // 取得したファイル情報を表示
-      console.log("取得したファイル情報:", fileData);
-
-      // ここで取得したファイル情報をAPIに送り返す処理を追加
-      this.sendFileDataToAnotherAPI(fileData);
-    } catch (error) {
-      console.error("ファイル情報の取得エラー:", error);
-    }
-  };
 
   // コンポーネントのマウント時にAsyncStorageから保存された位置情報を読み込む
   componentDidMount() {
@@ -166,6 +148,7 @@ class ImageScrollComponent extends Component {
           horizontal={true}
           style={{ width: "100%", height: 404 }}
         >
+          {/* 大きな画像 */}
           <Image
             source={require("../BikeImage/map.jpg")}
             style={{ width: 1453, height: "120%", marginTop: "-70" }}
@@ -179,13 +162,13 @@ class ImageScrollComponent extends Component {
               height: this.getScrollViewHeight(),
             }}
           >
-            {/* クリックした位置で画像を表示 */}
+            {/* クリックした位置でアイコンを表示 */}
             {clickX !== null && clickY !== null && (
-              <Image
-                source={require("../BikeImage/bike20.png")}
+              <FontAwesome5
+                name="biking"
+                size={25}
+                color="#FF0000"
                 style={{
-                  width: "3%",
-                  height: "6%",
                   top: clickY - 25,
                   left: clickX - 25,
                   position: "absolute",
@@ -373,7 +356,12 @@ class ImageScrollComponent extends Component {
               marginTop: "3%",
             }}
           >
-            <Image source={require("../BikeImage/bike20.png")} />
+            <FontAwesome5
+              name="biking"
+              color="#FF0000"
+              size={35}
+              style={{ marginLeft: "12%", marginTop: "5%" }}
+            />
           </TouchableOpacity>
         </View>
       </View>
