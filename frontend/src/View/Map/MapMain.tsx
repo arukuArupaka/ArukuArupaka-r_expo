@@ -14,7 +14,6 @@ import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { db } from '../../../firebase';
 import * as Crypto from 'expo-crypto';
 import { storage } from '../../../firebase';
-import MapChildBuildingSetting from '../../component/Map/MapChildBuildingSetting';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {manipulateAsync} from "expo-image-manipulator";
 import { judgeInclusion } from '../../component/Map/inRangDiscrimination';
@@ -396,7 +395,6 @@ const MapMainView = () => {
 
   return (
     <View style = {{position: 'relative'}}>
-
       {/* //キャンパス選択 */}
       {showCampusSelect&&
           <View style={{
