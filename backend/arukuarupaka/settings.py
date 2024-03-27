@@ -16,6 +16,11 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# プロジェクトのベースディレクトリを取得
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 静的ファイルを集めるディレクトリのパスを指定
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +32,7 @@ SECRET_KEY = 'django-insecure-^v-nnsmj31ix0z=_2q728f#nkfs7%q10j8&gur@#dw_9@ge(y2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.125','127.0.0.1',"192.168.11.3",'192.168.11.4']
+ALLOWED_HOSTS = ['*'] #本番環境では絶対変更して！！
 
 
 # Application definition
@@ -61,6 +66,8 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware', # 追加
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 ROOT_URLCONF = 'arukuarupaka.urls'
 
 TEMPLATES = [
@@ -87,8 +94,13 @@ WSGI_APPLICATION = 'arukuarupaka.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'kamoku',
+        'USER': 'kamoku_user',
+        'PASSWORD': 'jomIPTDpMlvkSXPHX4jnwj5sdxRTTqip',
+        'HOST': 'dpg-co15r95jm4es73a8tblg-a.singapore-postgres.render.com',
+        'PORT': '5432',
     }
 }
 
