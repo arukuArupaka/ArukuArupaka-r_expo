@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity,ScrollView, Alert } from 'react-native';
 import MapBuildingListItem from './MapBuildingListItem';
 import Dialog from 'react-native-dialog';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
 
@@ -11,6 +11,7 @@ const DisplayList = (props) => {
     const [showBuildingConfirm,setShowBuildingConfirm]=useState(false)
     const [selectBuilding,setSelectBuilding]=useState({})
     const [dialogTextInput,setDialogTextInput]=useState("")
+    const [campusBuildingsArray,setCampusBuildingArray]=useState(props.campusBuildingsArray)
 
     const delateBuilding=()=>{
 
@@ -18,7 +19,16 @@ const DisplayList = (props) => {
             const refFiresrore = doc(db, `mapBuildings/${props.campusID}`);
 
             await getDoc(refFiresrore).then((data)=>{
-              console.log(data.data().cloneArray)
+              //console.log(data.data().cloneArray)
+              let cloneArray=data.data().cloneArray.concat()
+
+              cloneArray.filter((item) => item.buildingID !== buildingID)
+
+              console.log(cloneArray.filter((item) => item.buildingID !== buildingID))
+
+              setDoc(refFiresrore,{cloneArray:cloneArray.filter((item) => item.buildingID !== buildingID)}).then((data)=>{
+                setCampusBuildingArray(cloneArray)
+              })
               
             }).catch(error => console.log(error));
         }
@@ -26,7 +36,7 @@ const DisplayList = (props) => {
         console.log(selectBuilding)
         if(dialogTextInput===selectBuilding.buildingName){
             setShowBuildingConfirm(false)
-            if(Math.floor(Math.random()*5)<6){
+            if(Math.floor(Math.random()*5)==1){
 
             firebaseDelateBuilding(selectBuilding.buildingID)
 
@@ -96,13 +106,13 @@ const DisplayList = (props) => {
             paddingTop:20,
             paddingHorizontal:20,
             }}>
-            {props.campusBuildingsArray.map((buildingData)=><TouchableOpacity onLongPress={()=>{setShowBuildingConfirm(true);setSelectBuilding(buildingData)}}><MapBuildingListItem buildingData={buildingData}/></TouchableOpacity>)}
+            {campusBuildingsArray.map((buildingData)=><TouchableOpacity onLongPress={()=>{setShowBuildingConfirm(true);setSelectBuilding(buildingData)}}><MapBuildingListItem buildingData={buildingData}/></TouchableOpacity>)}
             <Dialog.Container visible={showBuildingConfirm}>
                 <Dialog.Title>編集する建物の名前を入力</Dialog.Title>
                 <Dialog.Input onChangeText={setDialogTextInput}/>
                 <View>
                     <Dialog.Button label="建物を削除" onPress={()=>{delateBuilding()}} />
-                    <Dialog.Button label="建物情報を編集" onPress={()=>{editBuilding()}} />
+                    {/* <Dialog.Button label="建物情報を編集" onPress={()=>{editBuilding()}} /> */}
                     <Dialog.Button label="キャンセル" onPress={()=>setShowBuildingConfirm(false)} />
                 </View>
             </Dialog.Container>
