@@ -12,16 +12,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-<<<<<<< HEAD
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeCarousel from '../component/Home/HomeViewCarousel';
 import Specialsite from '../component/Home/HomeViewSpecial';
 import { onAuthStateChanged } from 'firebase/auth';
-=======
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeCarousel from "../component/Home/HomeViewCarousel";
-import { onAuthStateChanged } from "firebase/auth";
->>>>>>> 75ac4e1d0ef62070c4fa5ef18a8bb1c2c99f3526
 import { auth } from "../../firebase";
 import {
   handleLoginAction,
@@ -257,11 +251,7 @@ const HomeView = (props) => {
             color="#1BB1E7"
             test={props}
             jumpPage="Map"
-<<<<<<< HEAD
             iconName="map-marker-radius-outline" 
-=======
-            iconName="map-marker-radius-outline"
->>>>>>> 75ac4e1d0ef62070c4fa5ef18a8bb1c2c99f3526
           />
           <AppList
             appName="時間割"
