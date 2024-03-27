@@ -1,11 +1,11 @@
 set -o errexit
 
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
-python3 manage.py collectstatic --no-input
-python3 manage.py collectstatic
-python3 manage.py createsuperuser
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py flush --noinput
-python3 manage.py loaddata data.json
+python manage.py collectstatic --no-input
+python manage.py collectstatic
+python manage.py createsuperuser
+python manage.py makemigrations
+python manage.py migrate
+python manage.py flush --noinput
+python manage.py loaddata data.json
