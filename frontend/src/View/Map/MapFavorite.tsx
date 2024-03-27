@@ -1,11 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
-import { Camera } from 'expo-camera';
+import React from 'react';
 import DisplayList from '../../component/Map/DisplayList';
+import { useSelector } from 'react-redux';
 
 export default function App() {
+
+  const campusBuildingData =useSelector((state)=>state.map.campusBuildingData)
+  const campusData =useSelector((state)=>state.map.campusData)
+
+  console.log(campusData)
+
   return (
-    <DisplayList campusBuildingsArray={campusBuildingsArray} openMap={()=>toggleComponent()} campusID={campusData.id}/> : <DisplayMap campusBuildingsArray={campusBuildingsArray} campusData={campusData} isEditBuilding={showEditBuilding} onPickLongitudeLatitude={(event)=>{pickBuildinglocation(event);}}></DisplayList>
+    <View>
+      <DisplayList campusBuildingsArray={campusBuildingData} campusID={campusData.id}/>
+    </View>
   );
 }

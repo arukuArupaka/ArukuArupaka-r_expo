@@ -17,11 +17,11 @@ function MapLoot({navigation}) {
                     ),
                     headerTitle: (props) => <View style={{flexDirection:'row',alignItems:'center'}}><TouchableOpacity onPress={()=>navigation.navigate('Home')}><Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" /></TouchableOpacity><LogoTitle/></View>
                 }} />
-                            <Tab.Screen name='favorite' component={MapFavoriteView}
+            <Tab.Screen name='favorite' component={MapFavoriteView}
                 options={{
-                    headerShown: false,
-                    tabBarIcon: () => (<Ionicons name="star-outline" size={24} color="black" />
-                    )
+                    tabBarIcon: () => (<MaterialCommunityIcons name="map-marker-radius-outline" size={24} color="black" />
+                    ),
+                    headerTitle: (props) => <View style={{flexDirection:'row',alignItems:'center'}}><TouchableOpacity onPress={()=>navigation.navigate('Home')}><Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" /></TouchableOpacity><LogoTitle/></View>
                 }} />
                 
             <Tab.Screen name='notificate' component={MapNotificateView}

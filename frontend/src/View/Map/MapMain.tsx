@@ -18,7 +18,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {manipulateAsync} from "expo-image-manipulator";
 import { judgeInclusion } from '../../component/Map/inRangDiscrimination';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { setMapUserObject } from '../../redux/actions/mapUserActions';
+import { setCampusDataAction, setMapUserObject, setcampusBuildingDataAction } from '../../redux/actions/mapUserActions';
 
 const MAIN_PICTURE_MAX_SIZE:number=10000
 
@@ -209,9 +209,6 @@ const MapMainView = () => {
 
     let cloneArray = beforeData.cloneArray.concat();
 
-
-    console.log('imageURL')
-
     if(mainBuildingImage){
       cloneArray.push(
         {
@@ -246,15 +243,13 @@ const MapMainView = () => {
     });
   }
 
-
-
-
   const toggleComponent = () => {
     setShowMap(prev => !prev);
   };
 
   const selectCampus=(data)=>{
     setCampusData(data)
+    dispatch(setCampusDataAction(data))
     setShowCanpusSelect(false)
   }
 
@@ -313,10 +308,14 @@ const MapMainView = () => {
 
         await getDoc(refFiresrore).then((data)=>{
           //console.log(data.data().cloneArray)
-          setCampusBuildingArray(data.data().cloneArray)
+          const getbuildingData=data.data().cloneArray
+          setCampusBuildingArray(getbuildingData)
+          dispatch(setcampusBuildingDataAction(getbuildingData))
         }).catch(error => console.log(error));
       }
-      getCampusBuildingData()
+      if(campusData.id){
+        getCampusBuildingData()
+      }
 
     },[campusData])
 

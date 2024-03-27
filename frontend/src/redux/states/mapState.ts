@@ -11,6 +11,8 @@ type mapUserObject = {
 type mapState={
     mapUserObject:mapUserObject
     mapSearchWord:string,
+    campusData:object
+    campusBuildingData:object
 }
 
 export default mapState;

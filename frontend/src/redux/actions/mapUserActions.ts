@@ -11,3 +11,17 @@ export const setMapSearchWord = (res) => {
       payload:res
     }
   }
+
+export const setCampusDataAction = (res) => {
+    return {
+      type: 'setCampusDataAction',
+      payload:res
+    }
+  }
+
+export const setcampusBuildingDataAction = (res) => {
+  return {
+    type: 'setcampusBuildingDataAction',
+    payload:res
+  }
+}
