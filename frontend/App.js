@@ -8,7 +8,7 @@ import {Textbook} from './src/View/Textbook/TextbookView';
 import MapView from './src/View/Map/MapMain'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
-import { TouchableOpacity,Image,View} from 'react-native';
+import { TouchableOpacity,Image,View,TextInput} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import TimeTableSetting from './src/View/TimeTableSetting';
 import { TimeTableProvider } from './src/component/TimeTable/TimeTableContext';
@@ -21,12 +21,23 @@ import WebSite from './src/View/WebSite';
 import { Provider } from 'react-redux'
 import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
+import { MaterialIcons, MaterialCommunityIcons, Ionicons, FontAwesome,Feather } from '@expo/vector-icons';
+import { SearchSearch } from './src/View/Textbook/main/SearchHome/SearchSearch';
+// import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
+import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook';
+
+//algolia用
+import { InstantSearch } from 'react-instantsearch-core';
+import algoliasearch from 'algoliasearch/lite';
+const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
+
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <Provider store={AR_Store}>
+       <InstantSearch searchClient={searchClient} indexName="text_book">
     <TimeTableProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
@@ -44,11 +55,33 @@ function App() {
           <Stack.Screen name="weather" component={WeatherView}/>
           <Stack.Screen name="Map" component={MapLoot}
             options={{headerTitle: (props) => <LogoTitle {...props} />}}/>
-          <Stack.Screen name="textbook" component={Textbook} 
-           options={{
-            headerShown:false
-           }}
+          <Stack.Screen name="ホーム" component={Textbook}
+            options={({navigation})=>({
+              headerStyle: {
+                backgroundColor: '#F36F21',
+              },
+              headerRight: () => (
+                <TouchableOpacity onPress={() => navigation.navigate('サーチサーチ')}>
+                  <Ionicons name="search" size={30} color="black" />
+                </TouchableOpacity>
+              ),
+              headerTitle:() => (
+                <TouchableOpacity>
+                  <Feather name="shopping-cart" size={24} color="black" />
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: 'center',
+            })}
           />
+          <Stack.Screen name="サーチサーチ" component={SearchSearch}
+
+            options={()=>({
+              headerStyle: {
+                backgroundColor: '#F36F21',
+              },
+              headerBackTitleVisible: false,
+              headerTitle: (props) => <New_headerTextbook {...props} /> ,
+            })}/>
 
           <Stack.Screen name="settings" component={ASetting} options={{headerShown:false}}/>
           <Stack.Screen name="settingsToPage" component={ASettingToPage} options={{headerShown:false}}/>
@@ -62,6 +95,7 @@ function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>
+    </InstantSearch>
     </Provider>
   );
 }
