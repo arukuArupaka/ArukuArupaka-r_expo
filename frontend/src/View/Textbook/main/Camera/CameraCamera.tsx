@@ -29,16 +29,19 @@ import {
   auth,
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
+import RNPickerSelect from 'react-native-picker-select';
 
 export const CameraCamera = ({ route }) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedCondition, setSelectedCondition] = useState(null);
-  const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
-  const [conditionModalVisible, setConditionModalVisible] = useState(false);
+  // const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
+  // const [conditionModalVisible, setConditionModalVisible] = useState(false);
   const [productName, setproductName] = useState("");
   const [description, setdescription] = useState("");
   const [price, setprice] = useState("");
+  const [faculty, setFaculty] = useState('');
+  const [condition, setCondition] = useState('');
 
   const { product } = route.params || {};
 
@@ -97,20 +100,22 @@ export const CameraCamera = ({ route }) => {
   ) => {
     try {
       if (product) {
-        await updateDoc(doc(db, "freeMarket", product.id), {
-          productName,
-          department,
-          condition,
-          description,
-          price,
+        await updateDoc(doc(db, "syuppinn", product.id), {
+          productName: productName,
+          department: department,
+          condition: condition,
+          description: description,
+          price: price,
+          createdAt: new Date(),
         });
       } else {
-        const docRef = await addDoc(collection(db, "freeMarket"), {
-          productName,
-          department,
-          condition,
-          description,
-          price,
+        const docRef = await addDoc(collection(db, "syuppinn"), {
+          productName: productName,
+          department: department,
+          condition: condition,
+          description: description,
+          price: price,
+          createdAt: new Date(),
         });
         console.log("Document written with ID: ", docRef.id);
       }
@@ -132,7 +137,7 @@ export const CameraCamera = ({ route }) => {
       );
 
       // Firestoreに画像のURLを保存
-      await updateDoc(doc(db, "freeMarket", product ? product.id : docRef.id), {
+      await updateDoc(doc(db, "syuppin", product ? product.id : docRef.id), {
         images: imageUrls.filter((url) => url !== null),
       });
     } catch (e) {
@@ -199,19 +204,19 @@ export const CameraCamera = ({ route }) => {
 
     // Delete the document from the freeMarket collection
     if (product) {
-      await deleteDoc(doc(db, "freeMarket", product.id));
+      await deleteDoc(doc(db, "syuppinn", product.id));
     }
   };
 
-  const handleDepartmentSelect = (department) => {
-    setSelectedDepartment(department);
-    setDepartmentModalVisible(false);
-  };
+  // const handleDepartmentSelect = (department) => {
+  //   setSelectedDepartment(department);
+  //   setDepartmentModalVisible(false);
+  // };
 
-  const handleConditionSelect = (condition) => {
-    setSelectedCondition(condition);
-    setConditionModalVisible(false);
-  };
+  // const handleConditionSelect = (condition) => {
+  //   setSelectedCondition(condition);
+  //   setConditionModalVisible(false);
+  // };
 
   return (
     <View>
@@ -268,53 +273,57 @@ export const CameraCamera = ({ route }) => {
 
       <View style={styles.syousai}>
         <Text>商品情報</Text>
-        <TouchableOpacity onPress={() => setDepartmentModalVisible(true)}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>使用学部</Text>
-            <Text style={{ marginLeft: "5%" }}>
-              {selectedDepartment || "選択されていません"}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={departmentModalVisible}
-          onRequestClose={() => {
-            setDepartmentModalVisible(false);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <DepartmentPicker onSelect={handleDepartmentSelect} />
-          </View>
-        </Modal>
-        <TouchableOpacity onPress={() => setConditionModalVisible(true)}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>商品の状態</Text>
-            <Text style={{ marginLeft: "5%" }}>
-              {selectedCondition || "選択されていません"}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={conditionModalVisible}
-          onRequestClose={() => {
-            setConditionModalVisible(false);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <DepartmentPicker2 onSelect={handleConditionSelect} />
-          </View>
-        </Modal>
+
+        <Text>使用学部</Text>
+        <RNPickerSelect
+          value={faculty}
+          onValueChange={(value) => setFaculty(value)}
+          items={[
+            { label: '法学部', value: '法学部', key: 'hougaku' },
+            { label: '経済学部', value: '経済学部', key: 'keizai' },
+            { label: '経営学部', value: '経営学部', key: 'keiei' },
+            { label: '産業社会学部', value: '産業社会学部', key: 'sansha' },
+            { label: '国際関係学部', value: '国際関係学部', key: 'kokusai' },
+            { label: '政策科学部', value: '政策科学部', key: 'seisaku' },
+            { label: '文学部', value: '文学部', key: 'bun' },
+            { label: '映像学部', value: '映像学部', key: 'eizou' },
+            { label: '総合心理学部', value: '総合心理学部', key: 'sougou' },
+            { label: '理工学部', value: '理工学部', key: 'rikou' },
+            { label: 'グローバル教養学部', value: 'グローバル教養学部', key: 'gurokyou' },
+            { label: '食マネジメント学部', value: '食マネジメント学部', key: 'shokumane' },
+            { label: '情報理工学部', value: '情報理工学部', key: 'jouri' },
+            { label: '生命科学部', value: '生命科学部', key: 'seimei' },
+            { label: '薬学部', value: '薬学部', key: 'yakugaku' },
+            { label: 'スポーツ健康学部', value: 'スポーツ健康学部', key: 'supoken' }
+          ]}
+          style={pickerSelectStyles}
+          placeholder={{ label: '選択してください', value: 'notSelectCanpans' }}
+          Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789' }}>▼</Text>)}
+        />
+        <Text>商品の状態</Text>
+        <RNPickerSelect
+          value={condition}
+          onValueChange={(value) => setCondition(value)}
+          items={[
+            { label: '新品、未使用', value: '新品、未使用', key: 'condition1' },
+            { label: '未使用に近い', value: '未使用に近い', key: 'condition2' },
+            { label: '目立った傷や汚れなし', value: '目立った傷や汚れなし', key: 'condition3' },
+            { label: 'やや傷や汚れあり', value: 'やや傷や汚れあり', key: 'condition4' },
+            { label: '傷や汚れあり', value: '傷や汚れあり', key: 'condition5' },
+            { label: '全体的に状態が悪い', value: '政策科学部', key: 'condition' },
+          ]}
+          style={pickerSelectStyles}
+          placeholder={{ label: '選択してください', value: 'notSelectCanpans' }}
+          Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789' }}>▼</Text>)}
+        />
+
         <Text>商品説明</Text>
 
 
         <View
           style={{
             width: "90%",
-            height: "100%",
+            height: "40%",
             marginLeft: "5%",
             marginBottom: "5%",
             borderWidth: 1,
@@ -327,7 +336,7 @@ export const CameraCamera = ({ route }) => {
           ></TextInput>
         </View>
         <View
-          style={{ flexDirection: "row", marginTop: "5%", marginLeft: "2.5%" }}
+          style={{ flexDirection: "row", marginLeft: "2.5%" }}
         >
           <Text>値段</Text>
           <View
@@ -434,5 +443,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    marginTop: 5,
+    borderRadius: 5,
+    fontSize: 20,
+    backgroundColor: '#D9D9D9',
+    marginBottom: 20,
+    width: '100%'
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: '#789',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+    width: 280,
+    marginLeft: 30,
+    backgroundColor: '#eee'
   },
 });
