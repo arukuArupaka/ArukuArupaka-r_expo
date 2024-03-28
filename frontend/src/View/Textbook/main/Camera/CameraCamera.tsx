@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  ScrollView,
 } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
@@ -214,7 +215,9 @@ export const CameraCamera = ({ route }) => {
 
   return (
     <View>
+
       <HeaderforTextbook3 />
+
       <View style={styles.infomation}>
         <Ionicons
           name="information-circle"
@@ -248,6 +251,7 @@ export const CameraCamera = ({ route }) => {
           </TouchableOpacity>
         ))}
       </View>
+
       <View style={styles.productname}>
         <FontAwesome
           name="tag"
@@ -261,6 +265,7 @@ export const CameraCamera = ({ route }) => {
           onChangeText={setproductName}
         ></TextInput>
       </View>
+
       <View style={styles.syousai}>
         <Text>商品情報</Text>
         <TouchableOpacity onPress={() => setDepartmentModalVisible(true)}>
@@ -304,10 +309,12 @@ export const CameraCamera = ({ route }) => {
           </View>
         </Modal>
         <Text>商品説明</Text>
+
+
         <View
           style={{
             width: "90%",
-            height: "70%",
+            height: "100%",
             marginLeft: "5%",
             marginBottom: "5%",
             borderWidth: 1,
@@ -319,51 +326,55 @@ export const CameraCamera = ({ route }) => {
             onChangeText={setdescription}
           ></TextInput>
         </View>
-      </View>
-      <View
-        style={{ flexDirection: "row", marginTop: "5%", marginLeft: "2.5%" }}
-      >
-        <Text>値段</Text>
         <View
-          style={{
-            width: "40%",
-            height: "80%",
-            marginLeft: "5%",
-            borderWidth: 1,
-          }}
+          style={{ flexDirection: "row", marginTop: "5%", marginLeft: "2.5%" }}
         >
-          <TextInput value={price} onChangeText={setprice}></TextInput>
+          <Text>値段</Text>
+          <View
+            style={{
+              width: "40%",
+              height: "80%",
+              borderWidth: 1,
+            }}
+          >
+            <TextInput value={price} onChangeText={setprice}></TextInput>
+          </View>
+          <Text>円</Text>
         </View>
-        <Text>円</Text>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              saveDraft(
+                productName,
+                selectedDepartment,
+                selectedCondition,
+                description,
+                price
+              );
+            }}
+          >
+            <Text>下書きを保存する</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              exhibit(
+                productName,
+                selectedDepartment,
+                selectedCondition,
+                description,
+                price
+              );
+            }}
+          >
+            <Text>出品する</Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
-      <View style={styles.button}>
-        <TouchableOpacity
-          onPress={() => {
-            saveDraft(
-              productName,
-              selectedDepartment,
-              selectedCondition,
-              description,
-              price
-            );
-          }}
-        >
-          <Text>下書きを保存する</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            exhibit(
-              productName,
-              selectedDepartment,
-              selectedCondition,
-              description,
-              price
-            );
-          }}
-        >
-          <Text>出品する</Text>
-        </TouchableOpacity>
-      </View>
+
+
+
+
     </View>
   );
 };
@@ -413,10 +424,9 @@ const styles = StyleSheet.create({
   },
   syousai: {
     width: "95%",
-    height: "45%",
+    height: "30%",
     marginLeft: "2.5%",
     marginTop: "5%",
-    borderWidth: 1,
     borderRadius: 5,
   },
   modalContainer: {
@@ -424,8 +434,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-  },
-  button: {
-    marginTop: "5%",
   },
 });

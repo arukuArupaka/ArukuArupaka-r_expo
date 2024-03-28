@@ -8,7 +8,7 @@ export const CameraDraw = ({ navigation }) => {
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
-    const querySnapshot = await getDocs(collection(db, "freeMarket"));
+    const querySnapshot = await getDocs(collection(db, "syuppinn"));
     const productsData = [];
     querySnapshot.forEach((doc) => {
       productsData.push({ id: doc.id, ...doc.data() });
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   productContainer: {
-    marginBottom: 10,
+    marginBottom: 0,
     padding: 10,
   },
   productItem: {
