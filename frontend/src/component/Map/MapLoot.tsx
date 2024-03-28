@@ -6,6 +6,7 @@ import MapNotificateView from '../../View/Map/MapNotificate';
 import MapFriendsView from '../../View/Map/MapFriends';
 import { Text, TouchableOpacity, View } from 'react-native';
 import LogoTitle from './headerForMap';
+
 const Tab = createBottomTabNavigator();
 
 function MapLoot({navigation}) {
@@ -19,7 +20,7 @@ function MapLoot({navigation}) {
                 }} />
             <Tab.Screen name='favorite' component={MapFavoriteView}
                 options={{
-                    tabBarIcon: () => (<MaterialCommunityIcons name="map-marker-radius-outline" size={24} color="black" />
+                    tabBarIcon: () => (<MaterialCommunityIcons name="office-building-marker" size={24} color="black" />
                     ),
                     headerTitle: (props) => <View style={{flexDirection:'row',alignItems:'center'}}><TouchableOpacity onPress={()=>navigation.navigate('Home')}><Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" /></TouchableOpacity><LogoTitle/></View>
                 }} />

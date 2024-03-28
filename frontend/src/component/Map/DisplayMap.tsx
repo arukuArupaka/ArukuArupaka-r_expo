@@ -28,12 +28,15 @@ const DisplayMap = (props) => {
   const isLogin=useSelector((state)=>state.user.isLogin)
   
 
+  const [isShareLocation,setIsSharelocation]=useState<boolean>(false)
 
 
   const [myLocation,setMyLocation]=useState({})
   const [mapCenterLocation,setMapCenterLocation]=useState({})
 
   const [showBuildingIcon,setShowBuildIcon]=useState(false)
+
+  const [shareInfoMessage,setShareInfoMassage]=useState<string>("")
 
   useEffect(()=>{
 
@@ -66,8 +69,13 @@ const DisplayMap = (props) => {
           if(isLogin&&props.campusData.campusAria&&judgeInclusion({myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}},props.campusData.campusAria)){
             const refFiresrore = doc(db, `mapGPS/${userUUID}`);
             updateDoc(refFiresrore, {myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}}).then(() => {
-            }) 
+              setIsSharelocation(true)
+            }).catch((e)=>{
+              setIsSharelocation(false)
+            })
           }else{
+            setIsSharelocation(false)
+            setShareInfoMassage("キャンパス外のため")
           }
         }
       )
@@ -178,7 +186,7 @@ const DisplayMap = (props) => {
               shadowRadius: 4,
               paddingVertical:5,
               elevation: 10}}>
-                <Text style={{textAlign:'center',marginBottom:3}}>{false?"位置情共有中":"位置共有停止"}</Text>
+                <Text style={{textAlign:'center',marginBottom:3}}>{isShareLocation?"位置情共有中":"位置共有停止"}</Text>
                 {props.yourInfoMessage&&<Text>{props.yourInfoMessage&&props.yourInfoMessage}</Text>}
                 <Text style={{textAlign:'center'}}>{props.LocationShareTime?props.LocationShareTime+"に共有":"--:--に共有"}</Text>
             </View>
