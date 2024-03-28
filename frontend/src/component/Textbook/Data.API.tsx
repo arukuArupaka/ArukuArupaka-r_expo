@@ -334,7 +334,25 @@ export const Data = () => [
     "classname":"材料力学",
     "major":"法学部"
   },
-
+  {
+    "adult": false,
+    "backdrop_path": "/20eIP9o5ebArmu2HxJutaBjhLf4.jpg",
+    "first_air_date": "2019-05-06",
+    "genre_ids": Array [18],
+    "id": 87108,
+    "name": "チェルノブイリ",
+    "origin_country": Array ["US"],
+    "original_language": "en",
+    "original_name": "Chernobyl",
+    "overview": "本作は、歴史上最悪の人災を衝撃的かつ感情を揺さぶる物語として描き出す、製作の全5話のミニシリーズドラマだ。1986年、旧ソビエト連邦のチェルノブイリ原子力発電所で大規模な爆発事故が発生。放射性物質がベラルーシ、ロシア、ウクライナばかりか、スカンディナビアや西ヨーロッパまで飛散した。深夜の爆発は大混乱をもたらし、その後は何日も、何週も、何ヵ月もの間、人命が失われ続ける。「チェルノブイリ―CHERNOBYL―」は、人間の勇気を描くと同時に、事故の原因や責任追及をやりすごそうとする政府の極めて非人道的な慣行と、災害の危険性を軽視したことから多くの命が犠牲になったことを明らかにする。ジャレッド・ハリス、ステラン・スカルスガルド、エミリー・ワトソンら、豪華キャストの共演も見どころの1つだ。",
+    "popularity": 104.241,
+    "poster_path": "https://www.trans.co.jp/column/knowledge/ai_image_generator/img/ai_image_generator_01.jpg",
+    "vote_average": 8.66,
+    "vote_count": 5759,
+    "price":10000,
+    "classname":"材料力学",
+    "major":"法学部"
+  },
  
 ]
  

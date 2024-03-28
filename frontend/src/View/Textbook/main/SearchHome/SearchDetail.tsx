@@ -56,16 +56,19 @@ export const SearchDetail = (props, { route, navigation }) => {
     return (
         <ScrollView style={styles.container} >
 
-            <Poster_Detail posterPath={poster_path} imageWidth={780} imageHeight={480} price={price}>
+            <Poster_Detail posterPath={news.images[0]} imageWidth={780} imageHeight={480} price={price}>
             </Poster_Detail>
 
             <View style={{ margin: 8 }}>
-                <Text style={styles.title}>{name}</Text>
+                <View style={{flexDirection:'row'}}>
+                    <Text style={styles.title}>{news.productName}</Text>
+                    <Text style={{marginLeft:10,marginTop:12}}>{news.department}</Text>
+                </View>
                 <Text style={styles.classtitle}>#{classname}</Text>
                 <View style={{ borderRadius: 10, backgroundColor: '#888', width: '30%', marginVertical: 4 }}>
-                    <Text numberOfLines={1} style={styles.BookPrice}>￥{price}</Text>
+                    <Text numberOfLines={1} style={styles.BookPrice}>￥{news.price}</Text>
                 </View>
-                <Text style={styles.overview}>{overview}</Text>
+                <Text style={styles.overview}>{news.description}</Text>
             </View>
 
             <View style={{ height: 100, flexDirection: 'row-reverse', marginTop: 10 }}>

@@ -72,15 +72,26 @@ export const TextbookHome = () => {
       departmantName:"教養科目"
     },
   ]
-
   return (
-    <View
-      style={{
+    <Stack.Navigator>
+      <Stack.Screen name="サーチリスト" component={SearchList} options={{headerShown:false}}/>
+      <Stack.Screen name="サーチ詳細" component={SearchDetail} options={{headerShown:false}}/>
+      {/* <Stack.Screen name="サーチサーチ" component={SearchSearch} options={{headerShown:false}}/> */}
+    </Stack.Navigator>
 
-      }}>
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {departmentList.map((departmant)=><DepartmentSelectBotton name={departmant.departmantName} selectedDepartment={selectedDepartment} onSelected={(departmant)=>setSelectedDepartment(departmant)}/>)}
-      </ScrollView>
-    </View>
+    
   );
+
+  // return (
+  //   <View
+  //     style={{
+
+  //     }}>
+  //     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+  //       {departmentList.map((departmant)=><DepartmentSelectBotton name={departmant.departmantName} selectedDepartment={selectedDepartment} onSelected={(departmant)=>setSelectedDepartment(departmant)}/>)}
+  //     </ScrollView>
+  //     <SearchDetail news={[""]}/>
+
+  //   </View>
+  // );
 };

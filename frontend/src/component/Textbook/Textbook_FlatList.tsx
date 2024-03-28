@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
-import { Data } from './Data.API';
 import { Poster_List } from './Poster_List';
 
 export const Textbook_FlatList = (props) => {
   const majorname = props.majorname
   const navigation = props.navigation;
-  const [news, setNews] = useState(Data);
+  const [news, setNews] = useState(Object.keys(props.textBookList[0]).length !== 0?props.textBookList:[{images:[""],productName:"",department:"",price:""}]);
   const numColumns = 3;
-  const filteredNews = news.filter(item => item.major === majorname);
+ // const filteredNews = news.filter(item => item.major === majorname);
+ console.log("props.textBookList")
 
+console.log(Object.keys(props.textBookList[0]).length === 0)
 
 
   return (
     <ScrollView>
-
+      {Object.keys(props.textBookList[0]).length !== 0&&
       <FlatList
-        data={filteredNews}
+        data={props.textBookList}
         keyExtractor={item => item.id}
         numColumns={numColumns}
         flashScrollIndicators
@@ -27,16 +28,16 @@ export const Textbook_FlatList = (props) => {
             style={styles.BookContainer}
             onPress={() => navigation.navigate("サーチ詳細", { news: item })}
           >
-            <Poster_List posterPath={item.poster_path} imageHeight={170} price={item.price} />
+            <Poster_List posterPath={item.images[0]} imageHeight={170} price={item.price} />
 
-            <Text numberOfLines={1} style={styles.BookTitle}>{item.name}</Text>
-            <Text numberOfLines={1} style={styles.BookclassTitle}>#{item.classname}</Text>
+            <Text numberOfLines={1} style={styles.BookTitle}>{item.productName}</Text>
+            <Text numberOfLines={1} style={styles.BookclassTitle}>#{item.department}</Text>
 
           </TouchableOpacity>
 
         )}
       >
-      </FlatList>
+      </FlatList>}
 
     </ScrollView>
   )
