@@ -16,6 +16,8 @@ import LogoTitle from './src/component/Map/headerForMap';
 import ALoginView from './src/View/ALoginView';
 import MapLoot from './src/component/Map/MapLoot';
 import TimeTableClass from './src/View/TimeTableClass';
+import KomaView from './src/View/KomaView';
+import WebSite from './src/View/WebSite';
 import { Provider } from 'react-redux'
 import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
@@ -45,7 +47,7 @@ function App() {
               title: '',
               headerRight: () => (
                 <TouchableOpacity onPress={() => navigation.navigate('TimeTableSetting')}>
-                  <AntDesign name="ellipsis1" size={24} color="black" />
+                  <AntDesign name="setting" size={24} color="black" />
                 </TouchableOpacity>
               ),
             })} />
@@ -86,8 +88,10 @@ function App() {
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
           <Stack.Screen name="login" component={ALoginView} options={{ headerShown: false }}/>
-          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} />
-          <Stack.Screen name="TimeTableClass" component={TimeTableClass} />
+          <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={()=>({title: '',})}/>
+          <Stack.Screen name="TimeTableClass" component={TimeTableClass} options={()=>({title: '',})}/>
+          <Stack.Screen name="KomaView" component={KomaView} options={()=>({title: '',})}/>
+          <Stack.Screen name="WebSite" component={WebSite} options={()=>({title: '',})}/>
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>

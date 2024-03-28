@@ -13,6 +13,7 @@ const WeekFram = (props) => {
             marginLeft:1,
             marginRight:1,
             flex:1,
+            color: 'white'
       }}>
       {props.weekDay}
     </Text>
