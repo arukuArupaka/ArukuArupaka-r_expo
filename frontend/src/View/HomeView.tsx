@@ -224,7 +224,7 @@ const HomeView = (props) => {
         <HomeCarousel></HomeCarousel>
         <Text style={styles.title}>特設ページ</Text>
         <View style={{width: '100%', flexDirection: 'row', justifyContent: "center", display: "flex"}}>
-          <View style={{width: '85%'}}>
+          <View >
             <Specialsite navigation={props.navigation}/>
           </View>
         </View>
