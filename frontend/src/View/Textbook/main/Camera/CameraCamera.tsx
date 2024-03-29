@@ -33,14 +33,13 @@ import RNPickerSelect from 'react-native-picker-select';
 
 export const CameraCamera = ({ route }) => {
   const [images, setImages] = useState(Array(4).fill(null));
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [selectedCondition, setSelectedCondition] = useState(null);
+  const [department, setDepartment] = useState(null);
   // const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
   // const [conditionModalVisible, setConditionModalVisible] = useState(false);
   const [productName, setproductName] = useState("");
   const [description, setdescription] = useState("");
+  const [className, setClassName] = useState("");
   const [price, setprice] = useState("");
-  const [faculty, setFaculty] = useState('');
   const [condition, setCondition] = useState('');
 
   const { product } = route.params || {};
@@ -48,8 +47,8 @@ export const CameraCamera = ({ route }) => {
   useEffect(() => {
     if (product) {
       setproductName(product.productName);
-      setSelectedDepartment(product.department);
-      setSelectedCondition(product.condition);
+      setDepartment(product.department);
+      setCondition(product.condition);
       setdescription(product.description);
       setprice(product.price);
       setImages(product.images || Array(4).fill(null));
@@ -96,7 +95,8 @@ export const CameraCamera = ({ route }) => {
     department,
     condition,
     description,
-    price
+    price,
+    className,
   ) => {
     try {
       if (product) {
@@ -106,6 +106,7 @@ export const CameraCamera = ({ route }) => {
           condition: condition,
           description: description,
           price: price,
+          className: className,
           createdAt: new Date(),
         });
       } else {
@@ -115,6 +116,7 @@ export const CameraCamera = ({ route }) => {
           condition: condition,
           description: description,
           price: price,
+          className: className,
           createdAt: new Date(),
         });
         console.log("Document written with ID: ", docRef.id);
@@ -150,30 +152,37 @@ export const CameraCamera = ({ route }) => {
     department,
     condition,
     description,
-    price
+    price,
+    className,
   ) => {
     // ユーザーのログイン状態を確認する
     if (!auth.currentUser) {
       // ユーザーがログインしていない場合は、ログインページにリダイレクトするなどの処理を行う
+      alert("ログインしてください");
+      console.log("ログインしてください");
       return;
     }
 
     // ユーザーのuidを取得する
     const userId = auth.currentUser.uid;
 
+    console.log(productName,department,condition,description,price,className);
+
     // 全ての項目が入力されているか確認する
-    if (!productName || !department || !condition || !description || !price) {
+    if (!productName || !department || !condition || !description || !price || !className) {
       alert("全ての項目を入力してください");
       return; // 出品を中止する
     }
 
     try {
       const docRef = await addDoc(collection(db, "syuppinn"), {
-        productName,
-        department,
-        condition,
-        description,
-        price,
+        productName: productName,
+        department: department,
+        condition: condition,
+        description: description,
+        price: price,
+        className: className,
+        createdAt: new Date(),
         userId: userId, // ユーザーのuidを保存する
       });
       console.log("Document written with ID: ", docRef.id);
@@ -208,15 +217,6 @@ export const CameraCamera = ({ route }) => {
     }
   };
 
-  // const handleDepartmentSelect = (department) => {
-  //   setSelectedDepartment(department);
-  //   setDepartmentModalVisible(false);
-  // };
-
-  // const handleConditionSelect = (condition) => {
-  //   setSelectedCondition(condition);
-  //   setConditionModalVisible(false);
-  // };
 
   return (
     <View>
@@ -261,7 +261,7 @@ export const CameraCamera = ({ route }) => {
         <FontAwesome
           name="tag"
           size={22}
-          style={{ height: 20, paddingLeft: "5%", marginTop: "4%" }}
+          style={{ height: 20, paddingLeft: "5%", marginTop: 10}}
         ></FontAwesome>
         <TextInput
           style={{ marginLeft: "3%" }}
@@ -276,8 +276,8 @@ export const CameraCamera = ({ route }) => {
 
         <Text>使用学部</Text>
         <RNPickerSelect
-          value={faculty}
-          onValueChange={(value) => setFaculty(value)}
+          value={department}
+          onValueChange={(value) => setDepartment(value)}
           items={[
             { label: '法学部', value: '法学部', key: 'hougaku' },
             { label: '経済学部', value: '経済学部', key: 'keizai' },
@@ -297,7 +297,7 @@ export const CameraCamera = ({ route }) => {
             { label: 'スポーツ健康学部', value: 'スポーツ健康学部', key: 'supoken' }
           ]}
           style={pickerSelectStyles}
-          placeholder={{ label: '選択してください', value: 'notSelectCanpans' }}
+          placeholder={{ label: '学部を選択', value: 'notSelectCanpans' }}
           Icon={() => (<Text style={{ position: 'absolute', right: 95, top: 10, fontSize: 18, color: '#789' }}>▼</Text>)}
         />
         <Text>商品の状態</Text>
@@ -318,14 +318,12 @@ export const CameraCamera = ({ route }) => {
         />
 
         <Text>商品説明</Text>
-
-
         <View
           style={{
             width: "90%",
             height: "40%",
             marginLeft: "5%",
-            marginBottom: "5%",
+            marginBottom: 4,
             borderWidth: 1,
             borderRadius: 5,
           }}
@@ -333,6 +331,23 @@ export const CameraCamera = ({ route }) => {
           <TextInput
             value={description}
             onChangeText={setdescription}
+          ></TextInput>
+        </View>
+
+        <Text>授業名</Text>
+        <View
+          style={{
+            width: "90%",
+            height: 30,
+            marginLeft: "5%",
+            marginBottom: 4,
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
+        >
+          <TextInput
+            value={className}
+            onChangeText={setClassName}
           ></TextInput>
         </View>
         <View
@@ -355,10 +370,11 @@ export const CameraCamera = ({ route }) => {
             onPress={() => {
               saveDraft(
                 productName,
-                selectedDepartment,
-                selectedCondition,
+                department,
+                condition,
                 description,
-                price
+                price,
+                className,
               );
             }}
           >
@@ -368,11 +384,13 @@ export const CameraCamera = ({ route }) => {
             onPress={() => {
               exhibit(
                 productName,
-                selectedDepartment,
-                selectedCondition,
+                department,
+                condition,
                 description,
-                price
+                price,
+                className,
               );
+              console.log("出品しました");
             }}
           >
             <Text>出品する</Text>
