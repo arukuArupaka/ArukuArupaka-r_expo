@@ -26,17 +26,17 @@ const DisplayMap = (props) => {
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
   const mapSearchWord=useSelector((state)=>state.map.mapSearchWord)
   const isLogin=useSelector((state)=>state.user.isLogin)
-  
+
+  console.log(new Date().getHours()+":"+new Date().getMinutes())
 
   const [isShareLocation,setIsSharelocation]=useState<boolean>(false)
 
 
   const [myLocation,setMyLocation]=useState({})
   const [mapCenterLocation,setMapCenterLocation]=useState({})
-
   const [showBuildingIcon,setShowBuildIcon]=useState(false)
-
   const [shareInfoMessage,setShareInfoMassage]=useState<string>("")
+  const [shareTime,setShareTime]=useState("")
 
   useEffect(()=>{
 
@@ -63,24 +63,30 @@ const DisplayMap = (props) => {
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
           })
-          console.log(props.campusData.campusAria)
-          console.log('props.campusData.campusAria')
   
           if(isLogin&&props.campusData.campusAria&&judgeInclusion({myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}},props.campusData.campusAria)){
             const refFiresrore = doc(db, `mapGPS/${userUUID}`);
             updateDoc(refFiresrore, {myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}}).then(() => {
               setIsSharelocation(true)
+              setShareTime(new Date().getHours()+":"+new Date().getMinutes())
             }).catch((e)=>{
               setIsSharelocation(false)
             })
           }else{
             setIsSharelocation(false)
-            setShareInfoMassage("キャンパス外のため")
+
+            if(judgeInclusion({myLocation:{latitude: location.coords.latitude,longitude: location.coords.longitude}},props.campusData.campusAria)){
+              setShareInfoMassage("キャンパス外")
+            }else if(!isLogin){
+              setShareInfoMassage("未ログイン")
+            }else{
+              console.log("sss")
+            }
+            
           }
         }
       )
     }
-
     watchPositionAsync()
 
     return subscription?.remove();
@@ -187,8 +193,8 @@ const DisplayMap = (props) => {
               paddingVertical:5,
               elevation: 10}}>
                 <Text style={{textAlign:'center',marginBottom:3}}>{isShareLocation?"位置情共有中":"位置共有停止"}</Text>
-                {props.yourInfoMessage&&<Text>{props.yourInfoMessage&&props.yourInfoMessage}</Text>}
-                <Text style={{textAlign:'center'}}>{props.LocationShareTime?props.LocationShareTime+"に共有":"--:--に共有"}</Text>
+                {shareInfoMessage&&<Text style={{textAlign:'center',color:"red"}}>{shareInfoMessage}</Text>}
+                <Text style={{textAlign:'center'}}>{shareTime?shareTime+"に共有":"--:--に共有"}</Text>
             </View>
           {!props.isEditBuilding&&mapUserObject.mapShowFriends.map((friend)=><MapFriendIconContainer friendUUID={friend}></MapFriendIconContainer>)}
           {!props.isEditBuilding&&<MapUserIcon imageURI={userObject.userImage?userObject.userImage:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65fe8064&is=65ec0b64&hm=e615d93362c74b2d2a0788ef8867ccb999f462b0076e644dab324f8c8fab17ca&=&format=webp&width=1208&height=1208"} title={userObject.userName} location={myLocation}/>}
