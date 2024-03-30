@@ -12,9 +12,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeCarousel from "../component/Home/HomeViewCarousel";
-import { onAuthStateChanged } from "firebase/auth";
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import HomeCarousel from '../component/Home/HomeViewCarousel';
+import Specialsite from '../component/Home/HomeViewSpecial';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../../firebase";
 import {
   handleLoginAction,
@@ -221,6 +222,12 @@ const HomeView = (props) => {
         <ShowDate></ShowDate>
         <Text style={styles.title}>新着情報</Text>
         <HomeCarousel></HomeCarousel>
+        <Text style={styles.title}>特設ページ</Text>
+        <View style={{width: '100%', flexDirection: 'row', justifyContent: "center", display: "flex"}}>
+          <View >
+            <Specialsite navigation={props.navigation}/>
+          </View>
+        </View>
         <Text style={styles.title}>機能一覧</Text>
         <View style={styles.appListFlex}>
           <AppList
@@ -244,7 +251,7 @@ const HomeView = (props) => {
             color="#1BB1E7"
             test={props}
             jumpPage="Map"
-            iconName="map-marker-radius-outline"
+            iconName="map-marker-radius-outline" 
           />
           <AppList
             appName="時間割"
@@ -259,7 +266,7 @@ const HomeView = (props) => {
             appName="教科書     フリマ"
             color="#FFCB08"
             test={props}
-            jumpPage="textbook"
+            jumpPage="ホーム"
             iconName="book-multiple"
           />
           <AppList
