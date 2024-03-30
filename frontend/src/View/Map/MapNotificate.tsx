@@ -8,52 +8,71 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { db } from "../../../firebase"; // Firebaseからdbをインポート
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore"; // Firestoreからインポート
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  startAfter,
+} from "firebase/firestore"; // Firestoreからインポート
 
 const MapNotificateView = () => {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [lastVisible, setLastVisible] = useState(null); // 最後の可視ドキュメントの参照を格納する状態
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const notificationsCollection = collection(db, "notifications");
-        const q = query(
+    fetchNotifications(); // 初回の通知の取得
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const notificationsCollection = collection(db, "notifications");
+      let q = query(
+        notificationsCollection,
+        orderBy("createdAt", "desc"),
+        limit(10)
+      );
+
+      if (lastVisible) {
+        q = query(
           notificationsCollection,
           orderBy("createdAt", "desc"),
+          startAfter(lastVisible), // 最後の可視ドキュメントの後に開始
           limit(10)
-        ); // クエリの作成
-
-        const querySnapshot = await getDocs(q);
-
-        const fetchedNotifications = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.createdAt instanceof Date) {
-            fetchedNotifications.push(data);
-          } else if (
-            data.createdAt &&
-            data.createdAt.toDate instanceof Function
-          ) {
-            data.createdAt = data.createdAt.toDate();
-            fetchedNotifications.push(data);
-          } else {
-            console.warn(
-              "無効な 'createdAt' フィールドを含むドキュメント:",
-              doc.id,
-              data
-            );
-          }
-        });
-
-        setNotifications(fetchedNotifications);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
+        );
       }
-    };
 
-    fetchNotifications();
-  }, []);
+      const querySnapshot = await getDocs(q);
+
+      const fetchedNotifications = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.createdAt instanceof Date) {
+          fetchedNotifications.push(data);
+        } else if (
+          data.createdAt &&
+          data.createdAt.toDate instanceof Function
+        ) {
+          data.createdAt = data.createdAt.toDate();
+          fetchedNotifications.push(data);
+        } else {
+          console.warn(
+            "無効な 'createdAt' フィールドを含むドキュメント:",
+            doc.id,
+            data
+          );
+        }
+      });
+
+      setNotifications([...notifications, ...fetchedNotifications]);
+      // 最後の可視ドキュメントを更新
+      setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
 
   const handleNotificationPress = (notification) => {
     setSelectedNotification(notification);
@@ -158,6 +177,9 @@ const MapNotificateView = () => {
             </View>
           </TouchableOpacity>
         ))}
+        {lastVisible && (
+          <Button title="さらに表示" onPress={fetchNotifications} />
+        )}
       </View>
       <NotificationModal
         notification={selectedNotification}
