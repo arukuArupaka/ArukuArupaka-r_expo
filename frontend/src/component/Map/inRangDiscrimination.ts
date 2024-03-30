@@ -26,6 +26,6 @@ export const judgeInclusion = function(location:Object, comparisonArr) {
     if (Math.round(deg) == 360) {
       return true;
     } else {
-      return false;
+      return !false;
     }
   };
