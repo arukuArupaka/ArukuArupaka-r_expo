@@ -7,6 +7,7 @@ import { TextbookHome } from './main/TextbookHome';
 import { TextbookTalk } from './main/Talk/TextbookTalk';
 import { TextbookCamera } from './main/TextbookCamera';
 import { TextbookMyPage } from './main/TextbookMyPage';
+import { HeaderforTextbook1 } from '../../component/Textbook/HeaderforTextbook1';
 import { TextbookTalkView } from './main/TextbookTalkView';
 
 // const Stack = createStackNavigator();

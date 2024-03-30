@@ -223,8 +223,8 @@ const HomeView = (props) => {
         <Text style={styles.title}>新着情報</Text>
         <HomeCarousel></HomeCarousel>
         <Text style={styles.title}>特設ページ</Text>
-        <View style={{flexDirection: 'row', justifyContent: "center", display: "flex"}}>
-          <View style={{width: '85%'}}>
+        <View style={{width: '100%', flexDirection: 'row', justifyContent: "center", display: "flex"}}>
+          <View >
             <Specialsite navigation={props.navigation}/>
           </View>
         </View>
@@ -266,7 +266,7 @@ const HomeView = (props) => {
             appName="教科書     フリマ"
             color="#FFCB08"
             test={props}
-            jumpPage="textbook"
+            jumpPage="ホーム"
             iconName="book-multiple"
           />
           <AppList

@@ -19,7 +19,7 @@ const Specialsite = ({navigation}) => {
   return (
     <View>
         <View>
-          <View style={{ flexDirection: "row", justifyContent: 'space-between', flexWrap: 'wrap'}}>
+          <View style={{ flexDirection: "row",justifyContent: 'center', flexWrap: 'wrap'}}>
             {specials.map((special,index) => (
               <TouchableOpacity
                 key={index}
@@ -32,6 +32,7 @@ const Specialsite = ({navigation}) => {
                   borderRadius: 10,
                   justifyContent: 'center',
                   marginBottom: 20,
+                  marginHorizontal:8,
                 }}
                 onPress={() => {
                   console.log('url',special.destination_url);
