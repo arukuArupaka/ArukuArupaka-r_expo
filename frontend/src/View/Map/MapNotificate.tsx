@@ -32,7 +32,7 @@ const MapNotificateView = () => {
       let q = query(
         notificationsCollection,
         orderBy("createdAt", "desc"),
-        limit(10)
+        limit(1)
       );
 
       if (lastVisible) {
@@ -40,7 +40,7 @@ const MapNotificateView = () => {
           notificationsCollection,
           orderBy("createdAt", "desc"),
           startAfter(lastVisible), // 最後の可視ドキュメントの後に開始
-          limit(10)
+          limit(1)
         );
       }
 
@@ -178,7 +178,22 @@ const MapNotificateView = () => {
           </TouchableOpacity>
         ))}
         {lastVisible && (
-          <Button title="さらに表示" onPress={fetchNotifications} />
+          <TouchableOpacity
+            onPress={fetchNotifications}
+            style={{
+              width: "50%",
+              marginTop: 10,
+              marginLeft: "25%",
+              backgroundColor: "blue",
+              borderRadius: 30,
+              padding: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              さらに表示
+            </Text>
+          </TouchableOpacity>
         )}
       </View>
       <NotificationModal
