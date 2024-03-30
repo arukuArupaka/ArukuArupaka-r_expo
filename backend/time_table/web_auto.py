@@ -241,8 +241,6 @@ async def web_search(url, select_season, select_time, select_day, select_departm
                                         urls.append(url)
                                         #classroom = syllabus(url)
                                         status = None
-                                        if d==11:
-                                            status = await sync_to_async(kamoku_status)(num)
                                         await sync_to_async(kamoku_in_database)(int(num), cleaned_name, teacher, url, ad_day, c+1, ad_dep, int(unit), season, status)
                                 else:
                                     num_name_split = num_name(kamoku)
@@ -253,8 +251,6 @@ async def web_search(url, select_season, select_time, select_day, select_departm
                                     urls.append(url)
                                     #classroom = syllabus(url)
                                     status = None
-                                    if d==11:
-                                        status = await sync_to_async(kamoku_status)(num)
                                     await sync_to_async(kamoku_in_database)(int(num), cleaned_name, teacher, url, ad_day, c+1, ad_dep, int(unit), season, status)
                                     
                         kamoku_qty = await sync_to_async(Kamoku.objects.all().count)()
