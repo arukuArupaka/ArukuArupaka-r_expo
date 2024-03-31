@@ -51,7 +51,7 @@ const Weather = () => {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [tomorrowWeatherData, setTomorrowWeatherData] = useState(null);
   const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
-  const [rainyHours, setRainyHours] = useState([]);
+  const [rainyHours, setRainyHours] = useState([{"clouds": {"all": 100}, "dt": 1711907000, "dt_txt": "2024-03-31 18:00:00", "main": {"feels_like": 12.71, "grnd_level": 997, "humidity": 89, "pressure": 1010, "sea_level": 1010, "temp": 13.03, "temp_kf": 1.66, "temp_max": 13.03, "temp_min": 11.37}, "pop": 0.62, "rain": {"3h": 0.21}, "sys": {"pod": "n"}, "visibility": 10000, "weather": [[Object]], "wind": {"deg": 6, "gust": 1.62, "speed": 1.1}}]);
   const [sunrise, setSunrise] = useState(new Date());
   const [sunset, setSunset] = useState(new Date());
   const [moonAge, setMoonAge] = useState(null);
