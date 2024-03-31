@@ -65,8 +65,10 @@ const Weather = () => {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
+        console.log('weatherURL:',currentWeatherUrl(city, apiKey));
         const response = await axios.get(currentWeatherUrl(city, apiKey));
         setCurrentWeatherData(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching weather data:", error);
       }
@@ -80,15 +82,21 @@ const Weather = () => {
         tomorrow.setDate(tomorrow.getDate() + 1);
 
         const tomorrowData = response.data.list.find((item) => {
+          console.log('dt',item);
           const itemDate = new Date(item.dt * 1000);
           return (
             itemDate.getDate() === tomorrow.getDate() &&
             itemDate.getMonth() === tomorrow.getMonth() &&
             itemDate.getFullYear() === tomorrow.getFullYear()
           );
-        });
+        }) || null;
 
-        setTomorrowWeatherData(tomorrowData);
+        if (tomorrowData === null) {
+          // `tomorrowData`が`null`の場合、適切なエラーハンドリングや代替の処理をここに記述
+          console.error("No weather data available for tomorrow.");
+        } else {
+          setTomorrowWeatherData(tomorrowData);
+        }
       } catch (error) {
         console.error("Error fetching tomorrow's weather data:", error);
       }
