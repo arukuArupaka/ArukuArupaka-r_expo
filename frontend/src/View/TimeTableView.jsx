@@ -16,6 +16,13 @@ const TimrTableView = ({ navigation }) => {
 
   const window = Dimensions.get('window');
 
+  const requestPermissionsAsync = async () => {
+    const { granted } = await Notifications.getPermissionsAsync();
+    if (granted) { return }
+  
+    await Notifications.requestPermissionsAsync();
+  }
+
   //プッシュ通知系
   React.useEffect(() => {
     requestPermissionsAsync();
@@ -61,15 +68,16 @@ const TimrTableView = ({ navigation }) => {
       }
     } catch (e) {
       console.log(e.message);
+      console.log('例外処理です');
     }
   };
 
-  const requestPermissionsAsync = async () => {
-    const { granted } = await Notifications.getPermissionsAsync();
-    if (granted) { return }
+  // const requestPermissionsAsync = async () => {
+  //   const { granted } = await Notifications.getPermissionsAsync();
+  //   if (granted) { return }
   
-    await Notifications.requestPermissionsAsync();
-  }
+  //   await Notifications.requestPermissionsAsync();
+  // }
 
   //通知時間計算
   const timeCalc = (hour, minute, notification) => {

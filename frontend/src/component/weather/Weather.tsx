@@ -51,7 +51,7 @@ const Weather = () => {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [tomorrowWeatherData, setTomorrowWeatherData] = useState(null);
   const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
-  const [rainyHours, setRainyHours] = useState([{"clouds": {"all": 100}, "dt": 1711907000, "dt_txt": "2024-03-31 18:00:00", "main": {"feels_like": 12.71, "grnd_level": 997, "humidity": 89, "pressure": 1010, "sea_level": 1010, "temp": 13.03, "temp_kf": 1.66, "temp_max": 13.03, "temp_min": 11.37}, "pop": 0.62, "rain": {"3h": 0.21}, "sys": {"pod": "n"}, "visibility": 10000, "weather": [[Object]], "wind": {"deg": 6, "gust": 1.62, "speed": 1.1}}]);
+  const [rainyHours, setRainyHours] = useState([{"clouds": {"all": 100}, "dt": 1711907000, "dt_txt": "2024-03-31 18:00:00", "main": {"feels_like": 12.71, "grnd_level": 997, "humidity": 89, "pressure": 1010, "sea_level": 1010, "temp": 13.03, "temp_kf": 1.66, "temp_max": 13.03, "temp_min": 11.37}, "pop": 0, "rain": {"3h": 0.21}, "sys": {"pod": "n"}, "visibility": 10000, "weather": [[Object]], "wind": {"deg": 6, "gust": 1.62, "speed": 1.1}}]);
   const [sunrise, setSunrise] = useState(new Date());
   const [sunset, setSunset] = useState(new Date());
   const [moonAge, setMoonAge] = useState(null);
@@ -120,12 +120,14 @@ const Weather = () => {
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain"
+          (item) => item.weather[0].main === "Rain" && item.weather[0].main === "Thunderstorm" && item.weather[0].main === "Drizzle"
         );
-        setRainyHours(rainyHours);
+        // console.log('rainyhours1');
+        // console.log('rainyHours1',rainyHours[0].pop);
+        // setRainyHours(rainyHours);
 
       } catch (error) {
-        console.error("Error fetching hourly weather data:", error);
+        console.error("Error fetching hourly weather dataooo:", error);
       }
     };
 
@@ -197,6 +199,8 @@ const Weather = () => {
           }
           return false;
         }) || null;
+
+        console.log(tomorrowData);
     
         if (tomorrowData === null) {
           console.error("No weather data available for tomorrow.");
@@ -219,12 +223,14 @@ const Weather = () => {
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain"
+          (item) => item.weather[0].main === "Rain" || item.weather[0].main === "Thunderstorm" || item.weather[0].main === "Drizzle"
         );
+        console.log('rainyHours2');
+        console.log('rainyHours',rainyHours[0].pop);
         setRainyHours(rainyHours);
 
       } catch (error) {
-        console.error("Error fetching hourly weather data:", error);
+        console.error("Error fetching hourly weather dataaa:", error);
       }
     };
 
