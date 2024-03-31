@@ -81,7 +81,7 @@ const Weather = () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const tomorrowData = response.data.list.find((item) => {
+        const tomorrowData = response.data.list?.find((item) => {
           console.log('dt',item);
           const itemDate = new Date(item.dt * 1000);
           return (
@@ -343,7 +343,7 @@ const Weather = () => {
                 </Text>
                 <Image
                   source={{
-                    uri: weatherIconUrl(currentWeatherData.weather[0].icon),
+                    uri: tomorrowWeatherData ? weatherIconUrl(tomorrowWeatherData.weather[0].icon) : "デフォルトのアイコンURL",
                   }}
                   style={{
                     width: 80,
