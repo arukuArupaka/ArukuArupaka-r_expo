@@ -331,7 +331,7 @@ const Weather = () => {
                 borderRadius: 5,
               }}
             >
-                {rainyHours ? (
+                {rainyHours[0].pop > 0.5 ? (
                   <Text style={{ fontSize: 18 }}>
                     {formatDateAsHHmm(new Date(rainyHours[0].dt * 1000))}から雨が降る予報です。
                   </Text>
@@ -360,7 +360,7 @@ const Weather = () => {
                 </Text>
                 <Image
                   source={{
-                    uri: tomorrowWeatherData ? weatherIconUrl(tomorrowWeatherData.weather[0].icon) : "デフォルトのアイコンURL",
+                    uri: weatherIconUrl(tomorrowWeatherData.weather[0].icon),
                   }}
                   style={{
                     width: 80,
