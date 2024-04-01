@@ -1,20 +1,26 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "歩くアルパカ＋R",
+    "slug": "arukuarupaka",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/main_icon.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash_arupaka.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.arukuarupaka",
+      "buildNumber": "1.0.0",
+        "config": {
+          "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+        }
     },
+    
     "android": {
       "googleServicesFile": "./google-services.json",
       "config": {
@@ -27,21 +33,24 @@
         "permissions": [
           "CAMERA",
           "WRITE_EXTERNAL_STORAGE",
-          "CAMERA_ROLL"
+          "CAMERA_ROLL",
+          "ACCESS_FINE_LOCATION",
+          "ACCESS_COARSE_LOCATION",
+          "ACCESS_BACKGROUND_LOCATION"
         ]
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/main_icon.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.frontend.arupaka"
+      "package": "com.arukuarupaka"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-       // "projectId": "305c486b-9c0e-4413-9402-1e31193e3d59"
+        "projectId": "305c486b-9c0e-4413-9402-1e31193e3d59"
       }
     },
     "owner": "arupaka"

@@ -20,7 +20,7 @@ const TimeTableChange = () => {
           borderRadius: 4,
           color: '#789',
           paddingRight: 30, // to ensure the text is never behind the icon
-          width: 230,
+          width: '80%',
           marginLeft: 30
         },
         inputAndroid: {

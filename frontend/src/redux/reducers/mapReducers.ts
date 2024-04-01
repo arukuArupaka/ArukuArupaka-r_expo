@@ -10,7 +10,15 @@ const initialState:mapState = {
         mapShowFriends:[],
         locationSharingFriends:[],
         QRUUID:""
+    },
+    mapSearchWord:"",
+    campusData:{
+
+    },
+    campusBuildingData:{
+
     }
+
 }
 
 // 画面でDispatchされたActionから新しいStateを返却する
@@ -21,6 +29,21 @@ const mapRededucer = (state = initialState, action: Action) => {
             return {
                 ...state,
                 mapUserObject: action.payload
+            }
+        case "setMapSearchWord":
+            return{
+                ...state,
+                mapSearchWord:action.payload
+            }
+        case "setCampusDataAction":
+            return{
+                ...state,
+                campusData:action.payload
+            }
+        case "setcampusBuildingDataAction":
+            return{
+                ...state,
+                campusBuildingData:action.payload
             }
         default:
             return state
