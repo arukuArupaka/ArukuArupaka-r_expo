@@ -8,52 +8,71 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { db } from "../../../firebase"; // Firebaseからdbをインポート
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore"; // Firestoreからインポート
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  startAfter,
+} from "firebase/firestore"; // Firestoreからインポート
 
 const MapNotificateView = () => {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [lastVisible, setLastVisible] = useState(null); // 最後の可視ドキュメントの参照を格納する状態
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const notificationsCollection = collection(db, "notifications");
-        const q = query(
+    fetchNotifications(); // 初回の通知の取得
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const notificationsCollection = collection(db, "notifications");
+      let q = query(
+        notificationsCollection,
+        orderBy("createdAt", "desc"),
+        limit(1)
+      );
+
+      if (lastVisible) {
+        q = query(
           notificationsCollection,
           orderBy("createdAt", "desc"),
-          limit(10)
-        ); // クエリの作成
-
-        const querySnapshot = await getDocs(q);
-
-        const fetchedNotifications = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.createdAt instanceof Date) {
-            fetchedNotifications.push(data);
-          } else if (
-            data.createdAt &&
-            data.createdAt.toDate instanceof Function
-          ) {
-            data.createdAt = data.createdAt.toDate();
-            fetchedNotifications.push(data);
-          } else {
-            console.warn(
-              "無効な 'createdAt' フィールドを含むドキュメント:",
-              doc.id,
-              data
-            );
-          }
-        });
-
-        setNotifications(fetchedNotifications);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
+          startAfter(lastVisible), // 最後の可視ドキュメントの後に開始
+          limit(1)
+        );
       }
-    };
 
-    fetchNotifications();
-  }, []);
+      const querySnapshot = await getDocs(q);
+
+      const fetchedNotifications = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.createdAt instanceof Date) {
+          fetchedNotifications.push(data);
+        } else if (
+          data.createdAt &&
+          data.createdAt.toDate instanceof Function
+        ) {
+          data.createdAt = data.createdAt.toDate();
+          fetchedNotifications.push(data);
+        } else {
+          console.warn(
+            "無効な 'createdAt' フィールドを含むドキュメント:",
+            doc.id,
+            data
+          );
+        }
+      });
+
+      setNotifications([...notifications, ...fetchedNotifications]);
+      // 最後の可視ドキュメントを更新
+      setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
 
   const handleNotificationPress = (notification) => {
     setSelectedNotification(notification);
@@ -72,7 +91,6 @@ const MapNotificateView = () => {
               <View
                 style={{
                   marginTop: "50%",
-                  borderBottomWidth: 1,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -85,19 +103,23 @@ const MapNotificateView = () => {
                   </Text>
                   <View style={{ flexDirection: "row" }}>
                     <View
-                      style={{ backgroundColor: "#00ff7f", marginLeft: "4%" }}
+                      style={{ backgroundColor: "#00ff7f", marginLeft: "10%" }}
                     >
-                      <Text style={{ marginLeft: "5%" }}>
+                      <Text style={{ marginLeft: "10%" }}>
                         {notification.selectedDepartment}
                       </Text>
                     </View>
-                    <Text>:{notification.username}</Text>
+                    <Text style={{ marginLeft: "10%" }}>
+                      :{notification.username}
+                    </Text>
                   </View>
                 </View>
-                <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 15, marginTop: "5%" }}
+                >
                   {notification.subject}
                 </Text>
-                <Text>{notification.message}</Text>
+                <Text style={{ marginTop: "5%" }}>{notification.message}</Text>
               </View>
             </ScrollView>
           )}
@@ -108,17 +130,19 @@ const MapNotificateView = () => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <Text style={{ fontSize: 30, borderBottomWidth: 1 }}>お知らせ</Text>
-      <View style={{ alignContent: "center", marginTop: "5%" }}>
+    <View style={{ flex: 1 }}>
+      <View style={{ borderBottomWidth: 1 }}>
+        <Text style={{ fontSize: 30, marginLeft: "35%" }}>お知らせ</Text>
+      </View>
+      <View style={{ marginTop: "10%" }}>
         {notifications.map((notification, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleNotificationPress(notification)}
           >
-            <View style={{ marginTop: 10, borderBottomWidth: 1 }}>
+            <View style={{ marginTop: "5%", borderBottomWidth: 1 }}>
               <View style={{ flexDirection: "row" }}>
-                <Text>
+                <Text style={{ marginLeft: "3%" }}>
                   {notification.createdAt instanceof Date
                     ? notification.createdAt.toLocaleDateString()
                     : "Invalid Date"}
@@ -134,13 +158,43 @@ const MapNotificateView = () => {
                   <Text>:{notification.username}</Text>
                 </View>
               </View>
-              <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 15,
+                  marginLeft: "3%",
+                  marginTop: "1%",
+                }}
+              >
                 {notification.subject}
               </Text>
-              <Text numberOfLines={1}>{notification.message}</Text>
+              <Text
+                numberOfLines={1}
+                style={{ marginLeft: "3%", marginTop: "1%" }}
+              >
+                {notification.message}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}
+        {lastVisible && (
+          <TouchableOpacity
+            onPress={fetchNotifications}
+            style={{
+              width: "50%",
+              marginTop: 10,
+              marginLeft: "25%",
+              backgroundColor: "blue",
+              borderRadius: 30,
+              padding: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              さらに表示
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
       <NotificationModal
         notification={selectedNotification}

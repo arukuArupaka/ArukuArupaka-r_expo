@@ -7,7 +7,9 @@ import { TextbookHome } from './main/TextbookHome';
 import { TextbookTalk } from './main/Talk/TextbookTalk';
 import { TextbookCamera } from './main/TextbookCamera';
 import { TextbookMyPage } from './main/TextbookMyPage';
+import { HeaderforTextbook1 } from '../../component/Textbook/HeaderforTextbook1';
 import { TextbookTalkView } from './main/TextbookTalkView';
+import { Text, View } from 'react-native';
 
 // const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,6 +20,16 @@ const Tab = createBottomTabNavigator();
 // ];
 
 export const Textbookmain = () => {
+  return(
+    <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+    <Text>教科書フリーマーケット　近日公開予定</Text>
+  </View>
+  )
   return(
       <Tab.Navigator>
         

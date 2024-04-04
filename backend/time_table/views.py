@@ -14,6 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.views import APIView
+from .kamoku_status import kamoku_status
 
 async def search_class(request):
     if request.method == 'POST': 
@@ -41,6 +42,15 @@ async def search_class(request):
 
     # GETリクエストの場合の処理
     return await sync_to_async(lambda: render(request, 'time_table/index.html'))()
+
+async def merge_status(request):
+    if request.method == 'POST':
+        department = request.POST.get('department_select')
+        await kamoku_status(department)
+        response = await sync_to_async(render)(request, 'time_table/merge_result.html')
+        return response
+    return await sync_to_async(lambda: render(request, 'time_table/merge.html'))()
+        
 
 from rest_framework import generics
 

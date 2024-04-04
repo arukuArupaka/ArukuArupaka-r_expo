@@ -24,7 +24,7 @@ const MapFriendsView = ({ navigation }) => {
   const dispatch: Dispatch = useDispatch();
   const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
   if(!isLogin||isLoginNotVerificationEmail){
-    dispatch(handleLoginAfterPageName('Map',{ screen: 'friends' }))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる
+    dispatch(handleLoginAfterPageName('Home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる
     navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
   }
 
@@ -170,7 +170,7 @@ const friendRegist=async()=>{
           backgroundColor:'#FFFFFF'
         }}>
         <MapMyselfContainer/>
-        <MapFriendRegisteContainer mapUserObject={mapUserObject} onCamera={()=>{setShowCamera(true);}}/>
+        <MapFriendRegisteContainer mapUserObject={mapUserObject} onCamera={()=>{setShowCamera(true);Camera.requestCameraPermissionsAsync()}}/>
       </View>
       {showCamera&&
       <View style={{position:'absolute',width:'100%',height:'100%'}}>

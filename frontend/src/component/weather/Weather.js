@@ -90,7 +90,7 @@ const Weather = () => {
     const fetchVotes = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/weather/votes/"
+          "https://render-test-db-h83h.onrender.com/weather/votes/"
         );
         setVotes(response.data);
       } catch (error) {
@@ -110,12 +110,12 @@ const Weather = () => {
   const vote = async (option) => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/weather/vote/",
+        "https://render-test-db-h83h.onrender.com/weather/vote/",
         `option=${option}`
       );
       // 更新された投票結果を再取得
       const response = await axios.get(
-        "http://127.0.0.1:8000/weather/votes/"
+        "https://render-test-db-h83h.onrender.com/weather/votes/"
       );
       setVotes(response.data);
     } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome5 } from "@expo/vector-icons"; // @expo/vector-iconsからFontAwesome5をインポート
 
 const Bottan = () => {
   const [selectedAlphabet, setSelectedAlphabet] = useState(null);
@@ -113,72 +114,68 @@ const Bottan = () => {
       const imageName = `${selectedAlphabet}${selectedNumber}`;
       switch (imageName) {
         case "A1":
-          return require("./map.png"); // Update the file path
+          return require("../BikeImage/A1.jpg"); // Update the file path
         case "A2":
-          return require("./map.png");
+          return require("../BikeImage/A2.jpg");
         // Add cases for other combinations
         case "A3":
-          return require("./map.png");
+          return require("../BikeImage/A3.jpg");
         case "A4":
-          return require("./map.png");
+          return require("../BikeImage/A4.jpg");
         case "A5":
-          return require("./map.png");
+          return require("../BikeImage/A5.jpg");
         case "A6":
-          return require("./map.png");
+          return require("../BikeImage/A6.jpg");
         case "A7":
-          return require("./map.png");
+          return require("../BikeImage/A7.jpg");
         case "B1":
-          return require("./map.png");
+          return require("../BikeImage/B1.jpg");
         case "B2":
-          return require("./map.png");
-        // Add cases for other combinations
+          return require("../BikeImage/B2.jpg");
         case "B3":
-          return require("./map.png");
+          return require("../BikeImage/B3.jpg");
         case "B4":
-          return require("./map.png");
+          return require("../BikeImage/B4.jpg");
         case "B5":
-          return require("./map.png");
+          return require("../BikeImage/B5.jpg");
         case "B6":
-          return require("./map.png");
+          return require("../BikeImage/B6.jpg");
         case "C1":
-          return require("./map.png");
+          return require("../BikeImage/C1.jpg");
         case "C2":
-          return require("./map.png");
-        // Add cases for other combinations
+          return require("../BikeImage/C2.jpg");
         case "C3":
-          return require("./map.png");
+          return require("../BikeImage/C3.jpg");
         case "C4":
-          return require("./map.png");
+          return require("../BikeImage/C4.jpg");
         case "C5":
-          return require("./map.png");
+          return require("../BikeImage/C5.jpg");
         case "C6":
-          return require("./map.png");
+          return require("../BikeImage/C6.jpg");
         case "D1":
-          return require("./map.png");
+          return require("../BikeImage/D1.jpg");
         case "D2":
-          return require("./map.png");
-        // Add cases for other combinations
+          return require("../BikeImage/D2.jpg");
         case "D3":
-          return require("./map.png");
+          return require("../BikeImage/D3.jpg");
         case "D4":
-          return require("./map.png");
+          return require("../BikeImage/D4.jpg");
         case "D5":
-          return require("./map.png");
+          return require("../BikeImage/D5.jpg");
         case "D6":
-          return require("./map.png");
+          return require("../BikeImage/D6.jpg");
         case "E1":
-          return require("./map.png");
+          return require("../BikeImage/E1.jpg");
         case "E2":
-          return require("./map.png");
-        // Add cases for other combinations
+          return require("../BikeImage/E2.jpg");
         case "E3":
-          return require("./map.png");
+          return require("../BikeImage/E3.jpg");
         case "E4":
-          return require("./map.png");
+          return require("../BikeImage/E4.jpg");
         case "E5":
-          return require("./map.png");
+          return require("../BikeImage/E5.jpg");
         case "E6":
-          return require("./map.png");
+          return require("../BikeImage/E6.jpg");
         default:
           return null;
       }
@@ -229,7 +226,6 @@ const Bottan = () => {
       >
         <View
           style={{
-            marginTop: "48%",
             marginLeft: "-25%",
             flex: 1,
             flexDirection: "column",
@@ -271,7 +267,6 @@ const Bottan = () => {
         </View>
         <View
           style={{
-            paddingTop: "5%",
             marginLeft: "-35%",
             flex: 1,
             flexDirection: "column",
@@ -325,13 +320,7 @@ const Bottan = () => {
             )}
             {selectedAlphabet && selectedNumber && (
               <View onTouchEnd={(event) => handleImagePress(event)}>
-                <Image
-                  source={getImageForCombination()}
-                  style={{
-                    width: 166,
-                    height: 525,
-                  }}
-                />
+                <Image source={getImageForCombination()} />
                 {smallImagePosition.x > 0 &&
                   smallImagePosition.y > 0 &&
                   currentImage === `${selectedAlphabet}${selectedNumber}` && (
@@ -339,8 +328,6 @@ const Bottan = () => {
                       style={[
                         {
                           position: "absolute",
-                          width: "3%",
-                          height: "3%",
                         },
                         {
                           left: smallImagePosition.x,
@@ -349,15 +336,7 @@ const Bottan = () => {
                       ]}
                     >
                       {/* ここに小さい画像の要素を追加 */}
-                      {/* 例: <Image source={require('./smallImage.png')} style={styles.smallImage} /> */}
-                      <Image
-                        source={require("./bike20.png")}
-                        style={{
-                          position: "absolute",
-                          width: 50,
-                          height: 50,
-                        }}
-                      />
+                      <FontAwesome5 name="biking" size={24} color="#FF0000" />
                     </View>
                   )}
               </View>

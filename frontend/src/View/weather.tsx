@@ -1,13 +1,13 @@
 import React from "react";
-import { View } from "react-native";
-import Weather from "../component/weather//Weather";
+import { View, ScrollView } from "react-native";
+import Weather from "../component/weather/Weather";
 
-const App = () => {
+const WeatherView = () => {
   return (
-    <View>
+    <ScrollView>
       <Weather />
-    </View>
+    </ScrollView>
   );
 };
 
-export default App;
+export default WeatherView;
