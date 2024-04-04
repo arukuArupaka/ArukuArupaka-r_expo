@@ -248,7 +248,7 @@ const KomaView = ({ navigation }) => {
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
                   </View>
                 </View>
-                {!nodata && !kamokuStatus && 
+                {!nodata && weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].status=="null" && 
                 <View style={{paddingBottom: 8}}> 
                   <View style={styles.notifi}>
                       <View style={{alignItems: 'center', paddingBottom: 7}}onPress={() => {}}><Text>{"色を設定する"}</Text></View>

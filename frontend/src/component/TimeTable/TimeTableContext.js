@@ -248,6 +248,7 @@ export const TimeTableProvider = ({ children }) => {
     if(isNaN(pushedClassFrameDetail.day)){
       console.log('初期コンポーネントマウントです');
     }else{
+      if(!kamokuStatus){
       console.log('色変えが実行されたよ');
       const nullKamoku = {
         day: pushedClassFrameDetail.day,
@@ -269,7 +270,30 @@ export const TimeTableProvider = ({ children }) => {
       };
       setWeekTime((prev) => {prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period]=nullKamoku; return prev});
       setColorset(false);
+    }else if(kamokuStatus){
+      console.log('色変えが実行されたよ');
+      const nullKamoku = {
+        day: pushedClassFrameDetail.day,
+        period: pushedClassFrameDetail.period,
+        classRoom: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].classRoom,
+        className: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].className,
+        memo: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo,
+        notifion: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].notifion,
+        notification: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].notification,
+        department: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].department,
+        unit: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].unit,
+        num: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].num,
+        resume: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].resume,
+        teacher: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].teacher,
+        status: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].status,
+        color: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].color,
+        mulcolor: weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].color,
+        statuscolor: `${multicolor}`,
+      };
+      setWeekTime((prev) => {prev[pushedClassFrameDetail.day][pushedClassFrameDetail.period]=nullKamoku; return prev});
+      setColorset(false);
     }
+  }
 
   },[colorset]);
 
