@@ -51,7 +51,7 @@ const Weather = () => {
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [tomorrowWeatherData, setTomorrowWeatherData] = useState(null);
   const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
-  const [rainyHours, setRainyHours] = useState([]);
+  const [rainyHours, setRainyHours] = useState([{"clouds": {"all": 100}, "dt": 1711907000, "dt_txt": "2024-03-31 18:00:00", "main": {"feels_like": 12.71, "grnd_level": 997, "humidity": 89, "pressure": 1010, "sea_level": 1010, "temp": 13.03, "temp_kf": 1.66, "temp_max": 13.03, "temp_min": 11.37}, "pop": 0, "rain": {"3h": 0.21}, "sys": {"pod": "n"}, "visibility": 10000, "weather": [[Object]], "wind": {"deg": 6, "gust": 1.62, "speed": 1.1}}]);
   const [sunrise, setSunrise] = useState(new Date());
   const [sunset, setSunset] = useState(new Date());
   const [moonAge, setMoonAge] = useState(null);
@@ -65,34 +65,49 @@ const Weather = () => {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
+        console.log('weatherURL:',currentWeatherUrl(city, apiKey));
         const response = await axios.get(currentWeatherUrl(city, apiKey));
         setCurrentWeatherData(response.data);
+        console.log(response.data);
       } catch (error) {
-        console.error("Error fetching weather data:", error);
+        console.error("Error fetching weather dataooo:", error);
       }
     };
 
     const fetchTomorrowWeather = async () => {
       try {
         const response = await axios.get(weatherForecastUrl(city, apiKey));
-
+        //console.log("API Response1:", response.data); // デバッグ情報としてレスポンスをログに出力
+    
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-
-        const tomorrowData = response.data.list.find((item) => {
-          const itemDate = new Date(item.dt * 1000);
-          return (
-            itemDate.getDate() === tomorrow.getDate() &&
-            itemDate.getMonth() === tomorrow.getMonth() &&
-            itemDate.getFullYear() === tomorrow.getFullYear()
-          );
-        });
-
-        setTomorrowWeatherData(tomorrowData);
+    
+        const listFiltered = response.data.list?.filter(item => item !== undefined) || []; // undefinedをフィルタリング
+        const tomorrowData = listFiltered.find((item) => {
+          
+          // `dt`プロパティへの安全なアクセス
+          if (item && typeof item.dt === 'number') {
+            console.log('item.dt:',item.dt);
+            const itemDate = new Date(item.dt * 1000);
+            return (
+              itemDate.getDate() === tomorrow.getDate() &&
+              itemDate.getMonth() === tomorrow.getMonth() &&
+              itemDate.getFullYear() === tomorrow.getFullYear()
+            );
+          }
+          return false;
+        }) || null;
+    
+        if (tomorrowData === null) {
+          console.error("No weather data available for tomorrow.");
+        } else {
+          setTomorrowWeatherData(tomorrowData);
+        }
       } catch (error) {
-        console.error("Error fetching tomorrow's weather data:", error);
+        console.error("Error fetching tomorrow's weather dataooo:", error);
       }
     };
+    
 
     const fetchHourlyWeather = async () => {
       try {
@@ -105,12 +120,14 @@ const Weather = () => {
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain"
+          (item) => item.weather[0].main === "Rain" && item.weather[0].main === "Thunderstorm" && item.weather[0].main === "Drizzle"
         );
-        setRainyHours(rainyHours);
+        // console.log('rainyhours1');
+        // console.log('rainyHours1',rainyHours[0].pop);
+        // setRainyHours(rainyHours);
 
       } catch (error) {
-        console.error("Error fetching hourly weather data:", error);
+        console.error("Error fetching hourly weather dataooo:", error);
       }
     };
 
@@ -157,29 +174,41 @@ const Weather = () => {
         const response = await axios.get(currentWeatherUrl(city, apiKey));
         setCurrentWeatherData(response.data);
       } catch (error) {
-        console.error("Error fetching weather data:", error);
+        console.error("Error fetching weather dataaaa:", error);
       }
     };
 
     const fetchTomorrowWeather = async () => {
       try {
         const response = await axios.get(weatherForecastUrl(city, apiKey));
-
+        //console.log("API Response2:", response.data); // デバッグ情報としてレスポンスをログに出力
+    
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
+    
+        const listFiltered = response.data.list?.filter(item => item !== undefined) || []; // undefinedをフィルタリング
+        const tomorrowData = listFiltered.find((item) => {
+          // `dt`プロパティへの安全なアクセス
+          if (item && typeof item.dt === 'number') {
+            const itemDate = new Date(item.dt * 1000);
+            return (
+              itemDate.getDate() === tomorrow.getDate() &&
+              itemDate.getMonth() === tomorrow.getMonth() &&
+              itemDate.getFullYear() === tomorrow.getFullYear()
+            );
+          }
+          return false;
+        }) || null;
 
-        const tomorrowData = response.data.list.find((item) => {
-          const itemDate = new Date(item.dt * 1000);
-          return (
-            itemDate.getDate() === tomorrow.getDate() &&
-            itemDate.getMonth() === tomorrow.getMonth() &&
-            itemDate.getFullYear() === tomorrow.getFullYear()
-          );
-        });
-
-        setTomorrowWeatherData(tomorrowData);
+        console.log(tomorrowData);
+    
+        if (tomorrowData === null) {
+          console.error("No weather data available for tomorrow.");
+        } else {
+          setTomorrowWeatherData(tomorrowData);
+        }
       } catch (error) {
-        console.error("Error fetching tomorrow's weather data:", error);
+        console.error("Error fetching tomorrow's weather dataaaa:", error);
       }
     };
 
@@ -194,12 +223,14 @@ const Weather = () => {
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain"
+          (item) => item.weather[0].main === "Rain" || item.weather[0].main === "Thunderstorm" || item.weather[0].main === "Drizzle"
         );
+        console.log('rainyHours2');
+        console.log('rainyHours',rainyHours[0].pop);
         setRainyHours(rainyHours);
 
       } catch (error) {
-        console.error("Error fetching hourly weather data:", error);
+        console.error("Error fetching hourly weather dataaa:", error);
       }
     };
 
@@ -222,12 +253,12 @@ const Weather = () => {
   const vote = async (option) => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/weather/vote/",
+        "https://render-test-db-h83h.onrender.com/weather/vote/",
         `option=${option}`
       );
       // 更新された投票結果を再取得
       const response = await axios.get(
-        "http://127.0.0.1:8000/weather/votes/"
+        "https://render-test-db-h83h.onrender.com/weather/votes/"
       );
       setVotes(response.data);
     } catch (error) {
@@ -306,7 +337,7 @@ const Weather = () => {
                 borderRadius: 5,
               }}
             >
-                {rainyHours ? (
+                {rainyHours[0].pop > 0.5 ? (
                   <Text style={{ fontSize: 18 }}>
                     {formatDateAsHHmm(new Date(rainyHours[0].dt * 1000))}から雨が降る予報です。
                   </Text>
@@ -335,7 +366,7 @@ const Weather = () => {
                 </Text>
                 <Image
                   source={{
-                    uri: weatherIconUrl(currentWeatherData.weather[0].icon),
+                    uri: weatherIconUrl(tomorrowWeatherData.weather[0].icon),
                   }}
                   style={{
                     width: 80,

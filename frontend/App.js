@@ -32,6 +32,7 @@ import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook'
 //algolia用
 import { InstantSearch } from 'react-instantsearch-core';
 import algoliasearch from 'algoliasearch/lite';
+import RitsuMatch from './src/View/RitsuMatch';
 const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 
@@ -97,11 +98,11 @@ function App() {
                 component={BikeView}
                 options={() => ({ title: "" })}
               />
-              <Stack.Screen name="weather" component={WeatherView} />
+              <Stack.Screen name="weather" component={WeatherView} options={{headerTitle:""}}/>
               <Stack.Screen
                 name="Map"
                 component={MapLoot}
-                options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
+                options={{ headerShown: false}}
               />
               <Stack.Screen
                 name="textbook"
@@ -152,6 +153,11 @@ function App() {
                 component={HomeWebSite}
                 options={() => ({ title: "" })}
               />
+              <Stack.Screen
+                name="RitsuMatch"
+                component={RitsuMatch}
+                options={() => ({ title: "" })}
+              />
                <Stack.Screen name="ホーム" component={Textbook}
             options={({navigation})=>({
               headerStyle: {
@@ -167,22 +173,14 @@ function App() {
                   <Feather name="shopping-cart" size={24} color="black" />
                 </TouchableOpacity>
               ),
-              headerTitleAlign: 'center',
-            })}
-          />
-          <Stack.Screen name="サーチサーチ" component={SearchSearch}
+            })} />
 
-            options={()=>({
-              headerStyle: {
-                backgroundColor: '#F36F21',
-              },
-              headerBackTitleVisible: false,
-              headerTitle: (props) => <New_headerTextbook {...props} /> ,
-            })}/>
-            </Stack.Navigator>
-          </NavigationContainer>
-        </TimeTableProvider>
-      </InstantSearch>
+          {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
+          {/* <Stack.Screen name="settings" component={ASetting}/> */}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TimeTableProvider>
+    </InstantSearch>
     </Provider>
   );
 }

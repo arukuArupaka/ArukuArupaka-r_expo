@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import React, { useEffect, useState } from 'react';
+import { View, Dimensions, TextInput ,TouchableOpacity} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { setMapSearchWord } from '../../redux/actions/mapUserActions';
+
 
 function LogoTitle() {
+
+    const [searchWord,setSearchWord]=useState("")
+    const dispatch = useDispatch();
+
+
+    useEffect(()=>{
+        dispatch(setMapSearchWord(searchWord))
+    },[searchWord])
+
+
     return (
         <View style={{
             marginRight: 130,
@@ -18,8 +28,10 @@ function LogoTitle() {
             alignItems: 'center',
             justifyContent: 'space-between',
         }}>
-            <TextInput placeholder="なにかお探しですか？"></TextInput>
-            <Ionicons name='search' size={20}></Ionicons>
+            <TextInput value={searchWord} onChangeText={setSearchWord} placeholder="なにかお探しですか？"></TextInput>
+            <TouchableOpacity>
+                <Ionicons name='search' size={20}></Ionicons>
+                </TouchableOpacity>
         </View>
     );
 } export default LogoTitle;
