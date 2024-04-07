@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from .kamoku_status import kamoku_status
+from .rename_classroom import rename_classroom
 
 async def search_class(request):
     if request.method == 'POST': 
@@ -50,6 +51,13 @@ async def merge_status(request):
         response = await sync_to_async(render)(request, 'time_table/merge_result.html')
         return response
     return await sync_to_async(lambda: render(request, 'time_table/merge.html'))()
+
+async def rename_class(request):
+    if request.method == 'POST':
+        rename_classroom()
+        response = await sync_to_async(render)(request, 'time_table/rename_result.html')
+        return response
+    return await sync_to_async(lambda: render(request, 'time_table/rename.html'))()
         
 
 from rest_framework import generics
