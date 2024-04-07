@@ -5,7 +5,7 @@ import { HeaderforTextbook2 } from '../../../component/Textbook/HeaderforTextboo
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useState ,useEffect} from 'react';
 import {TextInput, TouchableOpacity, Image, Settings} from 'react-native';
-import ActionSheet from '@yfuks/react-native-action-sheet';
+//import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth ,db,storage} from '../../../../firebase';
