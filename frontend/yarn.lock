@@ -3126,11 +3126,6 @@
   "resolved" "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   "version" "4.2.2"
 
-"@yfuks/react-native-action-sheet@^0.0.5":
-  "integrity" "sha512-lZtD9P3x5ehxKd86IGdXY7laHRMYAtBHPaWXz+q8uW7dY4lJU5mR434FgofFIG0UyflWOL/yabfkK3L6cWUkQw=="
-  "resolved" "https://registry.npmjs.org/@yfuks/react-native-action-sheet/-/react-native-action-sheet-0.0.5.tgz"
-  "version" "0.0.5"
-
 "abab@^2.0.5":
   "integrity" "sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA=="
   "resolved" "https://registry.npmjs.org/abab/-/abab-2.0.6.tgz"
@@ -8687,10 +8682,10 @@
     "prop-types" "^15.6.1"
     "react-addons-shallow-compare" "15.6.2"
 
-"react-native-svg@>=13.2.0":
-  "integrity" "sha512-ZUEXlzdU3cHjhOuc4BP7fbvabmz8yIuH4ocKSEr5V3P5skk2wnbEyZd3p7dzV9IoODgguCe7tcrNRGwr9pLRig=="
-  "resolved" "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.0.0.tgz"
-  "version" "15.0.0"
+"react-native-svg@^15.1.0", "react-native-svg@>=13.2.0":
+  "integrity" "sha512-p0Sx0EpQNk1nu6UcMEiB8K9P04n3J7s+pNYUwf1d/Yz+v4hk961VjuVqjyndgiEbHZyWiKWLZRVNuvLpwjPY2A=="
+  "resolved" "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.1.0.tgz"
+  "version" "15.1.0"
   dependencies:
     "css-select" "^5.1.0"
     "css-tree" "^1.1.3"

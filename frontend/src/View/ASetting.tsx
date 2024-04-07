@@ -3,7 +3,7 @@ import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, Styl
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import ActionSheet from '@yfuks/react-native-action-sheet';
+//import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth ,db,storage} from '../../firebase';
@@ -235,21 +235,24 @@ const ASetting = (props) => {
 
 
   const onOpenActionSheet=()=> {
-    if(Platform.OS=='android'){
-      pickImage()
-      return
-    }
+    
+    pickImage()
+
+    // if(Platform.OS=='android'){
+    //   pickImage()
+    //   return
+    // }
     const options = ['写真を選択', 'キャンセル'];
     const cancelButtonIndex = 1;
-    ActionSheet.showActionSheetWithOptions({
-      options,
-      cancelButtonIndex
-    },
-    buttonIndex => {
-      if(buttonIndex==0){
-        pickImage()
-      }
-    })
+    // ActionSheet.showActionSheetWithOptions({
+    //   options,
+    //   cancelButtonIndex
+    // },
+    // buttonIndex => {
+    //   if(buttonIndex==0){
+    //     pickImage()
+    //   }
+    // })
   }
 
   const pickImage = async () => {
