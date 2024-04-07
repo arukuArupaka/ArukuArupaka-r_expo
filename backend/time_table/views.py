@@ -54,7 +54,7 @@ async def merge_status(request):
 
 async def rename_class(request):
     if request.method == 'POST':
-        rename_classroom()
+        await rename_classroom()
         response = await sync_to_async(render)(request, 'time_table/rename_result.html')
         return response
     return await sync_to_async(lambda: render(request, 'time_table/rename.html'))()
