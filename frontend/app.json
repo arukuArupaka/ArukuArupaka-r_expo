@@ -52,5 +52,12 @@
       }
     },
     "owner": "arukuarupakabuild"
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5827416667703619~1145796134",
+    "delay_app_measurement_init": true ,
+    "enabled": true,
+    "test_mode": true,
+    "user_tracking_usage_description": "許可することで、より関連性の高い広告を表示することができるようになります。" 
   }
 }

@@ -79,7 +79,7 @@ const ALoginView = (props) => {
 
   const handleRegister = async () => {
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
+      const user = await createUserWithEmailAndPassword(auth, email+"@ed.ritsumei.ac.jp", password);
       setAuthMail(email);
       setAuthPass(password);
       await setUserInfo(user);
@@ -132,7 +132,7 @@ const ALoginView = (props) => {
 
   const handleLogin = async () => {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email+"@ed.ritsumei.ac.jp", password);
 
       setUserInfo(user);
       if (await isMailVerified()) {
@@ -245,9 +245,10 @@ const ALoginView = (props) => {
   const completeCreateAccount = async () => {
     try {
       await signOUt();
-      await signInWithEmailAndPassword(auth, authMail, authPass);
+      await signInWithEmailAndPassword(auth, authMail+"@ed.ritsumei.ac.jp", authPass);
       const unsubscribe = await onAuthStateChanged(auth, (user) => {
         if (user.emailVerified) {
+          saveCredentials(authMail,authPass)
           changePageDialog();
         } else {
           pleaseValidateMailDialog();
@@ -263,7 +264,7 @@ const ALoginView = (props) => {
   };
 
   const passwordReset = () => {
-    sendPasswordResetEmail(auth, email)
+    sendPasswordResetEmail(auth, email+"@ed.ritsumei.ac.jp")
       .then(() => {
         pleaseReLogin();
       })
