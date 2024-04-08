@@ -11,23 +11,16 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
-      "buildNumber": "1.0.0",
-        "config": {
-          "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
-        }
+      "buildNumber": "1.0.0"
     },
-    
     "android": {
       "googleServicesFile": "./google-services.json",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
-        }
-      },
       "versionCode": 1,
       "permissions": [
         "CAMERA",
@@ -51,13 +44,19 @@
         "projectId": "fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
       }
     },
-    "owner": "arukuarupakabuild"
+    "owner": "arukuarupakabuild",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
+    }
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-5827416667703619~1145796134",
-    "delay_app_measurement_init": true ,
+    "delay_app_measurement_init": true,
     "enabled": true,
     "test_mode": true,
-    "user_tracking_usage_description": "許可することで、より関連性の高い広告を表示することができるようになります。" 
+    "user_tracking_usage_description": "許可することで、より関連性の高い広告を表示することができるようになります。"
   }
 }
