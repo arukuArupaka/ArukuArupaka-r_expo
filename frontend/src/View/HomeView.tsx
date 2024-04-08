@@ -36,6 +36,14 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import { AdsConsent, AdsConsentDebugGeography, AdsConsentStatus } from 'react-native-google-mobile-ads';
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { BannerAdSize } from "react-native-google-mobile-ads";
+//import { Appbar, Surface, Title } from "react-native-paper";
+import MyAdmob from "../component/MyAdmob";
+//import { StackParamList } from "../App";
+
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -135,6 +143,34 @@ const ShowDate = () => {
 
 //実際に描画される部分
 const HomeView = (props) => {
+  const [nonPersonalizedOnly, setNonPersonalizedOnly] = useState(true);
+
+  useEffect(() => {
+    // ATTとGDPRの同意状態を取得
+    AdsConsent.requestInfoUpdate({
+      debugGeography: AdsConsentDebugGeography.EEA, // EU圏としてテストする設定
+      testDeviceIdentifiers: ["TEST-DEVICE-HASHED-ID"], // 実機でテストする場合はハッシュIDを指定
+    }).then(async (consentInfo) => {
+      let status = consentInfo.status;
+      if (
+        consentInfo.isConsentFormAvailable &&
+        status === AdsConsentStatus.REQUIRED
+      ) {
+        // 同意状態が必要な場合はダイアログを表示する
+        const result = await AdsConsent.showForm();
+        status = result.status;
+      }
+
+      if (
+        consentInfo.status === AdsConsentStatus.OBTAINED ||
+        status === AdsConsentStatus.OBTAINED
+      ) {
+        // 同意が取得できた場合はNonPersonalizedOnlyをfalseにする(トラッキング取得する)
+        setNonPersonalizedOnly(false);
+      }
+    });
+  }, []);
+
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
@@ -151,7 +187,7 @@ const HomeView = (props) => {
         const savedEmail = await AsyncStorage.getItem("email");
         const savedPassword = await AsyncStorage.getItem("password");
         if (savedEmail && savedPassword) {
-          signInWithEmailAndPassword(auth, savedEmail, savedPassword)
+          signInWithEmailAndPassword(auth, savedEmail+"@ed.ritsumei.ac.jp", savedPassword)
             .then((userCredential) => {
               // ログイン成功時の処理
               const user = userCredential.user;
@@ -309,6 +345,7 @@ const HomeView = (props) => {
             iconName="contacts"
           />
         </View>}
+        {/* <MyAdmob size={BannerAdSize.FULL_BANNER} /> */}
       </ScrollView>
     </SafeAreaView>
   );
