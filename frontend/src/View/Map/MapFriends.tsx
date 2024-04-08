@@ -1,5 +1,5 @@
-import React ,{useEffect, useState} from 'react';
-import {Text, View,StyleSheet,Linking, TouchableOpacity,Image} from 'react-native';
+import React ,{useCallback, useEffect, useState} from 'react';
+import {Text, View,StyleSheet,Linking, TouchableOpacity,Image, Platform} from 'react-native';
 import MapMyselfContainer from '../../component/Map/MapMyselfContainer';
 import {useSelector,useDispatch} from 'react-redux';
 import { handleLoginAfterPageName } from '../../redux/actions/commonAction';
@@ -14,8 +14,62 @@ import QRCode from 'react-native-qrcode-svg';
 import {  ref, getDownloadURL } from "firebase/storage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Dispatch } from 'redux';
+import { TestIds, useInterstitialAd } from 'react-native-google-mobile-ads';
+
 
 const MapFriendsView = ({ navigation }) => {
+
+  const [unitId, setUnitId] = useState(TestIds.INTERSTITIAL);
+
+  const { isLoaded, isClosed, load, show } = useInterstitialAd(unitId, {
+    requestNonPersonalizedAdsOnly: false,
+  });
+
+  useEffect(() => {
+    // インタースティシャルの初期化（テスト用ID）
+    const testUnitID = TestIds.INTERSTITIAL;
+
+    // 実際に広告配信する際のID
+    // 広告ユニットを作成した際に表示されたものを設定する
+    const adUnitID = Platform.select({
+      android: "ca-app-pub-5827416667703619/7401063358",
+    });
+
+    // if (testUnitID) {
+    //   setUnitId(testUnitID);
+    // } else if (adUnitID) {
+      setUnitId(adUnitID);
+    //}
+  }, []);
+
+  useEffect(() => {
+    if (load) {
+      // 広告をロードする
+      load();
+    }
+  }, [load]);
+
+  useEffect(() => {
+    // 閉じられたら次の広告をロードしておく
+    if (isClosed) {
+      load();
+    }
+  }, [isClosed]);
+
+  const viewInterstitial = useCallback(async () => {
+    // 広告の表示
+    var random = Math.floor(Math.random() * 3);
+    console.log(random)
+    if(random==1){
+      return
+    }
+    if (isLoaded) {
+      show();
+    } else {
+      console.log("not loaded:", isLoaded);
+    }
+  }, [isLoaded]);
+
 
   const userObject=useSelector((state)=>state.user.userObject)
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
@@ -48,6 +102,7 @@ const MapFriendsView = ({ navigation }) => {
       const snap = await getDoc(refFiresrore);
 
       if (snap.exists()) {
+        viewInterstitial()
         setShowQR(true)
       }else{
         const mapUser={
@@ -96,7 +151,6 @@ console.log(mapUserObject.QRUUID)
 
 const friendRegist=async()=>{
   if (await isLogin) {
-    // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
       let newFrends=mapUserObject.friends

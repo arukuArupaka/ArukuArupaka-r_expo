@@ -29,6 +29,11 @@ import { SearchSearch } from './src/View/Textbook/main/SearchHome/SearchSearch';
 // import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
 import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook';
 
+import { BannerAdSize } from "react-native-google-mobile-ads";
+//import { Appbar, Surface, Title } from "react-native-paper";
+import MyAdmob from "./src/component/MyAdmob";
+//import { StackParamList } from "../App";
+
 //algolia用
 import { InstantSearch } from 'react-instantsearch-core';
 import algoliasearch from 'algoliasearch/lite';
@@ -179,6 +184,7 @@ function App() {
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
         </Stack.Navigator>
       </NavigationContainer>
+      <MyAdmob size={BannerAdSize.FULL_BANNER} />
     </TimeTableProvider>
     </InstantSearch>
     </Provider>

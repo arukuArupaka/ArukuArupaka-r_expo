@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Platform, Text, View,StyleSheet,useColorScheme, Button, ScrollView, Dimensions} from 'react-native';
 import WeekFram from '../component/TimeTable/WeekFrame';
 import ClassFrame from '../component/TimeTable/ClassFrame';
@@ -9,10 +9,62 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TimeTableQty from '../component/TimeTable/TimeTableQty';
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
-
+import { TestIds, useInterstitialAd } from "react-native-google-mobile-ads";
 
 const TimrTableView = ({ navigation }) => {
-  const { kamokuStatus, setKamokuStatus, unitCalc, setUnitCalc, unitSum, setUnitSum, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding,show, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
+
+  const [unitId, setUnitId] = useState(TestIds.INTERSTITIAL);
+
+  const { isLoaded, isClosed, load, show } = useInterstitialAd(unitId, {
+    requestNonPersonalizedAdsOnly: false,
+  });
+
+  useEffect(() => {
+    // インタースティシャルの初期化（テスト用ID）
+    const testUnitID =TestIds.INTERSTITIAL;
+
+    // 実際に広告配信する際のID
+    // 広告ユニットを作成した際に表示されたものを設定する
+    const adUnitID = Platform.select({
+      android: "ca-app-pub-5827416667703619/7401063358",
+    });
+
+    // if (testUnitID) {
+    //   setUnitId(testUnitID);
+    // } else if (adUnitID) {
+      setUnitId(adUnitID);
+   // }
+  }, []);
+
+  useEffect(() => {
+    if (load) {
+      // 広告をロードする
+      load();
+    }
+  }, [load]);
+
+  useEffect(() => {
+    // 閉じられたら次の広告をロードしておく
+    if (isClosed) {
+      load();
+    }
+  }, [isClosed]);
+
+  const viewInterstitial = useCallback(async () => {
+    // 広告の表示
+    var random = Math.floor(Math.random() * 4);
+    console.log(random)
+    if(random!==2){
+      return
+    }
+    if (isLoaded) {
+      show();
+    } else {
+      console.log("not loaded:", isLoaded);
+    }
+  }, [isLoaded]);
+
+  const { kamokuStatus, setKamokuStatus, unitCalc, setUnitCalc, unitSum, setUnitSum, weekTimeQty, timesize, setWeekTimeQty,sizechange, setSizechange,padding, setShow, season, setSeason, time, setTime, day, setDay, department, setDepartment, dodata, setDodata, pushedClassFrameDetail,setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, period, setPeriod, kamokuItem, setKamokuItem, nodata, setNodata, isInfoShow, setIsInfoShow } = useTimeTable();
 
   const window = Dimensions.get('window');
 
@@ -661,7 +713,7 @@ useEffect(() => {
                           weekTimeQty={weekTimeQty} 
                           onEventCallBack={(frameDetail)=>{
                             //console.log(typeof weekTime2.day);
-                            //console.log(typeof weekTime2.period);
+                            viewInterstitial()
                             if(weekTime2.className == ""){
                               setShow(true);
                               setPeriod(weekTime2.period);
