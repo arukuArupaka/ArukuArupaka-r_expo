@@ -48,7 +48,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
+       // "projectId": "fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
       }
     },
     "owner": "arukuarupakabuild"
