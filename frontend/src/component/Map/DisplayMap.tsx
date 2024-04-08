@@ -139,7 +139,12 @@ const DisplayMap = (props) => {
   const [isShareLocation, setIsSharelocation] = useState<boolean>(false);
 
   const [myLocation, setMyLocation] = useState({});
-  const [mapCenterLocation, setMapCenterLocation] = useState({});
+  const [mapCenterLocation, setMapCenterLocation] = useState({          
+    latitude: props.campusData.location.latitude?props.campusData.location.latitude:0,
+    longitude: props.campusData.location.longitude?props.campusData.location.longitude:0,
+    latitudeDelta: 0.005,
+    longitudeDelta: 0.005,
+  });
   const [showBuildingIcon, setShowBuildIcon] = useState(false);
   const [shareInfoMessage, setShareInfoMassage] = useState<string>("");
   const [shareTime, setShareTime] = useState("");
@@ -255,7 +260,10 @@ const DisplayMap = (props) => {
 
   const onSelectBuilding = (data) => {
     dispatch(setMapSearchWord(""));
-    setMapCenterLocation(data.buildingLocation);
+    setMapCenterLocation({
+      ...data.buildingLocation,          
+      latitudeDelta: 0.001,
+      longitudeDelta: 0.001,});
     setShowBuildIcon(true);
   };
 
@@ -317,17 +325,15 @@ const DisplayMap = (props) => {
           width: "100%",
           height: "100%",
         }}
-        provider={PROVIDER_GOOGLE}
+         provider={PROVIDER_GOOGLE}
         initialRegion={{
-          latitude: props.campusData.location.latitude,
-          longitude: props.campusData.location.longitude,
+          latitude: props.campusData.location.latitude?props.campusData.location.latitude:0,
+          longitude: props.campusData.location.longitude?props.campusData.location.longitude:0,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
         region={{
           ...mapCenterLocation,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.001,
         }}
         userInterfaceStyle={"light"}
         onRegionChange={handleRegionChangeComplete}
