@@ -17,7 +17,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "googleServicesFile":"./GoogleService-Info.plist"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -54,6 +55,7 @@
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-5827416667703619~1145796134",
+    "ios_app_id":"ca-app-pub-5827416667703619~1631298712",
     "delay_app_measurement_init": true,
     "enabled": true,
     "test_mode": true,

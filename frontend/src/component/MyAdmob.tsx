@@ -22,6 +22,7 @@ export default function MyAdmob(props: Props) {
   // 実際に広告配信する際のID
   // 広告ユニット（バナー）を作成した際に表示されたものを設定する
   const adUnitID = Platform.select({
+    ios:"ca-app-pub-5827416667703619/5823693158",
     android: "ca-app-pub-5827416667703619/1898489074",
   });
 

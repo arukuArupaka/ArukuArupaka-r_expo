@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
-import {Textbook} from './src/View/Textbook/TextbookView';
 import MapView from './src/View/Map/MapMain'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
@@ -25,9 +24,9 @@ import * as Notifications from 'expo-notifications';
 import React from 'react';
 import HomeWebSite from './src/View/HomeWebSite';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, FontAwesome,Feather } from '@expo/vector-icons';
-import { SearchSearch } from './src/View/Textbook/main/SearchHome/SearchSearch';
+// import { SearchSearch } from './src/View/Textbook/main/SearchHome/SearchSearch';
 // import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
-import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook';
+// import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook';
 
 import { BannerAdSize } from "react-native-google-mobile-ads";
 //import { Appbar, Surface, Title } from "react-native-paper";
@@ -35,10 +34,11 @@ import MyAdmob from "./src/component/MyAdmob";
 //import { StackParamList } from "../App";
 
 //algolia用
-import { InstantSearch } from 'react-instantsearch-core';
-import algoliasearch from 'algoliasearch/lite';
+// import { InstantSearch } from 'react-instantsearch-core';
+// import algoliasearch from 'algoliasearch/lite';
 import RitsuMatch from './src/View/RitsuMatch';
-const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
+import TextBookRoot from './src/View/TextBook/TextBookView';
+// const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 
 const Stack = createNativeStackNavigator();
@@ -75,7 +75,7 @@ function App() {
 
   return (
     <Provider store={AR_Store}>
-      <InstantSearch searchClient={searchClient} indexName="text_book">
+      {/* <InstantSearch searchClient={searchClient} indexName="text_book"> */}
         <TimeTableProvider>
         <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName="Home">
@@ -109,13 +109,13 @@ function App() {
                 component={MapLoot}
                 options={{ headerShown: false}}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="textbook"
                 component={Textbook}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="settings"
                 component={ASetting}
@@ -163,13 +163,13 @@ function App() {
                 component={RitsuMatch}
                 options={() => ({ title: "" })}
               />
-               <Stack.Screen name="ホーム" component={Textbook}
+               <Stack.Screen name="ホーム" component={TextBookRoot}
             options={({navigation})=>({
               headerStyle: {
                 backgroundColor: '#F36F21',
               },
               headerRight: () => (
-                <TouchableOpacity onPress={() => navigation.navigate('サーチサーチ')}>
+                <TouchableOpacity>
                   <Ionicons name="search" size={30} color="black" />
                 </TouchableOpacity>
               ),
@@ -186,7 +186,7 @@ function App() {
       </NavigationContainer>
       <MyAdmob size={BannerAdSize.FULL_BANNER} />
     </TimeTableProvider>
-    </InstantSearch>
+    {/* </InstantSearch> */}
     </Provider>
   );
 }
