@@ -102,10 +102,8 @@ const DisplayMap = (props) => {
       if (
         judgeInclusion(
           {
-            myLocation: {
               latitude: locations[0].coords.latitude,
               longitude: locations[0].coords.longitude,
-            },
           },
           props.campusData.campusAria
         )
@@ -127,9 +125,6 @@ const DisplayMap = (props) => {
   );
 
   const dispatch = useDispatch();
-  console.log("props.campusData");
-
-  console.log(props.campusData);
 
   var { width, height } = Dimensions.get("window");
 
@@ -176,6 +171,7 @@ const DisplayMap = (props) => {
           let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
           console.log(longitude);
           console.log(latitude);
+          
           setMyLocation({
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
@@ -186,13 +182,11 @@ const DisplayMap = (props) => {
             props.campusData.campusAria &&
             judgeInclusion(
               {
-                myLocation: {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-                },
               },
               props.campusData.campusAria
-            )
+            )&&mapUserObject.isLocationShare
           ) {
             const refFiresrore = doc(db, `mapGPS/${userUUID}`);
             updateDoc(refFiresrore, {
@@ -215,10 +209,8 @@ const DisplayMap = (props) => {
             if (
               !judgeInclusion(
                 {
-                  myLocation: {
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
-                  },
                 },
                 props.campusData.campusAria
               )
@@ -226,7 +218,8 @@ const DisplayMap = (props) => {
               setShareInfoMassage("キャンパス外");
             } else if (!isLogin) {
               setShareInfoMassage("未ログイン");
-            } else {
+            } else if(!mapUserObject.isLocationShare){
+              setShareInfoMassage("共有を停止する");
             }
           }
         }
@@ -254,7 +247,7 @@ const DisplayMap = (props) => {
 
     return () => {
       subscription?.remove();
-      if (isLogin) {
+      if (isLogin&&mapUserObject.isLocationShare) {
         toggleFetchTask();
       }
     };
@@ -288,11 +281,11 @@ const DisplayMap = (props) => {
     } else if (status === "granted") {
       await Location.getCurrentPositionAsync({})
         .then((location) => {
+          console.log("getCurrentPositionAsync");
           let longitude = "経度:" + JSON.stringify(location.coords.longitude);
           let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
           console.log(longitude);
           console.log(latitude);
-          console.log("getCurrentPositionAsync");
           setMyLocation({
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,

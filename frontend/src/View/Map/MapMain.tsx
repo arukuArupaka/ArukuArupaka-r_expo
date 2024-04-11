@@ -17,7 +17,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import Dropdown from "react-native-input-select";
-import ActionSheet from "@yfuks/react-native-action-sheet";
+//import ActionSheet from "@yfuks/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { db } from "../../../firebase";
@@ -36,6 +36,10 @@ import {
 const MAIN_PICTURE_MAX_SIZE: number = 10000;
 
 const MapMainView = () => {
+  const userUUID: boolean = useSelector(
+    (state: State) => state.user.userUUID || ""
+  );
+
   const isLogin: boolean = useSelector(
     (state: State) => state.user.isLogin || false
   ); //import {useSelector,useDispatch} from 'react-redux'; でimport してね
@@ -51,13 +55,12 @@ const MapMainView = () => {
       console.log(await isLogin);
       if (await isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+        console.log('getMapUserData:inMapMain')
         const refFiresrore = doc(db, `mapGPS/${userUUID}`);
         const snap = await getDoc(refFiresrore);
 
         if (snap.exists()) {
           const appUser = (await getDoc(refFiresrore)).data() as User; //appUserがデータベースから取得したオブジェクト
-          console.log(appUser);
-          console.log("exit!");
           dispatch(setMapUserObject(appUser));
         } else {
           const mapUser = {
@@ -100,23 +103,26 @@ const MapMainView = () => {
   const userObject = useSelector((state) => state.user.userObject);
 
   const onOpenActionSheet = () => {
-    if (Platform.OS == "android") {
-      pickImage();
-      return;
-    }
-    const options = ["写真を選択", "キャンセル"];
-    const cancelButtonIndex = 1;
-    ActionSheet.showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (buttonIndex) => {
-        if (buttonIndex == 0) {
-          pickImage();
-        }
-      }
-    );
+
+    pickImage()
+
+    // if (Platform.OS == "android") {
+    //   pickImage();
+    //   return;
+    // }
+    // const options = ["写真を選択", "キャンセル"];
+    // const cancelButtonIndex = 1;
+    // ActionSheet.showActionSheetWithOptions(
+    //   {
+    //     options,
+    //     cancelButtonIndex,
+    //   },
+    //   (buttonIndex) => {
+    //     if (buttonIndex == 0) {
+    //       pickImage();
+    //     }
+    //   }
+    // );
   };
 
   const pickImage = async () => {

@@ -3,11 +3,20 @@ import {Text, View,Image,Switch} from 'react-native';
 import {useSelector,useDispatch} from 'react-redux';
 import { doc, setDoc } from '@firebase/firestore';
 import { db } from '../../../firebase';
+import { setMapUserObject } from '../../redux/actions/mapUserActions';
 
 const MapMyselfContainer = () => {
+  const userObject=useSelector((state)=>state.user.userObject)
+
 
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
   const userUUID=useSelector((state:State)=>state.user.userUUID||"") 
+
+  const dispatch: Dispatch = useDispatch();
+
+  console.log("mapUserObject on map myselfvontainer")
+  console.log(userObject.userImage)
+  console.log(mapUserObject)
 
 
   const [userName,setUserName]=useState('')
@@ -17,7 +26,7 @@ const MapMyselfContainer = () => {
 
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
-    let isShareLoactionObject=mapUserObject
+    let isShareLoactionObject={...mapUserObject}
 
     isShareLoactionObject.isLocationShare=!isShowMyLocation
     //console.log(isShareLoactionObject)
@@ -25,6 +34,7 @@ const MapMyselfContainer = () => {
       setDoc(refFiresrore, isShareLoactionObject).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
         setIsShowMyLocation(isShareLoactionObject.isLocationShare)
+        dispatch(setMapUserObject(isShareLoactionObject))
       });
 
   };
@@ -34,8 +44,6 @@ const MapMyselfContainer = () => {
   const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
   if(!isLogin||isLoginNotVerificationEmail){
   }
-  const userObject=useSelector((state)=>state.user.userObject)
-  //console.log(userObject.userImage)
   return (
     <View
       style={{

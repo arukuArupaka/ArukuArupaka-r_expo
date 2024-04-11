@@ -91,42 +91,42 @@ const MapFriendsView = ({ navigation }) => {
     }
   }
 
-useEffect(()=>{//これをホームへ
+// useEffect(()=>{//これをホームへ
 
 
-  const getUserDate=async()=>{
-    console.log(await isLogin)
-    if (await isLogin) {
-      // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-      const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-      const snap = await getDoc(refFiresrore);
+//   const getUserDate=async()=>{
+//     console.log(await isLogin)
+//     if (await isLogin) {
+//       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+//       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+//       const snap = await getDoc(refFiresrore);
 
-      if (snap.exists()) {
-        const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-        console.log(appUser)
-        console.log('exit!')
-        dispatch(setMapUserObject(appUser))
-      }else{
-        const mapUser={
-          isLocationShare:true,
-          userName:userObject.userName,
-          userUUID:userUUID,
-          friends:[],
-          mapShowFriends:[],
-          locationSharingFriends:[],
-          QRUUID:Crypto.randomUUID()
-        }
-        console.log('norExit')
-        setDoc(refFiresrore, mapUser).then(() => {
-          // 保存に成功したらコンテクストにユーザーデータを格納
-          console.log('mapUser')
-          dispatch(setMapUserObject(mapUser))
-        });
-      }
-    }
-  }
-  getUserDate()
-},[isLogin])
+//       if (snap.exists()) {
+//         const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+//         console.log(appUser)
+//         console.log('exit!')
+//         dispatch(setMapUserObject(appUser))
+//       }else{
+//         const mapUser={
+//           isLocationShare:true,
+//           userName:userObject.userName,
+//           userUUID:userUUID,
+//           friends:[],
+//           mapShowFriends:[],
+//           locationSharingFriends:[],
+//           QRUUID:Crypto.randomUUID()
+//         }
+//         console.log('norExit')
+//         setDoc(refFiresrore, mapUser).then(() => {
+//           // 保存に成功したらコンテクストにユーザーデータを格納
+//           console.log('mapUser')
+//           dispatch(setMapUserObject(mapUser))
+//         });
+//       }
+//     }
+//   }
+//   getUserDate()
+// },[isLogin])
 
 console.log(mapUserObject.QRUUID)
 

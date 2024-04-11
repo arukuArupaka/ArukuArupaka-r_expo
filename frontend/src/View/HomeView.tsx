@@ -157,6 +157,8 @@ const HomeView = (props) => {
               dispatch(handleLoginAction(user.emailVerified));
               dispatch(setUserUUIDAction(user.uid));
               console.log("<<")
+
+              fetchUserObject(user.uid)
               getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
                 (getURI) => {
                   setUserIconImageUri(getURI);
