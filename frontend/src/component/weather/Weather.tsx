@@ -1,57 +1,97 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { backendWeatherVotesUrl, currentWeatherUrl, weatherForecastUrl, weatherIconUrl, moonInformationUrl } from "../../consts/urls";
-import { formatDateAsHHmm, formatDateAsISO8601WithoutTime } from "../../utils/formatDate";
-import RNPickerSelect from 'react-native-picker-select';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  backendWeatherVotesUrl,
+  currentWeatherUrl,
+  weatherForecastUrl,
+  weatherIconUrl,
+  moonInformationUrl,
+} from "../../consts/urls";
+import {
+  formatDateAsHHmm,
+  formatDateAsISO8601WithoutTime,
+} from "../../utils/formatDate";
+import RNPickerSelect from "react-native-picker-select";
 import axios from "axios";
 
 const Weather = () => {
   const apiKey = "8c2f6bbbd0df6dcd73cd7cf494b66bce";
-  const weatherDictionary = {  // 日本になさそうな天気が多くて訳語が難しい
-    "Thunderstorm": "雷雨",
-    "Drizzle": "小雨",
-    "Rain": "雨",
-    "Snow": "雪",
-    "Mist": "靄",
-    "Smoke": "煙",
-    "Haze": "煙霧",
-    "Dust": "粉塵",
-    "Fog": "霧",
-    "Sand": "砂",
-    "Ash": "灰",
-    "Squall": "スコール",
-    "Tornado": "竜巻",
-    "Clear": "晴れ",
-    "Clouds": "曇り",
+  const weatherDictionary = {
+    // 日本になさそうな天気が多くて訳語が難しい
+    Thunderstorm: "雷雨",
+    Drizzle: "小雨",
+    Rain: "雨",
+    Snow: "雪",
+    Mist: "靄",
+    Smoke: "煙",
+    Haze: "煙霧",
+    Dust: "粉塵",
+    Fog: "霧",
+    Sand: "砂",
+    Ash: "灰",
+    Squall: "スコール",
+    Tornado: "竜巻",
+    Clear: "晴れ",
+    Clouds: "曇り",
   };
 
   const moonAgeToMoonPhase = (moonAge: number) => {
-    if ((0 <= moonAge && moonAge <= 1) || 29 <= moonAge && moonAge <= 30) {
-      return "moon-new"
+    if ((0 <= moonAge && moonAge <= 1) || (29 <= moonAge && moonAge <= 30)) {
+      return "moon-new";
     } else if (2 <= moonAge && moonAge <= 4) {
-      return "moon-waxing-crescent"
+      return "moon-waxing-crescent";
     } else if (5 <= moonAge && moonAge <= 8) {
-      return "moon-first-quarter"
+      return "moon-first-quarter";
     } else if (9 <= moonAge && moonAge <= 12) {
-      return "moon-waxing-gibbous"
+      return "moon-waxing-gibbous";
     } else if (13 <= moonAge && moonAge <= 17) {
-      return "moon-full"
+      return "moon-full";
     } else if (18 <= moonAge && moonAge <= 21) {
-      return "moon-waning-gibbous"
+      return "moon-waning-gibbous";
     } else if (22 <= moonAge && moonAge <= 25) {
-      return "moon-last-quarter"
+      return "moon-last-quarter";
     } else if (26 <= moonAge && moonAge <= 28) {
-      return "moon-waning-crescent"
+      return "moon-waning-crescent";
     }
-  }
+  };
 
   const [city, setCity] = useState("Kusatsu");
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [tomorrowWeatherData, setTomorrowWeatherData] = useState(null);
   const [hourlyWeatherData, setHourlyWeatherData] = useState([]);
-  const [rainyHours, setRainyHours] = useState([{"clouds": {"all": 100}, "dt": 1711907000, "dt_txt": "2024-03-31 18:00:00", "main": {"feels_like": 12.71, "grnd_level": 997, "humidity": 89, "pressure": 1010, "sea_level": 1010, "temp": 13.03, "temp_kf": 1.66, "temp_max": 13.03, "temp_min": 11.37}, "pop": 0, "rain": {"3h": 0.21}, "sys": {"pod": "n"}, "visibility": 10000, "weather": [[Object]], "wind": {"deg": 6, "gust": 1.62, "speed": 1.1}}]);
+  const [rainyHours, setRainyHours] = useState([
+    {
+      clouds: { all: 100 },
+      dt: 1711907000,
+      dt_txt: "2024-03-31 18:00:00",
+      main: {
+        feels_like: 12.71,
+        grnd_level: 997,
+        humidity: 89,
+        pressure: 1010,
+        sea_level: 1010,
+        temp: 13.03,
+        temp_kf: 1.66,
+        temp_max: 13.03,
+        temp_min: 11.37,
+      },
+      pop: 0,
+      rain: { "3h": 0.21 },
+      sys: { pod: "n" },
+      visibility: 10000,
+      weather: [[Object]],
+      wind: { deg: 6, gust: 1.62, speed: 1.1 },
+    },
+  ]);
   const [sunrise, setSunrise] = useState(new Date());
   const [sunset, setSunset] = useState(new Date());
   const [moonAge, setMoonAge] = useState(null);
@@ -65,7 +105,7 @@ const Weather = () => {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
-        console.log('weatherURL:',currentWeatherUrl(city, apiKey));
+        console.log("weatherURL:", currentWeatherUrl(city, apiKey));
         const response = await axios.get(currentWeatherUrl(city, apiKey));
         setCurrentWeatherData(response.data);
         console.log(response.data);
@@ -78,26 +118,27 @@ const Weather = () => {
       try {
         const response = await axios.get(weatherForecastUrl(city, apiKey));
         //console.log("API Response1:", response.data); // デバッグ情報としてレスポンスをログに出力
-    
+
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-    
-        const listFiltered = response.data.list?.filter(item => item !== undefined) || []; // undefinedをフィルタリング
-        const tomorrowData = listFiltered.find((item) => {
-          
-          // `dt`プロパティへの安全なアクセス
-          if (item && typeof item.dt === 'number') {
-            console.log('item.dt:',item.dt);
-            const itemDate = new Date(item.dt * 1000);
-            return (
-              itemDate.getDate() === tomorrow.getDate() &&
-              itemDate.getMonth() === tomorrow.getMonth() &&
-              itemDate.getFullYear() === tomorrow.getFullYear()
-            );
-          }
-          return false;
-        }) || null;
-    
+
+        const listFiltered =
+          response.data.list?.filter((item) => item !== undefined) || []; // undefinedをフィルタリング
+        const tomorrowData =
+          listFiltered.find((item) => {
+            // `dt`プロパティへの安全なアクセス
+            if (item && typeof item.dt === "number") {
+              console.log("item.dt:", item.dt);
+              const itemDate = new Date(item.dt * 1000);
+              return (
+                itemDate.getDate() === tomorrow.getDate() &&
+                itemDate.getMonth() === tomorrow.getMonth() &&
+                itemDate.getFullYear() === tomorrow.getFullYear()
+              );
+            }
+            return false;
+          }) || null;
+
         if (tomorrowData === null) {
           console.error("No weather data available for tomorrow.");
         } else {
@@ -107,25 +148,26 @@ const Weather = () => {
         console.error("Error fetching tomorrow's weather dataooo:", error);
       }
     };
-    
 
     const fetchHourlyWeather = async () => {
       try {
         const response = await axios.get(weatherForecastUrl(city, apiKey));
         const currentTime = new Date().getTime() / 1000;
         const filteredData = response.data.list.filter(
-          (item) => item.dt < currentTime + 36 * 3600
+          (item) => item.dt >= currentTime + 36 * 3600
         );
         setHourlyWeatherData(filteredData);
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain" && item.weather[0].main === "Thunderstorm" && item.weather[0].main === "Drizzle"
+          (item) =>
+            item.weather[0].main === "Rain" &&
+            item.weather[0].main === "Thunderstorm" &&
+            item.weather[0].main === "Drizzle"
         );
         // console.log('rainyhours1');
         // console.log('rainyHours1',rainyHours[0].pop);
         // setRainyHours(rainyHours);
-
       } catch (error) {
         console.error("Error fetching hourly weather dataooo:", error);
       }
@@ -144,7 +186,9 @@ const Weather = () => {
     const fetchMoonAge = async () => {
       const todayDate = new Date();
       try {
-        const response = await axios.get(moonInformationUrl(formatDateAsISO8601WithoutTime(todayDate)));
+        const response = await axios.get(
+          moonInformationUrl(formatDateAsISO8601WithoutTime(todayDate))
+        );
         setMoonAge(Math.round(response.data.result[0].age));
       } catch (error) {
         console.error("Error fetching moon phase data:", error);
@@ -182,26 +226,28 @@ const Weather = () => {
       try {
         const response = await axios.get(weatherForecastUrl(city, apiKey));
         //console.log("API Response2:", response.data); // デバッグ情報としてレスポンスをログに出力
-    
+
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-    
-        const listFiltered = response.data.list?.filter(item => item !== undefined) || []; // undefinedをフィルタリング
-        const tomorrowData = listFiltered.find((item) => {
-          // `dt`プロパティへの安全なアクセス
-          if (item && typeof item.dt === 'number') {
-            const itemDate = new Date(item.dt * 1000);
-            return (
-              itemDate.getDate() === tomorrow.getDate() &&
-              itemDate.getMonth() === tomorrow.getMonth() &&
-              itemDate.getFullYear() === tomorrow.getFullYear()
-            );
-          }
-          return false;
-        }) || null;
+
+        const listFiltered =
+          response.data.list?.filter((item) => item !== undefined) || []; // undefinedをフィルタリング
+        const tomorrowData =
+          listFiltered.find((item) => {
+            // `dt`プロパティへの安全なアクセス
+            if (item && typeof item.dt === "number") {
+              const itemDate = new Date(item.dt * 1000);
+              return (
+                itemDate.getDate() === tomorrow.getDate() &&
+                itemDate.getMonth() === tomorrow.getMonth() &&
+                itemDate.getFullYear() === tomorrow.getFullYear()
+              );
+            }
+            return false;
+          }) || null;
 
         console.log(tomorrowData);
-    
+
         if (tomorrowData === null) {
           console.error("No weather data available for tomorrow.");
         } else {
@@ -223,12 +269,14 @@ const Weather = () => {
 
         // Find rainy hours
         const rainyHours = filteredData.filter(
-          (item) => item.weather[0].main === "Rain" || item.weather[0].main === "Thunderstorm" || item.weather[0].main === "Drizzle"
+          (item) =>
+            item.weather[0].main === "Rain" ||
+            item.weather[0].main === "Thunderstorm" ||
+            item.weather[0].main === "Drizzle"
         );
-        console.log('rainyHours2');
-        console.log('rainyHours',rainyHours[0].pop);
+        console.log("rainyHours2");
+        console.log("rainyHours", rainyHours[0].pop);
         setRainyHours(rainyHours);
-
       } catch (error) {
         console.error("Error fetching hourly weather dataaa:", error);
       }
@@ -286,37 +334,43 @@ const Weather = () => {
             }}
           >
             <RNPickerSelect
-                onValueChange={(value) => setCity(value)}
-                items={[
-                    { label: '草津', value: 'Kusatsu' },
-                    { label: '衣笠', value: 'Kyoto' },
-                    { label: '茨木', value: 'Takatsuki' },
-                ]}
-                value={city}
-                placeholder={{}}
-                Icon={() => <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />}
-                style={{
-                  inputIOS :{
-                    width: 60,
-                    height: 22,
-                    fontSize: 12,
-                    paddingLeft: 6,
-                    borderWidth: 1.5,
-                    borderColor: "#007AFF",
-                    borderRadius: 5,
-                    backgroundColor: "#fff",
-                  },
-                  inputAndroid :{
-                    width: 60,
-                    height: 22,
-                    fontSize: 12,
-                    paddingLeft: 6,
-                    borderWidth: 1.5,
-                    borderColor: "#007AFF",
-                    borderRadius: 5,
-                    backgroundColor: "#fff",
-                  }
-                }}
+              onValueChange={(value) => setCity(value)}
+              items={[
+                { label: "草津", value: "Kusatsu" },
+                { label: "衣笠", value: "Kyoto" },
+                { label: "茨木", value: "Takatsuki" },
+              ]}
+              value={city}
+              placeholder={{}}
+              Icon={() => (
+                <MaterialIcons
+                  name="keyboard-arrow-down"
+                  size={24}
+                  color="black"
+                />
+              )}
+              style={{
+                inputIOS: {
+                  width: 60,
+                  height: 22,
+                  fontSize: 12,
+                  paddingLeft: 6,
+                  borderWidth: 1.5,
+                  borderColor: "#007AFF",
+                  borderRadius: 5,
+                  backgroundColor: "#fff",
+                },
+                inputAndroid: {
+                  width: 60,
+                  height: 22,
+                  fontSize: 12,
+                  paddingLeft: 6,
+                  borderWidth: 1.5,
+                  borderColor: "#007AFF",
+                  borderRadius: 5,
+                  backgroundColor: "#fff",
+                },
+              }}
             />
           </View>
           <View
@@ -337,19 +391,18 @@ const Weather = () => {
                 borderRadius: 5,
               }}
             >
-                {rainyHours[0].pop > 0.5 ? (
-                  <Text style={{ fontSize: 18 }}>
-                    {formatDateAsHHmm(new Date(rainyHours[0].dt * 1000))}から雨が降る予報です。
-                  </Text>
-                ) : (
-                  <Text style={{ fontSize: 18 }}>
-                    今日は雨は降らない予報です。
-                  </Text>
-                )}
+              {rainyHours[0].pop > 0.5 ? (
+                <Text style={{ fontSize: 18 }}>
+                  {formatDateAsHHmm(new Date(rainyHours[0].dt * 1000))}
+                  から雨が降る予報です。
+                </Text>
+              ) : (
+                <Text style={{ fontSize: 18 }}>
+                  今日は雨は降らない予報です。
+                </Text>
+              )}
             </View>
-            <View
-              style={{ flexDirection: "row",  marginTop: 16, height: 185}}
-            >
+            <View style={{ flexDirection: "row", marginTop: 16, height: 185 }}>
               {/* 今日の天気 */}
               <View
                 style={{
@@ -361,9 +414,7 @@ const Weather = () => {
                   flex: 1,
                 }}
               >
-                <Text style={{ marginTop: 8 }}>
-                  今日
-                </Text>
+                <Text style={{ marginTop: 8 }}>今日</Text>
                 <Image
                   source={{
                     uri: weatherIconUrl(tomorrowWeatherData.weather[0].icon),
@@ -379,14 +430,14 @@ const Weather = () => {
                 </Text>
                 <Text style={{ marginTop: 8, fontSize: 16 }}>
                   {currentWeatherData.main.humidity}
-                  <Text style={{fontSize: 12}}>{'%'}</Text>
+                  <Text style={{ fontSize: 12 }}>{"%"}</Text>
                 </Text>
                 <Text style={{ fontSize: 16 }}>
                   {Math.round(currentWeatherData.main.temp_min)}
-                  <Text style={{fontSize: 12}}>{'℃ '}</Text>
-                  {'- '}
+                  <Text style={{ fontSize: 12 }}>{"℃ "}</Text>
+                  {"- "}
                   {Math.round(currentWeatherData.main.temp_max)}
-                  <Text style={{fontSize: 12}}>{'℃ '}</Text>
+                  <Text style={{ fontSize: 12 }}>{"℃ "}</Text>
                 </Text>
               </View>
 
@@ -400,9 +451,7 @@ const Weather = () => {
                   flex: 1,
                 }}
               >
-                <Text style={{ marginTop: 8 }}>
-                  明日
-                </Text>
+                <Text style={{ marginTop: 8 }}>明日</Text>
                 <Image
                   source={{
                     uri: weatherIconUrl(tomorrowWeatherData.weather[0].icon),
@@ -418,20 +467,18 @@ const Weather = () => {
                 </Text>
                 <Text style={{ marginTop: 8, fontSize: 16 }}>
                   {tomorrowWeatherData.main.humidity}
-                  <Text style={{fontSize: 12}}>{'%'}</Text>
+                  <Text style={{ fontSize: 12 }}>{"%"}</Text>
                 </Text>
                 <Text style={{ fontSize: 16 }}>
                   {Math.round(tomorrowWeatherData.main.temp_min)}
-                  <Text style={{fontSize: 12}}>{'℃ '}</Text>
-                  {'- '}
+                  <Text style={{ fontSize: 12 }}>{"℃ "}</Text>
+                  {"- "}
                   {Math.round(tomorrowWeatherData.main.temp_max)}
-                  <Text style={{fontSize: 12}}>{'℃ '}</Text>
+                  <Text style={{ fontSize: 12 }}>{"℃ "}</Text>
                 </Text>
               </View>
             </View>
-            <View
-              style={{ flexDirection: "row",  marginTop: 16, height: 104}}
-            >
+            <View style={{ flexDirection: "row", marginTop: 16, height: 104 }}>
               <View
                 style={{
                   flexDirection: "column",
@@ -447,7 +494,9 @@ const Weather = () => {
                   source={require("./sunrise.png")}
                   style={{ marginTop: 7, height: 42, width: 42 }}
                 />
-                <Text style={{ marginTop: 7, fontSize: 16 }}>{formatDateAsHHmm(sunrise)}</Text>
+                <Text style={{ marginTop: 7, fontSize: 16 }}>
+                  {formatDateAsHHmm(sunrise)}
+                </Text>
               </View>
               <View
                 style={{
@@ -464,7 +513,9 @@ const Weather = () => {
                   source={require("./sunset.png")}
                   style={{ marginTop: 7, height: 42, width: 42 }}
                 />
-                <Text style={{ marginTop: 7, fontSize: 16 }}>{formatDateAsHHmm(sunset)}</Text>
+                <Text style={{ marginTop: 7, fontSize: 16 }}>
+                  {formatDateAsHHmm(sunset)}
+                </Text>
               </View>
               <View
                 style={{
@@ -476,12 +527,17 @@ const Weather = () => {
                 }}
               >
                 <Text style={{ marginTop: 7 }}>月の満ち欠け</Text>
-                <MaterialCommunityIcons name={moonAgeToMoonPhase(moonAge)} size={30} style={{ marginTop: 13 }} />
+                <MaterialCommunityIcons
+                  name={moonAgeToMoonPhase(moonAge)}
+                  size={30}
+                  style={{ marginTop: 13 }}
+                />
                 <Text style={{ marginTop: 11, fontSize: 16 }}>{moonAge}</Text>
               </View>
             </View>
             {hourlyWeatherData && hourlyWeatherData.length > 0 ? (
-              <ScrollView horizontal={true}
+              <ScrollView
+                horizontal={true}
                 style={{
                   height: 199,
                   marginTop: 16,
@@ -491,7 +547,8 @@ const Weather = () => {
                 }}
               >
                 {hourlyWeatherData.map((hourData, index) => (
-                  <View key={index}
+                  <View
+                    key={index}
                     style={{
                       flexDirection: "column",
                       justifyContent: "center",
@@ -503,7 +560,8 @@ const Weather = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         height: 170,
-                        borderRightWidth: index !== hourlyWeatherData.length - 1 ? 1 : 0,
+                        borderRightWidth:
+                          index !== hourlyWeatherData.length - 1 ? 1 : 0,
                         borderRightColor: "rgba(136, 136, 136, 1)",
                       }}
                     >
@@ -512,21 +570,21 @@ const Weather = () => {
                       </Text>
                       <Image
                         source={{
-                        uri: weatherIconUrl(hourData.weather[0].icon),
+                          uri: weatherIconUrl(hourData.weather[0].icon),
                         }}
                         style={{ width: 50, height: 50, marginTop: 9 }}
                       />
                       <Text style={{ marginTop: 8, fontSize: 16 }}>
                         {hourData.main.humidity}
-                        <Text style={{fontSize: 12}}>{'%'}</Text>
+                        <Text style={{ fontSize: 12 }}>{"%"}</Text>
                       </Text>
                       <Text style={{ marginTop: 8, fontSize: 16 }}>
                         {Math.round(hourData.main.temp)}
-                        <Text style={{fontSize: 12}}>{'℃ '}</Text>
+                        <Text style={{ fontSize: 12 }}>{"℃ "}</Text>
                       </Text>
                       <Text style={{ marginTop: 8, fontSize: 16 }}>
                         {Math.round(hourData.wind.speed * 10) / 10}
-                        <Text style={{fontSize: 12}}>{'m/s'}</Text>
+                        <Text style={{ fontSize: 12 }}>{"m/s"}</Text>
                       </Text>
                     </View>
                   </View>
@@ -535,7 +593,6 @@ const Weather = () => {
             ) : (
               <Text>一時間ごとの天気予報がありません。</Text>
             )}
-
           </View>
           {/*投票機能 */}
           <View
@@ -564,13 +621,18 @@ const Weather = () => {
                   borderRadius: 5,
                 }}
               >
-                <TouchableOpacity style={{flexDirection: "column", alignItems: "center" }} onPress={() => vote("sunny")}>
+                <TouchableOpacity
+                  style={{ flexDirection: "column", alignItems: "center" }}
+                  onPress={() => vote("sunny")}
+                >
                   <Text style={{ marginTop: 5, fontSize: 16 }}>晴れ</Text>
                   <Image
                     source={require("./sunny.png")}
                     style={{ marginTop: 3, height: 40, width: 40 }}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 16 }}>{votes.sunny}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 16 }}>
+                    {votes.sunny}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View
@@ -582,13 +644,18 @@ const Weather = () => {
                   borderRadius: 5,
                 }}
               >
-                <TouchableOpacity style={{flexDirection: "column", alignItems: "center" }} onPress={() => vote("cloudy")}>
+                <TouchableOpacity
+                  style={{ flexDirection: "column", alignItems: "center" }}
+                  onPress={() => vote("cloudy")}
+                >
                   <Text style={{ marginTop: 5, fontSize: 16 }}>曇り</Text>
                   <Image
                     source={require("./cloud.png")}
                     style={{ marginTop: 3, height: 40, width: 40 }}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 16 }}>{votes.cloudy}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 16 }}>
+                    {votes.cloudy}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View
@@ -600,13 +667,18 @@ const Weather = () => {
                   borderRadius: 5,
                 }}
               >
-                <TouchableOpacity style={{flexDirection: "column", alignItems: "center" }} onPress={() => vote("rainy")}>
+                <TouchableOpacity
+                  style={{ flexDirection: "column", alignItems: "center" }}
+                  onPress={() => vote("rainy")}
+                >
                   <Text style={{ marginTop: 5, fontSize: 16 }}>雨</Text>
                   <Image
                     source={require("./rainy.png")}
                     style={{ marginTop: 3, height: 40, width: 40 }}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 16 }}>{votes.rainy}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 16 }}>
+                    {votes.rainy}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View
@@ -618,20 +690,25 @@ const Weather = () => {
                   borderRadius: 5,
                 }}
               >
-                <TouchableOpacity style={{flexDirection: "column", alignItems: "center" }} onPress={() => vote("other")}>
+                <TouchableOpacity
+                  style={{ flexDirection: "column", alignItems: "center" }}
+                  onPress={() => vote("other")}
+                >
                   <Text style={{ marginTop: 5, fontSize: 16 }}>その他</Text>
                   <Image
                     source={require("./question.png")}
                     style={{ marginTop: 3, height: 40, width: 40 }}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 16 }}>{votes.other}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 16 }}>
+                    {votes.other}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </View>
       ) : (
-        <Text>天気情報が取得できませんでした。</Text>
+        <ActivityIndicator size={"large"} />
       )}
     </View>
   );
