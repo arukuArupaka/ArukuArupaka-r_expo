@@ -37,7 +37,7 @@ import MyAdmob from "./src/component/MyAdmob";
 // import { InstantSearch } from 'react-instantsearch-core';
 // import algoliasearch from 'algoliasearch/lite';
 import RitsuMatch from './src/View/RitsuMatch';
-import TextBookRoot from './src/View/TextBook/TextBookView';
+import TextBookRoot from './src/View/Textbook/TextbookView';
 // const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 

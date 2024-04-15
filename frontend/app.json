@@ -18,7 +18,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
       "buildNumber": "1.0.0",
-      "googleServicesFile":"./GoogleService-Info.plist"
+      "googleServicesFile":"./GoogleService-Info.plist",
+      "config": {
+        "googleMapsApiKey": "AIzaSyCPSG4CAkxNfBtYI-gewsbFCCTnYpGExCs"
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
