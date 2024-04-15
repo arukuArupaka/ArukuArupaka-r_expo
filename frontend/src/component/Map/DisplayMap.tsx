@@ -364,6 +364,7 @@ const DisplayMap = (props) => {
           width: "100%",
           height: "100%",
         }}
+         provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: props.campusData.location.latitude?props.campusData.location.latitude:0,
           longitude: props.campusData.location.longitude?props.campusData.location.longitude:0,
