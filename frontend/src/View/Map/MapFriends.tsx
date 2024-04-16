@@ -24,7 +24,7 @@ const MapFriendsView = ({ navigation }) => {
   const dispatch: Dispatch = useDispatch();
   const isLoginNotVerificationEmail:boolean=useSelector((state:State)=>state.user.isLoginNotVerificationEmail||false)
   if(!isLogin||isLoginNotVerificationEmail){
-    dispatch(handleLoginAfterPageName('Map',{ screen: 'friends' }))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる
+    dispatch(handleLoginAfterPageName('Home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる
     navigation.navigate('login')//なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
   }
 
@@ -91,42 +91,42 @@ const MapFriendsView = ({ navigation }) => {
     }
   }
 
-useEffect(()=>{//これをホームへ
+// useEffect(()=>{//これをホームへ
 
 
-  const getUserDate=async()=>{
-    console.log(await isLogin)
-    if (await isLogin) {
-      // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-      const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-      const snap = await getDoc(refFiresrore);
+//   const getUserDate=async()=>{
+//     console.log(await isLogin)
+//     if (await isLogin) {
+//       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+//       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+//       const snap = await getDoc(refFiresrore);
 
-      if (snap.exists()) {
-        const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-        console.log(appUser)
-        console.log('exit!')
-        dispatch(setMapUserObject(appUser))
-      }else{
-        const mapUser={
-          isLocationShare:true,
-          userName:userObject.userName,
-          userUUID:userUUID,
-          friends:[],
-          mapShowFriends:[],
-          locationSharingFriends:[],
-          QRUUID:Crypto.randomUUID()
-        }
-        console.log('norExit')
-        setDoc(refFiresrore, mapUser).then(() => {
-          // 保存に成功したらコンテクストにユーザーデータを格納
-          console.log('mapUser')
-          dispatch(setMapUserObject(mapUser))
-        });
-      }
-    }
-  }
-  getUserDate()
-},[isLogin])
+//       if (snap.exists()) {
+//         const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+//         console.log(appUser)
+//         console.log('exit!')
+//         dispatch(setMapUserObject(appUser))
+//       }else{
+//         const mapUser={
+//           isLocationShare:true,
+//           userName:userObject.userName,
+//           userUUID:userUUID,
+//           friends:[],
+//           mapShowFriends:[],
+//           locationSharingFriends:[],
+//           QRUUID:Crypto.randomUUID()
+//         }
+//         console.log('norExit')
+//         setDoc(refFiresrore, mapUser).then(() => {
+//           // 保存に成功したらコンテクストにユーザーデータを格納
+//           console.log('mapUser')
+//           dispatch(setMapUserObject(mapUser))
+//         });
+//       }
+//     }
+//   }
+//   getUserDate()
+// },[isLogin])
 
 console.log(mapUserObject.QRUUID)
 
@@ -170,7 +170,7 @@ const friendRegist=async()=>{
           backgroundColor:'#FFFFFF'
         }}>
         <MapMyselfContainer/>
-        <MapFriendRegisteContainer mapUserObject={mapUserObject} onCamera={()=>{setShowCamera(true);}}/>
+        <MapFriendRegisteContainer mapUserObject={mapUserObject} onCamera={()=>{setShowCamera(true);Camera.requestCameraPermissionsAsync()}}/>
       </View>
       {showCamera&&
       <View style={{position:'absolute',width:'100%',height:'100%'}}>

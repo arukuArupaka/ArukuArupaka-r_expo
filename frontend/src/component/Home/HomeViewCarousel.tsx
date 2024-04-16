@@ -2,35 +2,49 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity, Image } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { MaterialIcons } from "@expo/vector-icons";
+import axios from "axios";
 
-const HomeCarousel = () => {
+const HomeCarousel = ({ navigation }) => {
   const [activeDotIndex, setActiveDotIndex] = useState(0);
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch("https://render-test-db-h83h.onrender.com/home/photo/")
-      .then((response) => response.json())
-      .then((data) => {
-        setImages(data);
-      })
-      .catch((error) => console.error("Error fetching images:", error));
+    // Django APIからデータを取得
+    axios
+      .get("https://render-test-db-h83h.onrender.com/home/photo/")
+      .then((response) => {
+        console.log("fetch data", response.data);
+        setImages(response.data);
+      });
   }, []);
 
   const _carousel = useRef();
 
-  //カルーセルの中身
   const _renderItem = ({ item, index }) => {
     return (
-      <Image
-        source={{ uri: item.image }}
-        style={{ height: 200, width: 300, borderRadius: 10, borderWidth: 0.9, borderColor: 'black' }}
-      ></Image>
+      <TouchableOpacity
+        onPress={() => {
+          console.log("url", item.carousel_url);
+          navigation.navigate("HomeWebSite", { uri: item.carousel_url });
+        }}
+      >
+        <Image
+          source={{ uri: item.image }}
+          style={{
+            height: 200,
+            width: 300,
+            borderRadius: 10,
+            borderWidth: 0.9,
+            borderColor: "black",
+          }}
+        />
+      </TouchableOpacity>
     );
   };
 
   return (
     <View>
-      <View style={{ position: "relative",alignItems: 'center' }}>
+      <View style={{ position: "relative", alignItems: "center" }}>
         <Carousel
           ref={_carousel}
           data={images}

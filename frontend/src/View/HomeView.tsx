@@ -12,10 +12,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import HomeCarousel from '../component/Home/HomeViewCarousel';
-import Specialsite from '../component/Home/HomeViewSpecial';
-import { onAuthStateChanged } from 'firebase/auth';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import HomeCarousel from "../component/Home/HomeViewCarousel";
+import Specialsite from "../component/Home/HomeViewSpecial";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import {
   handleLoginAction,
@@ -136,6 +136,8 @@ const ShowDate = () => {
 const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
+  const [userID, setUserID] = useState("");
+  const [userIconImageUri,setUserIconImageUri]=useState("")
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -154,6 +156,14 @@ const HomeView = (props) => {
               const user = userCredential.user;
               dispatch(handleLoginAction(user.emailVerified));
               dispatch(setUserUUIDAction(user.uid));
+              console.log("<<")
+
+              fetchUserObject(user.uid)
+              getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
+                (getURI) => {
+                  setUserIconImageUri(getURI);
+                }
+              );
             })
             .catch((error) => {
               // ログイン失敗時の処理
@@ -207,11 +217,25 @@ const HomeView = (props) => {
       });
   };
 
+
   return (
     <SafeAreaView>
       <ScrollView>
         <View style={styles.topScreen}></View>
-        <View style={styles.profileIcon}></View>
+        <Image
+          style={{
+            position: "absolute",
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            borderWidth: 4,
+            top: 65,
+            left: 20,
+          }}
+          source={{
+            uri: userIconImageUri?userIconImageUri:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=661a2fe4&is=6607bae4&hm=cb9685af51a4ec6f9d8ce799cbfd5efff9fda1b9055ecbb2d26534425e88f552&=&format=webp&width=1012&height=1012",
+          }}
+        />
         <View style={styles.headerListStyle}>
           <Headerlist props={props} iconName="settings-outline" />
         </View>
@@ -221,11 +245,18 @@ const HomeView = (props) => {
         </View>
         <ShowDate></ShowDate>
         <Text style={styles.title}>新着情報</Text>
-        <HomeCarousel></HomeCarousel>
+        <HomeCarousel navigation={props.navigation}></HomeCarousel>
         <Text style={styles.title}>特設ページ</Text>
-        <View style={{width: '100%', flexDirection: 'row', justifyContent: "center", display: "flex"}}>
-          <View >
-            <Specialsite navigation={props.navigation}/>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <View>
+            <Specialsite navigation={props.navigation} />
           </View>
         </View>
         <Text style={styles.title}>機能一覧</Text>
@@ -251,7 +282,7 @@ const HomeView = (props) => {
             color="#1BB1E7"
             test={props}
             jumpPage="Map"
-            iconName="map-marker-radius-outline" 
+            iconName="map-marker-radius-outline"
           />
           <AppList
             appName="時間割"
@@ -272,6 +303,8 @@ const HomeView = (props) => {
           <AppList
             appName="Ritsu-  Match"
             color="#30CB89"
+            test={props}
+            jumpPage="RitsuMatch"
             iconName="contacts"
           />
         </View>

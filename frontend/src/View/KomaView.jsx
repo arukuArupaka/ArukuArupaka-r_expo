@@ -217,11 +217,14 @@ const KomaView = ({ navigation }) => {
           marginLeft: 30,
           backgroundColor: '#fff',
         },
+        edit: {
+          zIndex:300,right: '40%',top:11,
+        },
     });
 
     return (
         <View style={styles.body}>
-            <View style={{zIndex:300,right: 157}}>
+            <View style={styles.edit}>
                 {isShow && <TimeTableInfo day={pushedClassFrameDetail.day} period={pushedClassFrameDetail.period} pushFramDetail={weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period]} onEventCallBack={()=>{setIsShow(false);}} onSubmit={onSubmit} offSubmit={offSubmit} timeCalc={timeCalc} classStartEndTimeUnitList={classStartEndTimeUnitList}/>}
             </View>
             <View style={styles.title}>
@@ -248,7 +251,7 @@ const KomaView = ({ navigation }) => {
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
                   </View>
                 </View>
-                {!nodata && !kamokuStatus && 
+                {(!nodata && (( kamokuStatus && weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].status=="なし") || (!kamokuStatus))) && 
                 <View style={{paddingBottom: 8}}> 
                   <View style={styles.notifi}>
                       <View style={{alignItems: 'center', paddingBottom: 7}}onPress={() => {}}><Text>{"色を設定する"}</Text></View>

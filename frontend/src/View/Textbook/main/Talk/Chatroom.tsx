@@ -4,7 +4,7 @@ import { MaterialIcons, MaterialCommunityIcons, Ionicons, AntDesign, FontAwesome
 import TalkRoom from '../../../../component/Textbook/Chat/TalkRoom';
 import React, { useState ,useEffect, useRef} from 'react';
 import {Keyboard, ScrollView, TextInput, TouchableOpacity, Image,Platform, Settings} from 'react-native';
-import ActionSheet from '@yfuks/react-native-action-sheet';
+//import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth ,db,storage} from '../../../../../firebase';
