@@ -9,11 +9,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { doc, getDoc, setDoc,updateDoc } from '@firebase/firestore';
 import { db ,storage} from '../../../firebase';
-import * as Crypto from 'expo-crypto';
 import { setMapUserObject } from '../../redux/actions/mapUserActions';
 import QRCode from 'react-native-qrcode-svg';
 import {  ref, getDownloadURL } from "firebase/storage";
-
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { Dispatch } from 'redux';
 
 const MapFriendsView = ({ navigation }) => {
 
@@ -72,7 +72,8 @@ const MapFriendsView = ({ navigation }) => {
 
         const friendUUID = (await getDoc(refFiresrore)).data().userUUID as string;//appUserがデータベースから取得したオブジェクト
         setfriendRegistUUID(friendUUID)
-        const refFiresroreMapUser = await doc(db, `mapGPS/${friendUUID}`);
+        //const refFiresroreMapUser = await doc(db, `mapGPS/${friendUUID}`);
+        const refFiresroreMapUser = await doc(db, `users/${friendUUID}`);
         const friendObject = (await getDoc(refFiresroreMapUser)).data() ;//appUserがデータベースから取得したオブジェクト
 
         getDownloadURL(ref(storage, `users/${friendUUID}/mainPicture`)).then((getURI)=>{
@@ -91,43 +92,6 @@ const MapFriendsView = ({ navigation }) => {
     }
   }
 
-// useEffect(()=>{//これをホームへ
-
-
-//   const getUserDate=async()=>{
-//     console.log(await isLogin)
-//     if (await isLogin) {
-//       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-//       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-//       const snap = await getDoc(refFiresrore);
-
-//       if (snap.exists()) {
-//         const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-//         console.log(appUser)
-//         console.log('exit!')
-//         dispatch(setMapUserObject(appUser))
-//       }else{
-//         const mapUser={
-//           isLocationShare:true,
-//           userName:userObject.userName,
-//           userUUID:userUUID,
-//           friends:[],
-//           mapShowFriends:[],
-//           locationSharingFriends:[],
-//           QRUUID:Crypto.randomUUID()
-//         }
-//         console.log('norExit')
-//         setDoc(refFiresrore, mapUser).then(() => {
-//           // 保存に成功したらコンテクストにユーザーデータを格納
-//           console.log('mapUser')
-//           dispatch(setMapUserObject(mapUser))
-//         });
-//       }
-//     }
-//   }
-//   getUserDate()
-// },[isLogin])
-
 console.log(mapUserObject.QRUUID)
 
 const friendRegist=async()=>{
@@ -138,20 +102,18 @@ const friendRegist=async()=>{
       let newFrends=mapUserObject.friends
 
       newFrends[newFrends.length]={
-        QRUUID:readFriendObject.QRUUID,
         imageURI:friendImage,
         userName:readFriendObject.userName,
-        userUUID:readFriendObject.userUUID
+        userUUID:readFriendObject.id
       }
       console.log(newFrends)
       const uniqueNewFrends = Array.from(
-        new Map(newFrends.map((user) => [user.userUUID, user])).values()
+        new Map(newFrends.map((user) => [user.id, user])).values()
       );
       mapUserObject.friends=newFrends
 
       updateDoc(refFiresrore, {friends:uniqueNewFrends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
-        console.log('mapUser')
         dispatch(setMapUserObject(mapUserObject))
         setShowFriendRegisterDaialog(false)
         setFriendImage('')
@@ -177,7 +139,7 @@ const friendRegist=async()=>{
           <TouchableOpacity style={{position:'absolute',top:10,right:10,zIndex:10}} onPress={()=>setShowCamera(false)}>
             <MaterialIcons name="cancel" size={30} color="white" />
             </TouchableOpacity>
-            <Camera
+            <BarCodeScanner
             style={{height:'100%'}}
             onBarCodeScanned={({ type, data }) => {
               readQRCode(data)
@@ -207,7 +169,7 @@ const friendRegist=async()=>{
                 <Image style={{backgroundColor:'#EEEEEE',width:80,height:80,borderRadius:40,marginLeft:'auto',marginRight:'auto',marginTop:10,marginBottom:20}} source={{uri:friendImage}} />
                 <Text style={{textAlign:'center',fontSize:20}}>{readFriendObject.userName?readFriendObject.userName:'ネットワークエラー'}</Text>
                 <View style={{flexDirection:'row',marginTop:25}}>
-                  <TouchableOpacity onPress={()=>{setShowFriendRegisterDaialog(false);setfriendRegistUUID(''),setFriendImage('')}} style={{flex:1,marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'gray'}}>キャンセル</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{setShowFriendRegisterDaialog(false);setfriendRegistUUID('');setFriendImage('');setReadFriendObject({})}} style={{flex:1,marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'gray'}}>キャンセル</Text></TouchableOpacity>
                   <TouchableOpacity onPress={()=>friendRegist()} style={{flex:1,backgroundColor:'#C8252B',marginHorizontal:20,height:25,justifyContent:'center',borderRadius:20,}}><Text style={{textAlign:'center',color:'white'}}>登録</Text></TouchableOpacity>
                 </View>
               </View>

@@ -22,66 +22,9 @@ import { judgeInclusion } from "./inRangDiscrimination";
 import * as TaskManager from "expo-task-manager";
 
 const DisplayMap = (props) => {
-  const userUUIDB = "aaaa";
-
-  const CampusLocationData = [
-    {
-      id: "ritsumei_BKC",
-      name: "びわこくさつキャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469182",
-      location: {
-        latitude: 34.98213493094731,
-        longitude: 135.96364694774536,
-      },
-      campusAria: [
-        { latitude: 34.97712731885239, longitude: 135.96262335777283 },
-        { latitude: 34.97949920724689, longitude: 135.96129298210144 },
-        { latitude: 34.98062881074072, longitude: 135.96049368381503 },
-        { latitude: 34.9832994698679, longitude: 135.95910765230653 },
-        { latitude: 34.9832967228862, longitude: 135.95909524708986 },
-        { latitude: 34.98694545744828, longitude: 135.96298411488533 },
-        { latitude: 34.988108744112075, longitude: 135.9653464704752 },
-        { latitude: 34.98237400651514, longitude: 135.96632950007915 },
-        { latitude: 34.98109114152881, longitude: 135.96577126532793 },
-        { latitude: 34.97677732626124, longitude: 135.96496995538473 },
-      ],
-    },
-    {
-      id: "ritsumei_KIC",
-      name: "衣笠キャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469181",
-      location: {
-        latitude: 35.0325428,
-        longitude: 135.7240146,
-      },
-      campusAria: [
-        { latitude: 34.81218694153572, longitude: 135.56080330163238 },
-        { latitude: 34.808636419426435, longitude: 135.55954098701477 },
-        { latitude: 34.80757822523875, longitude: 135.56195430457592 },
-        { latitude: 34.809639819418585, longitude: 135.5637812241912 },
-        { latitude: 34.81089150593137, longitude: 135.5637721717358 },
-      ],
-    },
-    {
-      id: "ritsumei_OIC",
-      name: "大阪いばらきキャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469183",
-      location: {
-        latitude: 34.8108499,
-        longitude: 135.5612411,
-      },
-      campusAria: [
-        { latitude: 34.81212225282056, longitude: 135.56082140654325 },
-        { latitude: 34.808502356554435, longitude: 135.55953294038773 },
-        { latitude: 34.80757932638442, longitude: 135.56186612695456 },
-        { latitude: 34.809806913923346, longitude: 135.56380704045296 },
-        { latitude: 34.81086700642176, longitude: 135.56378725916147 },
-      ],
-    },
-  ];
 
   TaskManager.defineTask(
-    "BACKGROUND_FETCH_TASK",
+    "backgroundLocationUpdates",
     ({ data: { locations }, error }) => {
       console.log("watchPositionAsyncBackGround");
       if (error) {
@@ -145,24 +88,28 @@ const DisplayMap = (props) => {
   const [shareTime, setShareTime] = useState("");
 
   useEffect(() => {
-    TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+    TaskManager.unregisterTaskAsync("backgroundLocationUpdates");
+
 
     let subscription;
 
     getLocationAsync();
 
     const watchPositionAsync = async () => {
-      await Location.requestForegroundPermissionsAsync();
-      await Location.requestBackgroundPermissionsAsync();
+      console.log(98)
+     await Location.requestForegroundPermissionsAsync();
+     await Location.requestBackgroundPermissionsAsync();
 
       if (!props.campusData.campusAria) {
+        console.log(102)
         return;
       }
+      console.log(105)
       subscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 100000,
-          distanceInterval: 20,
+         timeInterval: 100000,
+         distanceInterval: 20,
         },
         (location) => {
           console.log("watchPositionAsync");
@@ -232,20 +179,67 @@ const DisplayMap = (props) => {
         setShareInfoMassage("権限エラー");
       }
 
-      Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 100000,
-        distanceInterval: 50,
-        foregroundService: {
-          notificationTitle: "En ligne ... ",
-          notificationBody: "Mise à jour de votre position en cours ...",
-        },
-      }).then((location) => {});
+      Location.startLocationUpdatesAsync('backgroundLocationUpdates', {
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 5000, // ミリ秒単位で指定された時間間隔で位置情報を取得
+      });
+      
+      // バックグラウンド更新タスクの実行時に実行されるコードを設定
+      // Location.setTaskName('backgroundLocationUpdates', async () => {
+      //   // 位置情報の取得
+      //   const location = await Location.getCurrentPositionAsync({});
+      //   console.log('Current location:', location);
+      // });
+      
+
+      // TaskManager.defineTask(
+      //   "BACKGROUND_FETCH_TASK",
+      //   ({ data: { locations }, error }) => {
+      //     console.log("watchPositionAsyncBackGround");
+      //     if (error) {
+      //       // check `error.message` for more details.
+      //       return;
+      //     }
+      //     console.log("Received new locations", locations);
+    
+      //     let longitude = "経度:" + JSON.stringify(locations[0].coords.longitude);
+      //     let latitude = "緯度:" + JSON.stringify(locations[0].coords.latitude);
+      //     console.log(longitude);
+      //     console.log(latitude);
+      //     // setMyLocation({
+      //     //   latitude: location.coords.latitude,
+      //     //   longitude: location.coords.longitude,
+      //     // });
+    
+      //     if (
+      //       judgeInclusion(
+      //         {
+      //             latitude: locations[0].coords.latitude,
+      //             longitude: locations[0].coords.longitude,
+      //         },
+      //         props.campusData.campusAria
+      //       )
+      //     ) {
+      //       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+      //       updateDoc(refFiresrore, {
+      //         myLocation: {
+      //           latitude: locations[0].coords.latitude,
+      //           longitude: locations[0].coords.longitude,
+      //         },
+      //       }).then(() => {
+      //         //   setIsSharelocation(true);
+      //         //   setShareTime(
+      //         //     new Date().getHours() + ":" + new Date().getMinutes()
+      //         //   );
+      //       });
+      //     }
+      //   })
     };
 
     watchPositionAsync();
 
     return () => {
+      console.log('eomovw')
       subscription?.remove();
       if (isLogin&&mapUserObject.isLocationShare) {
         toggleFetchTask();
@@ -290,15 +284,6 @@ const DisplayMap = (props) => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           });
-          // 現在位置をMap Viewの中心に更新
-          // setState({
-          //   region: {
-          //     latitude: location.coords.latitude,
-          //     longitude: location.coords.longitude,
-          //     latitudeDelta: 0.01,
-          //     longitudeDelta: 0.01,
-          //   }
-          // })
         })
         .catch((e) => {
           console.log("現在位置取得失敗");
@@ -342,15 +327,11 @@ const DisplayMap = (props) => {
           <MapUserIcon
             imageURI={
               userObject.userImage
-                ? userObject.userImage
-                : "https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=661a2fe4&is=6607bae4&hm=cb9685af51a4ec6f9d8ce799cbfd5efff9fda1b9055ecbb2d26534425e88f552&=&format=webp&width=1012&height=1012"
             }
             title={userObject.userName}
             location={myLocation}
           />
         )}
-        {/* {!props.isEditBuilding&&<MapUserIcon imageURI={userObject.userImage?userObject.userImage:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65fe8064&is=65ec0b64&hm=e615d93362c74b2d2a0788ef8867ccb999f462b0076e644dab324f8c8fab17ca&=&format=webp&width=1208&height=1208"} title={userObject.userName} title={userObject.userName} location={{latitude: 34.98213493094731,
-              longitude: 135.96364694774536,}}/>} */}
         {showBuildingIcon &&
           props.campusBuildingsArray.map((buildingData) => (
             <MapBuildingIcon buildingData={buildingData} />
