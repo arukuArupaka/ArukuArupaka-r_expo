@@ -85,6 +85,7 @@ const TimeTableClass = ({ navigation }) => {
       try{
         // デバッグ: notificationTime の内容を確認
         console.log('Scheduling notification:', notificationHour);
+        let classroom=classDetail.classRoom
       
         // 通知をスケジュールする際に数値であることを確認
         if (typeof notificationHour === 'number' && typeof notificationMinute === 'number') {
@@ -96,6 +97,14 @@ const TimeTableClass = ({ navigation }) => {
           console.log('classDetail.day:',classDetail.day);
           if (classDetail.day == 5){
             classDetail.day = 0;
+          }
+
+          if (classDetail.classRoom.indexOf('コラーニング')>=0){
+            classroom=classDetail.classRoom.replace('コラーニング', 'C');
+          }else if(classDetail.classRoom.indexOf('フォレストハウス')>=0){
+            classroom=classDetail.classRoom.replace('フォレストハウス', 'F');
+          }else if(classDetail.classRoom.indexOf('プリズムハウス')>=0){
+            classroom=classDetail.classRoom.replace('プリズムハウス', 'P');
           }
   
           await Notifications.scheduleNotificationAsync({
@@ -308,7 +317,7 @@ const TimeTableClass = ({ navigation }) => {
                     }
 
 
-              console.log(`count数は${count}です`); console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`, status: `${item.kamoku_status}`, color: kocolor, mulcolor: "#888888", statuscolor: stacolor});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (
+              console.log(`count数は${count}です`); console.log('indataが変更されました');  console.log('indataをtrueに変更'); setKamokuItem({...kamokuItem,notification: 10, className: `${item.kamoku_name}`, classRoom: `${item.kamoku_class}`, department: `${item.kamoku_department}`, unit: `${item.kamoku_unit}`, num: `${item.kamoku_num}`, resume: `${item.kamoku_resume}`, teacher: `${item.kamoku_teacher}`, status: `${item.kamoku_status}`, color: kocolor, mulcolor: "#888888", statuscolor: stacolor});setIndata(true); setKamokuShow(true); console.log('kamokuShowは'); console.log(kamokuShow);}}/>) : (
               <View style={{alignItems: 'center'}}>
                 <Text>{'学部、セメスターを選択していないか、このコマに授業が存在していません。'}</Text>
                 <View style={{paddingTop: 30}}>

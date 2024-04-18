@@ -61,6 +61,7 @@ const KomaView = ({ navigation }) => {
         try{
           // デバッグ: notificationTime の内容を確認
           console.log('Scheduling notification:', notificationHour);
+          let classroom=classDetail.classRoom
         
           // 通知をスケジュールする際に数値であることを確認
           if (typeof notificationHour === 'number' && typeof notificationMinute === 'number') {
@@ -73,11 +74,19 @@ const KomaView = ({ navigation }) => {
             if (classDetail.day == 5){
               classDetail.day = 0;
             }
+
+            if (classDetail.classRoom.indexOf('コラーニング')>=0){
+              classroom=classDetail.classRoom.replace('コラーニング', 'C');
+            }else if(classDetail.classRoom.indexOf('フォレストハウス')>=0){
+              classroom=classDetail.classRoom.replace('フォレストハウス', 'F');
+            }else if(classDetail.classRoom.indexOf('プリズムハウス')>=0){
+              classroom=classDetail.classRoom.replace('プリズムハウス', 'P');
+            }
     
             await Notifications.scheduleNotificationAsync({
               content: {
                 body: classDetail.memo,
-                title: classDetail.classRoom + " " + classDetail.className + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
+                title: classDetail.classRoom + " " + classDetail.className + "       "
               },
               trigger: {
                 weekday: classDetail.day+2,

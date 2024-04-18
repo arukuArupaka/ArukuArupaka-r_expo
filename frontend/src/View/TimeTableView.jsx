@@ -65,7 +65,7 @@ const TimrTableView = ({ navigation }) => {
         await Notifications.scheduleNotificationAsync({
           content: {
             body: classDetail.memo,
-            title: classroom + " " + classDetail.className + "       " + notificationHour  + "時" + notificationMinute + "分に通知"
+            title: classroom + " " + classDetail.className + "       "
           },
           trigger: {
             weekday: classDetail.day+2,
