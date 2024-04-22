@@ -16,6 +16,7 @@
     },
     "development-device": {
       "distribution": "internal",
+      "developmentClient": true,
       "android": {
         "buildType": "apk"
       }
