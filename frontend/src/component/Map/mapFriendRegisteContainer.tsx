@@ -109,8 +109,8 @@ const onOFFChangeSwitch=(UUID)=>{
       </View>
       <TextInput style={{backgroundColor:'#EEEEEE',height:25,borderRadius:15,marginBottom:10}}></TextInput>
       <View style={{flexDirection:'row',marginBottom:15}}>
-        <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:'white',fontWeight:'500'}}>マップ上に表示する人</Text></TouchableOpacity>
-        <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:!isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:'white',fontWeight:'500'}}>自分の位置を共有</Text></TouchableOpacity>
+        <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:isSettingMyfrendLocation?'#C8252B':'#EEEEEE',fontWeight:'500'}}>マップ上に表示する人</Text></TouchableOpacity>
+        <TouchableOpacity onPress={()=>setIsSettingMyfrendLocation(!isSettingMyfrendLocation)} style={{flex:1,backgroundColor:!isSettingMyfrendLocation?'#EEEEEE':'#C8252B',marginHorizontal:10,height:30,borderRadius:15,justifyContent: "center"}}><Text style={{textAlign:'center',color:!isSettingMyfrendLocation?'#C8252B':'#EEEEEE',fontWeight:'500'}}>自分の位置を共有</Text></TouchableOpacity>
       </View>
       {props.mapUserObject.friends&&
       <ScrollView style={{paddingHorizontal:10}}>
