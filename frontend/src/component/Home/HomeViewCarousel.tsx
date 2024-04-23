@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, TouchableOpacity, Image } from "react-native";
+import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
@@ -28,7 +28,7 @@ const HomeCarousel = ({ navigation }) => {
           navigation.navigate("HomeWebSite", { uri: item.carousel_url });
         }}
       >
-        <Image
+        {item.image?<Image
           source={{ uri: item.image }}
           style={{
             height: 200,
@@ -37,7 +37,14 @@ const HomeCarousel = ({ navigation }) => {
             borderWidth: 0.9,
             borderColor: "black",
           }}
-        />
+        />:  <View 
+        style={{
+          height: 200,
+          width: 300,
+          borderRadius: 10,
+          borderWidth: 0.9,
+          paddingVertical:100
+          }}><ActivityIndicator size="large" style={{marginVertical:'auto'}}></ActivityIndicator></View>      }
       </TouchableOpacity>
     );
   };
@@ -45,7 +52,7 @@ const HomeCarousel = ({ navigation }) => {
   return (
     <View>
       <View style={{ position: "relative", alignItems: "center" }}>
-        <Carousel
+      {images.length?<Carousel
           ref={_carousel}
           data={images}
           renderItem={_renderItem}
@@ -53,7 +60,14 @@ const HomeCarousel = ({ navigation }) => {
           sliderWidth={450}
           onSnapToItem={(index) => setActiveDotIndex(index)}
           loop={true}
-        ></Carousel>
+        ></Carousel>:  <View 
+        style={{
+          height: 200,
+          width: 300,
+          borderRadius: 10,
+          borderWidth: 0.9,
+          paddingVertical:100
+          }}><ActivityIndicator size="large" style={{marginVertical:'auto'}}></ActivityIndicator></View>      }
         <TouchableOpacity
           style={{
             position: "absolute",

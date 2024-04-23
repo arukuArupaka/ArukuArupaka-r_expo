@@ -14,7 +14,7 @@ const MapFriendIconContainer = (props) => {
     const [friendImageURI,setFriendImageURI]=useState("")
 
     useEffect(()=>{
-      console.log('asse')
+      console.log('mapFriendIconContainer useEffect')
 
         // getFriendDate()
 
@@ -42,8 +42,6 @@ const MapFriendIconContainer = (props) => {
          unsubscribe();
        };
     }, []);
-
-    console.log('ass')
 
     const getFriendDate=async()=>{
 

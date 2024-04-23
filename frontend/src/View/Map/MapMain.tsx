@@ -9,7 +9,6 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import DisplayMap from "../../component/Map/DisplayMap";
 import DisplayList from "../../component/Map/DisplayList";
 import { Ionicons } from "@expo/vector-icons";

@@ -7,10 +7,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 const MapUserIcon = (props) => {
 
-    console.log(props)
-    console.log("props")
-
-
   return (
         <Marker
             style={{
