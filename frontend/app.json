@@ -25,6 +25,11 @@
       "infoPlist": { "UIBackgroundModes": [ "location", "fetch" ] }
     },
     "android": {
+      "config":{
+        "googleMaps": {
+          "apiKey": "AIzaSyBwagFd9ysris-L-Lm2Ad5Rt6PZyy5Kme0"
+        }
+      },
       "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "permissions": [
