@@ -32,7 +32,7 @@ const MapNotificateView = () => {
       let q = query(
         notificationsCollection,
         orderBy("createdAt", "desc"),
-        limit(1)
+        limit(4)
       );
 
       if (lastVisible) {
@@ -40,7 +40,7 @@ const MapNotificateView = () => {
           notificationsCollection,
           orderBy("createdAt", "desc"),
           startAfter(lastVisible), // 最後の可視ドキュメントの後に開始
-          limit(1)
+          limit(4)
         );
       }
 
@@ -130,17 +130,17 @@ const MapNotificateView = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ borderBottomWidth: 1 }}>
+    <View style={{ flex: 1 ,backgroundColor:'white',borderTopWidth:3,borderColor:'#888888'}}>
+      <View style={{ borderBottomWidth: 1 ,borderColor:'#888888'}}>
         <Text style={{ fontSize: 30, marginLeft: "35%" }}>お知らせ</Text>
       </View>
-      <View style={{ marginTop: "10%" }}>
+      <ScrollView style={{}}>
         {notifications.map((notification, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleNotificationPress(notification)}
           >
-            <View style={{ marginTop: "5%", borderBottomWidth: 1 }}>
+            <View style={{borderBottomWidth: 1 ,borderColor:'888888',paddingVertical:20}}>
               <View style={{ flexDirection: "row" }}>
                 <Text style={{ marginLeft: "3%" }}>
                   {notification.createdAt instanceof Date
@@ -149,13 +149,13 @@ const MapNotificateView = () => {
                 </Text>
                 <View style={{ flexDirection: "row" }}>
                   <View
-                    style={{ backgroundColor: "#00ff7f", marginLeft: "4%" }}
+                    style={{ backgroundColor: "#30CB89", marginLeft: 10 ,paddingHorizontal:5}}
                   >
-                    <Text style={{ marginLeft: "5%" }}>
+                    <Text style={{color:'white',fontWeight:'600',textAlign:'center'}}>
                       {notification.selectedDepartment}
                     </Text>
                   </View>
-                  <Text>:{notification.username}</Text>
+                  {notification.username&&<Text>:{notification.username}</Text>}
                 </View>
               </View>
               <Text
@@ -170,7 +170,10 @@ const MapNotificateView = () => {
               </Text>
               <Text
                 numberOfLines={1}
-                style={{ marginLeft: "3%", marginTop: "1%" }}
+                style={{ 
+                  marginLeft: "3%",
+                   marginTop: "1%" ,
+                  fontSize:13}}
               >
                 {notification.message}
               </Text>
@@ -184,7 +187,7 @@ const MapNotificateView = () => {
               width: "50%",
               marginTop: 10,
               marginLeft: "25%",
-              backgroundColor: "blue",
+              backgroundColor: "#C8252B",
               borderRadius: 30,
               padding: 10,
               alignItems: "center",
@@ -195,7 +198,7 @@ const MapNotificateView = () => {
             </Text>
           </TouchableOpacity>
         )}
-      </View>
+      </ScrollView>
       <NotificationModal
         notification={selectedNotification}
         onClose={handleCloseModal}
