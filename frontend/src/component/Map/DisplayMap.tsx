@@ -378,9 +378,10 @@ const DisplayMap = (props) => {
         onRegionChange={handleRegionChangeComplete}
       >
         {!props.isEditBuilding &&
-          mapUserObject.mapShowFriends.map((friend) => (
+          mapUserObject.mapShowFriends.map((friend,index) => (
             <MapFriendIconContainer
               friendUUID={friend}
+              key={index}
             ></MapFriendIconContainer>
           ))}
         {!props.isEditBuilding && (
@@ -397,8 +398,8 @@ const DisplayMap = (props) => {
         {/* {!props.isEditBuilding&&<MapUserIcon imageURI={userObject.userImage?userObject.userImage:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65fe8064&is=65ec0b64&hm=e615d93362c74b2d2a0788ef8867ccb999f462b0076e644dab324f8c8fab17ca&=&format=webp&width=1208&height=1208"} title={userObject.userName} title={userObject.userName} location={{latitude: 34.98213493094731,
               longitude: 135.96364694774536,}}/>} */}
         {showBuildingIcon &&
-          props.campusBuildingsArray.map((buildingData) => (
-            <MapBuildingIcon buildingData={buildingData} />
+          props.campusBuildingsArray.map((buildingData,index) => (
+            <MapBuildingIcon buildingData={buildingData} key={index}/>
           ))}
       </MapView>
       <View
@@ -446,8 +447,8 @@ const DisplayMap = (props) => {
             .filter(
               (word) => JSON.stringify(word).indexOf(mapSearchWord) !== -1
             )
-            .map((buildingData) => (
-              <TouchableOpacity onPress={() => onSelectBuilding(buildingData)}>
+            .map((buildingData,index) => (
+              <TouchableOpacity onPress={() => onSelectBuilding(buildingData)} key={index}>
                 <MapBuildingListItem buildingData={buildingData} />
               </TouchableOpacity>
             ))}
