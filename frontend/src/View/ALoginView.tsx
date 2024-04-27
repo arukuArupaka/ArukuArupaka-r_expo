@@ -77,6 +77,16 @@ const ALoginView = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const configureTerms = () =>
+    Alert.alert('利用規約に同意しますか？', 'このアプリは学生チームにより開発されました。情報流出などいかなる損害が発生した場合も保証はできません。自己責任でご利用ください。https://docs.google.com/document/d/1mPBbzClm3-SVotQPHO_ugpcpKfsJcyGZ0YDraOyhoEk/edit', [
+      {
+        text: '同意しない',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {text: '同意', onPress: () => handleRegister()},
+    ]);
+
   const handleRegister = async () => {
     try {
       const user = await createUserWithEmailAndPassword(auth, email, password);
@@ -474,7 +484,7 @@ const ALoginView = (props) => {
                 padding: 5,
                 borderRadius: 5,
               }}
-              onPress={handleRegister}
+              onPress={configureTerms}
             >
               <Text
                 style={{

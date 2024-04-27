@@ -1,22 +1,25 @@
 import React, { useState ,useEffect} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, StyleSheet} from 'react-native';
+import {ScrollView, Text, TextInput, TouchableOpacity, View,Image,Platform, StyleSheet, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 //import ActionSheet from '@yfuks/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
-import { onAuthStateChanged } from 'firebase/auth';
+import { Auth, onAuthStateChanged } from 'firebase/auth';
 import { auth ,db,storage} from '../../firebase';
-import { connect } from 'react-redux'
+import Dialog from 'react-native-dialog';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from 'redux';
 import State from '../redux/states/userState';
 import { handleLoginAfterPageName } from '../redux/actions/commonAction';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc } from '@firebase/firestore';
 import { getStorage, ref, getDownloadURL,uploadBytes } from "firebase/storage";
 import {manipulateAsync,SaveFormat} from "expo-image-manipulator";
-import { setUserObject } from '../redux/actions/userAction';
+import { handleLoginAction, setUserObject } from '../redux/actions/userAction';
 import RNPickerSelect from 'react-native-picker-select';
+import { getAuth, deleteUser,signInWithEmailAndPassword,reauthenticateWithCredential } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const MAIN_PICTURE_MAX_SIZE:number=10000
 
@@ -24,6 +27,8 @@ const ASetting = (props) => {
 
   const [isCompress,setIsCompress]=useState(false)
   const [isPictureUpLoad,setIsPictureUpLoad]=useState(false)
+  const [isShowDelateConfig,setIsShowDelateConfig]=useState(false)
+  const [delateConfigWord,setDelateConfigWord]=useState("")
 
   const userUUID:boolean=useSelector((state:State)=>state.user.userUUID||"")
   console.log(userUUID)
@@ -273,6 +278,46 @@ const ASetting = (props) => {
       setIsPictureUpLoad(false)
     }
   }
+
+  const delateAccount=async()=>{
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const ref = doc(db, `users/${userUUID}`);
+    const mapRef=doc(db,`mapGPS/${userUUID}`)
+
+    const savedEmail = await AsyncStorage.getItem("email");
+        const savedPassword =  await AsyncStorage.getItem("password");
+    signInWithEmailAndPassword(auth, savedEmail, savedPassword).then((userCredential) => {
+        // ログイン成功時の処理
+        const user = userCredential.user;
+                    deleteDoc(ref)
+            deleteDoc(mapRef)
+
+       // reauthenticateWithCredential(user, userCredential).then(() => {
+          // User re-authenticated.
+          deleteUser(user).then(() => {
+            dispatch(handleLoginAction(false))
+            AsyncStorage.setItem("email", undefined);
+            AsyncStorage.setItem("password", undefined);
+            deleteDoc(ref)
+            deleteDoc(mapRef)
+          }).catch((error) => {
+            Alert.alert("error")
+            console.log(error)
+          })
+        }).catch((error) => {
+          // An error ocurred
+          // ...
+        });
+        
+     /// })
+      // .catch((error) => {
+      //   // ログイン失敗時の処理
+      //   console.error("自動ログインエラー:", error);
+      // });
+  }
+
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <SafeAreaView>
@@ -431,6 +476,7 @@ const ASetting = (props) => {
             <TouchableOpacity
             onPress={()=>{
               sendUserDate();
+              props.navigation.navigate('Home');
             }}
             style={{
               marginLeft:'80%',
@@ -444,6 +490,31 @@ const ASetting = (props) => {
                 fontWeight:'400',
                 paddingTop:2,
               }} >登録</Text></TouchableOpacity>
+              <TouchableOpacity 
+                style={{height:60,marginTop:20}}
+                onPress={()=>setIsShowDelateConfig(true)}
+                >
+                <Text style={{textAlign:'center',fontSize:20,color:'#C8252B'}}>アカウントを削除</Text>
+              </TouchableOpacity>
+              {isShowDelateConfig&&<Dialog.Container visible={true}>
+                <Dialog.Title>アカウントを削除しますか？</Dialog.Title>
+                <Dialog.Description>この操作は元に戻せません。</Dialog.Description>
+                <Dialog.Description>削除する場合は『削除』と入力</Dialog.Description>
+                <Dialog.Input onChangeText={(text)=>setDelateConfigWord(text)}/>
+                <View>
+                    <Dialog.Button label="アカウント削除" onPress={()=>{
+                      console.log(delateConfigWord)
+                      if(delateConfigWord=="削除"){
+                        delateAccount()
+                        setIsShowDelateConfig(false)
+                      }else{
+                        Alert.alert("入力した文字が違います。")
+                      }
+                      }} />
+                    {/* <Dialog.Button label="建物情報を編集" onPress={()=>{editBuilding()}} /> */}
+                    <Dialog.Button label="キャンセル" onPress={()=>{setIsShowDelateConfig(false)}} />
+                </View>
+            </Dialog.Container>}
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -474,5 +545,4 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 export default ASetting;
-
 
