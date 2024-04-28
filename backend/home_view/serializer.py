@@ -8,7 +8,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['title', 'description', 'image', 'carousel_url']  # carousel_url を fields に追加
+        fields = '__all__'  # carousel_url を fields に追加
 
     def get_image_url(self, obj):
         request = self.context.get('request')
