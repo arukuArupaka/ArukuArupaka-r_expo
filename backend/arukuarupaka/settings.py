@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
 
 
-
+env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # プロジェクトのベースディレクトリを取得
@@ -51,7 +52,9 @@ INSTALLED_APPS = [
     'common_data',
     'corsheaders',
     'weather',
-    'specialsite'
+    'specialsite',
+    'cloudinary', # 追加
+    'cloudinary_storage', # 追加
 ]
 
 MIDDLEWARE = [
@@ -159,7 +162,15 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
 MEDIA_URL = '/image/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_NAME'),
+    'API_KEY': env('CLOUDINARY_API_KEY'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET'),
+}
+
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 
 CORS_ALLOW_CREDENTIALS = True
 
