@@ -229,12 +229,12 @@ const HomeView = (props) => {
             height: 80,
             borderRadius: 40,
             borderWidth: 4,
+            borderColor:'black',
             top: 65,
             left: 20,
           }}
-          source={{
-            uri: userIconImageUri?userIconImageUri:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=661a2fe4&is=6607bae4&hm=cb9685af51a4ec6f9d8ce799cbfd5efff9fda1b9055ecbb2d26534425e88f552&=&format=webp&width=1012&height=1012",
-          }}
+          source={userIconImageUri?{
+            uri: userIconImageUri}:require('../image/Logo.png')}
         />
         <View style={styles.headerListStyle}>
           <Headerlist props={props} iconName="settings-outline" />
