@@ -112,7 +112,7 @@ const DisplayMap = (props) => {
               longitude: locations[0].coords.longitude,
           },
           props.campusData.campusAria
-        )
+        )&&          mapUserObject.locationSharingFriends.length!==0
       ) {
         const refFiresrore = doc(db, `mapGPS/${userUUID}`);
         updateDoc(refFiresrore, {
@@ -197,7 +197,7 @@ const DisplayMap = (props) => {
                   longitude: location.coords.longitude,
               },
               props.campusData.campusAria
-            )&&mapUserObject.isLocationShare
+            )&&mapUserObject.isLocationShare&&mapUserObject.locationSharingFriends.length!==0
           ) {
             const refFiresrore = doc(db, `mapGPS/${userUUID}`);
             updateDoc(refFiresrore, {
@@ -232,6 +232,8 @@ const DisplayMap = (props) => {
               setShareInfoMassage("未ログイン");
             } else if(!mapUserObject.isLocationShare){
               setShareInfoMassage("共有を停止する");
+            } else if(mapUserObject.locationSharingFriends.length==0){
+              setShareInfoMassage("共有する相手がいません");
             }
           }
         }
