@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",
@@ -31,7 +31,7 @@
         }
       },
       "googleServicesFile": "./google-services.json",
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
         "CAMERA",
         "WRITE_EXTERNAL_STORAGE",
