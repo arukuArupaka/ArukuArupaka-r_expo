@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  StyleSheet
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -315,7 +316,7 @@ const Weather = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       {currentWeatherData &&
       tomorrowWeatherData &&
       hourlyWeatherData &&
@@ -708,10 +709,23 @@ const Weather = () => {
           </View>
         </View>
       ) : (
-        <ActivityIndicator size={"large"} />
+        <View style={styles.loaderContainer}>
+         <ActivityIndicator size={"large"} />
+        </View>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default Weather;
