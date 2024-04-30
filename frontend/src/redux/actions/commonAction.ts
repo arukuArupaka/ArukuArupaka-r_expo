@@ -4,3 +4,10 @@ export const handleLoginAfterPageName = (res) => {
       payload:res
     }
   }
+
+export const handleNonPersonalizedOnly=(res)=>{
+  return{
+    type: 'handleNonPersonalizedOnly',
+    payload:res
+  }
+}

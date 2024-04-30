@@ -5,6 +5,7 @@ import {
   BannerAdSize,
   TestIds,
 } from "react-native-google-mobile-ads";
+import { useSelector } from "react-redux";
 //import { PremiumContext, TrackingContext } from "../../PremiumContext";
 
 interface Props {
@@ -12,6 +13,9 @@ interface Props {
 }
 
 export default function MyAdmob(props: Props) {
+
+  const nonPersonalizedOnly=useSelector((state)=>state.common.nonPersonalizedOnly)
+
 //   const { isPremium } = useContext(PremiumContext);
 //   const { nonPersonalizedOnly } = useContext(TrackingContext);
 
@@ -35,7 +39,7 @@ export default function MyAdmob(props: Props) {
     <BannerAd
       {...props}
       unitId={adUnitID}
-      requestOptions={{ requestNonPersonalizedAdsOnly:false }}
+      requestOptions={{ requestNonPersonalizedAdsOnly:nonPersonalizedOnly }}
     />
   );
 }

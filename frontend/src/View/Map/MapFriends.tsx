@@ -19,10 +19,13 @@ import { TestIds, useInterstitialAd } from 'react-native-google-mobile-ads';
 
 const MapFriendsView = ({ navigation }) => {
 
+  const nonPersonalizedOnly=useSelector((state)=>state.common.nonPersonalizedOnly)
+
+
   const [unitId, setUnitId] = useState(TestIds.INTERSTITIAL);
 
   const { isLoaded, isClosed, load, show } = useInterstitialAd(unitId, {
-    requestNonPersonalizedAdsOnly: false,
+    requestNonPersonalizedAdsOnly: nonPersonalizedOnly,
   });
 
   useEffect(() => {

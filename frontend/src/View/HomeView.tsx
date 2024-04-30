@@ -42,6 +42,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BannerAdSize } from "react-native-google-mobile-ads";
 //import { Appbar, Surface, Title } from "react-native-paper";
 import MyAdmob from "../component/MyAdmob";
+import { handleNonPersonalizedOnly } from "../redux/actions/commonAction";
 //import { StackParamList } from "../App";
 
 
@@ -143,13 +144,16 @@ const ShowDate = () => {
 
 //実際に描画される部分
 const HomeView = (props) => {
+
+  const dispatch = useDispatch();
+
   const [nonPersonalizedOnly, setNonPersonalizedOnly] = useState(true);
 
   useEffect(() => {
     // ATTとGDPRの同意状態を取得
     AdsConsent.requestInfoUpdate({
-      debugGeography: AdsConsentDebugGeography.EEA, // EU圏としてテストする設定
-      testDeviceIdentifiers: ["TEST-DEVICE-HASHED-ID"], // 実機でテストする場合はハッシュIDを指定
+    //  debugGeography: AdsConsentDebugGeography.EEA, // EU圏としてテストする設定
+    //  testDeviceIdentifiers: ["TEST-DEVICE-HASHED-ID"], // 実機でテストする場合はハッシュIDを指定
     }).then(async (consentInfo) => {
       let status = consentInfo.status;
       if (
@@ -167,12 +171,12 @@ const HomeView = (props) => {
       ) {
         // 同意が取得できた場合はNonPersonalizedOnlyをfalseにする(トラッキング取得する)
         setNonPersonalizedOnly(false);
+        dispatch(handleNonPersonalizedOnly(false))
       }
     });
   }, []);
 
   //fireBaseログイン確認
-  const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
   const [userIconImageUri,setUserIconImageUri]=useState("")
 
