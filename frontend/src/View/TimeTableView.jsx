@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import TimeTableQty from '../component/TimeTable/TimeTableQty';
 import { useTimeTable } from '../component/TimeTable/TimeTableContext'
 import { TestIds, useInterstitialAd } from "react-native-google-mobile-ads";
+import { useSelector } from 'react-redux';
 
 const TimrTableView = ({ navigation }) => {
 
