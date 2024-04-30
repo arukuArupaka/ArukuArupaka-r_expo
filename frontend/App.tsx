@@ -17,12 +17,13 @@ import MapLoot from './src/component/Map/MapLoot';
 import TimeTableClass from './src/View/TimeTableClass';
 import KomaView from './src/View/KomaView';
 import WebSite from './src/View/WebSite';
-import { Provider } from 'react-redux'
+import { Provider, useDispatch } from 'react-redux'
 import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
 import * as Notifications from 'expo-notifications';
-import React from 'react';
+import React, { useEffect ,useState} from 'react';
 import HomeWebSite from './src/View/HomeWebSite';
+import { AdsConsent, AdsConsentDebugGeography, AdsConsentStatus } from 'react-native-google-mobile-ads';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons, FontAwesome,Feather } from '@expo/vector-icons';
 // import { SearchSearch } from './src/View/Textbook/main/SearchHome/SearchSearch';
 // import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
@@ -38,13 +39,47 @@ import MyAdmob from "./src/component/MyAdmob";
 // import algoliasearch from 'algoliasearch/lite';
 import RitsuMatch from './src/View/RitsuMatch';
 import TextBookRoot from './src/View/Textbook/TextbookView';
+import { handleNonPersonalizedOnly } from './src/redux/actions/commonAction';
 // const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 
 const Stack = createNativeStackNavigator();
 
 function App() {
+
   const navigationRef = useNavigationContainerRef();
+
+  //const dispatch = useDispatch();
+
+  // const [nonPersonalizedOnly, setNonPersonalizedOnly] = useState(true);
+
+  // useEffect(() => {
+  //   // ATTとGDPRの同意状態を取得
+  //   AdsConsent.requestInfoUpdate({
+  //   //  debugGeography: AdsConsentDebugGeography.EEA, // EU圏としてテストする設定
+  //   //  testDeviceIdentifiers: ["TEST-DEVICE-HASHED-ID"], // 実機でテストする場合はハッシュIDを指定
+  //   }).then(async (consentInfo) => {
+  //     let status = consentInfo.status;
+  //     if (
+  //       consentInfo.isConsentFormAvailable &&
+  //       status === AdsConsentStatus.REQUIRED
+  //     ) {
+  //       // 同意状態が必要な場合はダイアログを表示する
+  //       const result = await AdsConsent.showForm();
+  //       status = result.status;
+  //     }
+
+  //     if (
+  //       consentInfo.status === AdsConsentStatus.OBTAINED ||
+  //       status === AdsConsentStatus.OBTAINED
+  //     ) {
+  //       // 同意が取得できた場合はNonPersonalizedOnlyをfalseにする(トラッキング取得する)
+  //       setNonPersonalizedOnly(false);
+  //       dispatch(handleNonPersonalizedOnly(false))
+  //     }
+  //   });
+  // }, []);
+
 
   React.useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {

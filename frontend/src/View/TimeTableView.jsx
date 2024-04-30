@@ -15,8 +15,10 @@ const TimrTableView = ({ navigation }) => {
 
   const [unitId, setUnitId] = useState(TestIds.INTERSTITIAL);
 
+  const nonPersonalizedOnly=useSelector((state)=>state.common.nonPersonalizedOnly)
+
   const { isLoaded, isClosed, load, show } = useInterstitialAd(unitId, {
-    requestNonPersonalizedAdsOnly: false,
+    requestNonPersonalizedAdsOnly: nonPersonalizedOnly,
   });
 
   useEffect(() => {
