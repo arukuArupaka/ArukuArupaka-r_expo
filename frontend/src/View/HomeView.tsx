@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
@@ -292,7 +293,7 @@ const HomeView = (props) => {
             iconName="file-table"
           />
         </View>
-        <View style={styles.appListFlex}>
+       {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"
@@ -307,7 +308,7 @@ const HomeView = (props) => {
             jumpPage="RitsuMatch"
             iconName="contacts"
           />
-        </View>
+        </View>}
       </ScrollView>
     </SafeAreaView>
   );
