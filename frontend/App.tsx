@@ -219,7 +219,7 @@ function App() {
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
         </Stack.Navigator>
       </NavigationContainer>
-      <MyAdmob size={BannerAdSize.FULL_BANNER} />
+      <MyAdmob size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
     </TimeTableProvider>
     {/* </InstantSearch> */}
     </Provider>
