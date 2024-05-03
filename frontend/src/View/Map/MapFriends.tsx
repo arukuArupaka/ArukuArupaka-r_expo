@@ -99,7 +99,20 @@ const friendRegist=async()=>{
     // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
-      let newFrends=mapUserObject.friends
+      console.log(mapUserObject.friends)
+
+      let newFrends=mapUserObject.friends.concat()
+
+      console.log("newFrends")
+      console.log(newFrends)
+
+      console.log("newFrend")
+      console.log({
+        imageURI:friendImage,
+        userName:readFriendObject.userName,
+        userUUID:readFriendObject.id
+
+      })
 
       newFrends[newFrends.length]={
         imageURI:friendImage,
@@ -108,10 +121,19 @@ const friendRegist=async()=>{
       }
       console.log(newFrends)
       const uniqueNewFrends = Array.from(
-        new Map(newFrends.map((user) => [user.id, user])).values()
+        new Map(newFrends.map((user) => [user.userUUID, user])).values()
       );
-      mapUserObject.friends=newFrends
 
+      let newMapUserObject={...mapUserObject}
+      newMapUserObject.friends=uniqueNewFrends
+      console.log("uniqueNewFrends")
+      console.log(uniqueNewFrends)
+      //mapUserObject.friends=newFrends
+      dispatch(setMapUserObject({
+        ...newMapUserObject
+
+      }))
+        
       updateDoc(refFiresrore, {friends:uniqueNewFrends}).then(() => {
         // 保存に成功したらコンテクストにユーザーデータを格納
         dispatch(setMapUserObject(mapUserObject))
