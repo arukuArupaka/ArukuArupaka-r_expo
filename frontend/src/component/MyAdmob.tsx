@@ -29,6 +29,10 @@ export default function MyAdmob(props: Props) {
     ios:"ca-app-pub-5827416667703619/5823693158",
     android: "ca-app-pub-5827416667703619/1898489074",
   });
+  const adUnitBasicID = Platform.select({
+    ios:"ca-app-pub-5827416667703619/2383376678",
+    android: "ca-app-pub-5827416667703619/9244298495",
+  });
 
   // プレミアムユーザーは広告を表示しない
 //   if (isPremium) {
@@ -38,7 +42,7 @@ export default function MyAdmob(props: Props) {
   return (
     <BannerAd
       {...props}
-      unitId={adUnitID}
+      unitId={adUnitBasicID}
       requestOptions={{ requestNonPersonalizedAdsOnly:nonPersonalizedOnly }}
     />
   );

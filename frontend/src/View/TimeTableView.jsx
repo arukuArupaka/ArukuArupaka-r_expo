@@ -32,11 +32,15 @@ const TimrTableView = ({ navigation }) => {
       ios:"ca-app-pub-5827416667703619/1508682238",
       android: "ca-app-pub-5827416667703619/7401063358",
     });
+    const adUnitBasicID = Platform.select({
+      ios:"ca-app-pub-5827416667703619/7070778915",
+      android: "ca-app-pub-5827416667703619/4706287682",
+    });
 
     // if (testUnitID) {
     //   setUnitId(testUnitID);
     // } else if (adUnitID) {
-      setUnitId(adUnitID);
+      setUnitId(adUnitBasicID);
    // }
   }, []);
 

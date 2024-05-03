@@ -77,6 +77,7 @@
     "android_app_id": "ca-app-pub-5827416667703619~1145796134",
     "ios_app_id": "ca-app-pub-5827416667703619~1631298712",
     "delay_app_measurement_init": true,
+    "test_mode": true,
     "user_tracking_usage_description": "サービス運営維持のため広告を表示させていただいています。個人の特定につながることはありませんのでご安心ください。"
   }
 }
