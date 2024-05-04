@@ -140,7 +140,7 @@ class ImageScrollComponent extends Component {
   render() {
     const { clickX, clickY } = this.state;
     return (
-      <View>
+      <View style={{paddingBottom:20}}>
         <View style={{ alignItems: "center", marginTop: "1%" }}>
           <Text style={{ fontSize: 20 }}>南草津駅</Text>
         </View>
