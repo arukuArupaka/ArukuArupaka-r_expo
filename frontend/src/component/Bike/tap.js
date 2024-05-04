@@ -27,15 +27,15 @@ class ImageScrollComponent extends Component {
   }
 
   // 位置情報が変更されたときにAsyncStorageに保存する
-  savePositions = () => {
+  savePositions = (clickGetX, clickGetY) => {
     const { clickX, clickY, disableChangePosition } = this.state;
     const scrollY = this.scrollViewRef.current
       ? this.scrollViewRef.current.contentOffset
       : 0;
 
     const positionsToSave = {
-      clickX,
-      clickY,
+      clickX:clickGetX,
+      clickY:clickGetY,
       disableChangePosition,
       scrollY,
     };
@@ -81,7 +81,7 @@ class ImageScrollComponent extends Component {
   // コンポーネントがアンマウントされる際に呼ばれるメソッド
   componentWillUnmount() {
     // アイコンの位置を保存
-    this.savePositions();
+   // this.savePositions();
   }
 
   handleImageClick = (event) => {
@@ -100,6 +100,7 @@ class ImageScrollComponent extends Component {
       (locationY * imageHeight) / this.getScrollViewHeight();
 
     this.setState({ clickX: clickXOnImage, clickY: clickYOnImage });
+    this.savePositions(clickXOnImage, clickYOnImage)
   };
 
   getScrollViewWidth = () => {
@@ -115,7 +116,7 @@ class ImageScrollComponent extends Component {
   };
 
   scrollToPosition = (yPosition) => {
-    this.scrollViewRef.current.scrollTo({ y: yPosition, animated: true });
+    this.scrollViewRef.current.scrollTo({ x: yPosition, animated: true });
   };
 
   toggleChangePosition = () => {
