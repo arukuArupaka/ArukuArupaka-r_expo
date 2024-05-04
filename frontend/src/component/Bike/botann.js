@@ -192,6 +192,7 @@ const Bottan = () => {
           marginVertical: 10,
           marginLeft: "55%",
           marginTop: "5%",
+          marginBottom:20
         }}
       >
         <Text>固定する</Text>
