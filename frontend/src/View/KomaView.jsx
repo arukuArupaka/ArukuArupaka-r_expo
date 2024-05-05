@@ -250,11 +250,11 @@ const KomaView = ({ navigation }) => {
                         <Text style={{fontSize: 17, padding: 5}}>{"メモ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo}</Text>
                     </View>
                 </View>
-                <View style={{paddingBottom: 8, paddingTop: 8}}>
+                {/* <View style={{paddingBottom: 8, paddingTop: 8}}>
                   <View style={styles.notifi}>
                       <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text style={{ width: 30}}>{"編集"}</Text></TouchableOpacity>
                   </View>
-                </View>
+                </View> */}
                 <View style={{paddingBottom: 8}}> 
                   <View style={styles.notifi}>
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
