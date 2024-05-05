@@ -60,7 +60,7 @@ const TimrTableView = ({ navigation }) => {
 
   const viewInterstitial = useCallback(async () => {
     // 広告の表示
-    var random = Math.floor(Math.random() * 4);
+    var random = Math.floor(Math.random() * 10);
     console.log(random)
     if(random!==2){
       return
