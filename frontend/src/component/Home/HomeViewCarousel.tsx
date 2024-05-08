@@ -13,7 +13,6 @@ const HomeCarousel = ({ navigation }) => {
     axios
       .get("https://render-test-db-h83h.onrender.com/home/photo/")
       .then((response) => {
-        console.log("fetch data", response.data);
         setImages(response.data);
       });
   }, []);
@@ -24,7 +23,6 @@ const HomeCarousel = ({ navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          console.log("url", item.carousel_url);
           navigation.navigate("HomeWebSite", { uri: item.carousel_url });
         }}
       >

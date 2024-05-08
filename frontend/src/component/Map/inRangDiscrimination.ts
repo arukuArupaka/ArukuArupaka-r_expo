@@ -22,14 +22,11 @@ export const judgeInclusion = function(location:Object, comparisonArr) {
       var cos = (ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by));
       deg += Math.acos(cos)* (180 / Math.PI);
     }
-    console.log('inRandDiscriminatons')
-    console.log(Math.round(deg))
-    console.log(location)
-    console.log(comparisonArr)
-  
     if (Math.round(deg) == 360) {
+      console.log("範囲内")
       return true;
     } else {
+      console.log("範囲外")
       return false;
     }
   };

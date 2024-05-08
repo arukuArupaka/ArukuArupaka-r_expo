@@ -54,12 +54,12 @@ const MapMainView = () => {
       console.log(await isLogin);
       if (await isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-        console.log('getMapUserData:inMapMain')
+        console.log('getDoc:inMapMain 57')
         const refFiresrore = doc(db, `mapGPS/${userUUID}`);
         const snap = await getDoc(refFiresrore);
 
         if (snap.exists()) {
-          const appUser = (await getDoc(refFiresrore)).data() as User; //appUserがデータベースから取得したオブジェクト
+          const appUser = snap.data() as User; //appUserがデータベースから取得したオブジェクト
           dispatch(setMapUserObject(appUser));
         } else {
           const mapUser = {
@@ -147,6 +147,7 @@ const MapMainView = () => {
       return;
     }
     const refFiresrore = doc(db, `mapBuildings/${campusData.id}`);
+    console.log('getDoc:inMapMain 151')
     await getDoc(refFiresrore)
       .then((deforeData) => {
         //compareSetMapBuildings(data,cloneArray)
@@ -330,7 +331,7 @@ const MapMainView = () => {
 
     const getCampusBuildingData = async () => {
       const refFiresrore = doc(db, `mapBuildings/${campusData.id}`);
-
+      console.log('getDoc:inMapMain 335')
       await getDoc(refFiresrore)
         .then((data) => {
           //console.log(data.data().cloneArray)

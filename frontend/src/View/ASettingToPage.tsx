@@ -61,11 +61,13 @@ const ASettingToPage = (props) => {
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
         const refFiresrore = doc(db, `users/${userUUID}`);
+        console.log("asettingtopage getDoc 64")
         const snap = await getDoc(refFiresrore);
 
         if (snap.exists()) {
           // ユーザーデータを取得して格納
-          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          // const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          const appUser = snap.data() as User
           setUserName(appUser.userName)
           setFaculty(appUser.faculty)
           setDepartment(appUser.department)

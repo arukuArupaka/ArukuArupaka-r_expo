@@ -14,22 +14,15 @@ const MapFriendIconContainer = (props) => {
     const [friendImageURI,setFriendImageURI]=useState("")
 
     useEffect(()=>{
-      console.log('mapFriendIconContainer useEffect')
 
-        // getFriendDate()
+      let unsubscribe
 
-        console.log('as')
+      try{
+
         const refFiresrore = doc(db, `mapGPS/${props.friendUUID}`);
-       //   const getFriendData=await (await getDoc(refFiresrore)).data()
-       //   console.log('ICONs')
-       //   console.log(getFriendData)
-       //   setFriendData(getFriendData)
-       //   getDownloadURL(ref(storage, `users/${props.friendUUID}/mainPicture`)).then((getURI)=>{
-       //     setFriendImageURI(getURI)
-       // })
  
-       const unsubscribe=onSnapshot(refFiresrore,(data)=>{
-           console.log(" data: ", data.data());
+        unsubscribe=onSnapshot(refFiresrore,(data)=>{
+           console.log("mapFriendIconContainer 25 snapshot", data.data());
            setFriendData(data.data())
  
        })
@@ -37,39 +30,14 @@ const MapFriendIconContainer = (props) => {
        getDownloadURL(ref(storage, `users/${props.friendUUID}/mainPicture`)).then((getURI)=>{
          setFriendImageURI(getURI)
        })
+      }catch(error){
+        console.log(error)
+      }
  
        return () => {
          unsubscribe();
        };
     }, []);
-
-    const getFriendDate=async()=>{
-
-      console.log('as')
-       const refFiresrore = await doc(db, `mapGPS/${await props.friendUUID}`);
-      //   const getFriendData=await (await getDoc(refFiresrore)).data()
-      //   console.log('ICONs')
-      //   console.log(getFriendData)
-      //   setFriendData(getFriendData)
-      //   getDownloadURL(ref(storage, `users/${props.friendUUID}/mainPicture`)).then((getURI)=>{
-      //     setFriendImageURI(getURI)
-      // })
-
-      const unsubscribe=onSnapshot(refFiresrore,(data)=>{
-          console.log(" data: ", data.data());
-          setFriendData(data.data())
-
-      })
-
-      getDownloadURL(ref(storage, `users/${props.friendUUID}/mainPicture`)).then((getURI)=>{
-        setFriendImageURI(getURI)
-      })
-
-      return () => {
-        unsubscribe();
-      };
-
-    }
 
   return (
 <MapUserIcon imageURI={friendImageURI} title={friendData.userName} location={friendData.myLocation}></MapUserIcon>

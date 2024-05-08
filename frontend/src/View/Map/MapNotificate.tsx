@@ -43,7 +43,7 @@ const MapNotificateView = () => {
           limit(4)
         );
       }
-
+      console.log('getDoc:Mapnotfication 46')
       const querySnapshot = await getDocs(q);
 
       const fetchedNotifications = [];

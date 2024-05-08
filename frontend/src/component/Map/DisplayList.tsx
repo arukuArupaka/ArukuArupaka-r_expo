@@ -17,9 +17,8 @@ const DisplayList = (props) => {
 
         const firebaseDelateBuilding=async(buildingID)=>{
             const refFiresrore = doc(db, `mapBuildings/${props.campusID}`);
-
+            console.log("getDoc on Display map 20")
             await getDoc(refFiresrore).then((data)=>{
-              //console.log(data.data().cloneArray)
               let cloneArray=data.data().cloneArray.concat()
 
               cloneArray.filter((item) => item.buildingID !== buildingID)
@@ -33,7 +32,6 @@ const DisplayList = (props) => {
             }).catch(error => console.log(error));
         }
 
-        console.log(selectBuilding)
         if(dialogTextInput===selectBuilding.buildingName){
             setShowBuildingConfirm(false)
             if(Math.floor(Math.random()*5)==1){
@@ -55,7 +53,6 @@ const DisplayList = (props) => {
     }
 
     const editBuilding=()=>{
-        console.log(selectBuilding)
         if(dialogTextInput===selectBuilding.buildingName){
             setShowBuildingConfirm(false)
 

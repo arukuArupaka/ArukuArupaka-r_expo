@@ -60,11 +60,13 @@ const ASetting = (props) => {
       if (isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
         const refFiresrore = doc(db, `users/${userUUID}`);
+        console.log("Asetting on 63 getDoc")
         const snap = await getDoc(refFiresrore);
 
         if (snap.exists()) {
           // ユーザーデータを取得して格納
-          const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
+          const appUser = snap.data() as User;//appUserがデータベースから取得したオブジェクト
+          // const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
           console.log(appUser)
 
           setUserName(appUser.userName)

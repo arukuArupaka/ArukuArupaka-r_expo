@@ -41,7 +41,6 @@ const Specialsite = ({ navigation }) => {
                 marginHorizontal: 8,
               }}
               onPress={() => {
-                console.log("url", special.destination_url);
                 navigation.navigate("HomeWebSite", {
                   uri: special.destination_url,
                 });

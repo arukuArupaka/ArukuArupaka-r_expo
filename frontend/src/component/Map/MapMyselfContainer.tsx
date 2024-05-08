@@ -14,10 +14,6 @@ const MapMyselfContainer = () => {
 
   const dispatch: Dispatch = useDispatch();
 
-  console.log("mapUserObject on map myselfvontainer")
-  console.log(userObject.userImage)
-  console.log(mapUserObject)
-
 
   const [userName,setUserName]=useState('')
   const [isShowMyLocation,setIsShowMyLocation]=useState(mapUserObject.isLocationShare)

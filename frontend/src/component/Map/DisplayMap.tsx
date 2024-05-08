@@ -22,8 +22,9 @@ import { judgeInclusion } from "./inRangDiscrimination";
 import * as TaskManager from "expo-task-manager";
 
 const DisplayMap = (props) => {
-  const userUUIDB = "aaaa";
+  var random = Math.floor( Math.random() * 30 );
 
+  console.log( random );
   const CampusLocationData = [
     {
       id: "ritsumei_BKC",
@@ -176,6 +177,8 @@ const DisplayMap = (props) => {
           distanceInterval: 50,
         },
         (location) => {
+
+          if(Math.floor( Math.random() * 10 )===1){
           console.log("watchPositionAsync");
 
           let longitude = "経度:" + JSON.stringify(location.coords.longitude);
@@ -236,6 +239,7 @@ const DisplayMap = (props) => {
               setShareInfoMassage("共有する相手がいません");
             }
           }
+        }
         }
       );
     };
@@ -319,7 +323,6 @@ const DisplayMap = (props) => {
   // // 現在位置の取得
   const getLocationAsync = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
-    console.log(status);
     if (status !== "granted") {
       // setState({
       // submitMessage: '位置情報の取得が許可されませんでした。',

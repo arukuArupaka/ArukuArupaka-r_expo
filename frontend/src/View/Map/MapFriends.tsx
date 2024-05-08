@@ -45,6 +45,7 @@ const MapFriendsView = ({ navigation }) => {
     if (await isLogin) {
       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
       const refFiresrore = doc(db, `mapFriendConvert/${mapUserObject.QRUUID}`);
+      console.log("mapfriendicon 48 getDoc")
       const snap = await getDoc(refFiresrore);
 
       if (snap.exists()) {
@@ -69,11 +70,12 @@ const MapFriendsView = ({ navigation }) => {
       if(!await showFriendRegisterDaialog){
         setShowFriendRegisterDaialog(true)
         const refFiresrore = await doc(db, `mapFriendConvert/${data}`);
-
+        console.log("mapFriends 73 getDoc")
         const friendUUID = (await getDoc(refFiresrore)).data().userUUID as string;//appUserがデータベースから取得したオブジェクト
         setfriendRegistUUID(friendUUID)
         //const refFiresroreMapUser = await doc(db, `mapGPS/${friendUUID}`);
         const refFiresroreMapUser = await doc(db, `users/${friendUUID}`);
+        console.log("mapfrinends 78 getDoc")
         const friendObject = (await getDoc(refFiresroreMapUser)).data() ;//appUserがデータベースから取得したオブジェクト
 
         getDownloadURL(ref(storage, `users/${friendUUID}/mainPicture`)).then((getURI)=>{

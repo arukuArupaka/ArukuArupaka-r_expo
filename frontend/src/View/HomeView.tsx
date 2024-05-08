@@ -157,14 +157,13 @@ const HomeView = (props) => {
               const user = userCredential.user;
               dispatch(handleLoginAction(user.emailVerified));
               dispatch(setUserUUIDAction(user.uid));
-              console.log("<<")
 
               fetchUserObject(user.uid)
-              getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
-                (getURI) => {
-                  setUserIconImageUri(getURI);
-                }
-              );
+              // getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
+              //   (getURI) => {
+              //     setUserIconImageUri(getURI);
+              //   }
+              // );
             })
             .catch((error) => {
               // ログイン失敗時の処理
@@ -183,12 +182,13 @@ const HomeView = (props) => {
 
   const fetchUserObject = async (userUUID) => {
     //const dispatch = useDispatch();
-    console.log("actionf");
+    console.log("getDoc HomeView 185");
 
     const refFiresrore = doc(db, `users/${userUUID}`);
     const appUser = (await getDoc(refFiresrore)).data(); //appUserがデータベースから取得したオブジェクト
     getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
       .then((getURI) => {
+        setUserIconImageUri(getURI)
         const data = {
           id: appUser.id,
           userName: appUser.userName,

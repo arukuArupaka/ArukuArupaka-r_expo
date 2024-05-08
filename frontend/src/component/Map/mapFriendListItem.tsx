@@ -46,7 +46,6 @@ const MapFriendListItem = (props) => {
     }
 
     useEffect(()=>{
-        console.log('effects')
         fetchFriendsList(mapUserObject)
     },[props.isSettingMyfrendLocation,mapUserObject])    
 

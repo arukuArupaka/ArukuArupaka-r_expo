@@ -71,7 +71,6 @@ const onOFFChangeSwitch=(UUID)=>{
     const refFiresrore = doc(db, `mapGPS/${userUUID}`);
 
     //const result = array.filter((num) => num != 1)
-    console.log('off')
     let newMapUserObject={...mapUserObject}
 
     newMapUserObject.locationSharingFriends=newMapUserObject.locationSharingFriends.filter((friendID) => friendID != UUID)
