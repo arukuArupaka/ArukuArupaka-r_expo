@@ -26,14 +26,7 @@ const TimeTableClass = ({ navigation }) => {
       if (weekTime && pushedClassFrameDetail && pushedClassFrameDetail.day !== undefined && pushedClassFrameDetail.period !== undefined) {
         const kamokudata = weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period];
         if (kamokudata) { // kamokudata が存在することをさらにチェック
-          setKamokuItem({
-            day: pushedClassFrameDetail.day,
-            period: pushedClassFrameDetail.period,
-            classRoom: kamokudata.classRoom,
-            className: kamokudata.className,
-            memo: kamokudata.memo,
-            notification: kamokudata.notification,
-          });
+          setKamokuItem(kamokudata);
         }
       }else{
         console.log('存在しません');
