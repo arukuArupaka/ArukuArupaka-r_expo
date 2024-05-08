@@ -16,6 +16,17 @@ const KomaView = ({ navigation }) => {
 
     const [isShow, setIsShow] = useState(false);
 
+    useEffect(() => {
+      if (weekTime && pushedClassFrameDetail && pushedClassFrameDetail.day !== undefined && pushedClassFrameDetail.period !== undefined) {
+        const kamokudata = weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period];
+        if (kamokudata) { // kamokudata が存在することをさらにチェック
+          setKamokuItem(kamokudata);
+        }
+      }else{
+        console.log('存在しません');
+      }
+    }, []); // 依存配列に weekTime と pushedClassFrameDetail を追加
+
     const timeCalc = (hour, minute, notification) => {
         let notificationHour = hour
         let notificationMinute = minute;
@@ -250,11 +261,11 @@ const KomaView = ({ navigation }) => {
                         <Text style={{fontSize: 17, padding: 5}}>{"メモ：" + weekTime[pushedClassFrameDetail.day][pushedClassFrameDetail.period].memo}</Text>
                     </View>
                 </View>
-                {/* <View style={{paddingBottom: 8, paddingTop: 8}}>
+                <View style={{paddingBottom: 8, paddingTop: 8}}>
                   <View style={styles.notifi}>
                       <TouchableOpacity style={{alignItems: 'center'}} onPress={() => {setIsShow(true);console.log(pushedClassFrameDetail);}}><Text style={{ width: 30}}>{"編集"}</Text></TouchableOpacity>
                   </View>
-                </View> */}
+                </View>
                 <View style={{paddingBottom: 8}}> 
                   <View style={styles.notifi}>
                       <TouchableOpacity onPress={() => {navigation.navigate('WebSite');console.log(pushedClassFrameDetail);}}><Text>{"レジュメのサイトへアクセス"}</Text></TouchableOpacity>
