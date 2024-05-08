@@ -3,7 +3,7 @@ import mapState from '../states/mapState';
 // Stateの初期状態
 const initialState:mapState = {
     mapUserObject:{
-        isLocationShare:true,
+        isLocationShare:false,
         userName:"",
         userUUID:"",
         friends:[],

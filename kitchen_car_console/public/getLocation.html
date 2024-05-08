@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>地図をタップして緯度経度を取得する</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      #map {
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>キッチンカーの場所を教えてください</h2>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      var queryStr = window.location.search.slice(1); // 文頭?を除外
+      queries = {};
+
+      // クエリがない場合は空のオブジェクトを返す
+      if (!queryStr) {
+      } else {
+        queryStr.split("&").forEach(function (queryStr) {
+          // = で分割してkey,valueをオブジェクトに格納
+          var queryArr = queryStr.split("=");
+          queries[queryArr[0]] = queryArr[1];
+        });
+      }
+     // alert(JSON.stringify(queries))
+
+      var map = L.map("map").setView([queries.Latitude, queries.Longitude], queries.zoom); // 初期位置とズームレベル
+
+      // OpenStreetMapタイルレイヤーを追加
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      // マウスクリックイベントを追加
+      map.on("click", function (e) {
+        var latitude = e.latlng.lat; // クリックした場所の緯度
+        var longitude = e.latlng.lng; // クリックした場所の経度
+        console.log("緯度: " + latitude + ", 経度: " + longitude);
+       if(window.confirm('場所はここでよろしいですか？')){
+       // alert("緯度: " + latitude + ", 経度: " + longitude);
+        if(queries.develop){
+            window.location.href=`http://localhost:3000/positon_register?latitude=${latitude}&longitude=${longitude}`
+        }
+       }
+
+      });
+    </script>
+  </body>
+</html>

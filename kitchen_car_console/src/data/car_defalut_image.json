@@ -1,0 +1,62 @@
+[
+    {
+        "id":"wagon_1",
+        "name":"wagon_1",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_1.png?alt=media"
+    },
+    {
+        "id":"wagon_2",
+        "name":"wagon_2",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_2.png?alt=media"
+    },
+    {
+        "id":"wagon_3",
+        "name":"wagon_3",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_3.png?alt=media"
+    },
+    {
+        "id":"wagon_4",
+        "name":"wagon_4",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_4.png?alt=media"
+    },
+    {
+        "id":"wagon_5",
+        "name":"wagon_5",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_5.png?alt=media"
+    },
+    {
+        "id":"wagon_6",
+        "name":"wagon_6",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_6.png?alt=media"
+    },
+    {
+        "id":"wagon_7",
+        "name":"wagon_7",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_7.png?alt=media"
+    },
+    {
+        "id":"wagon_8",
+        "name":"wagon_8",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Fwagon_8.png?alt=media"
+    },
+    {
+        "id":"truck_1",
+        "name":"truck_1",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Ftruck_1.png?alt=media"
+    },
+    {
+        "id":"truck_2",
+        "name":"truck_2",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Ftruck_2.png?alt=media"
+    },
+    {
+        "id":"truck_3",
+        "name":"truck_3",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Ftruck_3.png?alt=media"
+    },
+    {
+        "id":"truck_4",
+        "name":"truck_4",
+        "image": "https://firebasestorage.googleapis.com/v0/b/arupaka-kitchen-car.appspot.com/o/kitchen_car_image%2Fdefalut%2Ftruck_4.png?alt=media"
+    }
+]

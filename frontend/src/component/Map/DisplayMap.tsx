@@ -173,7 +173,7 @@ const DisplayMap = (props) => {
         {
           accuracy: Location.Accuracy.BestForNavigation,
           timeInterval: 100000,
-          distanceInterval: 20,
+          distanceInterval: 50,
         },
         (location) => {
           console.log("watchPositionAsync");
@@ -252,7 +252,7 @@ const DisplayMap = (props) => {
       Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 100000,
-        distanceInterval: 20,
+        distanceInterval: 50,
         foregroundService: {
           notificationTitle: "En ligne ... ",
           notificationBody: "Mise à jour de votre position en cours ...",
@@ -261,7 +261,7 @@ const DisplayMap = (props) => {
     };
 
     watchPositionAsync();
-    if (isLogin&&mapUserObject.isLocationShare) {
+    if (isLogin&&mapUserObject.isLocationShare&&mapUserObject.locationSharingFriends.length!==0) {
        toggleFetchTask();
      }
 
