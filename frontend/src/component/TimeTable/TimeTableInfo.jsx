@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch,Text, View,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
+import {Switch,Text, View,StyleSheet,TouchableOpacity,TextInput,Platform} from 'react-native';
 import {useState,useEffect} from 'react'
 import { useTimeTable } from './TimeTableContext'
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ const styles=StyleSheet.create({
   entire:{
     alignItems:'center',
     zIndex: 100,
-    elevation: Platform.OS === 'android' ? 200 : 0,
+    elevation:Platform.OS === 'android' ? 200 : 0,
     position:'absolute',
     width:"80%",
     //backgroundColor:'F8F8F8',
