@@ -49,7 +49,7 @@ const HomeCarousel = ({ navigation }) => {
 
   return (
     <View>
-      <View style={{ position: "relative", alignItems: "center" }}>
+      {/* <View style={{ position: "relative", alignItems: "center" }}>
       {images.length?<Carousel
           ref={_carousel}
           data={images}
@@ -120,7 +120,7 @@ const HomeCarousel = ({ navigation }) => {
         dotsLength={images.length}
         inactiveDotStyle={{ backgroundColor: "#BBBBBB" }}
         dotStyle={{ backgroundColor: "#30CB89" }}
-      ></Pagination>
+      ></Pagination> */}
     </View>
   );
 };
