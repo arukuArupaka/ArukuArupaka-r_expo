@@ -11,7 +11,7 @@ import * as Location from "expo-location";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapUserIcon from "./mapUserIcon";
 import { useSelector } from "react-redux";
-import { doc, updateDoc,serverTimestamp } from "@firebase/firestore";
+import { doc, updateDoc, serverTimestamp } from "@firebase/firestore";
 import { db } from "../../../firebase";
 import MapFriendIconContainer from "./mapFriendIconConteiner";
 import MapBuildingListItem from "./MapBuildingListItem";
@@ -20,66 +20,72 @@ import { useDispatch } from "react-redux";
 import { setMapSearchWord } from "../../redux/actions/mapUserActions";
 import { judgeInclusion } from "./inRangDiscrimination";
 import * as TaskManager from "expo-task-manager";
+import KitchenCarIconContainer from "./KitchenCarIconContainer";
+import KitchenCarListItem from "./KitchenCarListItem";
 
 const DisplayMap = (props) => {
-  var random = Math.floor( Math.random() * 30 );
+  const [kitchenCarJSON, setKitchenCarJSON] = useState([]);
 
-  console.log( random );
-  const CampusLocationData = [
-    {
-      id: "ritsumei_BKC",
-      name: "びわこくさつキャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469182",
-      location: {
-        latitude: 34.98213493094731,
-        longitude: 135.96364694774536,
-      },
-      campusAria: [
-        { latitude: 34.97712731885239, longitude: 135.96262335777283 },
-        { latitude: 34.97949920724689, longitude: 135.96129298210144 },
-        { latitude: 34.98062881074072, longitude: 135.96049368381503 },
-        { latitude: 34.9832994698679, longitude: 135.95910765230653 },
-        { latitude: 34.9832967228862, longitude: 135.95909524708986 },
-        { latitude: 34.98694545744828, longitude: 135.96298411488533 },
-        { latitude: 34.988108744112075, longitude: 135.9653464704752 },
-        { latitude: 34.98237400651514, longitude: 135.96632950007915 },
-        { latitude: 34.98109114152881, longitude: 135.96577126532793 },
-        { latitude: 34.97677732626124, longitude: 135.96496995538473 },
-      ],
-    },
-    {
-      id: "ritsumei_KIC",
-      name: "衣笠キャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469181",
-      location: {
-        latitude: 35.0325428,
-        longitude: 135.7240146,
-      },
-      campusAria: [
-        { latitude: 34.81218694153572, longitude: 135.56080330163238 },
-        { latitude: 34.808636419426435, longitude: 135.55954098701477 },
-        { latitude: 34.80757822523875, longitude: 135.56195430457592 },
-        { latitude: 34.809639819418585, longitude: 135.5637812241912 },
-        { latitude: 34.81089150593137, longitude: 135.5637721717358 },
-      ],
-    },
-    {
-      id: "ritsumei_OIC",
-      name: "大阪いばらきキャンパス",
-      imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469183",
-      location: {
-        latitude: 34.8108499,
-        longitude: 135.5612411,
-      },
-      campusAria: [
-        { latitude: 34.81212225282056, longitude: 135.56082140654325 },
-        { latitude: 34.808502356554435, longitude: 135.55953294038773 },
-        { latitude: 34.80757932638442, longitude: 135.56186612695456 },
-        { latitude: 34.809806913923346, longitude: 135.56380704045296 },
-        { latitude: 34.81086700642176, longitude: 135.56378725916147 },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const url =
+      "https://firestore.googleapis.com/v1/projects/arupaka-kitchen-car/databases/(default)/documents:runQuery";
+
+    async function fetchCarPosition() {
+      try {
+        // 今日の日付の0時0分0秒を取得
+        const now = new Date();
+        const startOfDay = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const startOfDayTimestamp = {
+          seconds: Math.floor(startOfDay.getTime() / 1000),
+          nanos: (startOfDay.getTime() % 1000) * 1e6,
+        };
+
+        // クエリの構築
+        const query = {
+          structuredQuery: {
+            from: [{ collectionId: "car_position_BKC" }],
+            where: {
+              fieldFilter: {
+                field: { fieldPath: "time" },
+                op: "GREATER_THAN_OR_EQUAL",
+                value: { timestampValue: startOfDayTimestamp },
+              },
+            },
+          },
+        };
+
+        // POSTリクエストの送信
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(query),
+        });
+
+        if (!response.ok) {
+          throw new Error("ネットワーク応答に問題がありました");
+        }
+
+        // レスポンスの解析
+        const data = await response.json();
+        const documents = data.map((doc) => doc.document);
+        if (documents[0] !== undefined) {
+          setKitchenCarJSON(documents);
+        }
+      } catch (error) {
+        console.error("フェッチエラー:", error);
+      }
+    }
+
+    if (props.campusData.id === "ritsumei_BKC") {
+      fetchCarPosition();
+    }
+  }, []);
 
   TaskManager.defineTask(
     "BACKGROUND_FETCH_TASK",
@@ -93,27 +99,18 @@ const DisplayMap = (props) => {
 
       let longitude = "経度:" + JSON.stringify(locations[0].coords.longitude);
       let latitude = "緯度:" + JSON.stringify(locations[0].coords.latitude);
-      // Alert.alert(JSON.stringify(judgeInclusion(
-      //   {
-      //       latitude: locations[0].coords.latitude,
-      //       longitude: locations[0].coords.longitude,
-      //   },
-      //   props.campusData.campusAria
-      // )));
+
       console.log(latitude);
-      // setMyLocation({
-      //   latitude: location.coords.latitude,
-      //   longitude: location.coords.longitude,
-      // });
 
       if (
         judgeInclusion(
           {
-              latitude: locations[0].coords.latitude,
-              longitude: locations[0].coords.longitude,
+            latitude: locations[0].coords.latitude,
+            longitude: locations[0].coords.longitude,
           },
           props.campusData.campusAria
-        )&&          mapUserObject.locationSharingFriends.length!==0
+        ) &&
+        mapUserObject.locationSharingFriends.length !== 0
       ) {
         const refFiresrore = doc(db, `mapGPS/${userUUID}`);
         updateDoc(refFiresrore, {
@@ -121,12 +118,9 @@ const DisplayMap = (props) => {
             latitude: locations[0].coords.latitude,
             longitude: locations[0].coords.longitude,
           },
-          timestamp: serverTimestamp()
+          timestamp: serverTimestamp(),
         }).then(() => {
-          //   setIsSharelocation(true);
-          //   setShareTime(
-          //     new Date().getHours() + ":" + new Date().getMinutes()
-          //   );
+          console.log("watchPositionAsyncBackGround");
         });
       }
     }
@@ -147,9 +141,13 @@ const DisplayMap = (props) => {
   const [isShareLocation, setIsSharelocation] = useState<boolean>(false);
 
   const [myLocation, setMyLocation] = useState({});
-  const [mapCenterLocation, setMapCenterLocation] = useState({          
-    latitude: props.campusData.location.latitude?props.campusData.location.latitude:0,
-    longitude: props.campusData.location.longitude?props.campusData.location.longitude:0,
+  const [mapCenterLocation, setMapCenterLocation] = useState({
+    latitude: props.campusData.location.latitude
+      ? props.campusData.location.latitude
+      : 0,
+    longitude: props.campusData.location.longitude
+      ? props.campusData.location.longitude
+      : 0,
     latitudeDelta: 0.005,
     longitudeDelta: 0.005,
   });
@@ -158,7 +156,6 @@ const DisplayMap = (props) => {
   const [shareTime, setShareTime] = useState("");
 
   useEffect(() => {
-
     let subscription;
 
     getLocationAsync();
@@ -177,76 +174,77 @@ const DisplayMap = (props) => {
           distanceInterval: 50,
         },
         (location) => {
+          if (Math.floor(Math.random() * 10) === 1) {
+            console.log("watchPositionAsync");
 
-          if(Math.floor( Math.random() * 10 )===1){
-          console.log("watchPositionAsync");
+            let longitude = "経度:" + JSON.stringify(location.coords.longitude);
+            let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
+            console.log(longitude);
+            console.log(latitude);
 
-          let longitude = "経度:" + JSON.stringify(location.coords.longitude);
-          let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
-          console.log(longitude);
-          console.log(latitude);
-          
-          setMyLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
+            setMyLocation({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            });
 
-          if (
-            isLogin &&
-            props.campusData.campusAria &&
-            judgeInclusion(
-              {
+            if (
+              isLogin &&
+              props.campusData.campusAria &&
+              judgeInclusion(
+                {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-              },
-              props.campusData.campusAria
-            )&&mapUserObject.isLocationShare&&mapUserObject.locationSharingFriends.length!==0
-          ) {
-            const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-            updateDoc(refFiresrore, {
-              myLocation: {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-              },
-              timestamp: serverTimestamp()
-            })
-              .then(() => {
-                setIsSharelocation(true);
-                setShareTime(
-                  new Date().getHours() + ":" + new Date().getMinutes()
-                );
-              })
-              .catch((e) => {
-                setIsSharelocation(false);
-              });
-          } else {
-            setIsSharelocation(false);
-            if (
-              !judgeInclusion(
-                {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
                 },
                 props.campusData.campusAria
-              )
+              ) &&
+              mapUserObject.isLocationShare &&
+              mapUserObject.locationSharingFriends.length !== 0
             ) {
-              setShareInfoMassage("キャンパス外");
-            } else if (!isLogin) {
-              setShareInfoMassage("未ログイン");
-            } else if(!mapUserObject.isLocationShare){
-              setShareInfoMassage("共有を停止する");
-            } else if(mapUserObject.locationSharingFriends.length==0){
-              setShareInfoMassage("共有する相手がいません");
+              const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+              updateDoc(refFiresrore, {
+                myLocation: {
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                },
+                timestamp: serverTimestamp(),
+              })
+                .then(() => {
+                  setIsSharelocation(true);
+                  setShareTime(
+                    new Date().getHours() + ":" + new Date().getMinutes()
+                  );
+                })
+                .catch((e) => {
+                  setIsSharelocation(false);
+                });
+            } else {
+              setIsSharelocation(false);
+              if (
+                !judgeInclusion(
+                  {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                  },
+                  props.campusData.campusAria
+                )
+              ) {
+                setShareInfoMassage("キャンパス外");
+              } else if (!isLogin) {
+                setShareInfoMassage("未ログイン");
+              } else if (!mapUserObject.isLocationShare) {
+                setShareInfoMassage("共有を停止する");
+              } else if (mapUserObject.locationSharingFriends.length == 0) {
+                setShareInfoMassage("共有する相手がいません");
+              }
             }
           }
-        }
         }
       );
     };
 
     const toggleFetchTask = async () => {
-      if(TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")){
-       TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
       }
       let { status } = await Location.requestBackgroundPermissionsAsync();
       if (!status) {
@@ -265,29 +263,32 @@ const DisplayMap = (props) => {
     };
 
     watchPositionAsync();
-    if (isLogin&&mapUserObject.isLocationShare&&mapUserObject.locationSharingFriends.length!==0) {
-       toggleFetchTask();
-     }
+    if (
+      isLogin &&
+      mapUserObject.isLocationShare &&
+      mapUserObject.locationSharingFriends.length !== 0
+    ) {
+      toggleFetchTask();
+    }
 
     return () => {
       subscription?.remove();
-      if (isLogin&&mapUserObject.isLocationShare) {
-       // toggleFetchTask();
+      if (isLogin && mapUserObject.isLocationShare) {
+        // toggleFetchTask();
       }
     };
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
+    if (!mapUserObject.isLocationShare) {
+      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+      }
+    } else {
+      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+      }
 
-    if(!mapUserObject.isLocationShare){
-      if(TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")){
-        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-       }
-    }else{
-      if(TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")){
-        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-       }
-       
       Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 100000,
@@ -298,15 +299,15 @@ const DisplayMap = (props) => {
         },
       }).then((location) => {});
     }
-
-  },[mapUserObject.isLocationShare])
+  }, [mapUserObject.isLocationShare]);
 
   const onSelectBuilding = (data) => {
     dispatch(setMapSearchWord(""));
     setMapCenterLocation({
-      ...data.buildingLocation,          
+      ...data.buildingLocation,
       latitudeDelta: 0.001,
-      longitudeDelta: 0.001,});
+      longitudeDelta: 0.001,
+    });
     setShowBuildIcon(true);
   };
 
@@ -324,9 +325,6 @@ const DisplayMap = (props) => {
   const getLocationAsync = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      // setState({
-      // submitMessage: '位置情報の取得が許可されませんでした。',
-      // });
       setShareInfoMassage("権限エラー");
     } else if (status === "granted") {
       await Location.getCurrentPositionAsync({})
@@ -340,15 +338,6 @@ const DisplayMap = (props) => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           });
-          // 現在位置をMap Viewの中心に更新
-          // setState({
-          //   region: {
-          //     latitude: location.coords.latitude,
-          //     longitude: location.coords.longitude,
-          //     latitudeDelta: 0.01,
-          //     longitudeDelta: 0.01,
-          //   }
-          // })
         })
         .catch((e) => {
           console.log("現在位置取得失敗");
@@ -367,10 +356,14 @@ const DisplayMap = (props) => {
           width: "100%",
           height: "100%",
         }}
-         provider={PROVIDER_GOOGLE}
+        //  provider={PROVIDER_GOOGLE}
         initialRegion={{
-          latitude: props.campusData.location.latitude?props.campusData.location.latitude:0,
-          longitude: props.campusData.location.longitude?props.campusData.location.longitude:0,
+          latitude: props.campusData.location.latitude
+            ? props.campusData.location.latitude
+            : 0,
+          longitude: props.campusData.location.longitude
+            ? props.campusData.location.longitude
+            : 0,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
@@ -388,20 +381,22 @@ const DisplayMap = (props) => {
           ))}
         {!props.isEditBuilding && (
           <MapUserIcon
-            imageURI={
-              userObject.userImage
-                ? userObject.userImage
-                : "https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=661a2fe4&is=6607bae4&hm=cb9685af51a4ec6f9d8ce799cbfd5efff9fda1b9055ecbb2d26534425e88f552&=&format=webp&width=1012&height=1012"
-            }
-            title={userObject.userName}
+            imageURI={userObject.userImage}
+            title={userObject.userName ? userObject.userName : "あなた"}
             location={myLocation}
           />
         )}
-        {/* {!props.isEditBuilding&&<MapUserIcon imageURI={userObject.userImage?userObject.userImage:"https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65fe8064&is=65ec0b64&hm=e615d93362c74b2d2a0788ef8867ccb999f462b0076e644dab324f8c8fab17ca&=&format=webp&width=1208&height=1208"} title={userObject.userName} title={userObject.userName} location={{latitude: 34.98213493094731,
-              longitude: 135.96364694774536,}}/>} */}
         {showBuildingIcon &&
           props.campusBuildingsArray.map((buildingData) => (
             <MapBuildingIcon buildingData={buildingData} />
+          ))}
+        {kitchenCarJSON &&
+          kitchenCarJSON.length != 0 &&
+          kitchenCarJSON.map((kitchenCarObject, index) => (
+            <KitchenCarIconContainer
+              kitchenCarObject={kitchenCarObject ? kitchenCarObject.fields : {}}
+              key={index}
+            />
           ))}
       </MapView>
       <View
@@ -445,6 +440,41 @@ const DisplayMap = (props) => {
             backgroundColor: "white",
           }}
         >
+          {kitchenCarJSON
+            .filter(
+              (word) => {
+                if(mapSearchWord=="キッチンカー"){
+                  return kitchenCarJSON
+                }
+                return(JSON.stringify(word.fields.storeName).indexOf(mapSearchWord) !== -1)}
+            ).concat(
+              kitchenCarJSON
+            .filter(
+              (word) => JSON.stringify(word.fields.herf).indexOf(mapSearchWord) !== -1
+            ))
+            .concat(
+              kitchenCarJSON
+            .filter(
+              (word) => JSON.stringify(word.fields.message).indexOf(mapSearchWord) !== -1
+            ))
+            .map((kitchenCarObject) => (
+              <TouchableOpacity
+                onPress={() =>
+                  setMapCenterLocation({
+                    latitude:
+                      kitchenCarObject.fields.position.mapValue.fields.latitude
+                        .stringValue,
+                    longitude:
+                        kitchenCarObject.fields.position.mapValue.fields
+                        .longitude.stringValue,
+                    latitudeDelta: 0.001,
+                    longitudeDelta: 0.001,
+                  })
+                }
+              >
+                <KitchenCarListItem kitchenCarObject={kitchenCarObject} />
+              </TouchableOpacity>
+            ))}
           {props.campusBuildingsArray
             .filter(
               (word) => JSON.stringify(word).indexOf(mapSearchWord) !== -1

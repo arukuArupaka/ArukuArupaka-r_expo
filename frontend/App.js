@@ -33,6 +33,7 @@ import { New_headerTextbook } from './src/component/Textbook/New_headerTextbook'
 import { InstantSearch } from 'react-instantsearch-core';
 import algoliasearch from 'algoliasearch/lite';
 import RitsuMatch from './src/View/RitsuMatch';
+import KitchenCarDetailView from './src/component/Map/KitchenCarDetailView';
 const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 
@@ -177,6 +178,11 @@ function App() {
 
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
+          <Stack.Screen
+            name="MapKitchenCarDetail"
+            component={KitchenCarDetailView}
+            options={() => ({ title: "" })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </TimeTableProvider>
