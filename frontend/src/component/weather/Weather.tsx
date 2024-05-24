@@ -328,13 +328,64 @@ const Weather = () => {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "flex-end",
+              justifyContent: "center",
               paddingTop: 9,
-              paddingRight: 22,
+              paddingLeft: 20,  
+              paddingRight: 20, 
               backgroundColor: "#fff",
             }}
           >
-            <RNPickerSelect
+            <TouchableOpacity 
+            onPress={()=>setCity("Kusatsu")}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: 3, 
+              padding: 5,
+              backgroundColor: '#f0f0f0',
+              borderWidth: 1, 
+              borderColor: '#ccc', 
+              borderRadius: 5, 
+            }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>草津</Text>
+            </TouchableOpacity>
+            
+            
+            
+            <TouchableOpacity 
+             onPress={()=>setCity("Kyoto")}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: 3, 
+              padding: 5,
+              backgroundColor: '#f0f0f0', 
+              borderWidth: 1, 
+              borderColor: '#ccc', 
+              borderRadius: 5, 
+            }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>衣笠</Text>
+            </TouchableOpacity>
+           
+
+            
+            <TouchableOpacity
+             onPress={()=>setCity("Takatsuki")}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: 3, 
+              padding: 5,
+              backgroundColor: '#f0f0f0', 
+              borderWidth: 1,
+              borderColor: '#ccc', 
+              borderRadius: 5, 
+            }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>茨木</Text>
+            </TouchableOpacity>
+          </View>                 
+                  
+            {/*cke<RNPirSelect
               onValueChange={(value) => setCity(value)}
               items={[
                 { label: "草津", value: "Kusatsu" },
@@ -359,7 +410,7 @@ const Weather = () => {
                   borderWidth: 1.5,
                   borderColor: "#007AFF",
                   borderRadius: 5,
-                  backgroundColor: "#fff",
+                  backgroundColor: "#dddddd",
                 },
                 inputAndroid: {
                   width: 60,
@@ -372,8 +423,9 @@ const Weather = () => {
                   backgroundColor: "#fff",
                 },
               }}
-            />
-          </View>
+            /> */}
+          
+          
           <View
             style={{
               height: 595,
@@ -387,7 +439,7 @@ const Weather = () => {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "#30CB89",
+                backgroundColor: "#30cb89",
                 height: 50,
                 borderRadius: 5,
               }}
@@ -425,7 +477,8 @@ const Weather = () => {
                     height: 80,
                     marginTop: 3,
                   }}
-                />
+                /> 
+                
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                   {weatherDictionary[currentWeatherData.weather[0].main]}
                 </Text>
@@ -542,7 +595,7 @@ const Weather = () => {
                 style={{
                   height: 199,
                   marginTop: 16,
-                  backgroundColor: "rgba(238, 238, 238, 0.8)",
+                  backgroundColor: "rgba(201, 255, 245, 0.8)",
                   borderWidth: 1.2,
                   borderRadius: 5,
                 }}
@@ -664,7 +717,7 @@ const Weather = () => {
                   width: 81,
                   height: 100,
                   borderWidth: 2,
-                  borderColor: "#1BB1E7",
+                  borderColor: "#1bb1e7",
                   borderRadius: 5,
                 }}
               >
