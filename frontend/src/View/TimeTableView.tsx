@@ -63,9 +63,10 @@ const TimrTableView = ({ navigation }) => {
     setIsInfoShow,
   } = useTimeTable();
 
-  const [showTutorial, setShowTutorial] = useState(true);
+  const [showTutorial1, setShowTutorial1] = useState(false);
+  const [showTutorial2, setShowTutorial2] = useState(false);
   const [schoolName, setSchoolName] = useState(true);
-  
+
   const requestPermissionsAsync = async () => {
     const { granted } = await Notifications.getPermissionsAsync();
     if (granted) {
@@ -558,6 +559,39 @@ const TimrTableView = ({ navigation }) => {
     saveSeasonChange();
   }, [season]);
 
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const hasLaunched = (await AsyncStorage.getItem("seasonkey"))&&(await AsyncStorage.getItem("departmentkey"));
+        if (hasLaunched === null) {
+          // 初回起動
+          setShowTutorial1(true);
+        }
+      } catch (error) {
+        console.error("AsyncStorageエラー:", error);
+      }
+    };
+
+    checkFirstLaunch();
+  }, []);
+
+  const finishTutorial = async () => {
+    try {
+      if (!department || !season) {
+        return;
+      }
+      console.log(583);
+      setShowTutorial2(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deforeTutorail = () => {
+    setShowTutorial2(false);
+    setShowTutorial1(true);
+  };
+
   const styles = StyleSheet.create({
     bodys: {
       flexDirection: "row",
@@ -774,59 +808,117 @@ const TimrTableView = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      <Dialog.Container visible={showTutorial}>
-      <Dialog.Title style={{marginBottom:10}}>チュートリアル(2/2)</Dialog.Title>
-
-
-        <Dialog.Description>
-          大学 学部 学科 セメスターを選択してください。
-        </Dialog.Description>
-        <View style={{ flexDirection: "row", marginHorizontal: 20 }}>
-          <Dialog.Description>立命館の学生ですか？</Dialog.Description>
-          <Dialog.Switch
-            value={schoolName}
-
-              onValueChange={(value)=>setSchoolName(value)}
+      {showTutorial1 && (
+        <Dialog.Container visible={showTutorial1}>
+          <Dialog.Title>チュートリアル（1/2）</Dialog.Title>
+          <Dialog.Description>
+            授業開始直線に教室の場所を通知する機能です。
+          </Dialog.Description>
+          <Dialog.Button
+            label="次へ"
+            onPress={() => {
+              setShowTutorial1(false);
+              setShowTutorial2(true);
+            }}
           />
-        </View>
-        {schoolName&&<View style={{marginHorizontal:20}}>
-        <RNPickerSelect
-          items={[
-            { label: '法学部', value: '法学部', key: 'hougaku' },
-            { label: '経済学部', value: '経済学部', key: 'keizai' },
-            { label: '経営学部', value: '経営学部', key: 'keiei' },
-            { label: '産業社会学部', value: '産業社会学部', key: 'sansha' },
-            { label: '国際関係学部', value: '国際関係学部', key: 'kokusai' },
-            { label: '政策科学部', value: '政策科学部', key: 'seisaku' },
-            { label: '文学部', value: '文学部', key: 'bun' },
-            { label: '映像学部', value: '映像学部', key: 'eizou' },
-            { label: '総合心理学部', value: '総合心理学部', key: 'sougou' },
-            { label: '理工学部', value: '理工学部', key: 'rikou' },
-            { label: 'グローバル教養学部', value: 'グローバル教養学部', key: 'gurokyou' },
-            { label: '食マネジメント学部', value: '食マネジメント学部', key: 'shokumane' },
-            { label: '情報理工学部', value: '情報理工学部', key: 'jouri' },
-            { label: '生命科学部', value: '生命科学部', key: 'seimei' },
-            { label: '薬学部', value: '薬学部', key: 'yakugaku' },
-            { label: 'スポーツ健康学部', value: 'スポーツ健康学部', key: 'supoken' }
-        ]}
-          onValueChange={(value) => setDepartment(value)}
-          value={department}
-          placeholder={{label:"ここをタップして学部選択", value: ''}}
-        />
-        <RNPickerSelect
-          items={[
-            { label: "秋セメスター", value: "秋セメスター", key: "fall" },
-            { label: "春セメスター", value: "春セメスター", key: "spring" },
-          ]}
-          onValueChange={(value) => setSeason(value)}
-          value={season}
-          placeholder={{label:"ここをタップしてセメスター選択", value: ''}}
-        />
-        </View>}
-        {schoolName&&(true)&&<Text style={{color:'red',textAlign:'center'}}>学部とセメスターを選択してください。</Text>}
-        {/* <Dialog.Button label="Cancel" color="red" onPress={() => {}} /> */}
-        <Dialog.Button label="OK" onPress={() => {}} />
-      </Dialog.Container>
+        </Dialog.Container>
+      )}
+      {showTutorial2 && (
+        <Dialog.Container visible={showTutorial2}>
+          <Dialog.Title style={{ marginBottom: 10 }}>
+            チュートリアル(2/2)
+          </Dialog.Title>
+
+          <Dialog.Description>
+            大学 学部 学科 セメスターを選択してください。
+          </Dialog.Description>
+          <View style={{ flexDirection: "row", marginHorizontal: 20 }}>
+            <Dialog.Description>立命館の学生ですか？</Dialog.Description>
+            <Dialog.Switch
+              value={schoolName}
+              onValueChange={(value) => setSchoolName(value)}
+            />
+          </View>
+          {schoolName && (
+            <View style={{ marginHorizontal: 20 }}>
+              <RNPickerSelect
+                items={[
+                  { label: "法学部", value: "法学部", key: "hougaku" },
+                  { label: "経済学部", value: "経済学部", key: "keizai" },
+                  { label: "経営学部", value: "経営学部", key: "keiei" },
+                  {
+                    label: "産業社会学部",
+                    value: "産業社会学部",
+                    key: "sansha",
+                  },
+                  {
+                    label: "国際関係学部",
+                    value: "国際関係学部",
+                    key: "kokusai",
+                  },
+                  { label: "政策科学部", value: "政策科学部", key: "seisaku" },
+                  { label: "文学部", value: "文学部", key: "bun" },
+                  { label: "映像学部", value: "映像学部", key: "eizou" },
+                  {
+                    label: "総合心理学部",
+                    value: "総合心理学部",
+                    key: "sougou",
+                  },
+                  { label: "理工学部", value: "理工学部", key: "rikou" },
+                  {
+                    label: "グローバル教養学部",
+                    value: "グローバル教養学部",
+                    key: "gurokyou",
+                  },
+                  {
+                    label: "食マネジメント学部",
+                    value: "食マネジメント学部",
+                    key: "shokumane",
+                  },
+                  {
+                    label: "情報理工学部",
+                    value: "情報理工学部",
+                    key: "jouri",
+                  },
+                  { label: "生命科学部", value: "生命科学部", key: "seimei" },
+                  { label: "薬学部", value: "薬学部", key: "yakugaku" },
+                  {
+                    label: "スポーツ健康学部",
+                    value: "スポーツ健康学部",
+                    key: "supoken",
+                  },
+                ]}
+                onValueChange={(value) => setDepartment(value)}
+                value={department}
+                placeholder={{ label: "ここをタップして学部選択", value: "" }}
+              />
+              <RNPickerSelect
+                items={[
+                  { label: "秋セメスター", value: "秋セメスター", key: "fall" },
+                  {
+                    label: "春セメスター",
+                    value: "春セメスター",
+                    key: "spring",
+                  },
+                ]}
+                onValueChange={(value) => setSeason(value)}
+                value={season}
+                placeholder={{
+                  label: "ここをタップしてセメスター選択",
+                  value: "",
+                }}
+              />
+            </View>
+          )}
+          {schoolName && (!department || !season) && (
+            <Text style={{ color: "red", textAlign: "center" }}>
+              学部とセメスターを選択してください。
+            </Text>
+          )}
+          <Dialog.Button label="戻る" color="red" onPress={deforeTutorail} />
+          <Dialog.Button label="OK" onPress={finishTutorial} />
+        </Dialog.Container>
+      )}
     </View>
   );
 };
