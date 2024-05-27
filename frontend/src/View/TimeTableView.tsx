@@ -577,7 +577,7 @@ const TimrTableView = ({ navigation }) => {
 
   const finishTutorial = async () => {
     try {
-      if (!department || !season) {
+      if ((!department || !season)&&schoolName) {
         return;
       }
       console.log(583);
