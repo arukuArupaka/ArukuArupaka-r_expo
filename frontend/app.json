@@ -50,9 +50,6 @@
     "extra": {
       "eas": {}
     },
-    "owner": "arukuarupakabuild",
-    "plugins": [
-      "expo-video"
-    ]
+    "owner": "arukuarupakabuild"
   }
 }
