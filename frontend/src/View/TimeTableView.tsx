@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Platform,
   Text,
@@ -8,6 +8,7 @@ import {
   Button,
   ScrollView,
   Dimensions,
+  PixelRatio,
 } from "react-native";
 import WeekFram from "../component/TimeTable/WeekFrame";
 import ClassFrame from "../component/TimeTable/ClassFrame";
@@ -20,6 +21,7 @@ import TimeTableQty from "../component/TimeTable/TimeTableQty";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import Dialog from "react-native-dialog";
 import RNPickerSelect from "react-native-picker-select";
+import { Video } from "expo-av";
 
 const TimrTableView = ({ navigation }) => {
   const {
@@ -562,7 +564,9 @@ const TimrTableView = ({ navigation }) => {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const hasLaunched = (await AsyncStorage.getItem("seasonkey"))&&(await AsyncStorage.getItem("departmentkey"));
+        const hasLaunched =
+          (await AsyncStorage.getItem("seasonkey")) &&
+          (await AsyncStorage.getItem("departmentkey"));
         if (hasLaunched === null) {
           // 初回起動
           setShowTutorial1(true);
@@ -577,7 +581,7 @@ const TimrTableView = ({ navigation }) => {
 
   const finishTutorial = async () => {
     try {
-      if ((!department || !season)&&schoolName) {
+      if ((!department || !season) && schoolName) {
         return;
       }
       console.log(583);
@@ -708,6 +712,8 @@ const TimrTableView = ({ navigation }) => {
     return day;
   };
 
+  const videoRef = useRef(null);
+
   return (
     <View>
       <ScrollView
@@ -812,8 +818,20 @@ const TimrTableView = ({ navigation }) => {
         <Dialog.Container visible={showTutorial1}>
           <Dialog.Title>チュートリアル（1/2）</Dialog.Title>
           <Dialog.Description>
-            授業開始直線に教室の場所を通知する機能です。
+            授業開始前に教室の場所を通知する機能です。
           </Dialog.Description>
+          <View style={{ alignItems: "center", marginBottom: 30 }}>
+            <Video
+              ref={videoRef}
+              style={{ width: 175, height: 300 }}
+              source={require("../videos/notificationExample.mp4")}
+              useNativeControls
+              resizeMode="contain"
+              shouldPlay
+              isLooping
+              onPlaybackStatusUpdate={(status) => {}}
+            />
+          </View>
           <Dialog.Button
             label="次へ"
             onPress={() => {

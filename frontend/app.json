@@ -11,16 +11,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
       "buildNumber": "1.0.0",
-        "config": {
-          "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
-        }
+      "config": {
+        "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+      }
     },
-    
     "android": {
       "googleServicesFile": "./google-services.json",
       "config": {
@@ -47,10 +48,11 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "eas": {
-       // "projectId": "fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
-      }
+      "eas": {}
     },
-    "owner": "arukuarupakabuild"
+    "owner": "arukuarupakabuild",
+    "plugins": [
+      "expo-video"
+    ]
   }
 }
