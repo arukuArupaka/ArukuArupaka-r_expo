@@ -1,0 +1,18 @@
+{
+    "立命館": {
+        "BKC":[
+            {
+                "name":"パナソニック東口",
+                "type":["バス停"],
+                "location":{"longitude":34.988895, "latitude":135.955231},
+                "image":"map/bus_stand.png"
+            }
+        ],
+        "KIC":{
+
+        },
+        "OIC":{
+
+        }
+    }
+}
