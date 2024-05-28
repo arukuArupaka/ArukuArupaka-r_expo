@@ -68,6 +68,7 @@ const TimrTableView = ({ navigation }) => {
   const [showTutorial1, setShowTutorial1] = useState(false);
   const [showTutorial2, setShowTutorial2] = useState(false);
   const [schoolName, setSchoolName] = useState(true);
+  const [tutorial2Error,setTutorial2Error]=useState(false)
 
   const requestPermissionsAsync = async () => {
     const { granted } = await Notifications.getPermissionsAsync();
@@ -582,6 +583,7 @@ const TimrTableView = ({ navigation }) => {
   const finishTutorial = async () => {
     try {
       if ((!department || !season) && schoolName) {
+        setTutorial2Error(true)
         return;
       }
       console.log(583);
@@ -859,6 +861,8 @@ const TimrTableView = ({ navigation }) => {
           </View>
           {schoolName && (
             <View style={{ marginHorizontal: 20 }}>
+                            <View style={{height:40,justifyContent:'center',borderWidth:1,paddingLeft:10}}>
+
               <RNPickerSelect
                 items={[
                   { label: "法学部", value: "法学部", key: "hougaku" },
@@ -910,26 +914,33 @@ const TimrTableView = ({ navigation }) => {
                 value={department}
                 placeholder={{ label: "ここをタップして学部選択", value: "" }}
               />
-              <RNPickerSelect
-                items={[
-                  { label: "秋セメスター", value: "秋セメスター", key: "fall" },
-                  {
-                    label: "春セメスター",
-                    value: "春セメスター",
-                    key: "spring",
-                  },
-                ]}
-                onValueChange={(value) => setSeason(value)}
-                value={season}
-                placeholder={{
-                  label: "ここをタップしてセメスター選択",
-                  value: "",
-                }}
-              />
+              </View>
+              <View style={{height:40,justifyContent:'center',borderWidth:1,paddingLeft:10}}>
+                <RNPickerSelect
+                  items={[
+                    {
+                      label: "秋セメスター",
+                      value: "秋セメスター",
+                      key: "fall",
+                    },
+                    {
+                      label: "春セメスター",
+                      value: "春セメスター",
+                      key: "spring",
+                    },
+                  ]}
+                  onValueChange={(value) => setSeason(value)}
+                  value={season}
+                  placeholder={{
+                    label: "ここをタップしてセメスター選択",
+                    value: "",
+                  }}
+                />
+              </View>
             </View>
           )}
-          {schoolName && (!department || !season) && (
-            <Text style={{ color: "red", textAlign: "center" }}>
+          {tutorial2Error&&schoolName && (!department || !season) && (
+            <Text style={{ color: "red", textAlign: "center",marginTop:10 }}>
               学部とセメスターを選択してください。
             </Text>
           )}
