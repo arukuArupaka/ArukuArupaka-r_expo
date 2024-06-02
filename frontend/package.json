@@ -26,6 +26,7 @@
     "clone": "^2.1.2",
     "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^51.0.5",
+    "expo-av": "~14.0.5",
     "expo-barcode-scanner": "~13.0.1",
     "expo-camera": "~15.0.8",
     "expo-crypto": "~13.0.2",

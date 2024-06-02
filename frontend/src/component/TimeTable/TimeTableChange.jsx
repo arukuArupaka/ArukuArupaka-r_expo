@@ -196,6 +196,7 @@ return (
                 <View style={styles.picker2}>
                         <RNPickerSelect
                         onValueChange={(value) => setSeason(value)}
+                        value={true}
                         items={[
                             { label: '秋セメスター', value: '秋セメスター' , key: 'fall'},
                             { label: '春セメスター', value: '春セメスター' , key: 'spring'}

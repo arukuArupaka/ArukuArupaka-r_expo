@@ -93,9 +93,7 @@ const MapMainView = () => {
   //新規建物追加
   const [buildingType, setBuildingType] = useState([]);
   const [buildingName, setBuildingName] = useState("");
-  const [mainBuildingImage, setMainBuildingImage] = useState(
-    "https://media.discordapp.net/attachments/1210241561095573504/1219219360976080987/24660942.jpg?ex=660a8183&is=65f80c83&hm=b3e22c638cb150a3ee37a0a7f0c228ce0c7b79130843af5cdb3597c8ee912b66&=&format=webp&width=1342&height=1012"
-  );
+  const [mainBuildingImage, setMainBuildingImage] = useState();
   const [buildingDetail, setBuildingDetail] = useState("");
   const [detailSetting, setDetailSetting] = useState(false);
 

@@ -217,8 +217,8 @@ const HomeView = (props) => {
         dispatch(setUserObject(data));
       });
   };
-
-
+console.log("image")
+console.log(userIconImageUri)
   return (
     <SafeAreaView>
       <ScrollView>
