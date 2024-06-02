@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import ImageScrollComponent from "../component/Bike/tap";
+import ImageScrollComponent from "../component/Bike/tap.js";
 import Bottan from "../component/Bike/botann.js";
-import ColorChange from "../component/TimeTable/ColorChange";
 
 const BikeView = () => {
   const [showImageScroll, setShowImageScroll] = useState(true);
@@ -18,44 +17,33 @@ const BikeView = () => {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginTop: 15,
+            marginTop: 20,
           }}
         >
           <TouchableOpacity
             onPress={() => setShowImageScroll(true)}
             style={{
-              marginLeft: 15,
+              marginLeft: 10,
               alignItems: "center",
-              borderRadius: 65,
+              borderRadius: 20,
               backgroundColor: showImageScroll ? "#30cb89" : "#eeeeee",
-              width: 170,
-              height:30,
-              justifyContent:"center"
+              width: 200,
             }}
           >
-            <Text style={{ 
-              fontSize: 20 ,
-              marginTop: 1,
-              color: showImageScroll ? "#ffffff" : "#010101",
-            }}>タップで</Text>
+            <Text style={{ fontSize: 20 }}>タップ</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowImageScroll(false)}
             style={{
-              marginLeft: 5,
+              marginLeft: 10,
               alignItems: "center",
-              borderRadius: 65,
+              borderRadius: 20,
               backgroundColor: showImageScroll ? "#eeeeee" : "#30cb89",
-              width: 170,
-              height:30,
-              justifyContent:"center"
+              width: 200,
             }}
           >
-            <Text style={{ 
-              fontSize: 20,
-              color: showImageScroll ? "#010101" : "#ffffff",
-               }}>ボタンで</Text>
+            <Text style={{ fontSize: 20 }}>ボタン</Text>
           </TouchableOpacity>
         </View>
 

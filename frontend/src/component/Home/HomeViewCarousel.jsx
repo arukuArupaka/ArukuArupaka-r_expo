@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
-import Carousel, { Pagination } from "react-native-snap-carousel";
+// import Carousel, { Pagination } from "react-native-snap-carousel";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 

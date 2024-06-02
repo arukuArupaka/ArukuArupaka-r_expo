@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5 } from "@expo/vector-icons"; // @expo/vector-iconsからFontAwesome5をインポート
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'; // @expo/vector-iconsからMaterialIconsをインポート
 
 class ImageScrollComponent extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class ImageScrollComponent extends Component {
       clickX: null,
       clickY: null,
       disableChangePosition: false,
+      switchTime: null,
     };
     this.scrollViewRef = React.createRef();
   }
@@ -27,7 +28,7 @@ class ImageScrollComponent extends Component {
   }
 
   // 位置情報が変更されたときにAsyncStorageに保存する
-  savePositions = (clickGetX, clickGetY) => {
+  savePositions = (clickGetX, clickGetY,switchTime) => {
     const { clickX, clickY, disableChangePosition } = this.state;
     const scrollY = this.scrollViewRef.current
       ? this.scrollViewRef.current.contentOffset
@@ -37,28 +38,38 @@ class ImageScrollComponent extends Component {
       clickX:clickGetX,
       clickY:clickGetY,
       disableChangePosition,
+      switchTime:switchTime,
       scrollY,
     };
+    console.log(positionsToSave)
 
     AsyncStorage.setItem(
       "imageScrollPositions",
       JSON.stringify(positionsToSave)
     ).catch((error) => console.error("位置情報の保存エラー:", error));
-  };
 
-  // Async storage からデータを読み込み、表示する位置にスクロールする
+    // AsyncStorage.setItem(
+    //   "switchTime",
+    //   JSON.stringify(positionsToSave)
+    // ).catch((error) => console.error("位置情報の保存エラー:", error));
+  };
+  
+
+
   loadSavedPositions = async () => {
     try {
       const savedPositionsJson = await AsyncStorage.getItem(
         "imageScrollPositions"
       );
       if (savedPositionsJson) {
+        console.log(savedPositionsJson)
         const savedPositions = JSON.parse(savedPositionsJson);
         this.setState(
           {
             clickX: savedPositions.clickX,
             clickY: savedPositions.clickY,
             disableChangePosition: savedPositions.disableChangePosition,
+            switchTime: savedPositions.switchTime,
           },
           () => {
             // ロード後にアイコンを設定
@@ -67,6 +78,13 @@ class ImageScrollComponent extends Component {
         );
         this.scrollToPosition(savedPositions.scrollY);
       }
+    } catch (error) {
+      console.error("保存された位置情報の読み込みエラー:", error);
+    }
+    try {
+      const savedPositionsJson = await AsyncStorage.getItem(
+        "switchTime"
+      );
     } catch (error) {
       console.error("保存された位置情報の読み込みエラー:", error);
     }
@@ -85,14 +103,21 @@ class ImageScrollComponent extends Component {
   }
 
   handleImageClick = (event) => {
+    
     const { disableChangePosition } = this.state;
+
+    const { switchTime } = this.state;
     const { locationX, locationY } = event.nativeEvent;
+    
 
     // クリック位置が既にセットされている場合は処理しない
     if (disableChangePosition) {
       return;
     }
-
+    const currentDate = new Date();
+    this.setState((prevState) => ({
+      switchTime: currentDate.toLocaleString(), // 現在の日時を更新
+    }));
     const { width: imageWidth, height: imageHeight } =
       this.getImageDimensions();
     const clickXOnImage = (locationX * imageWidth) / this.getScrollViewWidth();
@@ -100,7 +125,8 @@ class ImageScrollComponent extends Component {
       (locationY * imageHeight) / this.getScrollViewHeight();
 
     this.setState({ clickX: clickXOnImage, clickY: clickYOnImage });
-    this.savePositions(clickXOnImage, clickYOnImage)
+    console.log(`switchTime: ${switchTime}`)
+    this.savePositions(clickXOnImage, clickYOnImage, currentDate.toLocaleString())
   };
 
   getScrollViewWidth = () => {
@@ -138,22 +164,96 @@ class ImageScrollComponent extends Component {
   };
 
   render() {
-    const { clickX, clickY } = this.state;
+    const { clickX, clickY , switchTime} = this.state;
     return (
       <View style={{paddingBottom:20}}>
-        <View style={{ alignItems: "center", marginTop: "1%" }}>
-          <Text style={{ fontSize: 20 }}>南草津駅</Text>
-        </View>
+        <MaterialIcons name="arrow-back-ios-new" 
+        size={30} 
+        color="black" 
+        style={{
+          position: "absolute",
+          zIndex:"100",
+          transform: [{rotate: '90deg'}],
+          marginTop: "15%",
+          marginLeft: "40%",
+          }}/>
+        <Text style={{
+          position:"absolute",
+          zIndex:"100",
+          fontSize:20,
+          marginTop: "15%",
+          marginLeft: "50%"}}>
+          南草津駅
+          </Text>
+          <MaterialIcons name="arrow-back-ios-new" 
+        size={30} 
+        color="black" 
+        style={{
+          position: "absolute",
+          zIndex:"100",
+          transform: [{rotate: '270deg'}],
+          marginTop: "110%",
+          marginLeft: "40%",
+          }}/>
+        <Text style={{
+          position:"absolute",
+          zIndex:"100",
+          fontSize:20,
+          marginTop: "110%",
+          marginLeft: "50%"}}>
+          大学
+          </Text>
+          <MaterialIcons name="arrow-back-ios-new" 
+        size={30} 
+        color="black" 
+        style={{
+          position: "absolute",
+          zIndex:"100",
+          marginTop: "50%",
+          marginLeft: "2%",
+          }}/>
+        <View style={{
+          position:"absolute",
+          flexDirection:'column',
+          zIndex:"100",
+          marginTop: "60%",
+          marginRight: "90%",
+          marginLeft:"3%"
+          }}>
+          <Text style={{fontSize:20}}>瀬田方面</Text>
+          </View>
+          <MaterialIcons name="arrow-back-ios-new" 
+        size={30} 
+        color="black" 
+        style={{
+          position: "absolute",
+          zIndex:"100",
+          transform: [{rotate: '180deg'}],
+          marginTop: "50%",
+          marginLeft: "90%",
+          }}/>
+        <View style={{
+          position:"absolute",
+          flexDirection:'column',
+          zIndex:"100",
+          marginTop: "60%",
+          marginLeft: "92%"}}>
+          <Text style={{fontSize:20}}>守山方面</Text>
+          </View>
+        <View style={{ alignItems: "center", justifyContent:"center", marginTop: "4%" }}/>
         <ScrollView
           ref={this.scrollViewRef}
           horizontal={true}
-          style={{ width: "100%", height: 404 }}
-        >
+          style={{
+             width: "100%",
+              height: 404 }}
+          >
           {/* 大きな画像 */}
           <Image
             source={require("../BikeImage/map.jpg")}
             style={{ width: 1453, height: "120%", marginTop: "-70" }}
           />
+         
 
           <TouchableOpacity
             onPress={this.handleImageClick}
@@ -165,10 +265,9 @@ class ImageScrollComponent extends Component {
           >
             {/* クリックした位置でアイコンを表示 */}
             {clickX !== null && clickY !== null && (
-              <FontAwesome5
-                name="biking"
-                size={25}
-                color="#FF0000"
+             <MaterialIcons name="directions-bike" 
+             size={30}
+             color="black"
                 style={{
                   top: clickY - 25,
                   left: clickX - 25,
@@ -180,17 +279,17 @@ class ImageScrollComponent extends Component {
         </ScrollView>
 
         <View style={{ marginLeft: "50%" }}>
-          <Text style={{ fontSize: 25 }}>大学</Text>
+        <View style={{ alignItems: "center", marginTop: "10%" }}/>
         </View>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             backgroundColor: "#30CB89",
-            width: "40%",
-            height: "6%",
-            borderRadius: 66,
-            marginLeft: "57%",
+            width: "45%",
+            height: "7%",
+            borderRadius: 65,
+            marginLeft: "53%",
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -213,12 +312,35 @@ class ImageScrollComponent extends Component {
           <Switch
             value={this.state.disableChangePosition}
             onValueChange={this.toggleChangePosition}
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            trackColor={{ false: "#30cb89", true: "#FFFFFF" }}
             thumbColor={
-              this.state.disableChangePosition ? "#f5dd4b" : "#f4f3f4"
+              this.state.disableChangePosition ? "#30cb89" : "#FFFFFF"
             }
           />
         </View>
+        <View>
+        <Text
+              style={{
+                marginLeft: "50%",
+                color: "black",
+                fontSize: 14,
+                fontWeight: 400,
+              }}
+            >
+              変更時間：{JSON.stringify(switchTime).substr(6,15) || '未設定'}
+            </Text>
+        </View>
+        <Text
+              style={{
+                marginLeft: "5%",
+                color: "black",
+                fontSize: 20,
+                fontWeight: 400,
+              }}
+            >
+              {" "}
+              移動する
+            </Text>
         <View
           style={{ flexDirection: "row", flexWrap: "wrap", marginTop: "1%" }}
         >
@@ -228,7 +350,7 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#ffa081",
+              borderColor: "#ffcb08",
               paddingLeft: "4%",
               borderRadius: 4,
               marginLeft: "11.5%",
@@ -252,7 +374,7 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#fd97bc",
+              borderColor: "#f36f21",
               paddingLeft: "4%",
               borderRadius: 4,
               marginLeft: "11.5%",
@@ -276,7 +398,7 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#384cfe",
+              borderColor: "#1bb1e7",
               paddingLeft: "4%",
               borderRadius: 4,
               marginLeft: "11.5%",
@@ -300,7 +422,7 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#ff74b7",
+              borderColor: "#eb3637",
               paddingLeft: "4%",
               borderRadius: 4,
               marginLeft: "11.5%",
@@ -325,7 +447,7 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#2EDF60",
+              borderColor: "#00a651",
               paddingLeft: "4%",
               borderRadius: 4,
               marginLeft: "11.5%",
@@ -350,18 +472,17 @@ class ImageScrollComponent extends Component {
               height: "45%",
               width: "17%",
               borderWidth: 3,
-              borderColor: "#000",
+              borderColor: "#1ed661",
               paddingLeft: "-12%",
               borderRadius: 4,
               marginLeft: "11.5%",
               marginTop: "3%",
             }}
           >
-            <FontAwesome5
-              name="biking"
-              color="#FF0000"
-              size={35}
-              style={{ marginLeft: "12%", marginTop: "5%" }}
+            <MaterialIcons name="directions-bike" 
+            size={33}
+            color="black"
+              style={{ marginLeft: "22%", marginTop: "7%" }}
             />
           </TouchableOpacity>
         </View>

@@ -1,5 +1,5 @@
 import HomeView from './src/View/HomeView'
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
@@ -41,7 +41,6 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   const navigationRef = useNavigationContainerRef();
-
   React.useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
 
@@ -97,9 +96,47 @@ function App() {
               <Stack.Screen
                 name="Bike"
                 component={BikeView}
-                options={() => ({ title: "" })}
+                options={{
+                  headerTitle: props => <MaterialIcons 
+                  name="directions-bike"
+                  size={40} 
+                  color="black"
+                  />,
+                  headerRight: () => (
+                    <TouchableOpacity
+                      
+                    >
+                     <MaterialIcons name="question-mark" size={40} color="black" />
+                    </TouchableOpacity>
+                  ),
+                  headerLeft: (props) => <View style={{flexDirection:'row',alignItems:'center'}}>
+                    <TouchableOpacity onPress={()=>navigationRef.navigate('Home')}>
+                      <Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" />
+                      </TouchableOpacity></View>,
+                }}
               />
-              <Stack.Screen name="weather" component={WeatherView} options={{headerTitle:""}}/>
+              <Stack.Screen 
+              name="weather" 
+              component={WeatherView} 
+              options={{
+                headerTitle: props => <MaterialCommunityIcons 
+                name="weather-partly-cloudy" 
+                size={40} 
+                color="black" />,
+                headerRight: () => (
+                  <TouchableOpacity
+                   
+                  >
+                  <MaterialIcons name="notifications-none" size={40} color="black" />
+                  </TouchableOpacity>
+                ),
+                headerLeft: (props) => <View style={{flexDirection:'row',alignItems:'center'}}>
+                <TouchableOpacity onPress={()=>navigationRef.navigate('Home')}>
+                  <Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" />
+                  </TouchableOpacity></View>,
+              }}
+              />
+
               <Stack.Screen
                 name="Map"
                 component={MapLoot}
