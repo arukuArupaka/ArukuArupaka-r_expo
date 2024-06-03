@@ -327,7 +327,7 @@ class ImageScrollComponent extends Component {
                 fontWeight: 400,
               }}
             >
-              変更時間：{JSON.stringify(switchTime).substr(6,15) || '未設定'}
+              変更時間：{JSON.stringify(switchTime)?.substr(6,15) || '未設定'}
             </Text>
         </View>
         <Text
