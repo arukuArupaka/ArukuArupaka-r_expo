@@ -172,16 +172,16 @@ class ImageScrollComponent extends Component {
         color="black" 
         style={{
           position: "absolute",
-          zIndex:"100",
+          zIndex:100,
           transform: [{rotate: '90deg'}],
-          marginTop: "15%",
+          marginTop: 43,
           marginLeft: "40%",
           }}/>
         <Text style={{
           position:"absolute",
-          zIndex:"100",
+          zIndex:100,
           fontSize:20,
-          marginTop: "15%",
+          marginTop: 43,
           marginLeft: "50%"}}>
           南草津駅
           </Text>
@@ -190,16 +190,16 @@ class ImageScrollComponent extends Component {
         color="black" 
         style={{
           position: "absolute",
-          zIndex:"100",
+          zIndex:100,
           transform: [{rotate: '270deg'}],
-          marginTop: "110%",
+          marginTop: 425,
           marginLeft: "40%",
           }}/>
         <Text style={{
           position:"absolute",
-          zIndex:"100",
+          zIndex:100,
           fontSize:20,
-          marginTop: "110%",
+          marginTop: 425,
           marginLeft: "50%"}}>
           大学
           </Text>
@@ -208,15 +208,15 @@ class ImageScrollComponent extends Component {
         color="black" 
         style={{
           position: "absolute",
-          zIndex:"100",
-          marginTop: "50%",
+          zIndex:100,
+          marginTop: 150,
           marginLeft: "2%",
           }}/>
         <View style={{
           position:"absolute",
           flexDirection:'column',
-          zIndex:"100",
-          marginTop: "60%",
+          zIndex:100,
+          marginTop: 200,
           marginRight: "90%",
           marginLeft:"3%"
           }}>
@@ -227,16 +227,16 @@ class ImageScrollComponent extends Component {
         color="black" 
         style={{
           position: "absolute",
-          zIndex:"100",
+          zIndex:100,
           transform: [{rotate: '180deg'}],
-          marginTop: "50%",
+          marginTop: 150,
           marginLeft: "90%",
           }}/>
         <View style={{
           position:"absolute",
           flexDirection:'column',
-          zIndex:"100",
-          marginTop: "60%",
+          zIndex:100,
+          marginTop: 200,
           marginLeft: "92%"}}>
           <Text style={{fontSize:20}}>守山方面</Text>
           </View>
@@ -327,7 +327,7 @@ class ImageScrollComponent extends Component {
                 fontWeight: 400,
               }}
             >
-              変更時間：{JSON.stringify(switchTime)?.substr(6,15) || '未設定'}
+              {/* 変更時間：{JSON.stringify(switchTime)?.substr(6,15) || '未設定'} */}
             </Text>
         </View>
         <Text
