@@ -1,0 +1,221 @@
+{
+    "schedule": [
+        {
+            "week": "7",
+            "weekday": {
+                "date": "6",
+                "values": [
+                    37,
+                    47,
+                    52,
+                    57
+                ]
+            },
+            "saturday": {
+                "date": "7",
+                "values": [
+                    27,
+                    40,
+                    45
+                ]
+            },
+            "sunday": {
+                "date": "8",
+                "values": [
+                    27,
+                    47
+                ]
+            }
+        },
+        {
+            "week": "8",
+            "weekday": {
+                "date": "13",
+                "values": [
+                    16,
+                    22,
+                    37,
+                    45
+                ]
+            },
+            "saturday": {
+                "date": "14",
+                "values": [
+                    16,
+                    35,
+                    49
+                ]
+            },
+            "sunday": {
+                "date": "15",
+                "values": [
+                    16,
+                    33
+                ]
+            }
+        },
+        {
+            "week": "9",
+            "weekday": {
+                "date": "20",
+                "values": [
+                    2,
+                    5,
+                    9,
+                    12
+                ]
+            },
+            "saturday": {
+                "date": "21",
+                "values": [
+                    6,
+                    18,
+                    27
+                ]
+            },
+            "sunday": {
+                "date": "22",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        },
+        {
+            "week": "10",
+            "weekday": {
+                "date": "27",
+                "values": [
+                    18,
+                    30,
+                    45,
+                    52
+                ]
+            },
+            "saturday": {
+                "date": "28",
+                "values": [
+                    6,
+                    22,
+                    37
+                ]
+            },
+            "sunday": {
+                "date": "29",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        },
+        {
+            "week": "11",
+            "weekday": {
+                "date": "4",
+                "values": [
+                    2,
+                    16,
+                    20,
+                    32
+                ]
+            },
+            "saturday": {
+                "date": "5",
+                "values": [
+                    6,
+                    18,
+                    27
+                ]
+            },
+            "sunday": {
+                "date": "6",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        },
+        {
+            "week": "12",
+            "weekday": {
+                "date": "11",
+                "values": [
+                    2,
+                    5,
+                    20,
+                    35
+                ]
+            },
+            "saturday": {
+                "date": "12",
+                "values": [
+                    6,
+                    22,
+                    37
+                ]
+            },
+            "sunday": {
+                "date": "13",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        },
+        {
+            "week": "13",
+            "weekday": {
+                "date": "18",
+                "values": [
+                    2,
+                    16,
+                    32,
+                    52
+                ]
+            },
+            "saturday": {
+                "date": "19",
+                "values": [
+                    6,
+                    18,
+                    27
+                ]
+            },
+            "sunday": {
+                "date": "20",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        },
+        {
+            "week": "14",
+            "weekday": {
+                "date": "25",
+                "values": [
+                    2,
+                    16,
+                    32,
+                    52
+                ]
+            },
+            "saturday": {
+                "date": "26",
+                "values": [
+                    6,
+                    18,
+                    27
+                ]
+            },
+            "sunday": {
+                "date": "27",
+                "values": [
+                    6,
+                    22
+                ]
+            }
+        }
+    ]
+}
+
