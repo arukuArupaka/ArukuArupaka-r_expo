@@ -64,7 +64,6 @@ const Weather = () => {
       return "moon-waning-crescent";
     }
   };
-
   const [city, setCity] = useState("Kusatsu");
   const [currentWeatherData, setCurrentWeatherData] = useState(null);
   const [tomorrowWeatherData, setTomorrowWeatherData] = useState(null);
@@ -343,9 +342,9 @@ const Weather = () => {
               justifyContent: 'center',
               margin: 3, 
               padding: 5,
-              backgroundColor: '#f0f0f0',
+              backgroundColor: "#f0f0f0",
               borderWidth: 1, 
-              borderColor: '#ccc', 
+              borderColor: city=="Kusatsu" ? "#6D84FF" : "#f0f0f0", 
               borderRadius: 5, 
             }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>草津</Text>
             </TouchableOpacity>
@@ -360,9 +359,9 @@ const Weather = () => {
               justifyContent: 'center',
               margin: 3, 
               padding: 5,
-              backgroundColor: '#f0f0f0', 
+              backgroundColor: "#f0f0f0",
               borderWidth: 1, 
-              borderColor: '#ccc', 
+              borderColor: city=="Kyoto" ? "#6D84FF" : "#f0f0f0",
               borderRadius: 5, 
             }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>衣笠</Text>
             </TouchableOpacity>
@@ -378,8 +377,8 @@ const Weather = () => {
               margin: 3, 
               padding: 5,
               backgroundColor: '#f0f0f0', 
-              borderWidth: 1,
-              borderColor: '#ccc', 
+              borderWidth: 1.5,
+              borderColor: city=="Takatsuki" ? "#6D84FF":'#f0f0f0',
               borderRadius: 5, 
             }}><Text style={{ marginTop: 5, fontSize: 16 ,textAlign: 'center'}}>茨木</Text>
             </TouchableOpacity>
