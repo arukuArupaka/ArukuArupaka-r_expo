@@ -95,16 +95,35 @@ WSGI_APPLICATION = 'arukuarupaka.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         #'NAME': BASE_DIR / 'db.sqlite3',
+#         'NAME': 'kamoku',
+#         'USER': 'kamoku_user',
+#         'PASSWORD': 'jomIPTDpMlvkSXPHX4jnwj5sdxRTTqip',
+#         'HOST': 'dpg-co15r95jm4es73a8tblg-a.singapore-postgres.render.com',
+#         'PORT': '5432',
+#     }
+# }
+
+# Add these at the top of your settings.py
+from os import getenv
+from dotenv import load_dotenv
+
+# Replace the DATABASES section of your settings.py with this
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': BASE_DIR / 'db.sqlite3',
-        'NAME': 'kamoku',
-        'USER': 'kamoku_user',
-        'PASSWORD': 'jomIPTDpMlvkSXPHX4jnwj5sdxRTTqip',
-        'HOST': 'dpg-co15r95jm4es73a8tblg-a.singapore-postgres.render.com',
-        'PORT': '5432',
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': getenv('PGDATABASE'),
+    'USER': getenv('PGUSER'),
+    'PASSWORD': getenv('PGPASSWORD'),
+    'HOST': getenv('PGHOST'),
+    'PORT': getenv('PGPORT', 5432),
+    'OPTIONS': {
+      'sslmode': 'require',
+    },
+  }
 }
 
 # DATABASES = {
