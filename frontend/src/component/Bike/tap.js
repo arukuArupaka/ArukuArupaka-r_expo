@@ -279,7 +279,7 @@ class ImageScrollComponent extends Component {
         </ScrollView>
 
         <View style={{ marginLeft: "50%" }}>
-        <View style={{ alignItems: "center", marginTop: "10%" }}/>
+        <View style={{ alignItems: "center", marginTop: "18%" }}/>
         </View>
         <View
           style={{
