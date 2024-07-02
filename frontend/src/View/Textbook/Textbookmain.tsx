@@ -20,16 +20,7 @@ const Tab = createBottomTabNavigator();
 // ];
 
 export const Textbookmain = () => {
-  return(
-    <View
-    style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-    <Text>教科書フリーマーケット　近日公開予定</Text>
-  </View>
-  )
+
   return(
       <Tab.Navigator>
         

@@ -816,8 +816,8 @@ const TimrTableView = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      {showTutorial1 && (
-        <Dialog.Container visible={showTutorial1}>
+      {!showTutorial1 && (
+        <Dialog.Container visible={true}>
           <Dialog.Title>チュートリアル（1/2）</Dialog.Title>
           <Dialog.Description>
             授業開始前に教室の場所を通知する機能です。

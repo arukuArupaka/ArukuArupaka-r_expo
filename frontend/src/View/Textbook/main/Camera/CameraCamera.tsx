@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Platform,
   ScrollView,
+  Alert,
 } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
@@ -149,6 +150,7 @@ export const CameraCamera = ({ route }) => {
   ) => {
     // ユーザーのログイン状態を確認する
     if (!auth.currentUser) {
+      Alert.alert("ログイン白や")
       // ユーザーがログインしていない場合は、ログインページにリダイレクトするなどの処理を行う
       return;
     }
@@ -259,7 +261,9 @@ export const CameraCamera = ({ route }) => {
           style={{ height: 20, paddingLeft: "5%", marginTop: "4%" }}
         ></FontAwesome>
         <TextInput
-          style={{ marginLeft: "3%" }}
+          style={{ marginLeft: "3%" ,
+            flex:1
+          }}
           placeholder="商品名"
           value={productName}
           onChangeText={setproductName}
@@ -322,6 +326,10 @@ export const CameraCamera = ({ route }) => {
           }}
         >
           <TextInput
+           style={{
+            width: "100%",
+            height: "100%",
+          }}
             value={description}
             onChangeText={setdescription}
           ></TextInput>

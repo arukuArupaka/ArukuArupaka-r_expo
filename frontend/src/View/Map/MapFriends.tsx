@@ -1,5 +1,5 @@
 import React ,{useEffect, useState} from 'react';
-import {Text, View,StyleSheet,Linking, TouchableOpacity,Image} from 'react-native';
+import {Text,Alert, View,StyleSheet,Linking, TouchableOpacity,Image} from 'react-native';
 import MapMyselfContainer from '../../component/Map/MapMyselfContainer';
 import {useSelector,useDispatch} from 'react-redux';
 import { handleLoginAfterPageName } from '../../redux/actions/commonAction';
@@ -16,6 +16,14 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Dispatch } from 'redux';
 
 const MapFriendsView = ({ navigation }) => {
+
+  Alert.alert(
+    '位置情報共有は準備中です', 
+    '現在使うことができません',
+[
+
+  {text: 'OK', onPress: () =>navigation.navigate("main")},
+]);
 
   const userObject=useSelector((state)=>state.user.userObject)
   const mapUserObject =useSelector((state)=>state.map.mapUserObject)
