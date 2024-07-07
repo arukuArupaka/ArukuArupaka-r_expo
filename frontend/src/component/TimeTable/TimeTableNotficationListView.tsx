@@ -45,7 +45,12 @@ const HelloWorldApp = () => {
 };
 const styles = StyleSheet.create({
   body:{
-
+    marginTop:20,
+    marginBottom:40,
+    borderRadius:10,
+    marginHorizontal:15,
+    paddingHorizontal:5,
+    backgroundColor:"white"
   }
 })
 export default HelloWorldApp;
