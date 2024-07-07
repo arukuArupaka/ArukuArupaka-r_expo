@@ -16,11 +16,12 @@ const TimeTableNotificationsList = (props) => {
   return (
     <View
       style={{
-        height:80,
+        minHeight:80,
         flexDirection:'row',
         alignItems: 'center',
         borderColor:'#888888',
         borderBottomWidth:1,
+        borderColor:"#AFAFAF"
       }}>
       <Text style={{ flex:1,justifyContent: 'space-between',}}>{"  "+props.data.title}</Text>
       <TouchableOpacity onPress={()=>{Notifications.cancelScheduledNotificationAsync(props.data.id);}}>
