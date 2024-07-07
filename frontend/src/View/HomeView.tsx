@@ -37,6 +37,8 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import NewAppList from "../component/Home/NewAppList.tsx";
+import { Foundation } from '@expo/vector-icons';
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -295,12 +297,13 @@ console.log(userIconImageUri)
           />
         </View>
         <View style={styles.appListFlex}>
-        <AppList
+        <NewAppList
             appName="リンク一覧"
             color="#EB97A8"
             test={props}
             jumpPage="PortalAccess"
-            Foundation name="page-copy"
+            iconName="page-copy"
+            item={()=><Foundation name="page-copy" size={30} color="#EB97A8" />}
           />
           <AppList
             appName="教科書     フリマ"
@@ -309,6 +312,7 @@ console.log(userIconImageUri)
             jumpPage="ホーム"
             iconName="book-multiple"
           />
+          
         </View>
        {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
           <AppList
