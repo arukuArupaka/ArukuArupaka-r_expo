@@ -46,8 +46,9 @@ const PortalItem = (props) => {
         }}
       >
         <Image
-          source={{ uri: props.logoMark }}
+          source={props.logoMark?{ uri: props.logoMark }:require("../../image/no_image.jpg")}
           style={{
+            borderRadius:5,
             width: 60,
             height: 60,
             margin: 10

@@ -8,53 +8,99 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const PortalAccess = () => {
   const linklist = [
     {
-      logoMark: 'https://th.bing.com/th?id=ODLS.d7e6cdc6-a6e4-4e1c-85b1-c1e826e9975b&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2',
-      name: 'English Expedition',
-      webnavigate: 'https://www.ee.ritsumei.ac.jp/index.html',
-      category:['学内施設','留学'],
-      herf:"英語",
-      id:'1'
+   //   logoMark: 'https://th.bing.com/th?id=OIP.8Zyd4GpsM1tYW9vz1ELH8AHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
+      name: 'manaba+R 未提出レポート',
+      webnavigate: 'https://ct.ritsumei.ac.jp/ct/home_summary_report',
+      category: ['学びサポート',"学生生活"],
+      herf: 'manaba, 学びサポート, オンライン学習, コース管理, 課題提出, 学習プラットフォーム, eラーニング, 教育ツール, 学習管理, 学生ポータル, 授業資料, 学習サポート, 課題管理, テスト, 学生連絡, コース内容, 学習進捗, 学生アシスタンス, 教育支援',
+      id: '11'
     },
     {
-      logoMark: 'https://th.bing.com/th?id=OIP.XC8iVR__3Gq3iTu7RUb1IQAAAA&w=181&h=181&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-      name: '立命館大学図書館',
-      webnavigate: 'https://www.ritsumei.ac.jp/lib/',
-      category: ['学内施設'],
-      herf:"",
-      id:'2'
+        logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
+        name: '立命館大学図書館',
+        webnavigate: 'https://www.ritsumei.ac.jp/lib/',
+        category: ['学内施設'],
+        herf: '図書館, 学内施設, 本, 勉強, リサーチ, 読書, 学術資料, 文献, 資料検索, 図書館利用, 学生サポート, 研究, レファレンス, 自習室, 静かな場所, 学術書, 蔵書, 図書館サービス',
+        id: '2'
     },
     {
-      logoMark: 'https://th.bing.com/th?id=OIP.XC8iVR__3Gq3iTu7RUb1IQAAAA&w=181&h=181&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-      name: 'BKC体育館・ジム',
-      webnavigate: 'https://www.ritsumei.ac.jp/lifecareer/activity/facility/gym/bkc/',
-      category: ['学内施設'],
-      herf:"",
-      id:'3'
+        logoMark: 'https://th.bing.com/th?id=OIP.8Zyd4GpsM1tYW9vz1ELH8AHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
+        name: 'manaba+R',
+        webnavigate: 'https://ct.ritsumei.ac.jp/ct/home',
+        category: ['学びサポート'],
+        herf: 'manaba, 学びサポート, オンライン学習, コース管理, 課題提出, 学習プラットフォーム, eラーニング, 教育ツール, 学習管理, 学生ポータル, 授業資料, 学習サポート, 課題管理, テスト, 学生連絡, コース内容, 学習進捗, 学生アシスタンス, 教育支援',
+        id: '9'
     },
     {
-      logoMark: 'https://th.bing.com/th?id=OIP.8Zyd4GpsM1tYW9vz1ELH8AHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-      name: 'manaba+R',
-      webnavigate: 'https://ct.ritsumei.ac.jp/ct/home',
-      category: ['学びサポート'],
-      herf:"",
-      id:'4'
+        name: '食堂メニュー',
+        webnavigate: 'https://west2-univ.jp/sp/ritsmei.php',
+        category: ['学生生活',"フード"],
+        herf: '食堂, メニュー, 学生生活, 食事, ランチ, 夕食, 学食, フード, キャンパスランチ, カフェテリア, レストラン, 学食メニュー, 食事の選択肢, 料理, 健康食, 食事の場所, 栄養, バランスの取れた食事, 学生食堂, 食事サービス',
+        id: '10'
     },
     {
-      logoMark: 'https://th.bing.com/th?id=OIP.8Zyd4GpsM1tYW9vz1ELH8AHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-      name: 'manaba+R',
-      webnavigate: 'https://ritsumei.ac.jp/ct/home',
-      category: ['学びサポート'],
-      herf:"",
-      id:'5'
+        logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
+        name: 'キャンパス間バス',
+        webnavigate: 'https://www.ritsumei.ac.jp/infostudents/shuttlebus/',
+        category: ['学内施設', '学生生活'],
+        herf: 'シャトルバス, キャンパス間バス, 学内施設, 学生生活, 交通, 通学, バス利用, 移動, 便利, バススケジュール, 交通手段, 学生交通, 通学手段, シャトルサービス, 交通案内, キャンパス間移動, バス停, 交通サポート, 通学支援',
+        id: '8'
+    },
+    {
+        logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
+        name: '立命館大学図書館（施設予約）',
+        webnavigate: 'https://runners.ritsumei.ac.jp/opac/rsv/?lang=0',
+        category: ['学内施設'],
+        herf: '図書館, 施設予約, 学内施設, 勉強スペース, 予約, 学習環境, 施設利用, 図書館予約, スペース確保, 研究室, 会議室, 自習スペース, 読書スペース, 図書館機能, 利用予約, 学生利用, 図書館システム',
+        id: '3'
+    },
+    {
+        logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
+        name: 'BKC体育館・ジム',
+        webnavigate: 'https://www.ritsumei.ac.jp/lifecareer/activity/facility/gym/bkc/',
+        category: ['学内施設'],
+        herf: '体育館, ジム, 学内施設, 運動, フィットネス, トレーニング, スポーツ, エクササイズ, 体力作り, 健康, ワークアウト, スポーツ施設, フィットネスセンター, ジム利用, スポーツサポート, 運動機器, 体育活動, 学生運動, スポーツクラブ',
+        id: '7'
+    },
+    {
+        logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
+        name: '2024年度 立命館大学 学年暦 学部',
+        webnavigate: 'https://www.ritsumei.ac.jp/file.jsp?id=603970&f=.pdf',
+        category: ['学びサポート'],
+        herf: '学年暦, 学部, 学び, 年度計画, スケジュール, 学生カレンダー, 学期, 授業期間, 休暇期間, 試験日程, 学内行事, 学習計画, 時間割, 大学生活, 学生スケジュール, アカデミックカレンダー, 授業スケジュール, 学生行事, 大学カレンダー',
+        id: '4'
+    },
+    {
+        name: '立命館サークルコレクション',
+        webnavigate: 'https://college.ritsumei.club/circle/',
+        category: ['学生生活'],
+        herf: 'サークル, 学生生活, クラブ活動, コミュニティ, 趣味, 学生団体, サークル活動, 学生クラブ, 社交, 趣味活動, グループ活動, 学生ネットワーク, サークル参加, イベント, 学生活動, ボランティア, 文化活動, サークル紹介, 学生交流',
+        id: '5'
+    },
+    {
+        name: 'SPORTS&CULTURE',
+        webnavigate: 'https://www.ritsumei.ac.jp/sports-culture/all/group/',
+        category: ['学生生活'],
+        herf: 'スポーツ, 文化, 学生生活, クラブ, アクティビティ, 体育, 芸術, 文化活動, スポーツクラブ, 文化クラブ, 学生アクティビティ, 競技, トレーニング, 部活動, 体育施設, 文化施設, 学生イベント, 健康, フィットネス, スポーツ大会',
+        id: '6'
+    },
+    {
+        logoMark: 'https://th.bing.com/th?id=ODLS.d7e6cdc6-a6e4-4e1c-85b1-c1e826e9975b&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2',
+        name: 'English Expedition',
+        webnavigate: 'https://www.ee.ritsumei.ac.jp/index.html',
+        category: ['学びサポート', '留学'],
+        herf: '英語, 留学, 学び, 英語学習, 海外, 言語学習, 英語スキル, 英会話, 英語教材, 海外留学, 語学, TOEFL, IELTS, 留学準備, 英語サポート, 英語教育, 英語能力, 英語力向上',
+        id: '1'
     }
-  ];
+];
   const limitItem = [
     { name: 'すべて' },
-    { name: '学内施設' },
     { name: '学びサポート' },
-    { name: '研究室' },
-    { name: '留学' },
+    { name: '学生生活' },
+    { name: '学内施設' },
     { name: 'フード' },
+    { name: '留学' },
+    { name: '研究室' },
   ];
 
   const [text, onChangeText] = React.useState('');
@@ -95,7 +141,7 @@ const PortalAccess = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     searchSection: {
       height: 40,
@@ -144,7 +190,7 @@ const PortalAccess = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ marginTop: 50 }} />
+      <View style={{ marginTop: 20 }} />
       <View style={{ height: 40 }}>
         <ScrollView horizontal={true} style={{ width: "100%" }}>
           {limitItem.map((item, index) => (
@@ -157,7 +203,8 @@ const PortalAccess = () => {
           ))}
         </ScrollView>
       </View>
-      <View style={{ borderBottomWidth: 1 }}>
+      <ScrollView style={{ borderBottomWidth: 1 
+}}>
         {sortedLinks.map((item, index) => (
           <PortalItem
             id={item.id}
@@ -170,7 +217,7 @@ const PortalAccess = () => {
             locksite={lockedItems.includes(item.id)}
           />
         ))}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
