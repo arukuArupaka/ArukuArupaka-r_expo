@@ -34,6 +34,7 @@ import { InstantSearch } from 'react-instantsearch-core';
 import algoliasearch from 'algoliasearch/lite';
 import RitsuMatch from './src/View/RitsuMatch';
 import KitchenCarDetailView from './src/component/Map/KitchenCarDetailView';
+import PortalAccess from './src/View/PortalAccess';
 const searchClient = algoliasearch('8LXF97V2DN', 'd9e686fcc36b490017d240823c242f19'); //algoliaのapplicationIDとadmin API key
 
 
@@ -125,7 +126,7 @@ function App() {
                 color="black" />,
                 headerRight: () => (
                   <TouchableOpacity
-                   
+                    onPress={() => navigation.navigate("TimeTableSetting")}
                   >
                   <MaterialIcons name="notifications-none" size={40} color="black" />
                   </TouchableOpacity>
@@ -141,6 +142,17 @@ function App() {
                 name="Map"
                 component={MapLoot}
                 options={{ headerShown: false}}
+              />
+              <Stack.Screen
+                name="PortalAccess"
+                component={PortalAccess}
+                options={{
+                  headerTitle: props => (""),
+                  headerLeft: (props) => <View style={{flexDirection:'row',alignItems:'center'}}>
+                  <TouchableOpacity onPress={()=>navigationRef.navigate('Home')}>
+                  <Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" />
+                  </TouchableOpacity></View>} 
+                }
               />
               <Stack.Screen
                 name="textbook"

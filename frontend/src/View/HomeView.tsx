@@ -13,8 +13,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeCarousel from "../component/Home/HomeViewCarousel";
+import { Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
+import HomeCarousel from "../component/Home/HomeViewCarousel.jsx";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -291,6 +291,15 @@ console.log(userIconImageUri)
             test={props}
             jumpPage="TimeTable"
             iconName="file-table"
+          />
+        </View>
+        <View style={styles.appListFlex}>
+        <AppList
+            appName="リンク一覧"
+            color="#EB97A8"
+            test={props}
+            jumpPage="PortalAccess"
+            Foundation name="page-copy"
           />
         </View>
        {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
