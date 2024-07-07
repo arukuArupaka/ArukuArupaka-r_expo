@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Text, View,Image,Switch} from 'react-native';
+import {Text, View,Image,Switch, Alert} from 'react-native';
 import {useSelector,useDispatch} from 'react-redux';
 import { doc, setDoc } from '@firebase/firestore';
 import { db } from '../../../firebase';
@@ -55,8 +55,11 @@ const MapMyselfContainer = () => {
         </View>
         <Text>{isShowMyLocation?'自分の位置を表示':'自分の位置を非表示'}</Text>
         <Switch 
-            onValueChange={toggleSwitch}
-            value={isShowMyLocation}/>
+            onValueChange={()=>Alert.alert("準備中です。","")}
+            value={false}
+            // onValueChange={toggleSwitch}
+            // value={isShowMyLocation}
+            />
       </View>
     </View>
   );
