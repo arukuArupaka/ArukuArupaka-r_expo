@@ -39,7 +39,8 @@ const PortalItem = (props) => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
+          width:"85%"
         }}
         onPress={() => {
           navigation.navigate("HomeWebSite", props.webnavigate)
