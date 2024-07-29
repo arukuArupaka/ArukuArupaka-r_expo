@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "歩くアルパカ＋R",
+    "slug": "arukuarupaka",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/main_icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash_arupaka.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.arukuarupaka",
+      "buildNumber": "1.0.0",
+      "config": {
+        "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+      }
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+        }
+      },
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "WRITE_EXTERNAL_STORAGE",
+        "CAMERA_ROLL",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/main_icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.arukuarupaka"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {}
+    },
+    "owner": "arukuarupakabuild"
+  }
+}

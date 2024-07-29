@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "345656246915",
+    "project_id": "arukuarupaka-6e101",
+    "storage_bucket": "arukuarupaka-6e101.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345656246915:android:91b8f8424ee823d57c51b6",
+        "android_client_info": {
+          "package_name": "com.arukuarupaka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwagFd9ysris-L-Lm2Ad5Rt6PZyy5Kme0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
