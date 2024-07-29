@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>検索結果</title>
+</head>
+<body>
+    <h1>検索結果</h1>
+    <h3>{{ count }}件が見つかりました</h2>
+    <ul>
+        {% for result in results %}
+        <li>授業名:{{ result.kamoku_name }}</li>
+        <li>教室:{{ result.kamoku_class }}</li>
+        <li>教授:{{ result.kamoku_teacher }}</li>
+        <li>学科:{{ result.kamoku_department}}</li>
+        <li>セメスター:{{ result.kamoku_season }}</li>
+        <li>曜日:{{ result.kamoku_day }}</li>
+        <li>時限:{{ result.kamoku_time }}</li>
+        <li>単位数:{{ result.kamoku_unit }}</li>
+        <li>授業コード:{{ result.kamoku_num }}</li>
+        <li>レジュメ:{{ result.kamoku_resume }}</li>
+        <br>
+        {% endfor %}
+    </ul>
+</body>
+</html>

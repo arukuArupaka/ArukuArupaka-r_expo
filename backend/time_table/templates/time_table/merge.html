@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>マージ</title>
+</head>
+<body>
+    <h1>科目情報をマージする</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <select name = "department_select">
+            <option value="">学科</option>
+            <option value="2">法学部</option>
+            <option value="3">経済学部</option>
+            <option value="4">経営学部</option>
+            <option value="5">産業社会学部</option>
+            <option value="6">国際関係学部</option>
+            <option value="7">政策科学部</option>
+            <option value="8">文学部</option>
+            <option value="9">映像学部</option>
+            <option value="10">総合心理学部</option>
+            <option value="11">理工学部</option>
+            <option value="12">グローバル教養学部</option>
+            <option value="13">食マネジメント学部</option>
+            <option value="14">情報理工学部</option>
+            <option value="15">生命科学部</option>
+            <option value="16">薬学部</option>
+            <option value="17">スポーツ健康学部</option>
+        </select>
+        <button type="submit">マージする</button>
+    </form>
+</body>
+</html>
+
