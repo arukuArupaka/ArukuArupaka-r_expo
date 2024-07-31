@@ -7,7 +7,7 @@ export const CameraHome = ({ navigation }) => {
 
   return (
     <View>
-      <HeaderforTextbook2 />
+      {/* <HeaderforTextbook2 /> */}
       <View style={styles.main}>
         <View
           style={{

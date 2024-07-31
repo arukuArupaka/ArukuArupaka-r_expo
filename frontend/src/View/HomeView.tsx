@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  Vibration,
   Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -293,7 +294,7 @@ console.log(userIconImageUri)
             iconName="file-table"
           />
         </View>
-       {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
+       {Platform.OS!=="ios"||true&& <View style={styles.appListFlex}>
           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"

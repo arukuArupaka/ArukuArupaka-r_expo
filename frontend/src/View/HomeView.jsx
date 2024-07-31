@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  Vibration,
   Alert,
   Platform,
 } from "react-native";

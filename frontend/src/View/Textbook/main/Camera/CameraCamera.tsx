@@ -30,6 +30,7 @@ import {
   auth,
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
 
 export const CameraCamera = ({ route }) => {
   const [images, setImages] = useState(Array(4).fill(null));
@@ -172,6 +173,7 @@ export const CameraCamera = ({ route }) => {
         description,
         price,
         userId: userId, // ユーザーのuidを保存する
+        createdAt: serverTimestamp() // 作成日時をサーバーのタイムスタンプで設定
       });
       console.log("Document written with ID: ", docRef.id);
 

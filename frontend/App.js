@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
-import {Textbook} from './src/View/Textbook/TextbookView';
+import {TextbookNavigateRoot} from './src/View/Textbook/TextbookNavigateRoot';
 import MapView from './src/View/Map/MapMain'
 import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
@@ -142,13 +142,13 @@ function App() {
                 component={MapLoot}
                 options={{ headerShown: false}}
               />
-              <Stack.Screen
-                name="textbook"
-                component={Textbook}
+              {/* <Stack.Screen
+                name="TextbookNavigateRoot"
+                component={TextbookNavigateRoot}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="settings"
                 component={ASetting}
@@ -196,22 +196,9 @@ function App() {
                 component={RitsuMatch}
                 options={() => ({ title: "" })}
               />
-               <Stack.Screen name="ホーム" component={Textbook}
-            options={({navigation})=>({
-              headerStyle: {
-                backgroundColor: '#F36F21',
-              },
-              headerRight: () => (
-                <TouchableOpacity onPress={() => navigation.navigate('サーチサーチ')}>
-                  <Ionicons name="search" size={30} color="black" />
-                </TouchableOpacity>
-              ),
-              headerTitle:() => (
-                <TouchableOpacity>
-                  <Feather name="shopping-cart" size={24} color="black" />
-                </TouchableOpacity>
-              ),
-            })} />
+               <Stack.Screen name="ホーム" component={TextbookNavigateRoot}
+               options={{headerShown:false}}
+            />
 
           {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
           {/* <Stack.Screen name="settings" component={ASetting}/> */}
