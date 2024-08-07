@@ -128,6 +128,7 @@ export const TextbookHome = () => {
     let scrollViewHeight = e.nativeEvent.layoutMeasurement.height // scrollViewの高さ
 
     if (offsetY + scrollViewHeight >= contentSizeHeight-40) {
+      console.log('End Scroll')
       getNextData()
     }
   }

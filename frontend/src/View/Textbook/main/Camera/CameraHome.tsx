@@ -7,7 +7,6 @@ export const CameraHome = ({ navigation }) => {
 
   return (
     <View>
-      {/* <HeaderforTextbook2 /> */}
       <View style={styles.main}>
         <View
           style={{
@@ -16,7 +15,7 @@ export const CameraHome = ({ navigation }) => {
             height: '75%'
           }}>
 
-          <TwoBox boxname='下書き一覧' iconName='draw' Screen='下書き一覧' navigation={navigation} Color='lightgreen' IconColor='mediumseagreen' />
+          {/* <TwoBox boxname='下書き一覧' iconName='draw' Screen='下書き一覧' navigation={navigation} Color='lightgreen' IconColor='mediumseagreen' /> */}
           <TwoBox boxname='出品する' iconName='camera-plus' Screen='出品する' navigation={navigation} Color='lightblue' IconColor='cornflowerblue'/>
 
         </View>

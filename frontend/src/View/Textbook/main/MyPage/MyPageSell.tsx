@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { HeaderforTextbook4 } from "../../../../component/Textbook/HeaderforTextbook4";
 import { db, collection, getDocs } from "../../../../../firebase";
-import { limit, orderBy, query, where } from "firebase/firestore";
+import { deleteDoc, doc, limit, orderBy, query, where } from "firebase/firestore";
 import { useSelector } from "react-redux";
 
 export const MyPageSell = ({}) => {
@@ -76,14 +76,29 @@ export const MyPageSell = ({}) => {
     setModalVisible(false);
   };
 
+  const deleteProduct = async () => {
+    if (!selectedProduct) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "syuppinn", selectedProduct.id));
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== selectedProduct.id)
+      );
+      closeModal();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <View>
-      {/* <HeaderforTextbook4 /> */}
       <ScrollView style={styles.draft}>
         {products.map((product) => (
           <TouchableOpacity key={product.id} onPress={() => openModal(product)}>
             <View style={styles.productItem}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ }}>
                 {product.images &&
                   product.images.map((imageUrl, index) => (
                     <Image
@@ -109,12 +124,7 @@ export const MyPageSell = ({}) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text>商品名：{selectedProduct?.productName}</Text>
-            <Text>使用学科：{selectedProduct?.department}</Text>
-            <Text>商品の状態：{selectedProduct?.condition}</Text>
-            <Text>説明：{selectedProduct?.description}</Text>
-            <Text>値段：{selectedProduct?.price}</Text>
-            {selectedProduct?.images &&
+          {selectedProduct?.images &&
               selectedProduct?.images.map((imageUrl, index) => (
                 <Image
                   key={index}
@@ -122,6 +132,14 @@ export const MyPageSell = ({}) => {
                   style={styles.image}
                 />
               ))}
+            <Text>商品名：{selectedProduct?.productName}</Text>
+            <Text>使用学科：{selectedProduct?.department}</Text>
+            <Text>商品の状態：{selectedProduct?.condition}</Text>
+            <Text>説明：{selectedProduct?.description}</Text>
+            <Text>値段：{selectedProduct?.price}</Text>
+            <TouchableOpacity onPress={()=>deleteProduct()}>
+              <Text style={styles.deleteButton}>出品取り下げる。</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={closeModal}>
               <Text style={styles.closeButton}>閉じる</Text>
             </TouchableOpacity>
@@ -137,6 +155,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   productItem: {
+    flexDirection: "row" ,
     borderWidth: 1,
     padding: 10,
     marginBottom: 10,
@@ -159,6 +178,13 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: "gray",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  deleteButton: {
+    color:"red",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
