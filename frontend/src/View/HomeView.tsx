@@ -294,7 +294,7 @@ console.log(userIconImageUri)
             iconName="file-table"
           />
         </View>
-       {Platform.OS!=="ios"||true&& <View style={styles.appListFlex}>
+       {true&& <View style={styles.appListFlex}>
           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"

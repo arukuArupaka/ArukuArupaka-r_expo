@@ -7,7 +7,7 @@ export const MyPageHome = ({navigation}) => {
   
   return(
     <View>
-      <HeaderforTextbook2/>
+     
       <View style={styles.main}>
         <View
           style={{
@@ -15,9 +15,6 @@ export const MyPageHome = ({navigation}) => {
             width: "80%",
             height: '80%'
           }}>
-
-          <ThreeBox boxname='購入した商品' iconName='hand-coin' Screen='マイページグッズ' navigation={navigation} Color='mediumseagreen' IconColor='seagreen'/>
-          <ThreeBox boxname='お気に入り' iconName='cards-heart' Screen='マイページお気に入り' navigation={navigation} Color='gold' IconColor='orange'/>
           <ThreeBox boxname='出品した商品' iconName='hand-pointing-right' Screen='マイページ出品' navigation={navigation} Color='skyblue' IconColor='dodgerblue'/>
 
         </View>
