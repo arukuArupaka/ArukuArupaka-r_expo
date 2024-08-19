@@ -19,13 +19,13 @@ export const TextbookNavigateRoot = () => {
           headerStyle: {
             backgroundColor: "#F36F21",
           },
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("サーチサーチ")}
-            >
-              <Ionicons name="search" size={30} color="black" />
-            </TouchableOpacity>
-          ),
+          // headerRight: () => (
+          //   <TouchableOpacity
+          //     onPress={() => navigation.navigate("サーチサーチ")}
+          //   >
+          //     <Ionicons name="search" size={30} color="black" />
+          //   </TouchableOpacity>
+          // ),
           headerTitle: () => (
             <TouchableOpacity>
               <Feather name="shopping-cart" size={24} color="black" />

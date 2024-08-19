@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { arrayRemove, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import TextBookChatView from "../../../View/Textbook/main/TextBookChatView";
 import { db } from "../../../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,11 +10,8 @@ import { useTimeTable } from "../../TimeTable/TimeTableContext";
 import { useSelector } from "react-redux";
 
 const TalkFriendListItemContainer = (props) => {
-  const { setUnreadMessageJSON, unreadMessagesJSON } = useTimeTable()
-     const userUUID=useSelector((state:State)=>state.user.userUUID||"") 
-
-
-
+  const { setUnreadMessageJSON, unreadMessagesJSON } = useTimeTable();
+  const userUUID = useSelector((state: State) => state.user.userUUID || "");
   const [roomID, setRoomID] = useState("");
   const [unreadMessagesDisplay, setUnreadMessagesDisplay] = useState([]);
   const navigation = useNavigation();
@@ -125,12 +122,10 @@ const TalkFriendListItemContainer = (props) => {
               }
             }
           }
-
           if (unreadMessages.length === 0) {
             setIsreadFirst(true);
             return;
           }
-
           setUnreadMessageJSON((prev) => {
             return {
               ...prev,
@@ -171,7 +166,7 @@ const TalkFriendListItemContainer = (props) => {
     getDate();
 
     const getRoomID = async () => {
-      const myID = userUUID
+      const myID = userUUID;
       const friendID = props.FriendData.id;
 
       if (myID.toLowerCase() < friendID.toLowerCase()) {
@@ -233,13 +228,38 @@ const TalkFriendListItemContainer = (props) => {
     refreshChatMessages();
   }, [unreadMessagesJSON[roomID], roomID]);
 
-  // useEffect(() => {
-  //   setUnreadMessageJSON({[roomID]:unreadMessagesDisplay});
-  // }, [unreadMessagesDisplay])
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const docRef = doc(db, "users", props.FriendData.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          console.log("Document data:241", docSnap.data());
+         // props.FriendData.name = docSnap.data().name;
+          setUserName(docSnap.data().userName);
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getUserData();
+  }, []);
 
   return (
     <TouchableOpacity
-      style={{borderTopWidth:1,borderTopColor:"silver",flexDirection:"row",paddingLeft:"2%",alignItems:"center",paddingVertical:"4%"}}
+      style={{
+        borderTopWidth: 1,
+        borderTopColor: "silver",
+        flexDirection: "row",
+        paddingLeft: "2%",
+        alignItems: "center",
+        paddingVertical: "4%",
+      }}
       onPress={() =>
         navigation.navigate("ChatView", {
           friend: { userid: props.FriendData.id },
@@ -248,7 +268,9 @@ const TalkFriendListItemContainer = (props) => {
     >
       <Ionicons name="person-circle-outline" size={50} color="orange" />
       <View className="flex-grow">
-        <Text className="text-xl">{props.FriendData.name?props.FriendData.name:"error"}</Text>
+        <Text className="text-xl">
+          {userName? userName: "error"}
+        </Text>
         <Text>
           {unreadMessagesJSON &&
             unreadMessagesJSON.hasOwnProperty(roomID) &&
@@ -263,11 +285,18 @@ const TalkFriendListItemContainer = (props) => {
         unreadMessagesJSON[roomID] &&
         unreadMessagesJSON[roomID].length != 0 && (
           <View
-          style={{backgroundColor:"orange",borderRadius:10}}
-           className="bg-[#30CB89] rounded-xl">
-            <Text 
-            style={{fontSize:20,color:"white",width:10,textAlign:"center"}}
-            className="text-lg color-white w-10 text-center">
+            style={{ backgroundColor: "orange", borderRadius: 10 }}
+            className="bg-[#30CB89] rounded-xl"
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                color: "white",
+                width: 10,
+                textAlign: "center",
+              }}
+              className="text-lg color-white w-10 text-center"
+            >
               {unreadMessagesJSON[roomID].length}
             </Text>
           </View>

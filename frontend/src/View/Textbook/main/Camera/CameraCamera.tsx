@@ -85,9 +85,14 @@ export const CameraCamera = ({ route }) => {
 
     if (!result.canceled) {
       const newImages = [...images];
-      newImages[index] = result.uri;
+      console.log(newImages);
+      newImages[index] = result.assets[0].uri;
+      console.log(result.assets[0].uri);
+      console.log(newImages);
+
       setImages(newImages);
     }
+
   };
 
   const saveDraft = async (
@@ -151,7 +156,7 @@ export const CameraCamera = ({ route }) => {
   ) => {
     // ユーザーのログイン状態を確認する
     if (!auth.currentUser) {
-      Alert.alert("ログイン白や")
+      Alert.alert("ログイン白や", "出品するにはログインが必要です");
       // ユーザーがログインしていない場合は、ログインページにリダイレクトするなどの処理を行う
       return;
     }
@@ -161,7 +166,7 @@ export const CameraCamera = ({ route }) => {
 
     // 全ての項目が入力されているか確認する
     if (!productName || !department || !condition || !description || !price) {
-      alert("全ての項目を入力してください");
+      Alert.alert("error","全ての項目を入力してください");
       return; // 出品を中止する
     }
 
@@ -219,9 +224,6 @@ export const CameraCamera = ({ route }) => {
 
   return (
     <View>
-
-      <HeaderforTextbook3 />
-
       <View style={styles.infomation}>
         <Ionicons
           name="information-circle"
@@ -232,7 +234,6 @@ export const CameraCamera = ({ route }) => {
           商品情報
         </Text>
       </View>
-
       <View style={styles.imageContainer}>
         {images.map((image, index) => (
           <TouchableOpacity
@@ -352,7 +353,7 @@ export const CameraCamera = ({ route }) => {
           <Text>円</Text>
         </View>
         <View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               saveDraft(
                 productName,
@@ -364,8 +365,9 @@ export const CameraCamera = ({ route }) => {
             }}
           >
             <Text>下書きを保存する</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
+          style={{backgroundColor:"orange",width:"90%",height:30,marginLeft:"5%",marginTop:"5%",justifyContent:"center",alignItems:"center",borderRadius:5}}
             onPress={() => {
               exhibit(
                 productName,
@@ -376,15 +378,10 @@ export const CameraCamera = ({ route }) => {
               );
             }}
           >
-            <Text>出品する</Text>
+            <Text style={{color:'white',fontWeight:"700"}}>出品する</Text>
           </TouchableOpacity>
         </View>
-
       </View>
-
-
-
-
     </View>
   );
 };

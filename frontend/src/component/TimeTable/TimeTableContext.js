@@ -79,6 +79,7 @@ export const TimeTableProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(`https://render-test-db-h83h.onrender.com/time_table/get/all/search/?kamoku_department=${department}&kamoku_day=${day}&kamoku_time=${time}&kamoku_season=${season}`)
       try {
         const response = await fetch(`https://render-test-db-h83h.onrender.com/time_table/get/all/search/?kamoku_department=${department}&kamoku_day=${day}&kamoku_time=${time}&kamoku_season=${season}`);
         if (!response.ok) {
