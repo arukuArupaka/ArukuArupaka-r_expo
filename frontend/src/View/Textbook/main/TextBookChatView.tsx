@@ -173,6 +173,14 @@ const TalkBookChatView = ({ navigation }) => {
     },
   ];
 
+  if(!useSelector((state:any)=>state.user.isLogin)){
+    return(
+      <View style={{justifyContent:"center",alignItems:"center",flex:1}}>
+
+        <Text style={{textAlign:"center"}}>ログインしてください</Text>
+      </View>)
+  }
+
   return (
     <View style={{ flex: 1, alignItems: "center" }} className="w-full bg-black">
       <ScrollView
