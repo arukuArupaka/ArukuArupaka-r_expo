@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import {MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { TextbookLogin } from "./main/TextbookLogin";
 import { TextbookFootNavigate } from "./TextbookFootNavigate";
 import TextBookBuyDetail from "./main/TextBookBuyDetail";
@@ -19,13 +19,14 @@ export const TextbookNavigateRoot = () => {
           headerStyle: {
             backgroundColor: "#F36F21",
           },
-          // headerRight: () => (
-          //   <TouchableOpacity
-          //     onPress={() => navigation.navigate("サーチサーチ")}
-          //   >
-          //     <Ionicons name="search" size={30} color="black" />
-          //   </TouchableOpacity>
-          // ),
+          headerLeft: () => (
+            <TouchableOpacity
+            onPress={() => navigation.navigate("Home")}
+              // onPress={() => navigation.navigate("サーチサーチ")}
+            >
+             <MaterialIcons name="arrow-back-ios" size={30} color="black"  style={{ marginLeft: 10 }}/>
+            </TouchableOpacity>
+          ),
           headerTitle: () => (
             <TouchableOpacity>
               <Feather name="shopping-cart" size={24} color="black" />
