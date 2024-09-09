@@ -5,7 +5,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  ImageBackground,
   Image,
   TouchableOpacity,
 } from "react-native";
@@ -141,10 +140,41 @@ const TalkBookChatView = ({ navigation }) => {
   });
 
   const [DMList, setDMList] = useState([]);
+  const [DMExhibitList, setDMExhibitList] = useState([]);
 
   useEffect(() => {
+    getbuyFriendData();
     getFriendData();
   }, []);
+
+  const getbuyFriendData = async () => {
+    const friendData = [];
+    const syuppinnCollectionRef = collection(db, "syuppinn");
+
+    // buyUserが指定したuserUUIDと一致するドキュメントを検索
+    const q = query(syuppinnCollectionRef, where("buyUser", "==", userUUID));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // データをfriendDataに追加
+        friendData.push({ bookID: doc.id, ...doc.data() });
+      });
+
+      // 取得したデータをセット
+      setDMList(friendData);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    }
+  };
+
+  const scrollToPurchase = () => {
+    scrollViewRef.current?.scrollTo({ x: 0, animated: true });
+  };
+
+  const scrollToExhibit = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  };
 
   const getFriendData = async () => {
     const friendData = [];
@@ -155,7 +185,7 @@ const TalkBookChatView = ({ navigation }) => {
         friendData.push({ id: friend });
       });
     }
-    setDMList(friendData);
+    setDMExhibitList(friendData);
   };
 
   const mockFriendData = [
@@ -173,29 +203,107 @@ const TalkBookChatView = ({ navigation }) => {
     },
   ];
 
-  if(!useSelector((state:any)=>state.user.isLogin)){
-    return(
-      <View style={{justifyContent:"center",alignItems:"center",flex:1}}>
+  console.log(DMList);
 
-        <Text style={{textAlign:"center"}}>ログインしてください</Text>
-      </View>)
+  if (!useSelector((state: any) => state.user.isLogin)) {
+    return (
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+        <Text style={{ textAlign: "center" }}>ログインしてください</Text>
+      </View>
+    );
   }
 
   return (
-    <View style={{ flex: 1, alignItems: "center" }} className="w-full bg-black">
-      <ScrollView
-        pagingEnabled={true}
-        ref={scrollViewRef}
-        style={{ width: windowWidth, paddingTop: "10%" }}
-      >
-        <View style={{ width: windowWidth }} className="border-b border-silver">
-          {DMList.map((FriendData) => (
-            <TalkFriendListItemContainer FriendData={FriendData} />
-          ))}
-        </View>
+    <View style={{ flex: 1 }} className="w-full bg-black">
+      <View style={{ flexDirection: "row", width: "100%", marginTop: 10 }}>
+        <TouchableOpacity
+          onPress={scrollToPurchase}
+          style={{
+            backgroundColor: "orange",
+            flex: 1,
+            paddingVertical: 10,
+            marginHorizontal: 20,
+            borderRadius: 20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontWeight: "600",
+              fontSize: 16,
+            }}
+          >
+            購入
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={scrollToExhibit}
+          style={{
+            backgroundColor: "orange",
+            flex: 1,
+            paddingVertical: 10,
+            marginHorizontal: 20,
+            borderRadius: 20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontWeight: "600",
+              fontSize: 16,
+            }}
+          >
+            出品
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView ref={scrollViewRef} horizontal={true} pagingEnabled={true}>
+        <ScrollView style={{ width: windowWidth, paddingTop: 5 }}>
+          <Text style={{textAlign:"center"}}>購入</Text>
+          <View
+            style={{ width: windowWidth }}
+            className="border-b border-silver"
+          >
+            {DMList.map((FriendData) => (
+              <TalkFriendListItemContainer FriendData={FriendData} />
+            ))}
+            <Text>{JSON.stringify(DMList)}</Text>
+          </View>
+        </ScrollView>
+        <ScrollView style={{ width: windowWidth, paddingTop: 5 }}>
+          <Text style={{textAlign:"center"}}>出品</Text>
+          <View
+            style={{ width: windowWidth }}
+            className="border-b border-silver"
+          >
+            {DMExhibitList.map((FriendData) => (
+              <TalkFriendListItemContainer FriendData={FriendData} />
+            ))}
+            <Text>{JSON.stringify(DMList)}</Text>
+          </View>
+        </ScrollView>
       </ScrollView>
     </View>
   );
 };
 
 export default TalkBookChatView;
+// [
+//   {
+//     buyUser: "k3KQIDC0z2ZakRa2XUqGvixu02e2",
+//     className: "Eee",
+//     condition: "やや傷や汚れあり",
+//     createdAt: [Object],
+//     department: "経営学部",
+//     description: "Eee",
+//     id: undefined,
+//     images: [
+//       "https://firebasestorage.googleapis.com/v0/b/arukuarupaka-6e101.appspot.com/o/syouhin%2Fp0hakIwubA4rWyTGvxIx%2Fimage0?alt=media&token=ea12a8d0-c5ac-4137-b1f5-2b9401b8ad7e",
+//     ],
+//     price: "111",
+//     productName: "Aaa",
+//     userId: "JoXEcpGeyueXE0fqlGSXVgqXD1a2",
+//   },
+// ];

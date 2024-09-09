@@ -276,7 +276,7 @@ const TalkFriendListItemContainer = (props) => {
       }}
       onPress={() =>
         navigation.navigate("ChatView", {
-          friend: { userid: props.FriendData.id },
+          chatData:{myID:userUUID,friendID:props.FriendData.id},
         })
       }
     >
@@ -313,7 +313,6 @@ const TalkFriendListItemContainer = (props) => {
             </Text>
           </View>
         )}
-      {/* <Text>{JSON.stringify(unreadMessagesJSON)}</Text> */}
     </TouchableOpacity>
   );
 };
