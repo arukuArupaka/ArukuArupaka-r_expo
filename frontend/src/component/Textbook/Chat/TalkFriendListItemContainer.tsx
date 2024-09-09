@@ -2,7 +2,13 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { arrayRemove, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import TextBookChatView from "../../../View/Textbook/main/TextBookChatView";
 import { db } from "../../../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,7 +16,7 @@ import { useTimeTable } from "../../TimeTable/TimeTableContext";
 import { useSelector } from "react-redux";
 
 const TalkFriendListItemContainer = (props) => {
-  const { setUnreadMessageJSON, unreadMessagesJSON } = useTimeTable();
+  const { setUnreadMessagesJSON, unreadMessagesJSON } = useTimeTable();
   const userUUID = useSelector((state: State) => state.user.userUUID || "");
   const [roomID, setRoomID] = useState("");
   const [unreadMessagesDisplay, setUnreadMessagesDisplay] = useState([]);
@@ -33,9 +39,10 @@ const TalkFriendListItemContainer = (props) => {
         );
         // リアルタイムリスナーを設定
         unsubscribe = onSnapshot(docRef, async (docSnapshot) => {
+          try{
           let unreadMessages = [];
 
-          const myID = userUUID;
+          const myID = userUUID
           const friendID = props.FriendData.id;
 
           if (myID.toLowerCase() < friendID.toLowerCase()) {
@@ -56,7 +63,7 @@ const TalkFriendListItemContainer = (props) => {
               `chatUnreadMessages_${roomGetID}`
             );
             console.log(JSON.parse(storedMessages));
-            if (JSON.parse(storedMessages).length !== 0) {
+            if (storedMessages!==null&&JSON.parse(storedMessages).length !== 0) {
               unreadMessages = JSON.parse(storedMessages);
             }
             console.log("getdata");
@@ -74,7 +81,7 @@ const TalkFriendListItemContainer = (props) => {
                 unreadMessagesJSON[roomGetID].length === 0
               ) {
                 console.log(unreadMessages);
-                setUnreadMessageJSON((prev) => {
+                setUnreadMessagesJSON((prev) => {
                   return {
                     ...prev,
                     [roomGetID]: removeDuplicates([...unreadMessages]),
@@ -122,11 +129,13 @@ const TalkFriendListItemContainer = (props) => {
               }
             }
           }
+
           if (unreadMessages.length === 0) {
             setIsreadFirst(true);
             return;
           }
-          setUnreadMessageJSON((prev) => {
+
+          setUnreadMessagesJSON((prev) => {
             return {
               ...prev,
               [roomGetID]: removeDuplicates([
@@ -136,6 +145,9 @@ const TalkFriendListItemContainer = (props) => {
             };
           });
           setIsreadFirst(true);
+        }catch(e){
+          console.error(e); 
+        }
         });
       }
     };
@@ -146,7 +158,7 @@ const TalkFriendListItemContainer = (props) => {
         }
         console.log(userUUID);
         console.log(props.id);
-        const myID = userUUID;
+        const myID = userUUID
         const friendID = props.FriendData.id;
 
         if (myID.toLowerCase() < friendID.toLowerCase()) {
@@ -166,7 +178,7 @@ const TalkFriendListItemContainer = (props) => {
     getDate();
 
     const getRoomID = async () => {
-      const myID = userUUID;
+      const myID = userUUID
       const friendID = props.FriendData.id;
 
       if (myID.toLowerCase() < friendID.toLowerCase()) {
@@ -196,6 +208,8 @@ const TalkFriendListItemContainer = (props) => {
       return false;
     });
   }
+
+  
 
   useEffect(() => {
     const refreshChatMessages = async () => {
@@ -237,7 +251,7 @@ const TalkFriendListItemContainer = (props) => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           console.log("Document data:241", docSnap.data());
-         // props.FriendData.name = docSnap.data().name;
+          // props.FriendData.name = docSnap.data().name;
           setUserName(docSnap.data().userName);
         } else {
           // doc.data() will be undefined in this case
@@ -268,9 +282,7 @@ const TalkFriendListItemContainer = (props) => {
     >
       <Ionicons name="person-circle-outline" size={50} color="orange" />
       <View className="flex-grow">
-        <Text className="text-xl">
-          {userName? userName: "error"}
-        </Text>
+        <Text className="text-xl">{userName ? userName : "error"}</Text>
         <Text>
           {unreadMessagesJSON &&
             unreadMessagesJSON.hasOwnProperty(roomID) &&

@@ -336,7 +336,6 @@ export const TimeTableProvider = ({ children }) => {
     };
 
     const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
-
   return (
     <TimeTableContext.Provider value={{ kamokuStatus, setKamokuStatus, statusSwitch, colorset, setColorset, multicolor, setMulticolor, timesize, weekTimeQty, setWeekTimeQty, sizechange, setSizechange, toggleSwitch, padding, department, setDepartment, show, setShow, season, setSeason, time, setTime, day, setDay, data, setData, dodata, setDodata, pushedClassFrameDetail, setPushedClassFrameDetail, weekTime, setWeekTime, indata, setIndata, kamokuItem, setKamokuItem, period, setPeriod, nodata, setNodata, notifiSwitch, isInfoShow, setIsInfoShow, kamokuShow, setKamokuShow, count, setCount, searchword, setSearchword, deletekoma, setDeletekoma, unitCalc, setUnitCalc, unitSum, setUnitSum,unreadMessagesJSON,setUnreadMessagesJSON}}>
       { children }
