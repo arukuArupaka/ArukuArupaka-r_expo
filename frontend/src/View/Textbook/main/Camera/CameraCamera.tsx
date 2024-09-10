@@ -31,8 +31,11 @@ import {
 } from "../../../../../firebase";
 import { getDownloadURL } from "firebase/storage";
 import { FieldValue, serverTimestamp } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 export const CameraCamera = ({ route }) => {
+  const navigation = useNavigation();
+
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedCondition, setSelectedCondition] = useState(null);
@@ -92,7 +95,6 @@ export const CameraCamera = ({ route }) => {
 
       setImages(newImages);
     }
-
   };
 
   const saveDraft = async (
@@ -155,63 +157,73 @@ export const CameraCamera = ({ route }) => {
     price
   ) => {
     // ユーザーのログイン状態を確認する
-    if (!auth.currentUser) {
-      Alert.alert("ログイン白や", "出品するにはログインが必要です");
-      // ユーザーがログインしていない場合は、ログインページにリダイレクトするなどの処理を行う
-      return;
-    }
-
-    // ユーザーのuidを取得する
-    const userId = auth.currentUser.uid;
-
-    // 全ての項目が入力されているか確認する
-    if (!productName || !department || !condition || !description || !price) {
-      Alert.alert("error","全ての項目を入力してください");
-      return; // 出品を中止する
-    }
-
     try {
-      const docRef = await addDoc(collection(db, "syuppinn"), {
-        productName,
-        department,
-        condition,
-        description,
-        price,
-        userId: userId, // ユーザーのuidを保存する
-        createdAt: serverTimestamp() // 作成日時をサーバーのタイムスタンプで設定
-      });
-      console.log("Document written with ID: ", docRef.id);
-
-      // 画像をアップロードしてURLを取得し、Firestoreに保存
-      const imageUrls = await Promise.all(
-        images.map(async (image, index) => {
-          if (image) {
-            const blob = await fetch(image).then((response) => response.blob());
-            const storageRef = ref(
-              storage,
-              `syouhin/${docRef.id}/image${index}`
-            );
-            await uploadBytes(storageRef, blob);
-            return getDownloadURL(storageRef);
-          }
-          return null;
-        })
-      );
-
-      // Firestoreに画像のURLを保存
-      await updateDoc(doc(db, "syuppinn", docRef.id), {
-        images: imageUrls.filter((url) => url !== null),
-      });
+      if (!auth.currentUser) {
+        Alert.alert("ログイン白や", "出品するにはログインが必要です");
+        return;
+      }
+  
+      const userId = auth.currentUser.uid;
+  
+      // 全ての項目が入力されているか確認する
+      if (!productName || !department || !condition || !description || !price) {
+        Alert.alert("error", "全ての項目を入力してください");
+        return; // 出品を中止する
+      }
+  
+      try {
+        const docRef = await addDoc(collection(db, "syuppinn"), {
+          productName,
+          department,
+          condition,
+          description,
+          price,
+          userId: userId,
+          createdAt: serverTimestamp(),
+        });
+        console.log("Document written with ID: ", docRef.id);
+  
+        const imageUrls = await Promise.all(
+          images.map(async (image, index) => {
+            if (image) {
+              const blob = await fetch(image).then((response) => response.blob());
+              const storageRef = ref(
+                storage,
+                `syouhin/${docRef.id}/image${index}`
+              );
+              await uploadBytes(storageRef, blob);
+              return getDownloadURL(storageRef);
+            }
+            return null;
+          })
+        );
+  
+        await updateDoc(doc(db, "syuppinn", docRef.id), {
+          images: imageUrls.filter((url) => url !== null),
+        });
+  
+        // Delete the document from the freeMarket collection
+        if (product) {
+          await deleteDoc(doc(db, "freeMarket", product.id));
+        }
+  
+        // 出品成功時のみダイアログを表示
+        Alert.alert("成功", "出品しました", [
+          {
+            text: "OK",
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+  
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        Alert.alert("エラー", "エラー");
+      }
     } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-
-    // Delete the document from the freeMarket collection
-    if (product) {
-      await deleteDoc(doc(db, "freeMarket", product.id));
+      console.error("Error: ", e);
     }
   };
-
+  
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
     setDepartmentModalVisible(false);
@@ -264,9 +276,7 @@ export const CameraCamera = ({ route }) => {
           style={{ height: 20, paddingLeft: "5%", marginTop: "4%" }}
         ></FontAwesome>
         <TextInput
-          style={{ marginLeft: "3%" ,
-            flex:1
-          }}
+          style={{ marginLeft: "3%", flex: 1 }}
           placeholder="商品名"
           value={productName}
           onChangeText={setproductName}
@@ -317,7 +327,6 @@ export const CameraCamera = ({ route }) => {
         </Modal>
         <Text>商品説明</Text>
 
-
         <View
           style={{
             width: "90%",
@@ -329,10 +338,10 @@ export const CameraCamera = ({ route }) => {
           }}
         >
           <TextInput
-           style={{
-            width: "100%",
-            height: "100%",
-          }}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
             value={description}
             onChangeText={setdescription}
           ></TextInput>
@@ -367,18 +376,42 @@ export const CameraCamera = ({ route }) => {
             <Text>下書きを保存する</Text>
           </TouchableOpacity> */}
           <TouchableOpacity
-          style={{backgroundColor:"orange",width:"90%",height:30,marginLeft:"5%",marginTop:"5%",justifyContent:"center",alignItems:"center",borderRadius:5}}
+            style={{
+              backgroundColor: "orange",
+              width: "90%",
+              height: 30,
+              marginLeft: "5%",
+              marginTop: "5%",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 5,
+            }}
             onPress={() => {
-              exhibit(
-                productName,
-                selectedDepartment,
-                selectedCondition,
-                description,
-                price
+              Alert.alert(
+                "出品しますか？",
+                "出品すると元に戻すことはできません",
+                [
+                  {
+                    text: "キャンセル",
+                    style: "cancel",
+                  },
+                  {
+                    text: "出品する",
+                    onPress: () => {
+                      exhibit(
+                        productName,
+                        selectedDepartment,
+                        selectedCondition,
+                        description,
+                        price
+                      );
+                    },
+                  },
+                ]
               );
             }}
           >
-            <Text style={{color:'white',fontWeight:"700"}}>出品する</Text>
+            <Text style={{ color: "white", fontWeight: "700" }}>出品する</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -17,9 +17,8 @@ import { useSelector } from "react-redux";
 
 const TalkFriendListItemContainer = (props) => {
   const { setUnreadMessagesJSON, unreadMessagesJSON } = useTimeTable();
-  const userUUID = useSelector((state: State) => state.user.userUUID || "");
+  //const userUUID = useSelector((state: State) => state.user.userUUID || "");
   const [roomID, setRoomID] = useState("");
-  const [unreadMessagesDisplay, setUnreadMessagesDisplay] = useState([]);
   const navigation = useNavigation();
   const [isReadFirst, setIsreadFirst] = useState(false);
 
@@ -29,11 +28,11 @@ const TalkFriendListItemContainer = (props) => {
   useEffect(() => {
     const watchMessage = () => {
       // ドキュメント参照を取得
-      if (userUUID && roomGetID) {
+      if (props.FriendData.myChatID && roomGetID) {
         const docRef = doc(
           db,
           "chatData",
-          `${userUUID}`,
+          `${props.FriendData.myChatID}`,
           `${roomGetID}`,
           "messages"
         );
@@ -42,8 +41,8 @@ const TalkFriendListItemContainer = (props) => {
           try{
           let unreadMessages = [];
 
-          const myID = userUUID
-          const friendID = props.FriendData.id;
+          const myID = props.FriendData.myChatID
+          const friendID = props.FriendData.friendChatID
 
           if (myID.toLowerCase() < friendID.toLowerCase()) {
             roomGetID = myID + friendID;
@@ -153,13 +152,13 @@ const TalkFriendListItemContainer = (props) => {
     };
     const getDate = async () => {
       try {
-        if (!userUUID) {
+        if (!props.FriendData.myChatID) {
           return;
         }
-        console.log(userUUID);
+        // console.log(userUUID);
         console.log(props.id);
-        const myID = userUUID
-        const friendID = props.FriendData.id;
+        const myID = props.FriendData.myChatID
+        const friendID = props.FriendData.friendChatID
 
         if (myID.toLowerCase() < friendID.toLowerCase()) {
           roomGetID = myID + friendID;
@@ -178,8 +177,8 @@ const TalkFriendListItemContainer = (props) => {
     getDate();
 
     const getRoomID = async () => {
-      const myID = userUUID
-      const friendID = props.FriendData.id;
+      const myID = props.FriendData.myChatID
+      const friendID = props.FriendData.friendChatID
 
       if (myID.toLowerCase() < friendID.toLowerCase()) {
         roomGetID = myID + friendID;
@@ -241,29 +240,7 @@ const TalkFriendListItemContainer = (props) => {
 
     refreshChatMessages();
   }, [unreadMessagesJSON[roomID], roomID]);
-
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const docRef = doc(db, "users", props.FriendData.id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          console.log("Document data:241", docSnap.data());
-          // props.FriendData.name = docSnap.data().name;
-          setUserName(docSnap.data().userName);
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getUserData();
-  }, []);
-
+  
   return (
     <TouchableOpacity
       style={{
@@ -276,13 +253,16 @@ const TalkFriendListItemContainer = (props) => {
       }}
       onPress={() =>
         navigation.navigate("ChatView", {
-          chatData:{myID:userUUID,friendID:props.FriendData.id},
+          chatData:{
+            myID:props.FriendData.myChatID,
+            friendID:props.FriendData.friendChatID,
+          },
         })
       }
     >
       <Ionicons name="person-circle-outline" size={50} color="orange" />
       <View className="flex-grow">
-        <Text className="text-xl">{userName ? userName : "error"}</Text>
+        <Text className="text-xl">{props.FriendData.productName ? props.FriendData.productName : "error"}</Text>
         <Text>
           {unreadMessagesJSON &&
             unreadMessagesJSON.hasOwnProperty(roomID) &&

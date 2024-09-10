@@ -158,7 +158,13 @@ const TalkBookChatView = ({ navigation }) => {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // データをfriendDataに追加
-        friendData.push({ bookID: doc.id, ...doc.data() });
+        friendData.push({ 
+          bookID: doc.id,
+          myChatID: userUUID,
+          friendChatID:doc.id,
+          myID:userUUID,
+          friendID:doc.data().userId,
+          ...doc.data() });
       });
 
       // 取得したデータをセット
@@ -178,15 +184,47 @@ const TalkBookChatView = ({ navigation }) => {
 
   const getFriendData = async () => {
     const friendData = [];
-    const friendDocRef = doc(db, "TextBookChatUsers", userUUID);
-    const friendDocSnap = await getDoc(friendDocRef);
-    if (friendDocSnap.exists()) {
-      friendDocSnap.data().TextBookChatUsers.map((friend) => {
-        friendData.push({ id: friend });
+    const syuppinnCollectionRef = collection(db, "syuppinn");
+  
+    // userIdがuserUUIDと一致し、かつbuyUserフィールドが存在し、undefinedでないドキュメントを検索
+    const q = query(
+      syuppinnCollectionRef, 
+      where("userId", "==", userUUID), // userIdがuserUUIDと一致する
+      where("buyUser", "!=", null) // buyUserフィールドが存在し、undefinedではない
+    );
+  
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // データをfriendDataに追加
+        friendData.push({ 
+          bookID: doc.id,
+          myChatID: doc.id,
+          friendChatID: doc.data().buyUser,
+          myID: userUUID,
+          friendID: doc.data().buyUser,
+          ...doc.data()
+        });
       });
+  
+      // 取得したデータをセット
+      setDMExhibitList(friendData);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
     }
-    setDMExhibitList(friendData);
   };
+
+  // const getFriendData = async () => {
+  //   const friendData = [];
+  //   const friendDocRef = doc(db, "TextBookChatUsers", userUUID);
+  //   const friendDocSnap = await getDoc(friendDocRef);
+  //   if (friendDocSnap.exists()) {
+  //     friendDocSnap.data().TextBookChatUsers.map((friend) => {
+  //       friendData.push({ id: friend });
+  //     });
+  //   }
+  //   setDMExhibitList(friendData);
+  // };
 
   const mockFriendData = [
     {
@@ -269,7 +307,6 @@ const TalkBookChatView = ({ navigation }) => {
             {DMList.map((FriendData) => (
               <TalkFriendListItemContainer FriendData={FriendData} />
             ))}
-            <Text>{JSON.stringify(DMList)}</Text>
           </View>
         </ScrollView>
         <ScrollView style={{ width: windowWidth, paddingTop: 5 }}>
@@ -281,7 +318,6 @@ const TalkBookChatView = ({ navigation }) => {
             {DMExhibitList.map((FriendData) => (
               <TalkFriendListItemContainer FriendData={FriendData} />
             ))}
-            <Text>{JSON.stringify(DMList)}</Text>
           </View>
         </ScrollView>
       </ScrollView>
@@ -297,13 +333,7 @@ export default TalkBookChatView;
 //     condition: "やや傷や汚れあり",
 //     createdAt: [Object],
 //     department: "経営学部",
-//     description: "Eee",
-//     id: undefined,
-//     images: [
-//       "https://firebasestorage.googleapis.com/v0/b/arukuarupaka-6e101.appspot.com/o/syouhin%2Fp0hakIwubA4rWyTGvxIx%2Fimage0?alt=media&token=ea12a8d0-c5ac-4137-b1f5-2b9401b8ad7e",
-//     ],
-//     price: "111",
-//     productName: "Aaa",
-//     userId: "JoXEcpGeyueXE0fqlGSXVgqXD1a2",
-//   },
-// ];
+//     description: "Eee",  
+//     faculty: "経済学部",
+//     image: [Object],
+//     price: 1000,

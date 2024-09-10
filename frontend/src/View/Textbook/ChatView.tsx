@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import MessageListContainer from "../../component/Textbook/Chat/MessageListContainer";
 import SendBoxContainer from "../../component/Textbook/Chat/SendBoxContainer";
-import { useSelector } from "react-redux";
 
 
 const ChatView = () => {
