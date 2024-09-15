@@ -1,7 +1,7 @@
 import { View, Text, SafeAreaView, ScrollView,Image, Platform, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import MessageListContainer from "../../component/Textbook/Chat/MessageListContainer";
+import MessageListContainer from "../../component/Textbook/Chat/messageListContainer";
 import SendBoxContainer from "../../component/Textbook/Chat/SendBoxContainer";
 import { deleteDoc, deleteField, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
