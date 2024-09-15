@@ -149,7 +149,12 @@ class ImageScrollComponent extends Component {
     // クリックしたときに表示する画像の位置変更可能性を切り替える
     this.setState((prevState) => ({
       disableChangePosition: !prevState.disableChangePosition,
-    }));
+    }),
+    () => {
+      const { clickX, clickY, switchTime } = this.state;
+      this.savePositions(clickX, clickY, switchTime);
+  }
+);
   };
 
   scrollToClickPosition = () => {

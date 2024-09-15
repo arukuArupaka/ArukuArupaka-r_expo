@@ -305,14 +305,13 @@ console.log(userIconImageUri)
             iconName="page-copy"
             item={()=><Foundation name="page-copy" size={30} color="#EB97A8" />}
           />
-          <AppList
+           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"
             test={props}
             jumpPage="ホーム"
             iconName="book-multiple"
           />
-          
         </View>
        {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
           <AppList
