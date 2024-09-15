@@ -32,6 +32,8 @@ import {
 import { getDownloadURL } from "firebase/storage";
 import { FieldValue, serverTimestamp } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import RNPickerSelect from "react-native-picker-select";
+import faculties from "../../../../data/faculties.json";
 
 export const CameraCamera = ({ route }) => {
   const navigation = useNavigation();
@@ -162,15 +164,15 @@ export const CameraCamera = ({ route }) => {
         Alert.alert("ログイン白や", "出品するにはログインが必要です");
         return;
       }
-  
+
       const userId = auth.currentUser.uid;
-  
+
       // 全ての項目が入力されているか確認する
       if (!productName || !department || !condition || !description || !price) {
         Alert.alert("error", "全ての項目を入力してください");
         return; // 出品を中止する
       }
-  
+
       try {
         const docRef = await addDoc(collection(db, "syuppinn"), {
           productName,
@@ -182,11 +184,13 @@ export const CameraCamera = ({ route }) => {
           createdAt: serverTimestamp(),
         });
         console.log("Document written with ID: ", docRef.id);
-  
+
         const imageUrls = await Promise.all(
           images.map(async (image, index) => {
             if (image) {
-              const blob = await fetch(image).then((response) => response.blob());
+              const blob = await fetch(image).then((response) =>
+                response.blob()
+              );
               const storageRef = ref(
                 storage,
                 `syouhin/${docRef.id}/image${index}`
@@ -197,16 +201,16 @@ export const CameraCamera = ({ route }) => {
             return null;
           })
         );
-  
+
         await updateDoc(doc(db, "syuppinn", docRef.id), {
           images: imageUrls.filter((url) => url !== null),
         });
-  
+
         // Delete the document from the freeMarket collection
         if (product) {
           await deleteDoc(doc(db, "freeMarket", product.id));
         }
-  
+
         // 出品成功時のみダイアログを表示
         Alert.alert("成功", "出品しました", [
           {
@@ -214,7 +218,6 @@ export const CameraCamera = ({ route }) => {
             onPress: () => navigation.goBack(),
           },
         ]);
-  
       } catch (e) {
         console.error("Error adding document: ", e);
         Alert.alert("エラー", "エラー");
@@ -223,7 +226,7 @@ export const CameraCamera = ({ route }) => {
       console.error("Error: ", e);
     }
   };
-  
+
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
     setDepartmentModalVisible(false);
@@ -285,46 +288,40 @@ export const CameraCamera = ({ route }) => {
 
       <View style={styles.syousai}>
         <Text>商品情報</Text>
-        <TouchableOpacity onPress={() => setDepartmentModalVisible(true)}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>使用学部</Text>
-            <Text style={{ marginLeft: "5%" }}>
-              {selectedDepartment || "選択されていません"}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={departmentModalVisible}
-          onRequestClose={() => {
-            setDepartmentModalVisible(false);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <DepartmentPicker onSelect={handleDepartmentSelect} />
-          </View>
-        </Modal>
-        <TouchableOpacity onPress={() => setConditionModalVisible(true)}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>商品の状態</Text>
-            <Text style={{ marginLeft: "5%" }}>
-              {selectedCondition || "選択されていません"}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={conditionModalVisible}
-          onRequestClose={() => {
-            setConditionModalVisible(false);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <DepartmentPicker2 onSelect={handleConditionSelect} />
-          </View>
-        </Modal>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text>使用学部</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setSelectedDepartment(value)}
+            placeholder={{ label: "選択されていません", value: null }}
+            items={Object.keys(faculties.学部).map((key) => ({
+              label: faculties.学部[key].名称,
+              value: faculties.学部[key].名称,
+            }))}
+            style={{ inputIOS: { marginLeft: "5%" } }} // iOS向けのスタイル調整
+            value={selectedDepartment}
+          />
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text>商品の状態</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setSelectedCondition(value)}
+            placeholder={{ label: "選択されていません", value: null }}
+            items={[
+              { label: "新品、未使用", value: "新品、未使用" },
+              { label: "未使用に近い", value: "未使用に近い" },
+              { label: "目立った傷や汚れなし", value: "目立った傷や汚れなし" },
+              { label: "やや傷や汚れあり", value: "やや傷や汚れあり" },
+              { label: "傷や汚れあり", value: "傷や汚れあり" },
+              { label: "全体的に状態が悪い", value: "全体的に状態が悪い" },
+              // 他の状態もここに追加できます
+            ]}
+            style={{
+              inputIOS: { marginLeft: "5%" },
+              inputAndroid: { marginLeft: "5%" },
+            }} // iOS & Android向けのスタイル調整
+            value={selectedCondition}
+          />
+        </View>
         <Text>商品説明</Text>
 
         <View

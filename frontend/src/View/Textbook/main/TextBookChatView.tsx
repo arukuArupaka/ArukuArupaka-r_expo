@@ -272,7 +272,7 @@ const TalkBookChatView = ({ navigation }) => {
               fontSize: 16,
             }}
           >
-            購入
+            購入した教科書
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -293,7 +293,7 @@ const TalkBookChatView = ({ navigation }) => {
               fontSize: 16,
             }}
           >
-            出品
+            出品した教科書
           </Text>
         </TouchableOpacity>
       </View>
@@ -305,7 +305,7 @@ const TalkBookChatView = ({ navigation }) => {
             className="border-b border-silver"
           >
             {DMList.map((FriendData) => (
-              <TalkFriendListItemContainer FriendData={FriendData} />
+              <TalkFriendListItemContainer isMyTextBook={false} FriendData={FriendData} />
             ))}
           </View>
         </ScrollView>
@@ -316,7 +316,7 @@ const TalkBookChatView = ({ navigation }) => {
             className="border-b border-silver"
           >
             {DMExhibitList.map((FriendData) => (
-              <TalkFriendListItemContainer FriendData={FriendData} />
+              <TalkFriendListItemContainer isMyTextBook={true} FriendData={FriendData} />
             ))}
           </View>
         </ScrollView>
@@ -326,14 +326,3 @@ const TalkBookChatView = ({ navigation }) => {
 };
 
 export default TalkBookChatView;
-// [
-//   {
-//     buyUser: "k3KQIDC0z2ZakRa2XUqGvixu02e2",
-//     className: "Eee",
-//     condition: "やや傷や汚れあり",
-//     createdAt: [Object],
-//     department: "経営学部",
-//     description: "Eee",  
-//     faculty: "経済学部",
-//     image: [Object],
-//     price: 1000,

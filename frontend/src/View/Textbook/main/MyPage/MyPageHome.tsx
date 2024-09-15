@@ -15,7 +15,7 @@ export const MyPageHome = ({navigation}) => {
             width: "80%",
             height: '80%'
           }}>
-          <ThreeBox boxname='出品した商品' iconName='hand-pointing-right' Screen='マイページ出品' navigation={navigation} Color='skyblue' IconColor='dodgerblue'/>
+          <ThreeBox boxname='出品中の商品' iconName='hand-pointing-right' Screen='マイページ出品' navigation={navigation} Color='skyblue' IconColor='dodgerblue'/>
 
         </View>
       </View>

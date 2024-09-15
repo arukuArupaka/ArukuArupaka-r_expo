@@ -157,20 +157,20 @@ export const TextbookHome = () => {
               <TouchableOpacity onPress={()=>navigation.navigate("TextBookDetail",{...textbook})} key={index} style={styles.textbookContainer}>
                 <Text>{textbook.productName}</Text>
                 {/* <Text>{textbook.id}</Text> */}
-                {textbook.images && textbook.images[0] && (
+                {textbook.images && (
                   <Image
                     source={
-                      textbook.images
+                      textbook.images.length != 0
                         ? { uri: textbook.images[0] }
-                        : require("../../../image/Logo.png")
+                        : require("../../../image/textbook/no_Image.png")
                     }
                     style={styles.image}
                   />
                 )}
                 <Text>¥{textbook.price}</Text>
-                <Text>{textbook.description}</Text>
+                <Text>{textbook.condition}</Text>
                 {textbook.hasOwnProperty("buyUser")&&<View style={{position:"absolute",top:'50%',width:'100%',marginHorizontal:10}}>
-                  <Text style={{textAlign:'center',width:'100%',color:'white',fontWeight:'800',borderRadius:7,transform:[{rotate:'25deg'}],backgroundColor:'red'}}>SOLD OUT</Text>
+                  <Text style={{textAlign:'center',width:'100%',color:'white',fontWeight:'800',borderRadius:7,transform:[{rotate:'25deg'}],backgroundColor:'red'}}>購入交渉中</Text>
                 </View>}
               </TouchableOpacity>
             ))}

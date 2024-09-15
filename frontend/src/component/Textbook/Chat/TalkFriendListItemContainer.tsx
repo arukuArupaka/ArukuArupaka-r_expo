@@ -32,7 +32,7 @@ const TalkFriendListItemContainer = (props) => {
         const docRef = doc(
           db,
           "chatData",
-          `${props.FriendData.myChatID}`,
+          `${props.FriendData.myID}`,
           `${roomGetID}`,
           "messages"
         );
@@ -240,7 +240,7 @@ const TalkFriendListItemContainer = (props) => {
 
     refreshChatMessages();
   }, [unreadMessagesJSON[roomID], roomID]);
-  
+
   return (
     <TouchableOpacity
       style={{
@@ -254,8 +254,14 @@ const TalkFriendListItemContainer = (props) => {
       onPress={() =>
         navigation.navigate("ChatView", {
           chatData:{
-            myID:props.FriendData.myChatID,
-            friendID:props.FriendData.friendChatID,
+            myChatID:props.FriendData.myChatID,
+            friendChatID:props.FriendData.friendChatID,
+            myID:props.FriendData.myID,
+            friendID:props.FriendData.friendID,
+            bookID:props.FriendData.bookID,
+            isMyTextBook:props.isMyTextBook,
+            productName:props.FriendData.productName,
+            ...props.FriendData
           },
         })
       }

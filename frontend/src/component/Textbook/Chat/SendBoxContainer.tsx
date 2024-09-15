@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import React from "react";
 import SendBox from "./SendBox";
 import { async } from "@firebase/util";
@@ -18,49 +18,19 @@ const SendBoxContainer = (props) => {
       // メッセージをコンソールにログ出力
 
       // Firestoreのドキュメント参照を取得
-      const docRef = doc(
-        db,
-        "chatData",
-        `${props.friend}`,
-        `${props.roomID}`,
-        "messages"
-      );
+      const docRef = doc(db, "chatData", `${props.friend}`, `${props.roomID}`, "messages");
 
-      // ドキュメントの存在を確認
-      const docSnapshot = await getDoc(docRef);
-
-      if (docSnapshot.exists()) {
-        console.log( 33, [
-          {
-            ...sendMessageObject,
-          },
-        ]);
-        // ドキュメントが存在する場合、メッセージを更新（追加）
-        await updateDoc(docRef, {
-          messages: arrayUnion({
-            ...sendMessageObject,
-          }),
-        });
-      } else {
-        // ドキュメントが存在しない場合、新しく作成
-        alert(  [
-          {
-            ...sendMessageObject,
-          },
-        ]);
-        await setDoc(docRef, {
-          messages: [
-            {
-              ...sendMessageObject,
-            },
-          ],
-        });
-      }
+      // ドキュメントを常に作成または更新
+      await setDoc(docRef, {
+        messages: arrayUnion({ ...sendMessageObject }),
+      }, { merge: true });
+      
+      props.SendMessage(sendMessageObject);
     } catch (e) {
       // その他のエラーの場合
+      Alert.alert("エラー", "メッセージの送信に失敗しました");
       console.error(e);
     } finally {
-      props.SendMessage(sendMessageObject);
     }
   };
   return <SendBox sendMessage={(message) => sendMessage(message)} />;
