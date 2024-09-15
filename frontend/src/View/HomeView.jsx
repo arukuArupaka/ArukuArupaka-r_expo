@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeCarousel from "../component/Home/HomeViewCarousel";
+// import HomeCarousel from "../component/Home/HomeViewCarousel";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -292,6 +292,15 @@ const HomeView = (props) => {
             test={props}
             jumpPage="TimeTable"
             iconName="file-table"
+          />
+        </View>
+        <View style={styles.appListFlex}>
+        <AppList
+            appName="リンク一覧"
+            color="#00A651"
+            test={props}
+            jumpPage=""
+            iconName=""
           />
         </View>
        {Platform.OS!=="ios"&& <View style={styles.appListFlex}>

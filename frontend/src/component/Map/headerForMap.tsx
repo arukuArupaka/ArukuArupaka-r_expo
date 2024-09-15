@@ -31,7 +31,7 @@ function LogoTitle() {
             <TextInput value={searchWord} onChangeText={setSearchWord} placeholder="なにかお探しですか？"></TextInput>
             <TouchableOpacity>
                 <Ionicons name='search' size={20}></Ionicons>
-                </TouchableOpacity>
+             </TouchableOpacity>
         </View>
     );
 } export default LogoTitle;
