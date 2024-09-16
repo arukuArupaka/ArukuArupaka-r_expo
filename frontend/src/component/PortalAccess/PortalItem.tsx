@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity ,Linking} from 'react-native';
 import { EvilIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,6 +15,14 @@ const PortalItem = (props) => {
     //setIcon(icon === 'unlock' ? 'lock' : 'unlock');
     props.onLock();
   };
+
+  const openExternalBrowser = (url) => {
+    Linking.openURL(url).catch((err) => {
+      console.error("Failed to open URL: ", err);
+    });
+  };
+
+  
 
   const styles = StyleSheet.create({
     websitePage: {
@@ -43,7 +51,8 @@ const PortalItem = (props) => {
           width:"85%"
         }}
         onPress={() => {
-          navigation.navigate("HomeWebSite", props.webnavigate)
+          // navigation.navigate("HomeWebSite", props.webnavigate)
+          openExternalBrowser(props.webnavigate)
         }}
       >
         <Image
