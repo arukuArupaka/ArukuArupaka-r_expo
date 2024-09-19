@@ -1,23 +1,18 @@
 import HomeView from './src/View/HomeView'
 import { NavigationContainer, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TimeTable from './src/View/TimeTableView'
 import BikeView from './src/View/BikeView'
 import WeatherView from './src/View/weather'
 import {TextbookNavigateRoot} from './src/View/Textbook/TextbookNavigateRoot';
 import MapView from './src/View/Map/MapMain'
-import TimeTableRoot from './src/View/TimeTableViewNavigateRoot'
 import ASetting from './src/View/ASetting';
 import { TouchableOpacity,Image,View,TextInput} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import TimeTableSetting from './src/View/TimeTableSetting';
 import { TimeTableProvider } from './src/component/TimeTable/TimeTableContext';
+import TimeTableView from './src/View/TimeTable/TimeTableView';
 import LogoTitle from './src/component/Map/headerForMap';
 import ALoginView from './src/View/ALoginView';
 import MapLoot from './src/component/Map/MapLoot';
-import TimeTableClass from './src/View/TimeTableClass';
-import KomaView from './src/View/KomaView';
-import WebSite from './src/View/WebSite';
 import { Provider } from 'react-redux'
 import AR_Store from './src/redux/store';
 import ASettingToPage from './src/View/ASettingToPage';
@@ -82,7 +77,7 @@ function App() {
               />
               <Stack.Screen
                 name="TimeTable"
-                component={TimeTable}
+                component={TimeTableView}
                 options={({ navigation }) => ({
                   title: "",
                   headerRight: () => (
@@ -177,26 +172,6 @@ function App() {
                 name="login"
                 component={ALoginView}
                 options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="TimeTableSetting"
-                component={TimeTableSetting}
-                options={() => ({ title: "" })}
-              />
-              <Stack.Screen
-                name="TimeTableClass"
-                component={TimeTableClass}
-                options={() => ({ title: "" })}
-              />
-              <Stack.Screen
-                name="KomaView"
-                component={KomaView}
-                options={() => ({ title: "" })}
-              />
-              <Stack.Screen
-                name="WebSite"
-                component={WebSite}
-                options={() => ({ title: "" })}
               />
               <Stack.Screen
                 name="HomeWebSite"
