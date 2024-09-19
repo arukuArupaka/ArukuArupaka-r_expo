@@ -47,11 +47,11 @@ export const TimeTableProvider = ({ children }) => {
           throw new Error("Network response was not ok");
         }
         const json = await response.json();
-        // ここでデータを加工してからセット
+
         const processedData = json.map((item) => ({
-          kamoku_name: item.kamoku_name, // 仮のプロパティ名
+          kamoku_name: item.kamoku_name,
           kamokuid: item.kamokuid,
-          kamoku_resume: item.kamoku_resume, // 仮のプロパティ名
+          kamoku_resume: item.kamoku_resume,
           kamoku_class: item.kamoku_class,
           kamoku_day: item.kamoku_day,
           kamoku_time: item.kamoku_time,
@@ -59,7 +59,7 @@ export const TimeTableProvider = ({ children }) => {
           kamoku_department: item.kamoku_department,
           kamoku_season: item.kamoku_season,
           kamoku_num: item.kamoku_num,
-          kamoku_teacher: item.kamoku_teacher, // 必要に応じて加工
+          kamoku_teacher: item.kamoku_teacher,
           kamoku_status: item.kamoku_status,
         }));
         setData(processedData);
@@ -69,19 +69,14 @@ export const TimeTableProvider = ({ children }) => {
     };
 
     fetchData();
-    //console.log(time);
-    console.log(pushedClassFrameDetail.day);
-    console.log(typeof weekTime);
     if (isNaN(pushedClassFrameDetail.day)) {
       console.log("pushedClassFrameDetail.dayはNaNです");
     } else {
       console.log("pushedClassFrameDetail.dayはNaNではありません");
     }
 
-    //setPushedClassFrameDetail({day: day-0, period: period-0});
-    //console.log('コンポーネントマウントされました');
     setDodata(false);
-  }, [dodata]); // dodataが更新されたときに再フェッチ
+  }, [dodata]);
 
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
   return (

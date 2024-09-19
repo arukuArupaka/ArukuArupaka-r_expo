@@ -1,5 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FC } from "react";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../interface/root-stack-param-list";
 
 type Props = {
   week: number;
@@ -7,11 +9,17 @@ type Props = {
 };
 
 const ClassPeriod: FC<Props> = ({ week, period }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   return (
     <View key={week} style={styles.classPeriodContainer}>
-      <View style={styles.classPeriod}>
+      <TouchableOpacity
+        style={styles.classPeriod}
+        onPress={() =>
+          navigation.navigate("ClassPeriodOptions", { week, period })
+        }
+      >
         <Text>{/* {week} {period} */}</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
