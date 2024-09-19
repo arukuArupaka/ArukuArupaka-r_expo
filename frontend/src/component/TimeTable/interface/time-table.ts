@@ -17,3 +17,23 @@ export type classPeriod = {
   mulcolor: string;
   statuscolor: string;
 };
+
+const TimeTable = {
+  year: 2024,
+  day: 0,
+  period: 0,
+  className: "",
+  classRoom: "",
+  memo: "",
+  notifion: false,
+  notification: "",
+  department: "",
+  unit: 0,
+  num: "",
+  resume: "",
+  teacher: "",
+  status: "",
+  color: "#888888",
+  mulcolor: "#888888",
+  statuscolor: "#888888",
+};
