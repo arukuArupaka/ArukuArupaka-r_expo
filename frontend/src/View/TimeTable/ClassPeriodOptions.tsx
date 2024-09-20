@@ -8,11 +8,14 @@ import {
   ScrollView,
 } from "react-native";
 import { RootStackParamList } from "../../component/TimeTable/interface/root-stack-param-list";
-import { fetchClassDatas } from "../../component/TimeTable/timeTableView/funtion/fetchClassDatas";
+import { fetchClassDatas } from "../../component/TimeTable/classPeriodOptions/funtion/fetchClassDatas";
 import { ClassPeriodOptionDatas } from "../../component/TimeTable/interface/class-period-option-datas";
-import { convertNumberToWeekOfTheDay } from "../../component/TimeTable/timeTableView/funtion/convertNumberToWeekOfTheDay";
+import { convertNumberToWeekOfTheDay } from "../../component/TimeTable/classPeriodOptions/funtion/convertNumberToWeekOfTheDay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Entypo from "@expo/vector-icons/Entypo";
 import ClassPeriodOption from "../../component/TimeTable/classPeriodOptions/ClassPeriodOption";
+import NotChoosenDepartmentOrSeason from "../../component/TimeTable/classPeriodOptions/NotChoosenDepartmentOrSeason";
+import SetClassPeriodModal from "../../component/TimeTable/classPeriodOptions/SetClassPeriodModal";
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
   "ClassPeriodOptions"
@@ -25,21 +28,32 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
   const [classPeriodOptions, setClassPeriodOptions] = useState<
     ClassPeriodOptionDatas[] | undefined | string
   >(undefined);
+  const [isModalShow, setIsModalShow] = useState(false);
+  const [selectedData, setSelectedData] =
+    useState<ClassPeriodOptionDatas | null>(null); // 選択されたデータのステート
 
   const stringWeekOfTheDay = convertNumberToWeekOfTheDay(weekOfTheDay);
+
   // バックエンドデータベースに非同期で問い合わせる
   const fetchClassPeriodOptions = async () => {
     const data = await fetchClassDatas({
-      // department: "理工学部",
+      department: "理工学部",
       season: "秋セメスター",
       weekOfTheDay: stringWeekOfTheDay,
       period: period,
     });
     setClassPeriodOptions(data);
   };
+
   useEffect(() => {
     fetchClassPeriodOptions();
   }, []);
+
+  const openModal = (data: ClassPeriodOptionDatas | undefined) => {
+    setSelectedData(data);
+    setIsModalShow(true);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -77,26 +91,45 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
           </View>
         </View>
         <ScrollView style={styles.body}>
-          {Array.isArray(classPeriodOptions) ? (
-            classPeriodOptions.length > 0 ? (
-              classPeriodOptions.map((data) => (
-                <ClassPeriodOption data={data} />
-              ))
+          <View style={{ flex: 1, marginBottom: 100 }}>
+            <View style={styles.multipleSettingSpace}>
+              <TouchableOpacity
+                style={styles.multipleSettingContainer}
+                onPress={() => openModal(undefined)}
+              >
+                <Text style={{ fontWeight: "bold" }}>手入力で追加</Text>
+                <Entypo name="plus" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+            {Array.isArray(classPeriodOptions) ? (
+              classPeriodOptions.length > 0 ? (
+                classPeriodOptions.map((data, index) => (
+                  <TouchableOpacity
+                    onPress={() => openModal(data)} // データをセットしてモーダルを開く
+                    key={index}
+                  >
+                    <ClassPeriodOption data={data} />
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.noHitsMessage}>
+                  <Text style={{ fontWeight: "bold" }}>
+                    当てはまる授業がありません
+                  </Text>
+                </View>
+              )
             ) : (
-              <View style={styles.noHitsMessage}>
-                <Text style={{ fontWeight: "bold" }}>
-                  当てはまる授業がありません
-                </Text>
-              </View>
-            )
-          ) : (
-            typeof classPeriodOptions === "string" && (
-              <Text>
-                学部かセメスターが選択されていません。選択してください。
-              </Text>
-            )
-          )}
+              typeof classPeriodOptions === "string" && (
+                <NotChoosenDepartmentOrSeason />
+              )
+            )}
+          </View>
         </ScrollView>
+        <SetClassPeriodModal
+          isShow={isModalShow}
+          onClose={() => setIsModalShow(false)}
+          data={selectedData} // 選択されたデータをモーダルに渡す
+        />
       </View>
     </View>
   );
@@ -129,9 +162,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "30%",
   },
+  multipleSettingSpace: {
+    height: "2%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  multipleSettingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   body: {
-    marginBottom: 100,
     width: "98%",
+    flex: 1,
   },
   noHitsMessage: {
     width: "100%",

@@ -14,8 +14,20 @@ const ClassPeriodOption: FC<Props> = ({ data }) => {
         </Text>
       </View>
       <View style={styles.classNameAndClass}>
-        <Text style={{ fontWeight: "bold" }}>{data.kamoku_name}</Text>
-        <Text style={{ fontWeight: "bold" }}>{data.kamoku_class}</Text>
+        <Text
+          style={{ fontWeight: "bold", maxWidth: "90%" }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {data.kamoku_name}
+        </Text>
+        <Text
+          style={{ fontWeight: "bold", maxWidth: "90%" }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {data.kamoku_class}
+        </Text>
       </View>
     </View>
   );
