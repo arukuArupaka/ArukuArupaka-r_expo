@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     height: "30%",
   },
   multipleSettingSpace: {
-    height: "2%",
+    height: 50,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
