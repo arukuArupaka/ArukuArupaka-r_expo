@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { ClassPeriodOptionDatas } from "../interface/class-period-option-datas";
+import { ClassPeriodOptionDatas } from "../types/class-period-option-datas";
 import { FC } from "react";
 type Props = {
   data: ClassPeriodOptionDatas;

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FC } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../interface/root-stack-param-list";
+import { RootStackParamList } from "../types/root-stack-param-list";
 
 type Props = {
   weekOfTheDay: number;

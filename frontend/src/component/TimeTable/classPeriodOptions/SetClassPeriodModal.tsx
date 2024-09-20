@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   Text,
 } from "react-native";
-import { ClassPeriodOptionDatas } from "../interface/class-period-option-datas";
+import { ClassPeriodOptionDatas } from "../types/class-period-option-datas";
 
 type Props = {
   isShow: boolean;

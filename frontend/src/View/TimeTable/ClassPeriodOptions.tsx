@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { RootStackParamList } from "../../component/TimeTable/interface/root-stack-param-list";
+import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import { fetchClassDatas } from "../../component/TimeTable/classPeriodOptions/funtion/fetchClassDatas";
-import { ClassPeriodOptionDatas } from "../../component/TimeTable/interface/class-period-option-datas";
+import { ClassPeriodOptionDatas } from "../../component/TimeTable/types/class-period-option-datas";
 import { convertNumberToWeekOfTheDay } from "../../component/TimeTable/classPeriodOptions/funtion/convertNumberToWeekOfTheDay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
