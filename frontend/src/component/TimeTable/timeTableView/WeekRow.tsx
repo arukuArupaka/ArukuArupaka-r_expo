@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
 
 const WeekRow = () => {
-  const weeks = ["月", "火", "水", "木", "金"];
+  const weekOfTheDays = ["月", "火", "水", "木", "金"];
   return (
     <View style={styles.weekRow}>
-      {weeks.map((week, index) => (
-        <View key={index} style={styles.oneWeekContainer}>
-          <View style={styles.oneWeek}>
-            <Text style={{ fontWeight: "bold", color: "white" }}>{week}</Text>
+      {weekOfTheDays.map((day, index) => (
+        <View key={index} style={styles.oneWeekOfTheDayContainer}>
+          <View style={styles.oneWeekOfTheDay}>
+            <Text style={{ fontWeight: "bold", color: "white" }}>{day}</Text>
           </View>
         </View>
       ))}
@@ -21,13 +21,13 @@ const styles = StyleSheet.create({
     height: 60,
     flexDirection: "row",
   },
-  oneWeekContainer: {
+  oneWeekOfTheDayContainer: {
     width: "20%",
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
-  oneWeek: {
+  oneWeekOfTheDay: {
     height: 40,
     width: 40,
     borderRadius: 100,

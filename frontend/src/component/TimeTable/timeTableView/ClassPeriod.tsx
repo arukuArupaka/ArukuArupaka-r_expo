@@ -4,18 +4,18 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../interface/root-stack-param-list";
 
 type Props = {
-  week: number;
+  weekOfTheDay: number;
   period: number;
 };
 
-const ClassPeriod: FC<Props> = ({ week, period }) => {
+const ClassPeriod: FC<Props> = ({ weekOfTheDay, period }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   return (
-    <View key={week} style={styles.classPeriodContainer}>
+    <View key={weekOfTheDay} style={styles.classPeriodContainer}>
       <TouchableOpacity
         style={styles.classPeriod}
         onPress={() =>
-          navigation.navigate("ClassPeriodOptions", { week, period })
+          navigation.navigate("ClassPeriodOptions", { weekOfTheDay, period })
         }
       >
         <Text>{/* {week} {period} */}</Text>

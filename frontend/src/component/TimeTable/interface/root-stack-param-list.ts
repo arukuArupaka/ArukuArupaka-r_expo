@@ -1,3 +1,3 @@
 export type RootStackParamList = {
-  ClassPeriodOptions: { week: number; period: number };
+  ClassPeriodOptions: { weekOfTheDay: number; period: number };
 };

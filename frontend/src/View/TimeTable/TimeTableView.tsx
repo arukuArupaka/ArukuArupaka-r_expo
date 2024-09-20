@@ -22,13 +22,13 @@ const TimeTableView = () => {
             <WeekRow />
             <View style={styles.scheduleContainer}>
               {Array.from({ length: 5 }, (_, i) => i + 1).map(
-                (week, weekIndex) => (
+                (weekOfTheDay, weekIndex) => (
                   <View key={weekIndex} style={styles.oneWeekContainer}>
                     {Array.from({ length: 7 }, (_, i) => i + 1).map(
                       (period, periodIndex) => (
                         <ClassPeriod
                           key={periodIndex}
-                          week={week}
+                          weekOfTheDay={weekOfTheDay}
                           period={period}
                         />
                       )
