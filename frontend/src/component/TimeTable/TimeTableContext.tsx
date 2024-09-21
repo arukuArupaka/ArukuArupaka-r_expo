@@ -1,4 +1,3 @@
-// TimeTableContext.js
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { ClassPeriod } from "./types/class-period";
 import { AsyncFunctions } from "./classObject/TimeTableClassObject";

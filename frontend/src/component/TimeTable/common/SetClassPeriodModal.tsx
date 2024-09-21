@@ -9,7 +9,7 @@ import {
   Text,
   Alert,
 } from "react-native";
-import { useTimeTable } from "../TimeTableContext";
+import { useTimeTable } from "../timeTableContext";
 import { AsyncFunctions } from "../classObject/TimeTableClassObject";
 import { ClassPeriod } from "../types/class-period";
 import { NavigationProp, useNavigation } from "@react-navigation/native";

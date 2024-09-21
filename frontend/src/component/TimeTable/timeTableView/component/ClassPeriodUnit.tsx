@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FC } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { useTimeTable } from "../../TimeTableContext";
+import { useTimeTable } from "../../timeTableContext";
 import { RootStackParamList } from "../../types/root-stack-param-list";
 import { ClassPeriod } from "../../types/class-period";
 import { ClassDataFetcher } from "../../classObject/TimeTableClassObject";

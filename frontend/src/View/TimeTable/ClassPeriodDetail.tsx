@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
-import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
+import { useTimeTable } from "../../component/TimeTable/timeTableContext";
 import { AsyncFunctions } from "../../component/TimeTable/classObject/TimeTableClassObject";
 import ClassPeriodDetailDataItem from "../../component/TimeTable/timeTableDetail/component/ClassPeriodDetailDatalBodyItem";
 import ActionButton from "../../component/TimeTable/timeTableDetail/ActionButton";
