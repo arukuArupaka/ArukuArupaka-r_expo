@@ -7,22 +7,87 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
+  Alert,
 } from "react-native";
-import { ClassPeriodOptionDatas } from "../types/class-period-option-datas";
+import { useTimeTable } from "../TimeTableContext";
+import { AsyncFunctions } from "../classObject/TimeTableClassObject";
+import { ClassPeriod } from "../types/class-period";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../types/root-stack-param-list";
 
 type Props = {
+  from: string;
   isShow: boolean;
-  data?: ClassPeriodOptionDatas;
+  data?: ClassPeriod;
   onClose: () => void;
+  onUpdate?: (updatedData: ClassPeriod) => void;
 };
 
-const SetClassPeriodModal: FC<Props> = ({ isShow, data, onClose }) => {
-  const [className, setClassName] = useState(data?.kamoku_name);
-  const [classRoom, setClassRoom] = useState(data?.kamoku_class);
+const SetClassPeriodModal: FC<Props> = ({
+  from,
+  isShow,
+  data,
+  onClose,
+  onUpdate,
+}) => {
+  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [className, setClassName] = useState(data?.className);
+  const [classRoom, setClassRoom] = useState(data?.classRoom);
+
   useEffect(() => {
-    setClassName(data?.kamoku_name);
-    setClassRoom(data?.kamoku_class);
+    setClassName(data?.className);
+    setClassRoom(data?.classRoom);
   }, [isShow]);
+
+  const setUserClassPeriods = async (data: ClassPeriod) => {
+    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+      const updated = [...prev, data];
+      return updated;
+    });
+
+    const updatedClassPeriods = [...userClassPeriodDatas, data];
+    await AsyncFunctions.saveClassPeriodDatas(updatedClassPeriods);
+  };
+
+  const changeUserClassPeriod = async (data: ClassPeriod) => {
+    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+      const deletePrevData: ClassPeriod[] = prev.filter(
+        (el) => el.num !== data.num
+      );
+      const updated = [...deletePrevData, data];
+      return updated;
+    });
+    const updatedClassPeriods = [
+      ...userClassPeriodDatas.filter((el) => el.num !== data.num),
+      data,
+    ];
+    await AsyncFunctions.saveClassPeriodDatas(updatedClassPeriods);
+  };
+
+  const handleSave = (from: string) => {
+    if (from === "classPeriodDetail") {
+      const updatedData = { ...data, className, classRoom }; // 新しいデータを作成
+      onUpdate(updatedData); // 変更後のデータを親コンポーネントに渡す
+      onClose();
+      changeUserClassPeriod(updatedData);
+    }
+    if (from === "classPeriodOptions") {
+      onClose();
+      setUserClassPeriods(data);
+      navigation.navigate("TimeTable");
+    }
+  };
+
+  function buttonText(from: string): string {
+    switch (from) {
+      case "classPeriodOptions":
+        return "追加";
+      case "classPeriodDetail":
+        return "変更";
+    }
+  }
+
   return (
     <View>
       <Modal
@@ -77,7 +142,9 @@ const SetClassPeriodModal: FC<Props> = ({ isShow, data, onClose }) => {
                       backgroundColor: "#30CB89",
                       borderRadius: 7,
                     }}
-                    onPress={onClose}
+                    onPress={() => {
+                      handleSave(from);
+                    }}
                   >
                     <Text
                       style={{
@@ -86,7 +153,7 @@ const SetClassPeriodModal: FC<Props> = ({ isShow, data, onClose }) => {
                         fontWeight: "800",
                       }}
                     >
-                      追加
+                      {`${buttonText(from)}`}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity

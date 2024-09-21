@@ -41,6 +41,8 @@ import RitsuMatch from "./src/View/RitsuMatch";
 import KitchenCarDetailView from "./src/component/Map/KitchenCarDetailView";
 import PortalAccess from "./src/View/PortalAccess";
 import ClassPeriodOptions from "./src/View/TimeTable/ClassPeriodOptions";
+import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
+import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
 const searchClient = algoliasearch(
   "8LXF97V2DN",
   "d9e686fcc36b490017d240823c242f19"
@@ -108,6 +110,20 @@ function App() {
               <Stack.Screen
                 name="ClassPeriodOptions"
                 component={ClassPeriodOptions}
+                options={() => ({
+                  title: "",
+                })}
+              />
+              <Stack.Screen
+                name="TimeTableSetting"
+                component={TimeTableSetting}
+                options={() => ({
+                  title: "",
+                })}
+              />
+              <Stack.Screen
+                name="ClassPeriodDetail"
+                component={ClassPeriodDetail}
                 options={() => ({
                   title: "",
                 })}

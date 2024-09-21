@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import ClassPeriod from "../../component/TimeTable/timeTableView/ClassPeriod";
+import { View, StyleSheet } from "react-native";
 import WeekRow from "../../component/TimeTable/timeTableView/WeekRow";
 import ClassTimeColumn from "../../component/TimeTable/timeTableView/ClassTimeColumn";
+import React from "react";
+import ClassPeriodUnit from "../../component/TimeTable/timeTableView/ClassPeriodUnit";
 
 const TimeTableView = () => {
   return (
@@ -26,7 +27,7 @@ const TimeTableView = () => {
                   <View key={weekIndex} style={styles.oneWeekContainer}>
                     {Array.from({ length: 7 }, (_, i) => i + 1).map(
                       (period, periodIndex) => (
-                        <ClassPeriod
+                        <ClassPeriodUnit
                           key={periodIndex}
                           weekOfTheDay={weekOfTheDay}
                           period={period}

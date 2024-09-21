@@ -1,0 +1,192 @@
+import { FC, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { ClassPeriod } from "../../component/TimeTable/types/class-period";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+} from "@react-navigation/native";
+import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
+import SetClassPeriodModal from "../../component/TimeTable/classPeriodOptions/SetClassPeriodModal";
+import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
+import { AsyncFunctions } from "../../component/TimeTable/classObject/TimeTableClassObject";
+
+type ClassPeriodDetailScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "ClassPeriodDetail"
+>;
+
+const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
+  route,
+}) => {
+  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { classPeriodData } = route.params;
+  const [isModalShow, setIsModalShow] = useState(false);
+  const [currentClassPeriodData, setCurrentClassPeriodData] =
+    useState(classPeriodData); // 変更後のデータを保持する状態
+
+  // モーダルから変更後のデータを受け取る関数
+  const handleUpdateClassPeriodData = (updatedData: ClassPeriod) => {
+    setCurrentClassPeriodData(updatedData); // 変更を反映
+  };
+
+  const deleteUserClassPeriod = async (data: ClassPeriod) => {
+    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+      const deletePrevData: ClassPeriod[] = prev.filter(
+        (el) => el.num !== data.num
+      );
+      return deletePrevData;
+    });
+    const updatedClassPeriods = userClassPeriodDatas.filter(
+      (el) => el.num !== data.num
+    );
+    await AsyncFunctions.saveClassPeriodDatas(updatedClassPeriods);
+  };
+
+  const deleteClassPeriodDialog = async (data: ClassPeriod) => {
+    // 画像を削除する前に確認のダイアログを表示
+    Alert.alert(
+      "この授業を削除しますか？",
+      "この操作は取り消せません。",
+      [
+        {
+          text: "キャンセル",
+          style: "cancel",
+        },
+        {
+          text: "削除",
+          onPress: () => {
+            deleteUserClassPeriod(data);
+            navigation.navigate("TimeTable");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
+        <Text
+          style={{
+            fontWeight: "bold",
+            color: "black",
+            fontSize: 25,
+            paddingVertical: 15,
+          }}
+        >
+          {currentClassPeriodData.weekOfTheDay}曜{currentClassPeriodData.period}
+          限
+        </Text>
+        <View style={styles.classPeriodDetailBody}>
+          <View style={styles.classPeriodNumAndEditContainer}>
+            <View style={styles.classPeriodNumberContainer}>
+              <Text style={{ fontWeight: "bold", color: "white" }}>
+                {currentClassPeriodData.num}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.classPeriodEdit}
+              onPress={() => setIsModalShow(true)}
+            >
+              <AntDesign name="edit" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.classPeriodDataContainer}>
+            <Text style={{ fontWeight: "bold", color: "black", fontSize: 25 }}>
+              {currentClassPeriodData.className}
+            </Text>
+          </View>
+          <View style={styles.classPeriodDataContainer}>
+            <Text style={styles.ClassPeriodDetailData}>
+              {currentClassPeriodData.classRoom}
+            </Text>
+          </View>
+          <View style={styles.classPeriodDataContainer}>
+            <Text style={styles.ClassPeriodDetailData}>
+              {currentClassPeriodData.teacher}
+            </Text>
+          </View>
+          <View style={styles.classPeriodDataContainer}>
+            <Text style={styles.ClassPeriodDetailData}>
+              単位数：{currentClassPeriodData.unit}
+            </Text>
+          </View>
+          <View style={styles.classPeriodDataContainer}>
+            <Text style={styles.ClassPeriodDetailData}>
+              科目の種類：{currentClassPeriodData.status}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.syllabusView}>
+          <View>
+            <Text style={{ fontWeight: "bold" }}>シラバスにアクセスする</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.syllabusView}
+          onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
+        >
+          <View>
+            <Text style={{ fontWeight: "bold", color: "red" }}>削除する</Text>
+          </View>
+        </TouchableOpacity>
+        <SetClassPeriodModal
+          from={"classPeriodDetail"}
+          isShow={isModalShow}
+          onClose={() => setIsModalShow(false)}
+          data={currentClassPeriodData} // 選択されたデータをモーダルに渡す
+          onUpdate={handleUpdateClassPeriodData}
+        />
+      </View>
+    </View>
+  );
+};
+export default ClassPeriodDetail;
+
+const styles = StyleSheet.create({
+  classPeriodDetailBody: {
+    flexDirection: "column",
+    height: "55%",
+    backgroundColor: "white",
+    width: "95%",
+    marginTop: 10,
+    borderRadius: 10,
+  },
+  classPeriodNumAndEditContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  classPeriodEdit: {
+    margin: 10,
+  },
+  classPeriodNumberContainer: {
+    padding: 5,
+    backgroundColor: "red",
+    borderRadius: 10,
+    margin: 10,
+    width: "18%",
+    alignItems: "center",
+  },
+  classPeriodDataContainer: {
+    width: "100%",
+    margin: 10,
+  },
+  ClassPeriodDetailData: {
+    fontWeight: "bold",
+    color: "black",
+    fontSize: 15,
+  },
+  syllabusView: {
+    height: 50,
+    marginTop: 5,
+    width: "95%",
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+});

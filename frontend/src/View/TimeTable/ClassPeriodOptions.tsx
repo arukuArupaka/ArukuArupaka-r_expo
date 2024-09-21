@@ -8,14 +8,13 @@ import {
   ScrollView,
 } from "react-native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
-import { fetchClassDatas } from "../../component/TimeTable/classPeriodOptions/funtion/fetchClassDatas";
-import { ClassPeriodOptionDatas } from "../../component/TimeTable/types/class-period-option-datas";
-import { convertNumberToWeekOfTheDay } from "../../component/TimeTable/classPeriodOptions/funtion/convertNumberToWeekOfTheDay";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
 import ClassPeriodOption from "../../component/TimeTable/classPeriodOptions/ClassPeriodOption";
 import NotChoosenDepartmentOrSeason from "../../component/TimeTable/classPeriodOptions/NotChoosenDepartmentOrSeason";
 import SetClassPeriodModal from "../../component/TimeTable/classPeriodOptions/SetClassPeriodModal";
+import { ClassDataFetcher } from "../../component/TimeTable/classObject/TimeTableClassObject";
+import { ClassPeriod } from "../../component/TimeTable/types/class-period";
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
   "ClassPeriodOptions"
@@ -26,22 +25,24 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
 }) => {
   const { weekOfTheDay, period } = route.params;
   const [classPeriodOptions, setClassPeriodOptions] = useState<
-    ClassPeriodOptionDatas[] | undefined | string
+    ClassPeriod[] | undefined | string
   >(undefined);
   const [isModalShow, setIsModalShow] = useState(false);
-  const [selectedData, setSelectedData] =
-    useState<ClassPeriodOptionDatas | null>(null); // 選択されたデータのステート
+  const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート
 
-  const stringWeekOfTheDay = convertNumberToWeekOfTheDay(weekOfTheDay);
+  const classFetcher = new ClassDataFetcher({
+    department: "理工学部",
+    weekOfTheDay: ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay),
+    period: period,
+    season: "秋セメスター",
+  });
+
+  const stringWeekOfTheDay =
+    ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay);
 
   // バックエンドデータベースに非同期で問い合わせる
   const fetchClassPeriodOptions = async () => {
-    const data = await fetchClassDatas({
-      department: "理工学部",
-      season: "秋セメスター",
-      weekOfTheDay: stringWeekOfTheDay,
-      period: period,
-    });
+    const data = await classFetcher.fetchClassDatas();
     setClassPeriodOptions(data);
   };
 
@@ -49,7 +50,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
     fetchClassPeriodOptions();
   }, []);
 
-  const openModal = (data: ClassPeriodOptionDatas | undefined) => {
+  const openModal = (data: ClassPeriod | undefined) => {
     setSelectedData(data);
     setIsModalShow(true);
   };
@@ -126,6 +127,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
           </View>
         </ScrollView>
         <SetClassPeriodModal
+          from={"classPeriodOptions"}
           isShow={isModalShow}
           onClose={() => setIsModalShow(false)}
           data={selectedData} // 選択されたデータをモーダルに渡す

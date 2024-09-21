@@ -1,17 +1,15 @@
 import { View, Text, StyleSheet } from "react-native";
-import { ClassPeriodOptionDatas } from "../types/class-period-option-datas";
 import { FC } from "react";
+import { ClassPeriod } from "../types/class-period";
 type Props = {
-  data: ClassPeriodOptionDatas;
+  data: ClassPeriod;
 };
 
 const ClassPeriodOption: FC<Props> = ({ data }) => {
   return (
     <View style={styles.classPeriodOption}>
       <View style={styles.classPeriodNumber}>
-        <Text style={{ fontWeight: "bold", color: "white" }}>
-          {data.kamoku_num}
-        </Text>
+        <Text style={{ fontWeight: "bold", color: "white" }}>{data.num}</Text>
       </View>
       <View style={styles.classNameAndClass}>
         <Text
@@ -19,14 +17,14 @@ const ClassPeriodOption: FC<Props> = ({ data }) => {
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {data.kamoku_name}
+          {data.className}
         </Text>
         <Text
           style={{ fontWeight: "bold", maxWidth: "90%" }}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {data.kamoku_class}
+          {data.classRoom}
         </Text>
       </View>
     </View>

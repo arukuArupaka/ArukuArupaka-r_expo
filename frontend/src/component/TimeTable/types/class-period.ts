@@ -1,6 +1,7 @@
-export type classPeriod = {
+export type ClassPeriod = {
   year: number;
-  day: number;
+  season: string;
+  weekOfTheDay: string;
   period: number;
   className: string;
   classRoom: string;
@@ -36,4 +37,19 @@ const TimeTable = {
   color: "#888888",
   mulcolor: "#888888",
   statuscolor: "#888888",
+};
+
+export type ClassPeriodOptionDatas = {
+  kamoku_name: string;
+  kamokuid: number;
+  kamoku_resume: string;
+  kamoku_class: string;
+  kamoku_day: string;
+  kamoku_time: string;
+  kamoku_unit: number;
+  kamoku_department: string;
+  kamoku_season: string;
+  kamoku_num: number;
+  kamoku_teacher: string;
+  kamoku_status: string;
 };
