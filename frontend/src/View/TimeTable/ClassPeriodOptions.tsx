@@ -19,7 +19,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
 }) => {
   const { weekOfTheDay, period } = route.params;
   const [classPeriodOptions, setClassPeriodOptions] = useState<
-    ClassPeriod[] | undefined | string
+    ClassPeriod[] | string
   >(undefined);
   const [isModalShow, setIsModalShow] = useState(false);
   const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ClassPeriod } from "../types/class-period";
+import { TIME_TABLE_API_URL } from "@env";
 
 type Props = {
   department?: string;
@@ -27,7 +28,7 @@ export class ClassDataFetcher {
         return "not chosen your department or now season";
       }
       const response = await fetch(
-        `https://render-test-db-h83h.onrender.com/time_table/get/all/search/?kamoku_department=${this.department}&kamoku_day=${this.weekOfTheDay}&kamoku_time=${this.period}&kamoku_season=${this.season}`
+        `${TIME_TABLE_API_URL}?kamoku_department=${this.department}&kamoku_day=${this.weekOfTheDay}&kamoku_time=${this.period}&kamoku_season=${this.season}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
