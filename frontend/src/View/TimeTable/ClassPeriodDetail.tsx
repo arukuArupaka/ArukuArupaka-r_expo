@@ -1,16 +1,18 @@
 import { FC, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { ClassPeriod } from "../../component/TimeTable/types/class-period";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   NavigationProp,
   RouteProp,
   useNavigation,
 } from "@react-navigation/native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
-import SetClassPeriodModal from "../../component/TimeTable/classPeriodOptions/SetClassPeriodModal";
+import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../../component/TimeTable/classObject/TimeTableClassObject";
+import ClassPeriodDetailDataItem from "../../component/TimeTable/timeTableDetail/component/ClassPeriodDetailDatalBodyItem";
+import ActionButton from "../../component/TimeTable/timeTableDetail/ActionButton";
+import ClassPeriodDetailDataBody from "../../component/TimeTable/timeTableDetail/ClassPeriodDetailDataBody";
 
 type ClassPeriodDetailScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -81,59 +83,20 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
           {currentClassPeriodData.weekOfTheDay}曜{currentClassPeriodData.period}
           限
         </Text>
-        <View style={styles.classPeriodDetailBody}>
-          <View style={styles.classPeriodNumAndEditContainer}>
-            <View style={styles.classPeriodNumberContainer}>
-              <Text style={{ fontWeight: "bold", color: "white" }}>
-                {currentClassPeriodData.num}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={styles.classPeriodEdit}
-              onPress={() => setIsModalShow(true)}
-            >
-              <AntDesign name="edit" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.classPeriodDataContainer}>
-            <Text style={{ fontWeight: "bold", color: "black", fontSize: 25 }}>
-              {currentClassPeriodData.className}
-            </Text>
-          </View>
-          <View style={styles.classPeriodDataContainer}>
-            <Text style={styles.ClassPeriodDetailData}>
-              {currentClassPeriodData.classRoom}
-            </Text>
-          </View>
-          <View style={styles.classPeriodDataContainer}>
-            <Text style={styles.ClassPeriodDetailData}>
-              {currentClassPeriodData.teacher}
-            </Text>
-          </View>
-          <View style={styles.classPeriodDataContainer}>
-            <Text style={styles.ClassPeriodDetailData}>
-              単位数：{currentClassPeriodData.unit}
-            </Text>
-          </View>
-          <View style={styles.classPeriodDataContainer}>
-            <Text style={styles.ClassPeriodDetailData}>
-              科目の種類：{currentClassPeriodData.status}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.syllabusView}>
-          <View>
-            <Text style={{ fontWeight: "bold" }}>シラバスにアクセスする</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.syllabusView}
+        <ClassPeriodDetailDataBody
+          onPress={() => setIsModalShow(true)}
+          currentClassPeriodData={currentClassPeriodData}
+        />
+        <ActionButton
+          onPress={() => console.log("hello")}
+          color={"black"}
+          label={"シラバスにアクセスする"}
+        />
+        <ActionButton
           onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
-        >
-          <View>
-            <Text style={{ fontWeight: "bold", color: "red" }}>削除する</Text>
-          </View>
-        </TouchableOpacity>
+          color={"red"}
+          label={"削除する"}
+        />
         <SetClassPeriodModal
           from={"classPeriodDetail"}
           isShow={isModalShow}
@@ -146,47 +109,3 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   );
 };
 export default ClassPeriodDetail;
-
-const styles = StyleSheet.create({
-  classPeriodDetailBody: {
-    flexDirection: "column",
-    height: "55%",
-    backgroundColor: "white",
-    width: "95%",
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  classPeriodNumAndEditContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  classPeriodEdit: {
-    margin: 10,
-  },
-  classPeriodNumberContainer: {
-    padding: 5,
-    backgroundColor: "red",
-    borderRadius: 10,
-    margin: 10,
-    width: "18%",
-    alignItems: "center",
-  },
-  classPeriodDataContainer: {
-    width: "100%",
-    margin: 10,
-  },
-  ClassPeriodDetailData: {
-    fontWeight: "bold",
-    color: "black",
-    fontSize: 15,
-  },
-  syllabusView: {
-    height: 50,
-    marginTop: 5,
-    width: "95%",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-  },
-});

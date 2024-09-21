@@ -67,8 +67,8 @@ const SetClassPeriodModal: FC<Props> = ({
 
   const handleSave = (from: string) => {
     if (from === "classPeriodDetail") {
-      const updatedData = { ...data, className, classRoom }; // 新しいデータを作成
-      onUpdate(updatedData); // 変更後のデータを親コンポーネントに渡す
+      const updatedData = { ...data, className, classRoom };
+      onUpdate(updatedData);
       onClose();
       changeUserClassPeriod(updatedData);
     }

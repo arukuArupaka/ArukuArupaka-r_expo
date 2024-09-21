@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FC } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../types/root-stack-param-list";
-import { useTimeTable } from "../TimeTableContext";
-import { ClassPeriod } from "../types/class-period";
-import { ClassDataFetcher } from "../classObject/TimeTableClassObject";
+import { useTimeTable } from "../../TimeTableContext";
+import { RootStackParamList } from "../../types/root-stack-param-list";
+import { ClassPeriod } from "../../types/class-period";
+import { ClassDataFetcher } from "../../classObject/TimeTableClassObject";
 
 type Props = {
   weekOfTheDay: number;
