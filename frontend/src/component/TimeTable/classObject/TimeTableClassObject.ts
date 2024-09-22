@@ -82,24 +82,26 @@ export class ClassDataFetcher {
 }
 
 export class AsyncFunctions {
-  classPeriodDatas: ClassPeriod[];
+  classPeriodDatas?: ClassPeriod[];
+  place: string;
 
-  constructor(classPeriodDatas: ClassPeriod[] = []) {
+  constructor(classPeriodDatas: ClassPeriod[] = [], place: string) {
     this.classPeriodDatas = classPeriodDatas;
+    this.place = place;
   }
 
-  static async saveClassPeriodDatas(value: ClassPeriod[]) {
+  async saveClassPeriodDatas() {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("@classPeriods", jsonValue);
+      const jsonValue = JSON.stringify(this.classPeriodDatas);
+      await AsyncStorage.setItem(this.place, jsonValue);
     } catch (e) {
       console.error("Failed to save data to AsyncStorage", e);
     }
   }
 
-  static async getClassPeriodDatas(): Promise<ClassPeriod[]> {
+  async getClassPeriodDatas(): Promise<ClassPeriod[]> {
     try {
-      const jsonValue = await AsyncStorage.getItem("@classPeriods");
+      const jsonValue = await AsyncStorage.getItem(this.place);
       return jsonValue != null ? JSON.parse(jsonValue) : [];
     } catch (e) {
       console.error("Failed to fetch data from AsyncStorage", e);

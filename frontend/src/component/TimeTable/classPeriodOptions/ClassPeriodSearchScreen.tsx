@@ -21,43 +21,6 @@ type Props = {
 const ClassPeriodSearchScreen: FC<Props> = ({ onClose }) => {
   const [searchWord, setSearchWord] = useState<string>("");
   const textInputRef = useRef<TextInput>(null); // TextInputの参照を作成
-  const [classPeriodOptions, setClassPeriodOptions] = useState<
-    ClassPeriod[] | string
-  >(undefined);
-  const weekOfTheDay = 1;
-  const period = 1;
-  const [isModalShow, setIsModalShow] = useState(false);
-  const [isShowSearchScreen, setIsShowSearchScreen] = useState(false);
-  const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート
-
-  const classFetcher = new ClassDataFetcher({
-    department: "理工学部",
-    weekOfTheDay: ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay),
-    period: period,
-    season: "秋セメスター",
-  });
-
-  const stringWeekOfTheDay =
-    ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay);
-
-  // バックエンドデータベースに非同期で問い合わせる
-  const fetchClassPeriodOptions = async () => {
-    const data = await classFetcher.fetchClassDatas();
-    setClassPeriodOptions(data);
-  };
-
-  useEffect(() => {
-    fetchClassPeriodOptions();
-  }, []);
-
-  const openModal = (data?: ClassPeriod) => {
-    setSelectedData(data);
-    setIsModalShow(true);
-  };
-
-  const switchSearchScreen = (isShow: boolean) => {
-    setIsShowSearchScreen(isShow);
-  };
 
   useEffect(() => {
     // コンポーネントがマウントされた時にフォーカスを当てる
