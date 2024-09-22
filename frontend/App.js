@@ -119,7 +119,7 @@ function App() {
               />
               <Stack.Screen
                 name="TimeTableSetting"
-                component={ClassPeriodSearchScreen}
+                component={TimeTableSetting}
                 options={() => ({
                   title: "",
                 })}
