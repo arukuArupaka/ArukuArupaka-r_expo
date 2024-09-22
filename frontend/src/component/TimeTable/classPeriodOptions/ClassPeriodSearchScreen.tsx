@@ -7,19 +7,25 @@ import {
   TouchableOpacity,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { ClassPeriod } from "../types/class-period";
+import { useTimeTable } from "../TimeTableContext";
 import ClassPeriodOptionsBody from "./ClassPeriodOptionsBody";
 import SetClassPeriodModal from "../common/SetClassPeriodModal";
-import { ClassDataFetcher } from "../classObject/TimeTableClassObject";
-import { ClassPeriod } from "../types/class-period";
-import ChoosenWeekOfTheDayAndPeriod from "./ChoosenWeekOfTheDayAndPeriod";
-import { SearchBox } from "../../Textbook/SearchBox";
 
 type Props = {
   onClose: () => void;
+  classPeriodOptions: ClassPeriod[];
 };
 
-const ClassPeriodSearchScreen: FC<Props> = ({ onClose }) => {
+const ClassPeriodSearchScreen: FC<Props> = ({
+  onClose,
+  classPeriodOptions,
+}) => {
+  const { userClassPeriodDatas } = useTimeTable();
   const [searchWord, setSearchWord] = useState<string>("");
+  const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null);
+  const [isModalShow, setIsModalShow] = useState(false);
+  const [searchResults, setSearchResults] = useState<ClassPeriod[]>([]);
   const textInputRef = useRef<TextInput>(null); // TextInputの参照を作成
 
   useEffect(() => {
@@ -28,6 +34,57 @@ const ClassPeriodSearchScreen: FC<Props> = ({ onClose }) => {
       textInputRef.current.focus();
     }
   }, []); // 空の依存配列でコンポーネントマウント時のみ実行
+
+  function convertObjectToStrings(obj: ClassPeriod): { [key: string]: string } {
+    const result: { [key: string]: string } = {};
+
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = String(obj[key]); // 値を文字列に変換
+      }
+    }
+
+    return result;
+  }
+
+  function containsSearchWord(obj: ClassPeriod, searchWord: string): boolean {
+    const stringifiedObj = convertObjectToStrings(obj);
+
+    for (const key in stringifiedObj) {
+      if (key === "num") {
+        // numの場合は、指定された検索ワードで始まるかどうかを確認
+        if (stringifiedObj[key].startsWith(searchWord)) {
+          return true;
+        }
+      } else if (key === "className") {
+        // nameの場合は、検索ワードが含まれているかを確認
+        if (stringifiedObj[key].includes(searchWord)) {
+          return true;
+        }
+      }
+    }
+
+    return false; // どのプロパティにも検索ワードが含まれていなければ false
+  }
+
+  const openModal = (data?: ClassPeriod) => {
+    setSelectedData(data);
+    setIsModalShow(true);
+  };
+
+  useEffect(() => {
+    if (searchWord) {
+      setSearchResults(() => {
+        const result = classPeriodOptions.filter((el: ClassPeriod) => {
+          return containsSearchWord(el, searchWord); // true/false を返す必要がある
+        });
+        return result;
+      });
+    }
+    if (!searchWord) {
+      setSearchResults([]);
+    }
+  }, [searchWord]);
 
   return (
     <View
@@ -49,7 +106,9 @@ const ClassPeriodSearchScreen: FC<Props> = ({ onClose }) => {
               />
               <TextInput
                 ref={textInputRef} // TextInputの参照を設定
-                onChangeText={(text) => setSearchWord(text)}
+                onChangeText={(text) => {
+                  setSearchWord(text);
+                }}
                 value={searchWord}
                 placeholder="検索ワードを入力"
                 style={{
@@ -68,6 +127,16 @@ const ClassPeriodSearchScreen: FC<Props> = ({ onClose }) => {
           </View>
         </View>
       </View>
+      <ClassPeriodOptionsBody
+        classPeriodOptions={searchResults}
+        onPress={openModal}
+      />
+      <SetClassPeriodModal
+        from={"classPeriodOptions"}
+        isShow={isModalShow}
+        onClose={() => setIsModalShow(false)}
+        data={selectedData}
+      />
     </View>
   );
 };

@@ -86,7 +86,12 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
           />
         </View>
       ) : (
-        <ClassPeriodSearchScreen onClose={() => switchSearchScreen(false)} />
+        <ClassPeriodSearchScreen
+          onClose={() => switchSearchScreen(false)}
+          classPeriodOptions={
+            typeof classPeriodOptions === "string" ? [] : classPeriodOptions
+          }
+        />
       )}
     </View>
   );
