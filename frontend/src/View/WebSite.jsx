@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { useTimeTable } from "../component/TimeTable/timeTableContext";
+import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 
 export default function App() {
   const {

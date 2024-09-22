@@ -12,7 +12,7 @@ import {
 import TextBookChatView from "../../../View/Textbook/main/TextBookChatView";
 import { db } from "../../../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTimeTable } from "../../TimeTable/timeTableContext";
+import { useTimeTable } from "../../TimeTable/TimeTableContext";
 import { useSelector } from "react-redux";
 
 const TalkFriendListItemContainer = (props) => {
