@@ -12,7 +12,7 @@ import MapView from "./src/View/Map/MapMain";
 import ASetting from "./src/View/ASetting";
 import { TouchableOpacity, Image, View, TextInput } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { TimeTableProvider } from "./src/component/TimeTable/timeTableContext";
+import { TimeTableProvider } from "./src/component/TimeTable/TimeTableContext";
 import TimeTableView from "./src/View/TimeTable/TimeTableView";
 import LogoTitle from "./src/component/Map/headerForMap";
 import ALoginView from "./src/View/ALoginView";

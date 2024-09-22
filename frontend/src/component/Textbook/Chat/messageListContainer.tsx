@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import MessageListItem from "./MessageListItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTimeTable } from "../../TimeTable/timeTableContext";
+import { useTimeTable } from "../../TimeTable/TimeTableContext";
 
 const MessageListContainer = forwardRef((props, ref) => {
   const [displayMessageArray, setDisplayMessageArray] = useState([]);
