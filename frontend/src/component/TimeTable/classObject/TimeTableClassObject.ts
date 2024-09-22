@@ -85,9 +85,9 @@ export class AsyncFunctions {
   classPeriodDatas?: ClassPeriod[];
   place: string;
 
-  constructor(classPeriodDatas: ClassPeriod[] = [], place: string) {
-    this.classPeriodDatas = classPeriodDatas;
+  constructor(place: string, classPeriodDatas: ClassPeriod[] = []) {
     this.place = place;
+    this.classPeriodDatas = classPeriodDatas;
   }
 
   async saveClassPeriodDatas() {
@@ -105,6 +105,7 @@ export class AsyncFunctions {
       return jsonValue != null ? JSON.parse(jsonValue) : [];
     } catch (e) {
       console.error("Failed to fetch data from AsyncStorage", e);
+      return [];
     }
   }
 }

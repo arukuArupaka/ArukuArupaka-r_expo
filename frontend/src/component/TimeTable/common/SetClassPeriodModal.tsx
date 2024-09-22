@@ -47,7 +47,11 @@ const SetClassPeriodModal: FC<Props> = ({
     });
 
     const updatedClassPeriods = [...userClassPeriodDatas, data];
-    await AsyncFunctions.saveClassPeriodDatas(updatedClassPeriods);
+    const asyncFunctions = new AsyncFunctions(
+      "@classPeriods",
+      updatedClassPeriods
+    );
+    await asyncFunctions.saveClassPeriodDatas();
   };
 
   const changeUserClassPeriod = async (data: ClassPeriod) => {
@@ -62,7 +66,11 @@ const SetClassPeriodModal: FC<Props> = ({
       ...userClassPeriodDatas.filter((el) => el.num !== data.num),
       data,
     ];
-    await AsyncFunctions.saveClassPeriodDatas(updatedClassPeriods);
+    const asyncFunctions = new AsyncFunctions(
+      "@classPeriod",
+      updatedClassPeriods
+    );
+    await asyncFunctions.saveClassPeriodDatas();
   };
 
   const handleSave = (from: string) => {

@@ -13,8 +13,8 @@ export const TimeTableProvider = ({ children }) => {
   >([]);
 
   const getClassPeriodDatas = async () => {
-    const asyncFunction = new AsyncFunctions([], "@classPeriods");
-    const classPeriodDatas = await asyncFunction.getClassPeriodDatas();
+    const asyncFunctions = new AsyncFunctions("@classPeriods");
+    const classPeriodDatas = await asyncFunctions.getClassPeriodDatas();
     setUserClassPeriodDatas(classPeriodDatas);
   };
 
