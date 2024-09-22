@@ -12,7 +12,7 @@ import {
 import TextBookChatView from "../../../View/Textbook/main/TextBookChatView";
 import { db } from "../../../../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTimeTable } from "../../TimeTable/TimeTableContext";
+import { useTimeTable } from "../../TimeTable/timeTableContext";
 import { useSelector } from "react-redux";
 
 const TalkFriendListItemContainer = (props) => {
@@ -38,115 +38,118 @@ const TalkFriendListItemContainer = (props) => {
         );
         // リアルタイムリスナーを設定
         unsubscribe = onSnapshot(docRef, async (docSnapshot) => {
-          try{
-          let unreadMessages = [];
+          try {
+            let unreadMessages = [];
 
-          const myID = props.FriendData.myChatID
-          const friendID = props.FriendData.friendChatID
+            const myID = props.FriendData.myChatID;
+            const friendID = props.FriendData.friendChatID;
 
-          if (myID.toLowerCase() < friendID.toLowerCase()) {
-            roomGetID = myID + friendID;
-            setRoomID(roomGetID);
-          }
-          if (myID.toLowerCase() > friendID.toLowerCase()) {
-            roomGetID = friendID + myID;
-            setRoomID(roomGetID);
-          }
-
-          console.log("79");
-          console.log(unreadMessagesJSON[roomGetID]);
-
-          if (!unreadMessagesJSON[roomGetID]) {
-            console.log("getdata62", `chatUnreadMessages_${roomGetID}`);
-            const storedMessages = await AsyncStorage.getItem(
-              `chatUnreadMessages_${roomGetID}`
-            );
-            console.log(JSON.parse(storedMessages));
-            if (storedMessages!==null&&JSON.parse(storedMessages).length !== 0) {
-              unreadMessages = JSON.parse(storedMessages);
+            if (myID.toLowerCase() < friendID.toLowerCase()) {
+              roomGetID = myID + friendID;
+              setRoomID(roomGetID);
             }
-            console.log("getdata");
-            console.log(unreadMessages);
-          }
+            if (myID.toLowerCase() > friendID.toLowerCase()) {
+              roomGetID = friendID + myID;
+              setRoomID(roomGetID);
+            }
 
-          console.log(docSnapshot.exists());
-          if (docSnapshot.exists()) {
-            const data = docSnapshot.data().messages;
-            console.log(docSnapshot.data().messages);
-            console.log(22);
-            if (data.length === 0) {
+            console.log("79");
+            console.log(unreadMessagesJSON[roomGetID]);
+
+            if (!unreadMessagesJSON[roomGetID]) {
+              console.log("getdata62", `chatUnreadMessages_${roomGetID}`);
+              const storedMessages = await AsyncStorage.getItem(
+                `chatUnreadMessages_${roomGetID}`
+              );
+              console.log(JSON.parse(storedMessages));
               if (
-                !unreadMessagesJSON[roomGetID] ||
-                unreadMessagesJSON[roomGetID].length === 0
+                storedMessages !== null &&
+                JSON.parse(storedMessages).length !== 0
               ) {
-                console.log(unreadMessages);
-                setUnreadMessagesJSON((prev) => {
-                  return {
-                    ...prev,
-                    [roomGetID]: removeDuplicates([...unreadMessages]),
-                  };
-                });
+                unreadMessages = JSON.parse(storedMessages);
               }
-              setIsreadFirst(true);
-              return;
+              console.log("getdata");
+              console.log(unreadMessages);
             }
-            data.forEach((messageObject) => {
-              console.log(62);
-              console.log(messageObject);
-              // Alert.alert(messageObject.message);
-              unreadMessages.push(messageObject);
-            });
-            console.log(unreadMessages);
-            unreadMessages.sort(
-              (a, b) => new Date(b.sendAt) - new Date(a.sendAt)
-            );
-            console.log(36);
-            // setUnreadMessagesDisplay([
-            //   ...removeDuplicates([...unreadMessages]),
-            // ]);
-            console.log(getRoomID());
 
-            if (data && data.length > 0) {
-              for (const message of data) {
-                try {
-                  // AsyncStorageに保存
-                  //   const storageKey = `${props.roomID}-${message.sendAt}`;
-                  //   await AsyncStorage.setItem(storageKey, JSON.stringify(message));
-                  //setGetmessageArray(data.messages)
-                  console.log(30);
-                  // Firestoreから削除
-                  //sortMessageArray(data.messages)
-                  await updateDoc(docRef, {
-                    messages: arrayRemove(message),
+            console.log(docSnapshot.exists());
+            if (docSnapshot.exists()) {
+              const data = docSnapshot.data().messages;
+              console.log(docSnapshot.data().messages);
+              console.log(22);
+              if (data.length === 0) {
+                if (
+                  !unreadMessagesJSON[roomGetID] ||
+                  unreadMessagesJSON[roomGetID].length === 0
+                ) {
+                  console.log(unreadMessages);
+                  setUnreadMessagesJSON((prev) => {
+                    return {
+                      ...prev,
+                      [roomGetID]: removeDuplicates([...unreadMessages]),
+                    };
                   });
-                } catch (error) {
-                  console.error(
-                    "Error saving message to AsyncStorage or deleting from Firestore:",
-                    error
-                  );
+                }
+                setIsreadFirst(true);
+                return;
+              }
+              data.forEach((messageObject) => {
+                console.log(62);
+                console.log(messageObject);
+                // Alert.alert(messageObject.message);
+                unreadMessages.push(messageObject);
+              });
+              console.log(unreadMessages);
+              unreadMessages.sort(
+                (a, b) => new Date(b.sendAt) - new Date(a.sendAt)
+              );
+              console.log(36);
+              // setUnreadMessagesDisplay([
+              //   ...removeDuplicates([...unreadMessages]),
+              // ]);
+              console.log(getRoomID());
+
+              if (data && data.length > 0) {
+                for (const message of data) {
+                  try {
+                    // AsyncStorageに保存
+                    //   const storageKey = `${props.roomID}-${message.sendAt}`;
+                    //   await AsyncStorage.setItem(storageKey, JSON.stringify(message));
+                    //setGetmessageArray(data.messages)
+                    console.log(30);
+                    // Firestoreから削除
+                    //sortMessageArray(data.messages)
+                    await updateDoc(docRef, {
+                      messages: arrayRemove(message),
+                    });
+                  } catch (error) {
+                    console.error(
+                      "Error saving message to AsyncStorage or deleting from Firestore:",
+                      error
+                    );
+                  }
                 }
               }
             }
-          }
 
-          if (unreadMessages.length === 0) {
+            if (unreadMessages.length === 0) {
+              setIsreadFirst(true);
+              return;
+            }
+
+            setUnreadMessagesJSON((prev) => {
+              return {
+                ...prev,
+                [roomGetID]: removeDuplicates([
+                  ...(prev[roomGetID] || []),
+                  ...unreadMessages,
+                ]),
+              };
+            });
             setIsreadFirst(true);
-            return;
+          } catch (e) {
+            console.error(e);
           }
-
-          setUnreadMessagesJSON((prev) => {
-            return {
-              ...prev,
-              [roomGetID]: removeDuplicates([
-                ...(prev[roomGetID] || []),
-                ...unreadMessages,
-              ]),
-            };
-          });
-          setIsreadFirst(true);
-        }catch(e){
-          console.error(e); 
-        }
         });
       }
     };
@@ -157,8 +160,8 @@ const TalkFriendListItemContainer = (props) => {
         }
         // console.log(userUUID);
         console.log(props.id);
-        const myID = props.FriendData.myChatID
-        const friendID = props.FriendData.friendChatID
+        const myID = props.FriendData.myChatID;
+        const friendID = props.FriendData.friendChatID;
 
         if (myID.toLowerCase() < friendID.toLowerCase()) {
           roomGetID = myID + friendID;
@@ -177,8 +180,8 @@ const TalkFriendListItemContainer = (props) => {
     getDate();
 
     const getRoomID = async () => {
-      const myID = props.FriendData.myChatID
-      const friendID = props.FriendData.friendChatID
+      const myID = props.FriendData.myChatID;
+      const friendID = props.FriendData.friendChatID;
 
       if (myID.toLowerCase() < friendID.toLowerCase()) {
         roomGetID = myID + friendID;
@@ -207,8 +210,6 @@ const TalkFriendListItemContainer = (props) => {
       return false;
     });
   }
-
-  
 
   useEffect(() => {
     const refreshChatMessages = async () => {
@@ -253,22 +254,26 @@ const TalkFriendListItemContainer = (props) => {
       }}
       onPress={() =>
         navigation.navigate("ChatView", {
-          chatData:{
-            myChatID:props.FriendData.myChatID,
-            friendChatID:props.FriendData.friendChatID,
-            myID:props.FriendData.myID,
-            friendID:props.FriendData.friendID,
-            bookID:props.FriendData.bookID,
-            isMyTextBook:props.isMyTextBook,
-            productName:props.FriendData.productName,
-            ...props.FriendData
+          chatData: {
+            myChatID: props.FriendData.myChatID,
+            friendChatID: props.FriendData.friendChatID,
+            myID: props.FriendData.myID,
+            friendID: props.FriendData.friendID,
+            bookID: props.FriendData.bookID,
+            isMyTextBook: props.isMyTextBook,
+            productName: props.FriendData.productName,
+            ...props.FriendData,
           },
         })
       }
     >
       <Ionicons name="person-circle-outline" size={50} color="orange" />
       <View className="flex-grow">
-        <Text className="text-xl">{props.FriendData.productName ? props.FriendData.productName : "error"}</Text>
+        <Text className="text-xl">
+          {props.FriendData.productName
+            ? props.FriendData.productName
+            : "error"}
+        </Text>
         <Text>
           {unreadMessagesJSON &&
             unreadMessagesJSON.hasOwnProperty(roomID) &&
