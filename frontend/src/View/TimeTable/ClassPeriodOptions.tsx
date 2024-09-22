@@ -8,6 +8,7 @@ import { ClassPeriod } from "../../component/TimeTable/types/class-period";
 import SearchBoxPressButton from "../../component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ChoosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChoosenWeekOfTheDayAndPeriod";
 import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions/ClassPeriodOptionsBody";
+import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -22,6 +23,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
     ClassPeriod[] | string
   >(undefined);
   const [isModalShow, setIsModalShow] = useState(false);
+  const [isShowSearchScreen, setIsShowSearchScreen] = useState(false);
   const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート
 
   const classFetcher = new ClassDataFetcher({
@@ -49,35 +51,43 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
     setIsModalShow(true);
   };
 
+  const switchSearchScreen = (isShow: boolean) => {
+    setIsShowSearchScreen(isShow);
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: "column",
-          flex: 1,
-          alignItems: "center",
-        }}
-      >
-        <View style={styles.header}>
-          <View style={styles.searchBoxContainer}>
-            <SearchBoxPressButton />
-            <ChoosenWeekOfTheDayAndPeriod
-              stringWeekOfTheDay={stringWeekOfTheDay}
-              period={period}
-            />
+      {!isShowSearchScreen ? (
+        <View
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.header}>
+            <View style={styles.searchBoxContainer}>
+              <SearchBoxPressButton onOpen={() => switchSearchScreen(true)} />
+              <ChoosenWeekOfTheDayAndPeriod
+                stringWeekOfTheDay={stringWeekOfTheDay}
+                period={period}
+              />
+            </View>
           </View>
+          <ClassPeriodOptionsBody
+            classPeriodOptions={classPeriodOptions}
+            onPress={openModal}
+          />
+          <SetClassPeriodModal
+            from={"classPeriodOptions"}
+            isShow={isModalShow}
+            onClose={() => setIsModalShow(false)}
+            data={selectedData}
+          />
         </View>
-        <ClassPeriodOptionsBody
-          classPeriodOptions={classPeriodOptions}
-          onPress={openModal} // 修正：関数そのものを渡す
-        />
-        <SetClassPeriodModal
-          from={"classPeriodOptions"}
-          isShow={isModalShow}
-          onClose={() => setIsModalShow(false)}
-          data={selectedData} // 選択されたデータをモーダルに渡す
-        />
-      </View>
+      ) : (
+        <ClassPeriodSearchScreen onClose={() => switchSearchScreen(false)} />
+      )}
     </View>
   );
 };
