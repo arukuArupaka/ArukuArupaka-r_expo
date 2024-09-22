@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 const TimeTableSetting = () => {
   return (
     <View>
-      <Text>こんにちは</Text>
+      <Text>近日完成</Text>
     </View>
   );
 };
