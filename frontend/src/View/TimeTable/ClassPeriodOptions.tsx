@@ -9,6 +9,7 @@ import SearchBoxPressButton from "../../component/TimeTable/classPeriodOptions/S
 import ChoosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChoosenWeekOfTheDayAndPeriod";
 import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions/ClassPeriodOptionsBody";
 import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
+import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -19,6 +20,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
   route,
 }) => {
   const { weekOfTheDay, period } = route.params;
+  const { userSettingContent } = useTimeTable();
   const [classPeriodOptions, setClassPeriodOptions] = useState<
     ClassPeriod[] | string
   >(undefined);
@@ -27,10 +29,10 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
   const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート
 
   const classFetcher = new ClassDataFetcher({
-    department: "理工学部",
+    department: userSettingContent.department,
     weekOfTheDay: ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay),
     period: period,
-    season: "秋セメスター",
+    season: userSettingContent.semester,
   });
 
   const stringWeekOfTheDay =

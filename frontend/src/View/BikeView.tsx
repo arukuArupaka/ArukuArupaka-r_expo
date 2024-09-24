@@ -29,15 +29,19 @@ const BikeView = () => {
               borderRadius: 65,
               backgroundColor: showImageScroll ? "#30cb89" : "#eeeeee",
               width: 170,
-              height:30,
-              justifyContent:"center"
+              height: 30,
+              justifyContent: "center",
             }}
           >
-            <Text style={{ 
-              fontSize: 20 ,
-              marginTop: 1,
-              color: showImageScroll ? "#ffffff" : "#010101",
-            }}>タップで</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: 1,
+                color: showImageScroll ? "#ffffff" : "#010101",
+              }}
+            >
+              タップで
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -48,14 +52,18 @@ const BikeView = () => {
               borderRadius: 65,
               backgroundColor: showImageScroll ? "#eeeeee" : "#30cb89",
               width: 170,
-              height:30,
-              justifyContent:"center"
+              height: 30,
+              justifyContent: "center",
             }}
           >
-            <Text style={{ 
-              fontSize: 20,
-              color: showImageScroll ? "#010101" : "#ffffff",
-               }}>ボタンで</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                color: showImageScroll ? "#010101" : "#ffffff",
+              }}
+            >
+              ボタンで
+            </Text>
           </TouchableOpacity>
         </View>
 

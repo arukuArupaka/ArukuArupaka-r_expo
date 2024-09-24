@@ -14,6 +14,7 @@ import { AsyncFunctions } from "../classObject/TimeTableClassObject";
 import { ClassPeriod } from "../types/class-period";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../types/root-stack-param-list";
+import { UserSettingContent } from "../types/user-setting-content";
 
 type Props = {
   from: string;
@@ -30,7 +31,12 @@ const SetClassPeriodModal: FC<Props> = ({
   onClose,
   onUpdate,
 }) => {
-  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const {
+    userClassPeriodDatas,
+    setUserClassPeriodDatas,
+    userSettingContent,
+    setUserSettingContent,
+  } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
@@ -47,11 +53,10 @@ const SetClassPeriodModal: FC<Props> = ({
     });
 
     const updatedClassPeriods = [...userClassPeriodDatas, data];
-    const asyncFunctions = new AsyncFunctions(
-      "@classPeriods",
+    await AsyncFunctions.saveClassPeriodDatas(
+      "classPeriod",
       updatedClassPeriods
     );
-    await asyncFunctions.saveClassPeriodDatas();
   };
 
   const changeUserClassPeriod = async (data: ClassPeriod) => {
@@ -66,11 +71,10 @@ const SetClassPeriodModal: FC<Props> = ({
       ...userClassPeriodDatas.filter((el) => el.num !== data.num),
       data,
     ];
-    const asyncFunctions = new AsyncFunctions(
-      "@classPeriod",
+    await AsyncFunctions.saveClassPeriodDatas(
+      "classPeriod",
       updatedClassPeriods
     );
-    await asyncFunctions.saveClassPeriodDatas();
   };
 
   const handleSave = (from: string) => {

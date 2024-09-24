@@ -18,7 +18,6 @@ type Props = {
 };
 
 const ClassPeriodOptionsBody: FC<Props> = ({ classPeriodOptions, onPress }) => {
-  console.log(classPeriodOptions);
   return (
     <ScrollView style={styles.body}>
       <View style={{ flex: 1, marginBottom: 100 }}>

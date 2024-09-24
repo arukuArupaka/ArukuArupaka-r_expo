@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ClassPeriod } from "../types/class-period";
 import { TIME_TABLE_API_URL } from "@env";
+import { UserSettingContent } from "../types/user-setting-content";
 
 type Props = {
   department?: string;
@@ -82,48 +83,53 @@ export class ClassDataFetcher {
 }
 
 export class AsyncFunctions {
-  classPeriodDatas?: ClassPeriod[]|string;
   place: string;
+  isArray: boolean;
 
-  constructor(place: string, classPeriodDatas: ClassPeriod[]|string = []) {
+  constructor(place: string, isArray: boolean) {
     this.place = place;
-    this.classPeriodDatas = classPeriodDatas;
+    this.isArray = isArray;
   }
 
-  async saveClassPeriodDatas() {
+  // ジェネリックメソッドで保存
+  static async saveClassPeriodDatas<T>(place: string, data: T): Promise<void> {
     try {
-      const jsonValue = JSON.stringify(this.classPeriodDatas);
-      await AsyncStorage.setItem(this.place, jsonValue);
+      const jsonValue = JSON.stringify(data);
+      await AsyncStorage.setItem(place, jsonValue);
     } catch (e) {
       console.error("Failed to save data to AsyncStorage", e);
     }
   }
 
-  async getClassPeriodDatas(): Promise<ClassPeriod[]> {
+  // ジェネリックメソッドで取得
+  static async getClassPeriodDatas<T>(
+    place: string,
+    type: string
+  ): Promise<T | null> {
     try {
-      const jsonValue = await AsyncStorage.getItem(this.place);
-      return jsonValue != null ? JSON.parse(jsonValue) : [];
+      const jsonValue = await AsyncStorage.getItem(place);
+      if (jsonValue !== null) {
+        return JSON.parse(jsonValue);
+      } else {
+        switch (type) {
+          case "array":
+            return [] as T;
+          case "object":
+            return null;
+          default:
+            return null;
+        }
+      }
     } catch (e) {
       console.error("Failed to fetch data from AsyncStorage", e);
-      return [];
-    }
-  }
-  async saveData() {
-    try {
-      const jsonValue = JSON.stringify(this.classPeriodDatas);
-      await AsyncStorage.setItem(this.place, jsonValue);
-    } catch (e) {
-      console.error("Failed to save data to AsyncStorage", e);
-    }
-  }
-
-  async getData(): Promise<string> {
-    try {
-      const jsonValue = await AsyncStorage.getItem(this.place);
-      return jsonValue != null ? JSON.parse(jsonValue) : "";
-    } catch (e) {
-      console.error("Failed to fetch data from AsyncStorage", e);
-      return "";
+      switch (type) {
+        case "array":
+          return [] as T;
+        case "object":
+          return null;
+        default:
+          return null;
+      }
     }
   }
 }
