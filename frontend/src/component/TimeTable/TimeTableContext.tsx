@@ -23,7 +23,6 @@ export const TimeTableProvider = ({ children }) => {
   const [userSettingContent, setUserSettingContent] =
     useState<UserSettingContent>(initialUserSettingContent);
 
-  // 時間割データを取得
   const getClassPeriodDatas = async () => {
     const classPeriodDatas = await AsyncFunctions.getClassPeriodDatas<
       ClassPeriod[]
@@ -31,7 +30,6 @@ export const TimeTableProvider = ({ children }) => {
     setUserClassPeriodDatas(classPeriodDatas);
   };
 
-  //ユーザーの設定項目を取得
   const getUserSettingContent = async () => {
     const userSettingContentData =
       await AsyncFunctions.getClassPeriodDatas<UserSettingContent>(
@@ -45,40 +43,52 @@ export const TimeTableProvider = ({ children }) => {
     }
   };
 
+  const getTotalUnits = () => {
+    if (
+      userSettingContent.department !== "" &&
+      userSettingContent.semester !== ""
+    ) {
+      const selectedAllClassPeriods: ClassPeriod[] =
+        userClassPeriodDatas.filter(
+          (el: ClassPeriod) =>
+            el.department === userSettingContent.department &&
+            el.season === userSettingContent.semester
+        );
+
+      const uniqueClassPeriods: ClassPeriod[] = selectedAllClassPeriods.filter(
+        (value, index, self) =>
+          index === self.findIndex((obj) => obj.num === value.num)
+      );
+
+      const totalUnits = uniqueClassPeriods.reduce(
+        (acc, obj: ClassPeriod) => acc + obj.unit,
+        0
+      );
+
+      setUserSettingContent((data) => ({
+        ...data,
+        totalUnits: totalUnits,
+      }));
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       await getClassPeriodDatas();
       await getUserSettingContent();
+      getTotalUnits();
     };
 
     fetchData();
   }, []);
 
-  //　同期ずれが起きて上手くいかないから要修正！
   useEffect(() => {
-    const SelectedAllClassPeriods: ClassPeriod[] = userClassPeriodDatas.filter(
-      (el: ClassPeriod) =>
-        el.department === userSettingContent.department &&
-        el.season === userSettingContent.semester
-    );
-    const uniqueClassPeriods: ClassPeriod[] = SelectedAllClassPeriods.filter(
-      (value, index, self) =>
-        index === self.findIndex((obj) => obj.num === value.num)
-    );
-    setUserSettingContent((data: UserSettingContent) => ({
-      ...data,
-      totalUnits: uniqueClassPeriods.reduce(
-        (acc, obj: ClassPeriod) => acc + obj.unit,
-        0
-      ),
-    }));
-    // console.log("set", userSettingContent);
-    // console.log(userClassPeriodDatas);
-    // console.log(SelectedAllClassPeriods);
-    console.log(
-      uniqueClassPeriods.reduce((acc, obj: ClassPeriod) => acc + obj.unit, 0)
-    );
-  }, [userClassPeriodDatas]);
+    getTotalUnits();
+  }, [
+    userClassPeriodDatas,
+    userSettingContent.department,
+    userSettingContent.semester,
+  ]);
 
   return (
     <TimeTableContext.Provider

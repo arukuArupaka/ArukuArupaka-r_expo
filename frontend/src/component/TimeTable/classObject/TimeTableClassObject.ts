@@ -53,8 +53,8 @@ export class ClassDataFetcher {
         teacher: item.kamoku_teacher,
         status: item.kamoku_status,
         color: "",
-        mulcolor: "",
-        statuscolor: "",
+        mulColor: "",
+        statusColor: "",
       }));
 
       return processedData;
@@ -130,6 +130,106 @@ export class AsyncFunctions {
         default:
           return null;
       }
+    }
+  }
+}
+
+export class DataChangeMethods {
+  // クラスのプロパティとして `userSettingContent`, `userClassPeriodDatas`, `classPeriodIndex` を扱う
+  userSettingContent: any;
+  userClassPeriodDatas: any;
+  classPeriodIndex: number;
+
+  constructor(
+    userSettingContent: any,
+    userClassPeriodDatas: any,
+    classPeriodIndex: number
+  ) {
+    this.userSettingContent = userSettingContent;
+    this.userClassPeriodDatas = userClassPeriodDatas;
+    this.classPeriodIndex = classPeriodIndex;
+  }
+
+  // プライベートな静的メソッド
+  private static classRoomColor(color: string): string {
+    switch (color) {
+      case "#FFB74D":
+        return "#ffcd82";
+      case "#4DB6AC":
+        return "#82ccc5";
+      case "#64B5F6":
+        return "#92cbf9";
+      case "#AED581":
+        return "#c6e2a7";
+      case "#BA68C8":
+        return "#cf95d8";
+      default:
+        return "#87ceeb";
+    }
+  }
+
+  // プライベートな静的メソッド
+  private static getColor(
+    userSettingContent: UserSettingContent,
+    userClassPeriodDatas: ClassPeriod,
+    classPeriodIndex: number
+  ): string {
+    const { colorBySubject, colorByUnits } = userSettingContent;
+    const classData = userClassPeriodDatas[classPeriodIndex];
+
+    if (colorBySubject) {
+      return classData?.statusColor || "#d3d3d3";
+    }
+    if (colorByUnits) {
+      return classData?.mulColor || "#d3d3d3";
+    }
+    return classData?.color || "#d3d3d3";
+  }
+
+  // プライベートな静的メソッド
+  private static textBlackOrWhite(
+    userSettingContent: UserSettingContent,
+    userClassPeriodDatas: ClassPeriod,
+    classPeriodIndex: number
+  ): string {
+    const color = this.getColor(
+      userSettingContent,
+      userClassPeriodDatas,
+      classPeriodIndex
+    );
+    return color !== "#d3d3d3" ? "white" : "black";
+  }
+
+  // パブリックな静的メソッド
+  public static classPeriodBackColor(
+    place: string,
+    userSettingContent: UserSettingContent,
+    userClassPeriodDatas: ClassPeriod,
+    classPeriodIndex: number
+  ): string {
+    switch (place) {
+      case "entire":
+        return this.getColor(
+          userSettingContent,
+          userClassPeriodDatas,
+          classPeriodIndex
+        );
+      case "classRoom":
+        return this.classRoomColor(
+          this.getColor(
+            userSettingContent,
+            userClassPeriodDatas,
+            classPeriodIndex
+          )
+        );
+      case "text":
+        return this.textBlackOrWhite(
+          userSettingContent,
+          userClassPeriodDatas,
+          classPeriodIndex
+        );
+      default:
+        return "#d3d3d3"; // デフォルトの値を設定
     }
   }
 }

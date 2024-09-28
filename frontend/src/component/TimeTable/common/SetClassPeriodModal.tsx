@@ -31,12 +31,7 @@ const SetClassPeriodModal: FC<Props> = ({
   onClose,
   onUpdate,
 }) => {
-  const {
-    userClassPeriodDatas,
-    setUserClassPeriodDatas,
-    userSettingContent,
-    setUserSettingContent,
-  } = useTimeTable();
+  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
@@ -46,15 +41,45 @@ const SetClassPeriodModal: FC<Props> = ({
     setClassRoom(data?.classRoom);
   }, [isShow]);
 
+  const setClassPeriodStatusColor = (classPeriod: ClassPeriod) => {
+    if (classPeriod.status.includes("基礎専")) {
+      return "#FFB74D";
+    } else if (classPeriod.status.includes("専門")) {
+      return "#4DB6AC";
+    } else if (classPeriod.status.includes("教養")) {
+      return "#64B5F6";
+    }
+  };
+
+  const setClassPeriodUnitColor = (classPeriod: ClassPeriod) => {
+    switch (classPeriod.unit) {
+      case 1:
+        return "#FFB74D";
+      case 2:
+        return "#4DB6AC";
+      case 3:
+        return "#64B5F6";
+      case 4:
+        return "#AED581";
+    }
+  };
+
   const setUserClassPeriods = async (data: ClassPeriod) => {
+    const newData = {
+      ...data,
+      statusColor: setClassPeriodStatusColor(data),
+      mulColor: setClassPeriodUnitColor(data),
+      className,
+      classRoom,
+    };
     setUserClassPeriodDatas((prev: ClassPeriod[]) => {
-      const updated = [...prev, data];
+      const updated = [...prev, newData];
       return updated;
     });
 
-    const updatedClassPeriods = [...userClassPeriodDatas, data];
+    const updatedClassPeriods = [...userClassPeriodDatas, newData];
     await AsyncFunctions.saveClassPeriodDatas(
-      "classPeriod",
+      "@classPeriods",
       updatedClassPeriods
     );
   };
@@ -72,7 +97,7 @@ const SetClassPeriodModal: FC<Props> = ({
       data,
     ];
     await AsyncFunctions.saveClassPeriodDatas(
-      "classPeriod",
+      "@classPeriods",
       updatedClassPeriods
     );
   };

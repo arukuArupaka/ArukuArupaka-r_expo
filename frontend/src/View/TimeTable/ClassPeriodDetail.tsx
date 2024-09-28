@@ -10,10 +10,11 @@ import { RootStackParamList } from "../../component/TimeTable/types/root-stack-p
 import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../../component/TimeTable/classObject/TimeTableClassObject";
-import ClassPeriodDetailDataItem from "../../component/TimeTable/timeTableDetail/component/ClassPeriodDetailDatalBodyItem";
+import ClassPeriodDetailDataItem from "../../component/TimeTable/timeTableDetail/components/ClassPeriodDetailDatalBodyItem";
 import ActionButton from "../../component/TimeTable/timeTableDetail/ActionButton";
 import ClassPeriodDetailDataBody from "../../component/TimeTable/timeTableDetail/ClassPeriodDetailDataBody";
 import WebView from "react-native-webview";
+import ColorChange from "../../component/TimeTable/timeTableDetail/ColorChange";
 
 type ClassPeriodDetailScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -93,6 +94,7 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
             onPress={() => setIsModalShow(true)}
             currentClassPeriodData={currentClassPeriodData}
           />
+          <ColorChange currentClassPeriodData={currentClassPeriodData} />
           <ActionButton
             onPress={() => setIsVisible(true)}
             color={"black"}
