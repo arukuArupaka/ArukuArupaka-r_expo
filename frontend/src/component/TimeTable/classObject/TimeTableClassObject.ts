@@ -228,6 +228,12 @@ export class DataChangeMethods {
           userClassPeriodDatas,
           classPeriodIndex
         );
+      case "classNumber":
+        return this.getColor(
+          userSettingContent,
+          userClassPeriodDatas,
+          classPeriodIndex
+        );
       default:
         return "#d3d3d3"; // デフォルトの値を設定
     }

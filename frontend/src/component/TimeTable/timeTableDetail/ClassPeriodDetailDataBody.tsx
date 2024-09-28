@@ -4,6 +4,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { FC } from "react";
 import { ClassPeriod } from "../types/class-period";
 import { useTimeTable } from "../TimeTableContext";
+import { DataChangeMethods } from "../classObject/TimeTableClassObject";
 
 type Props = {
   onPress: () => void;
@@ -14,7 +15,7 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
   onPress,
   currentClassPeriodData,
 }) => {
-  const { userClassPeriodDatas } = useTimeTable();
+  const { userClassPeriodDatas, userSettingContent } = useTimeTable();
   const selectedClassPeriod: ClassPeriod = userClassPeriodDatas.find(
     (el: ClassPeriod) =>
       el.department === currentClassPeriodData.department &&
@@ -29,9 +30,12 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
         <View
           style={{
             padding: 5,
-            backgroundColor: userClassPeriodDatas[classPeriodIndex].color
-              ? userClassPeriodDatas[classPeriodIndex].color
-              : "red",
+            backgroundColor: DataChangeMethods.classPeriodBackColor(
+              "classNumber",
+              userSettingContent,
+              userClassPeriodDatas,
+              classPeriodIndex
+            ),
             borderRadius: 10,
             margin: 10,
             width: "18%",

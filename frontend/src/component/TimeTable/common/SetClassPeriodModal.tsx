@@ -14,7 +14,6 @@ import { AsyncFunctions } from "../classObject/TimeTableClassObject";
 import { ClassPeriod } from "../types/class-period";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../types/root-stack-param-list";
-import { UserSettingContent } from "../types/user-setting-content";
 
 type Props = {
   from: string;
