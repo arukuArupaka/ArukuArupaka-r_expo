@@ -37,12 +37,20 @@ export const TextbookNavigateRoot = () => {
       <Stack.Screen
         name="TextBookDetail"
         component={TextBookBuyDetail}
-        options={{
+        options={({ navigation }) => ({
           headerStyle: {
-            backgroundColor: "#F36F21",
-          },
-          headerTitle: "",
-        }}
+         backgroundColor: "#F36F21",
+       },
+         headerLeft: () => (
+           <TouchableOpacity
+           onPress={() => navigation.navigate("本画面")}
+           >
+            <MaterialIcons name="arrow-back-ios" size={30} color="black"  style={{ marginLeft: 10 }}/>
+           </TouchableOpacity>
+         ),
+         headerTitle: "",
+        })}
+        
       />
       <Stack.Screen
         name="ChatView"
