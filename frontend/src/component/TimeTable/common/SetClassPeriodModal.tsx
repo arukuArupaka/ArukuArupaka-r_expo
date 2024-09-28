@@ -41,11 +41,11 @@ const SetClassPeriodModal: FC<Props> = ({
   }, [isShow]);
 
   const setClassPeriodStatusColor = (classPeriod: ClassPeriod) => {
-    if (classPeriod.status.includes("基礎専")) {
+    if (classPeriod.status?.includes("基礎専")) {
       return "#FFB74D";
-    } else if (classPeriod.status.includes("専門")) {
+    } else if (classPeriod.status?.includes("専門")) {
       return "#4DB6AC";
-    } else if (classPeriod.status.includes("教養")) {
+    } else if (classPeriod.status?.includes("教養")) {
       return "#64B5F6";
     }
   };

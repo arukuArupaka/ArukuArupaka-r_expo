@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { View, Text, Switch, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Switch,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { UserSettingContent } from "../types/user-setting-content";
 import { useTimeTable } from "../TimeTableContext";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -7,7 +14,7 @@ import { AsyncFunctions } from "../classObject/TimeTableClassObject";
 import DepartmentSelect from "./components/DepartmentSelect";
 import SemesterSelect from "./components/SemesterSelect";
 import DisplayCountSelect from "./components/DisplayCountSelect";
-
+const windowWidth = Dimensions.get("window").width;
 const SettingBody = () => {
   const { userSettingContent, setUserSettingContent } = useTimeTable();
 
@@ -81,6 +88,7 @@ const styles = StyleSheet.create({
     flex: 8,
     marginTop: 20,
     alignItems: "center",
+    width: windowWidth,
   },
   bodyContent: {
     width: "90%",

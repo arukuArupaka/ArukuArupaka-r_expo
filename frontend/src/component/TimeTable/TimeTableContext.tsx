@@ -9,6 +9,7 @@ export const useTimeTable = () => useContext(TimeTableContext);
 
 export const TimeTableProvider = ({ children }) => {
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
+  const [settingScreen, setSettingScreen] = useState(true);
   const [userClassPeriodDatas, setUserClassPeriodDatas] = useState<
     ClassPeriod[]
   >([]);
@@ -99,6 +100,8 @@ export const TimeTableProvider = ({ children }) => {
         setUserClassPeriodDatas,
         userSettingContent,
         setUserSettingContent,
+        settingScreen,
+        setSettingScreen,
       }}
     >
       {children}

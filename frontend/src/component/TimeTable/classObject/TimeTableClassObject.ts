@@ -172,7 +172,8 @@ export class DataChangeMethods {
   private static getColor(
     userSettingContent: UserSettingContent,
     userClassPeriodDatas: ClassPeriod,
-    classPeriodIndex: number
+    classPeriodIndex: number,
+    defaultColor: string
   ): string {
     const { colorBySubject, colorByUnits } = userSettingContent;
     const classData = userClassPeriodDatas[classPeriodIndex];
@@ -183,7 +184,7 @@ export class DataChangeMethods {
     if (colorByUnits) {
       return classData?.mulColor || "#d3d3d3";
     }
-    return classData?.color || "#d3d3d3";
+    return classData?.color || defaultColor;
   }
 
   // プライベートな静的メソッド
@@ -195,7 +196,8 @@ export class DataChangeMethods {
     const color = this.getColor(
       userSettingContent,
       userClassPeriodDatas,
-      classPeriodIndex
+      classPeriodIndex,
+      "#d3d3d3"
     );
     return color !== "#d3d3d3" ? "white" : "black";
   }
@@ -212,14 +214,16 @@ export class DataChangeMethods {
         return this.getColor(
           userSettingContent,
           userClassPeriodDatas,
-          classPeriodIndex
+          classPeriodIndex,
+          "#d3d3d3"
         );
       case "classRoom":
         return this.classRoomColor(
           this.getColor(
             userSettingContent,
             userClassPeriodDatas,
-            classPeriodIndex
+            classPeriodIndex,
+            "#d3d3d3"
           )
         );
       case "text":
@@ -232,7 +236,8 @@ export class DataChangeMethods {
         return this.getColor(
           userSettingContent,
           userClassPeriodDatas,
-          classPeriodIndex
+          classPeriodIndex,
+          "#87ceeb"
         );
       default:
         return "#d3d3d3"; // デフォルトの値を設定
