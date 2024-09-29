@@ -74,7 +74,6 @@ const SetClassPeriodModal: FC<Props> = ({
       const weekOfTheDay = ConvertMethods.convertWeekOfTheDayToNumber(
         data.weekOfTheDay
       );
-      console.log("data", data);
 
       let updatedData = {
         ...data,
@@ -273,7 +272,7 @@ const SetClassPeriodModal: FC<Props> = ({
                     }}
                     placeholder={{
                       label: "選択してください",
-                      value: "",
+                      value: 10,
                     }}
                     disabled={!isNotify}
                   />
