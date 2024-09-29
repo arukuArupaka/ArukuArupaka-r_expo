@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { ClassPeriod } from "./types/class-period";
-import { AsyncFunctions } from "./classObject/TimeTableClassObject";
+import { UserSettingContent } from "./types/user-setting-content";
+import * as Notifications from "expo-notifications";
+import { AsyncFunctions } from "./classObject/async-functions";
 
 const TimeTableContext = createContext(null);
 
@@ -11,14 +13,92 @@ export const TimeTableProvider = ({ children }) => {
   const [userClassPeriodDatas, setUserClassPeriodDatas] = useState<
     ClassPeriod[]
   >([]);
+  const initialUserSettingContent = {
+    department: "",
+    semester: "",
+    displayCount: 5,
+    colorByUnits: false,
+    colorBySubject: false,
+    totalUnits: 0,
+  };
+  const [userSettingContent, setUserSettingContent] =
+    useState<UserSettingContent>(initialUserSettingContent);
 
   const getClassPeriodDatas = async () => {
-    const classPeriodDatas = await AsyncFunctions.getClassPeriodDatas();
+    const classPeriodDatas = await AsyncFunctions.getData<ClassPeriod[]>(
+      "@classPeriods",
+      "array"
+    );
     setUserClassPeriodDatas(classPeriodDatas);
   };
 
+  const getUserSettingContent = async () => {
+    const userSettingContentData =
+      await AsyncFunctions.getData<UserSettingContent>(
+        "@userSettingContent",
+        "object"
+      );
+
+    if (userSettingContentData) {
+      setUserSettingContent(userSettingContentData);
+    }
+  };
+
+  const getTotalUnits = () => {
+    if (
+      userSettingContent.department !== "" &&
+      userSettingContent.semester !== ""
+    ) {
+      const selectedAllClassPeriods: ClassPeriod[] =
+        userClassPeriodDatas.filter(
+          (el: ClassPeriod) =>
+            el.department === userSettingContent.department &&
+            el.season === userSettingContent.semester
+        );
+
+      const uniqueClassPeriods: ClassPeriod[] = selectedAllClassPeriods.filter(
+        (value, index, self) =>
+          index === self.findIndex((obj) => obj.num === value.num)
+      );
+
+      const totalUnits = uniqueClassPeriods.reduce(
+        (acc, obj: ClassPeriod) => acc + obj.unit,
+        0
+      );
+
+      setUserSettingContent((data) => ({
+        ...data,
+        totalUnits: totalUnits,
+      }));
+    }
+  };
+
   useEffect(() => {
-    getClassPeriodDatas();
+    const fetchData = async () => {
+      await getClassPeriodDatas();
+      await getUserSettingContent();
+      getTotalUnits();
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    getTotalUnits();
+  }, [
+    userClassPeriodDatas,
+    userSettingContent.department,
+    userSettingContent.semester,
+  ]);
+
+  useEffect(() => {
+    // 通知の許可をリクエスト
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("通知の許可が必要です！");
+      }
+    })();
   }, []);
 
   return (
@@ -28,6 +108,8 @@ export const TimeTableProvider = ({ children }) => {
         setUnreadMessagesJSON,
         userClassPeriodDatas,
         setUserClassPeriodDatas,
+        userSettingContent,
+        setUserSettingContent,
       }}
     >
       {children}

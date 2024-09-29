@@ -1,9 +1,14 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FC } from "react";
 
-const SearchBoxPressButton = () => {
+type Props = {
+  onOpen: () => void;
+};
+
+const SearchBoxPressButton: FC<Props> = ({ onOpen }) => {
   return (
-    <TouchableOpacity style={styles.searchBox}>
+    <TouchableOpacity style={styles.searchBox} onPress={() => onOpen()}>
       <FontAwesome
         name="search"
         size={24}

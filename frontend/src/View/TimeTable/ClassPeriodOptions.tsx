@@ -8,6 +8,9 @@ import { ClassPeriod } from "../../component/TimeTable/types/class-period";
 import SearchBoxPressButton from "../../component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ChoosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChoosenWeekOfTheDayAndPeriod";
 import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions/ClassPeriodOptionsBody";
+import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
+import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
+import { ConvertMethods } from "../../component/TimeTable/classObject/convert-methods";
 
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -18,21 +21,23 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
   route,
 }) => {
   const { weekOfTheDay, period } = route.params;
+  const { userSettingContent } = useTimeTable();
   const [classPeriodOptions, setClassPeriodOptions] = useState<
     ClassPeriod[] | string
   >(undefined);
   const [isModalShow, setIsModalShow] = useState(false);
+  const [isShowSearchScreen, setIsShowSearchScreen] = useState(false);
   const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null); // 選択されたデータのステート
 
   const classFetcher = new ClassDataFetcher({
-    department: "理工学部",
-    weekOfTheDay: ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay),
+    department: userSettingContent.department,
+    weekOfTheDay: ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay),
     period: period,
-    season: "秋セメスター",
+    season: userSettingContent.semester,
   });
 
   const stringWeekOfTheDay =
-    ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay);
+    ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay);
 
   // バックエンドデータベースに非同期で問い合わせる
   const fetchClassPeriodOptions = async () => {
@@ -49,35 +54,48 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
     setIsModalShow(true);
   };
 
+  const switchSearchScreen = (isShow: boolean) => {
+    setIsShowSearchScreen(isShow);
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: "column",
-          flex: 1,
-          alignItems: "center",
-        }}
-      >
-        <View style={styles.header}>
-          <View style={styles.searchBoxContainer}>
-            <SearchBoxPressButton />
-            <ChoosenWeekOfTheDayAndPeriod
-              stringWeekOfTheDay={stringWeekOfTheDay}
-              period={period}
-            />
+      {!isShowSearchScreen ? (
+        <View
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.header}>
+            <View style={styles.searchBoxContainer}>
+              <SearchBoxPressButton onOpen={() => switchSearchScreen(true)} />
+              <ChoosenWeekOfTheDayAndPeriod
+                stringWeekOfTheDay={stringWeekOfTheDay}
+                period={period}
+              />
+            </View>
           </View>
+          <ClassPeriodOptionsBody
+            classPeriodOptions={classPeriodOptions}
+            onPress={openModal}
+          />
+          <SetClassPeriodModal
+            from={"classPeriodOptions"}
+            isShow={isModalShow}
+            onClose={() => setIsModalShow(false)}
+            data={selectedData}
+          />
         </View>
-        <ClassPeriodOptionsBody
-          classPeriodOptions={classPeriodOptions}
-          onPress={openModal} // 修正：関数そのものを渡す
+      ) : (
+        <ClassPeriodSearchScreen
+          onClose={() => switchSearchScreen(false)}
+          classPeriodOptions={
+            typeof classPeriodOptions === "string" ? [] : classPeriodOptions
+          }
         />
-        <SetClassPeriodModal
-          from={"classPeriodOptions"}
-          isShow={isModalShow}
-          onClose={() => setIsModalShow(false)}
-          data={selectedData} // 選択されたデータをモーダルに渡す
-        />
-      </View>
+      )}
     </View>
   );
 };

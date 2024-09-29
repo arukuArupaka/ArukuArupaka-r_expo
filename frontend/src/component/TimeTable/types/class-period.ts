@@ -6,8 +6,9 @@ export type ClassPeriod = {
   className: string;
   classRoom: string;
   memo: string;
-  notifion: boolean;
-  notification: string;
+  isNotify: boolean;
+  notificationTime: number;
+  notificationId?: string;
   department: string;
   unit: number;
   num: string;
@@ -15,8 +16,8 @@ export type ClassPeriod = {
   teacher: string;
   status: string;
   color: string;
-  mulcolor: string;
-  statuscolor: string;
+  mulColor: string;
+  statusColor: string;
 };
 
 const TimeTable = {
@@ -35,8 +36,8 @@ const TimeTable = {
   teacher: "",
   status: "",
   color: "#888888",
-  mulcolor: "#888888",
-  statuscolor: "#888888",
+  mulColor: "#888888",
+  statusColor: "#888888",
 };
 
 export type ClassPeriodOptionDatas = {

@@ -1,8 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import ClassPeriodDetailDataBodyItem from "./component/ClassPeriodDetailDatalBodyItem";
+import ClassPeriodDetailDataBodyItem from "./components/ClassPeriodDetailDatalBodyItem";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { FC } from "react";
 import { ClassPeriod } from "../types/class-period";
+import { useTimeTable } from "../TimeTableContext";
+import { ColorSettingMethods } from "../classObject/color-setting-methods";
 
 type Props = {
   onPress: () => void;
@@ -13,10 +15,33 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
   onPress,
   currentClassPeriodData,
 }) => {
+  const { userClassPeriodDatas, userSettingContent } = useTimeTable();
+  const selectedClassPeriod: ClassPeriod = userClassPeriodDatas.find(
+    (el: ClassPeriod) =>
+      el.department === currentClassPeriodData.department &&
+      el.season === currentClassPeriodData.season &&
+      el.weekOfTheDay === currentClassPeriodData.weekOfTheDay &&
+      el.period === currentClassPeriodData.period
+  );
+  const classPeriodIndex = userClassPeriodDatas.indexOf(selectedClassPeriod);
   return (
     <View style={styles.classPeriodDetailBody}>
       <View style={styles.classPeriodNumAndEditContainer}>
-        <View style={styles.classPeriodNumberContainer}>
+        <View
+          style={{
+            padding: 5,
+            backgroundColor: ColorSettingMethods.classPeriodBackColor(
+              "classNumber",
+              userSettingContent,
+              userClassPeriodDatas,
+              classPeriodIndex
+            ),
+            borderRadius: 10,
+            margin: 10,
+            width: "18%",
+            alignItems: "center",
+          }}
+        >
           <Text style={{ fontWeight: "bold", color: "white" }}>
             {currentClassPeriodData.num}
           </Text>
@@ -36,7 +61,11 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
         value={`単位数：${currentClassPeriodData.unit}`}
       />
       <ClassPeriodDetailDataBodyItem
-        value={`科目の種類：${currentClassPeriodData.status}`}
+        value={`科目の種類：${
+          currentClassPeriodData.status
+            ? currentClassPeriodData.status
+            : "情報なし"
+        }`}
       />
     </View>
   );
@@ -59,14 +88,7 @@ const styles = StyleSheet.create({
   classPeriodEdit: {
     margin: 10,
   },
-  classPeriodNumberContainer: {
-    padding: 5,
-    backgroundColor: "red",
-    borderRadius: 10,
-    margin: 10,
-    width: "18%",
-    alignItems: "center",
-  },
+  classPeriodNumberContainer: {},
   classPeriodDataContainer: {
     width: "100%",
     margin: 10,

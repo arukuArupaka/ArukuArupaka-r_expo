@@ -4,7 +4,8 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useTimeTable } from "../../TimeTableContext";
 import { RootStackParamList } from "../../types/root-stack-param-list";
 import { ClassPeriod } from "../../types/class-period";
-import { ClassDataFetcher } from "../../classObject/TimeTableClassObject";
+import { ConvertMethods } from "../../classObject/convert-methods";
+import { ColorSettingMethods } from "../../classObject/color-setting-methods";
 
 type Props = {
   weekOfTheDay: number;
@@ -12,19 +13,40 @@ type Props = {
 };
 
 const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
-  const { userClassPeriodDatas } = useTimeTable();
+  const { userSettingContent, userClassPeriodDatas } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   const findInUserClassPeriodData: ClassPeriod = userClassPeriodDatas.find(
     (data: ClassPeriod) =>
       data.weekOfTheDay ===
-        ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay) &&
-      data.period === period
+        ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
+      data.period === period &&
+      data.department === userSettingContent.department &&
+      data.season === userSettingContent.semester
+  );
+
+  const classPeriodIndex = userClassPeriodDatas.indexOf(
+    findInUserClassPeriodData
   );
 
   return (
-    <View key={weekOfTheDay} style={styles.classPeriodContainer}>
+    <View
+      key={weekOfTheDay}
+      style={{ flex: 0.5, width: "100%", marginTop: 2.5 }}
+    >
       <TouchableOpacity
-        style={styles.classPeriod}
+        style={{
+          margin: 2,
+          height: "100%",
+          borderRadius: 10,
+          backgroundColor: ColorSettingMethods.classPeriodBackColor(
+            "entire",
+            userSettingContent,
+            userClassPeriodDatas,
+            classPeriodIndex
+          ),
+          alignItems: "center",
+        }}
         onPress={() => {
           !findInUserClassPeriodData
             ? navigation.navigate("ClassPeriodOptions", {
@@ -51,6 +73,12 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 fontSize: 11,
                 width: "90%",
                 marginTop: 3,
+                color: ColorSettingMethods.classPeriodBackColor(
+                  "text",
+                  userSettingContent,
+                  userClassPeriodDatas,
+                  classPeriodIndex
+                ),
               }}
               numberOfLines={3}
               ellipsizeMode="tail"
@@ -61,7 +89,12 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
               style={{
                 borderRadius: 10,
                 width: "90%",
-                backgroundColor: "#87ceeb",
+                backgroundColor: ColorSettingMethods.classPeriodBackColor(
+                  "classRoom",
+                  userSettingContent,
+                  userClassPeriodDatas,
+                  classPeriodIndex
+                ),
                 alignItems: "center",
                 marginBottom: 3,
               }}
@@ -92,7 +125,6 @@ export default ClassPeriodUnit;
 
 const styles = StyleSheet.create({
   classPeriodContainer: {
-    height: "13.69%",
     width: "100%",
     marginTop: 2.5,
   },
