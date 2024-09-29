@@ -14,7 +14,6 @@ import RNPickerSelect from "react-native-picker-select";
 import { ClassPeriod } from "../types/class-period";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../types/root-stack-param-list";
-import * as Notifications from "expo-notifications";
 import { NotificationMethods } from "../classObject/notification-methods";
 import { ConvertMethods } from "../classObject/convert-methods";
 import { AsyncFunctions } from "../classObject/async-functions";

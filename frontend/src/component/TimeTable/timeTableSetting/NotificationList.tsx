@@ -13,6 +13,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useEffect, useState } from "react";
 import { NotificationMethods } from "../classObject/notification-methods";
 import { AsyncFunctions } from "../classObject/async-functions";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const NotificationList = () => {
   const { userClassPeriodDatas, setUserClassPeriodDatas, userSettingContent } =
@@ -117,7 +118,7 @@ const NotificationList = () => {
                 style={styles.stopNotifyButton}
                 onPress={() => stopNotificationDialog(classPeriod.num)}
               >
-                <FontAwesome5 name="stop-circle" size={24} color="red" />
+                <MaterialCommunityIcons name="cancel" size={24} color="red" />
               </TouchableOpacity>
             </View>
           ))}
