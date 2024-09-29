@@ -271,7 +271,7 @@ const SetClassPeriodModal: FC<Props> = ({
                     }}
                     placeholder={{
                       label: "選択してください",
-                      value: 10,
+                      value: 0,
                     }}
                     disabled={!isNotify}
                   />
