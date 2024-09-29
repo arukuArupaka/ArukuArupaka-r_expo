@@ -13,7 +13,6 @@ import NotificationList from "../../component/TimeTable/timeTableSetting/Notific
 const TimeTableSetting = () => {
   const [settingScreen, setSettingScreen] = useState(true);
   const windowWidth = Dimensions.get("window").width;
-  const a = 0;
   const scrollViewRef = useRef(null);
 
   const handleScroll = (event) => {
