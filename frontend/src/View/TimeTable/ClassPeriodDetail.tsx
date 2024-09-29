@@ -9,12 +9,12 @@ import {
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
-import { AsyncFunctions } from "../../component/TimeTable/classObject/TimeTableClassObject";
-import ClassPeriodDetailDataItem from "../../component/TimeTable/timeTableDetail/components/ClassPeriodDetailDatalBodyItem";
 import ActionButton from "../../component/TimeTable/timeTableDetail/ActionButton";
 import ClassPeriodDetailDataBody from "../../component/TimeTable/timeTableDetail/ClassPeriodDetailDataBody";
 import WebView from "react-native-webview";
 import ColorChange from "../../component/TimeTable/timeTableDetail/ColorChange";
+import { NotificationMethods } from "../../component/TimeTable/classObject/notification-methods";
+import { AsyncFunctions } from "../../component/TimeTable/classObject/async-functions";
 
 type ClassPeriodDetailScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -30,7 +30,7 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   const [isModalShow, setIsModalShow] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currentClassPeriodData, setCurrentClassPeriodData] =
-    useState(classPeriodData); // 変更後のデータを保持する状態
+    useState<ClassPeriod>(classPeriodData); // 変更後のデータを保持する状態
 
   // モーダルから変更後のデータを受け取る関数
   const handleUpdateClassPeriodData = (updatedData: ClassPeriod) => {
@@ -38,6 +38,13 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   };
 
   const deleteUserClassPeriod = async (data: ClassPeriod) => {
+    if (data.isNotify) {
+      await NotificationMethods.cancelNotification(
+        data.num,
+        userClassPeriodDatas,
+        setUserClassPeriodDatas
+      );
+    }
     setUserClassPeriodDatas((prev: ClassPeriod[]) => {
       const deletePrevData: ClassPeriod[] = prev.filter(
         (el) => el.num !== data.num
@@ -47,10 +54,7 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
     const updatedClassPeriods = userClassPeriodDatas.filter(
       (el) => el.num !== data.num
     );
-    await AsyncFunctions.saveClassPeriodDatas(
-      "@classPeriods",
-      updatedClassPeriods
-    );
+    await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);
   };
 
   const deleteClassPeriodDialog = async (data: ClassPeriod) => {

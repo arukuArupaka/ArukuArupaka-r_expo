@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { ClassPeriod } from "./types/class-period";
-import { AsyncFunctions } from "./classObject/TimeTableClassObject";
 import { UserSettingContent } from "./types/user-setting-content";
+import * as Notifications from "expo-notifications";
+import { AsyncFunctions } from "./classObject/async-functions";
 
 const TimeTableContext = createContext(null);
 
@@ -9,7 +10,6 @@ export const useTimeTable = () => useContext(TimeTableContext);
 
 export const TimeTableProvider = ({ children }) => {
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
-  const [settingScreen, setSettingScreen] = useState(true);
   const [userClassPeriodDatas, setUserClassPeriodDatas] = useState<
     ClassPeriod[]
   >([]);
@@ -25,21 +25,21 @@ export const TimeTableProvider = ({ children }) => {
     useState<UserSettingContent>(initialUserSettingContent);
 
   const getClassPeriodDatas = async () => {
-    const classPeriodDatas = await AsyncFunctions.getClassPeriodDatas<
-      ClassPeriod[]
-    >("@classPeriods", "array");
+    const classPeriodDatas = await AsyncFunctions.getData<ClassPeriod[]>(
+      "@classPeriods",
+      "array"
+    );
     setUserClassPeriodDatas(classPeriodDatas);
   };
 
   const getUserSettingContent = async () => {
     const userSettingContentData =
-      await AsyncFunctions.getClassPeriodDatas<UserSettingContent>(
+      await AsyncFunctions.getData<UserSettingContent>(
         "@userSettingContent",
         "object"
       );
 
     if (userSettingContentData) {
-      console.log("user", userSettingContentData);
       setUserSettingContent(userSettingContentData);
     }
   };
@@ -91,6 +91,16 @@ export const TimeTableProvider = ({ children }) => {
     userSettingContent.semester,
   ]);
 
+  useEffect(() => {
+    // 通知の許可をリクエスト
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("通知の許可が必要です！");
+      }
+    })();
+  }, []);
+
   return (
     <TimeTableContext.Provider
       value={{
@@ -100,8 +110,6 @@ export const TimeTableProvider = ({ children }) => {
         setUserClassPeriodDatas,
         userSettingContent,
         setUserSettingContent,
-        settingScreen,
-        setSettingScreen,
       }}
     >
       {children}

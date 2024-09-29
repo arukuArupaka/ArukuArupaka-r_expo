@@ -4,7 +4,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { FC } from "react";
 import { ClassPeriod } from "../types/class-period";
 import { useTimeTable } from "../TimeTableContext";
-import { DataChangeMethods } from "../classObject/TimeTableClassObject";
+import { ColorSettingMethods } from "../classObject/color-setting-methods";
 
 type Props = {
   onPress: () => void;
@@ -30,7 +30,7 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
         <View
           style={{
             padding: 5,
-            backgroundColor: DataChangeMethods.classPeriodBackColor(
+            backgroundColor: ColorSettingMethods.classPeriodBackColor(
               "classNumber",
               userSettingContent,
               userClassPeriodDatas,

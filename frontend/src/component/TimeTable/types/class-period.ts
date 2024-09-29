@@ -6,8 +6,9 @@ export type ClassPeriod = {
   className: string;
   classRoom: string;
   memo: string;
-  notifion: boolean;
-  notification: string;
+  isNotify: boolean;
+  notificationTime: number;
+  notificationId?: string;
   department: string;
   unit: number;
   num: string;

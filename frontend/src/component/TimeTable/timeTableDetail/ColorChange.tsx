@@ -1,8 +1,8 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useTimeTable } from "../TimeTableContext";
 import { ClassPeriod } from "../types/class-period";
-import { FC, useEffect } from "react";
-import { AsyncFunctions } from "../classObject/TimeTableClassObject";
+import { FC } from "react";
+import { AsyncFunctions } from "../classObject/async-functions";
 
 type Props = {
   currentClassPeriodData: ClassPeriod;
@@ -28,7 +28,7 @@ const ColorChange: FC<Props> = ({ currentClassPeriodData }) => {
         color,
       };
 
-      AsyncFunctions.saveClassPeriodDatas("@classPeriods", newData);
+      AsyncFunctions.saveData("@classPeriods", newData);
 
       return newData;
     });

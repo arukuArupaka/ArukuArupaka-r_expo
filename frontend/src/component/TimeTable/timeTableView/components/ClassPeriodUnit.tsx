@@ -1,19 +1,11 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  DimensionValue,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FC } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useTimeTable } from "../../TimeTableContext";
 import { RootStackParamList } from "../../types/root-stack-param-list";
 import { ClassPeriod } from "../../types/class-period";
-import {
-  ClassDataFetcher,
-  DataChangeMethods,
-} from "../../classObject/TimeTableClassObject";
+import { ConvertMethods } from "../../classObject/convert-methods";
+import { ColorSettingMethods } from "../../classObject/color-setting-methods";
 
 type Props = {
   weekOfTheDay: number;
@@ -27,7 +19,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
   const findInUserClassPeriodData: ClassPeriod = userClassPeriodDatas.find(
     (data: ClassPeriod) =>
       data.weekOfTheDay ===
-        ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay) &&
+        ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
       data.period === period &&
       data.department === userSettingContent.department &&
       data.season === userSettingContent.semester
@@ -47,7 +39,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
           margin: 2,
           height: "100%",
           borderRadius: 10,
-          backgroundColor: DataChangeMethods.classPeriodBackColor(
+          backgroundColor: ColorSettingMethods.classPeriodBackColor(
             "entire",
             userSettingContent,
             userClassPeriodDatas,
@@ -81,7 +73,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 fontSize: 11,
                 width: "90%",
                 marginTop: 3,
-                color: DataChangeMethods.classPeriodBackColor(
+                color: ColorSettingMethods.classPeriodBackColor(
                   "text",
                   userSettingContent,
                   userClassPeriodDatas,
@@ -97,7 +89,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
               style={{
                 borderRadius: 10,
                 width: "90%",
-                backgroundColor: DataChangeMethods.classPeriodBackColor(
+                backgroundColor: ColorSettingMethods.classPeriodBackColor(
                   "classRoom",
                   userSettingContent,
                   userClassPeriodDatas,

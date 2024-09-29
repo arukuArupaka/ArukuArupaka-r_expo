@@ -6,14 +6,12 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import SettingHeader from "../../component/TimeTable/timeTableSetting/SettingHeader";
 import SettingBody from "../../component/TimeTable/timeTableSetting/SettingBody";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import NotificationList from "../../component/TimeTable/timeTableSetting/NotificationList";
-import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 
 const TimeTableSetting = () => {
-  const { settingScreen, setSettingScreen } = useTimeTable();
+  const [settingScreen, setSettingScreen] = useState(true);
   const windowWidth = Dimensions.get("window").width;
   const a = 0;
   const scrollViewRef = useRef(null);

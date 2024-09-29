@@ -10,6 +10,7 @@ import ChoosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodO
 import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions/ClassPeriodOptionsBody";
 import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
+import { ConvertMethods } from "../../component/TimeTable/classObject/convert-methods";
 
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -30,13 +31,13 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
 
   const classFetcher = new ClassDataFetcher({
     department: userSettingContent.department,
-    weekOfTheDay: ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay),
+    weekOfTheDay: ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay),
     period: period,
     season: userSettingContent.semester,
   });
 
   const stringWeekOfTheDay =
-    ClassDataFetcher.convertNumberToWeekOfTheDay(weekOfTheDay);
+    ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay);
 
   // バックエンドデータベースに非同期で問い合わせる
   const fetchClassPeriodOptions = async () => {

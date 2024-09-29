@@ -7,13 +7,17 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
-  Alert,
+  Switch,
 } from "react-native";
 import { useTimeTable } from "../TimeTableContext";
-import { AsyncFunctions } from "../classObject/TimeTableClassObject";
+import RNPickerSelect from "react-native-picker-select";
 import { ClassPeriod } from "../types/class-period";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../types/root-stack-param-list";
+import * as Notifications from "expo-notifications";
+import { NotificationMethods } from "../classObject/notification-methods";
+import { ConvertMethods } from "../classObject/convert-methods";
+import { AsyncFunctions } from "../classObject/async-functions";
 
 type Props = {
   from: string;
@@ -34,84 +38,85 @@ const SetClassPeriodModal: FC<Props> = ({
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
-
-  useEffect(() => {
-    setClassName(data?.className);
-    setClassRoom(data?.classRoom);
-  }, [isShow]);
-
-  const setClassPeriodStatusColor = (classPeriod: ClassPeriod) => {
-    if (classPeriod.status?.includes("基礎専")) {
-      return "#FFB74D";
-    } else if (classPeriod.status?.includes("専門")) {
-      return "#4DB6AC";
-    } else if (classPeriod.status?.includes("教養")) {
-      return "#64B5F6";
-    }
-  };
-
-  const setClassPeriodUnitColor = (classPeriod: ClassPeriod) => {
-    switch (classPeriod.unit) {
-      case 1:
-        return "#FFB74D";
-      case 2:
-        return "#4DB6AC";
-      case 3:
-        return "#64B5F6";
-      case 4:
-        return "#AED581";
-    }
-  };
+  const [isNotify, setIsNotify] = useState<boolean>(data?.isNotify);
+  const [notificationTime, setNotificationTime] = useState<number>(
+    data?.notificationTime
+  );
 
   const setUserClassPeriods = async (data: ClassPeriod) => {
-    const newData = {
-      ...data,
-      statusColor: setClassPeriodStatusColor(data),
-      mulColor: setClassPeriodUnitColor(data),
-      className,
-      classRoom,
-    };
     setUserClassPeriodDatas((prev: ClassPeriod[]) => {
-      const updated = [...prev, newData];
+      const updated = [...prev, data];
       return updated;
     });
 
-    const updatedClassPeriods = [...userClassPeriodDatas, newData];
-    await AsyncFunctions.saveClassPeriodDatas(
-      "@classPeriods",
-      updatedClassPeriods
-    );
+    const updatedClassPeriods = [...userClassPeriodDatas, data];
+    await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);
   };
 
-  const changeUserClassPeriod = async (data: ClassPeriod) => {
+  const changeUserClassPeriod = async (newData: ClassPeriod) => {
     setUserClassPeriodDatas((prev: ClassPeriod[]) => {
       const deletePrevData: ClassPeriod[] = prev.filter(
-        (el) => el.num !== data.num
+        (el) => el.num !== newData.num
       );
-      const updated = [...deletePrevData, data];
+      const updated = [...deletePrevData, newData];
       return updated;
     });
     const updatedClassPeriods = [
-      ...userClassPeriodDatas.filter((el) => el.num !== data.num),
-      data,
+      ...userClassPeriodDatas.filter((el) => el.num !== newData.num),
+      newData,
     ];
-    await AsyncFunctions.saveClassPeriodDatas(
-      "@classPeriods",
-      updatedClassPeriods
-    );
+    await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);
   };
 
-  const handleSave = (from: string) => {
-    if (from === "classPeriodDetail") {
-      const updatedData = { ...data, className, classRoom };
-      onUpdate(updatedData);
+  const handleSave = async (from: string) => {
+    try {
+      const notifyTime = ConvertMethods.convertPeriodToTime(data.period);
+      const weekOfTheDay = ConvertMethods.convertWeekOfTheDayToNumber(
+        data.weekOfTheDay
+      );
+      console.log("data", data);
+
+      let updatedData = {
+        ...data,
+        className,
+        classRoom,
+        isNotify,
+        notificationTime,
+      };
+
+      if (isNotify) {
+        const notificationId =
+          await NotificationMethods.scheduleWeeklyNotification(
+            weekOfTheDay,
+            notifyTime.hour,
+            notifyTime.minute,
+            notificationTime,
+            updatedData
+          );
+        updatedData.notificationId = notificationId;
+      }
+
+      if (from === "classPeriodDetail") {
+        await NotificationMethods.cancelNotification(
+          data.num,
+          userClassPeriodDatas,
+          setUserClassPeriodDatas
+        );
+        await changeUserClassPeriod(updatedData);
+        if (onUpdate) onUpdate(updatedData);
+      } else if (from === "classPeriodOptions") {
+        updatedData = {
+          ...updatedData,
+          statusColor: ConvertMethods.setClassPeriodStatusColor(data),
+          mulColor: ConvertMethods.setClassPeriodUnitColor(data),
+        };
+        await setUserClassPeriods(updatedData);
+        navigation.navigate("TimeTable");
+      }
+
       onClose();
-      changeUserClassPeriod(updatedData);
-    }
-    if (from === "classPeriodOptions") {
-      onClose();
-      setUserClassPeriods(data);
-      navigation.navigate("TimeTable");
+    } catch (e) {
+      console.error(e.message);
     }
   };
 
@@ -123,6 +128,11 @@ const SetClassPeriodModal: FC<Props> = ({
         return "変更";
     }
   }
+
+  useEffect(() => {
+    setClassName(data?.className);
+    setClassRoom(data?.classRoom);
+  }, [isShow]);
 
   return (
     <View>
@@ -170,6 +180,104 @@ const SetClassPeriodModal: FC<Props> = ({
                   value={classRoom}
                   onChangeText={(text) => setClassRoom(text)}
                 />
+                <View
+                  style={{
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginVertical: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 18,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    通知する
+                  </Text>
+                  <Switch
+                    value={isNotify} // 状態を制御
+                    onValueChange={() => setIsNotify((prev) => !prev)} // スイッチの変化に対応
+                  />
+                </View>
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "center",
+                    marginTop: 10,
+                    paddingBottom: 20,
+                  }}
+                >
+                  <Text style={styles.modalText}>何分前に通知</Text>
+                  <RNPickerSelect
+                    value={notificationTime}
+                    onValueChange={(value) => setNotificationTime(value)}
+                    items={[
+                      {
+                        label: "60",
+                        value: 60,
+                        key: "60",
+                      },
+                      {
+                        label: "50",
+                        value: 50,
+                        key: "50",
+                      },
+                      {
+                        label: "40",
+                        value: 40,
+                        key: "40",
+                      },
+                      {
+                        label: "30",
+                        value: 30,
+                        key: "30",
+                      },
+                      {
+                        label: "20",
+                        value: 20,
+                        key: "20",
+                      },
+                      {
+                        label: "15",
+                        value: 15,
+                        key: "15",
+                      },
+                      {
+                        label: "10",
+                        value: 10,
+                        key: "10",
+                      },
+                      {
+                        label: "5",
+                        value: 5,
+                        key: "5",
+                      },
+                    ]}
+                    style={{
+                      inputIOS: {
+                        ...pickerSelectStyles.inputIOS,
+                        backgroundColor: isNotify ? "#D9D9D9" : "white",
+                        color: isNotify ? "black" : "white",
+                      },
+                      inputAndroid: {
+                        ...pickerSelectStyles.inputAndroid,
+                        backgroundColor: isNotify ? "#D9D9D9" : "white",
+                        color: isNotify ? "black" : "white",
+                      },
+                    }}
+                    placeholder={{
+                      label: "選択してください",
+                      value: "",
+                    }}
+                    disabled={!isNotify}
+                  />
+                </View>
                 <View style={styles.buttonsContainer}>
                   <TouchableOpacity
                     style={{
@@ -277,5 +385,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginTop: 10,
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    borderRadius: 5,
+    fontSize: 16,
+    backgroundColor: "#D9D9D9",
+    width: "100%",
+    padding: 10,
+    fontWeight: "bold",
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: "#789",
+    borderRadius: 8,
+    color: "black",
+    paddingRight: 30,
+    width: 280,
+    marginLeft: 30,
+    backgroundColor: "#eee",
+    fontWeight: "bold",
   },
 });
