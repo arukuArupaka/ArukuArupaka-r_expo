@@ -111,7 +111,7 @@ const NotificationList = () => {
                 </Text>
                 <Text style={styles.textDesign}>{classPeriod.classRoom}</Text>
                 <Text style={styles.textDesign}>
-                  {classPeriod.notificationTime}分前に通知
+                  授業開始{classPeriod.notificationTime}分前に通知
                 </Text>
               </View>
               <TouchableOpacity
