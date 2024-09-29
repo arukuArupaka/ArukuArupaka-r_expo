@@ -34,6 +34,7 @@ import { FieldValue, serverTimestamp } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
 import faculties from "../../../../data/faculties.json";
+import {KeyboardAvoidingView, } from "react-native";
 
 export const CameraCamera = ({ route }) => {
   const navigation = useNavigation();
@@ -238,6 +239,12 @@ export const CameraCamera = ({ route }) => {
   };
 
   return (
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    style={{ flex: 1 }}
+  >
+    <ScrollView>
     <View>
       <View style={styles.infomation}>
         <Ionicons
@@ -354,7 +361,11 @@ export const CameraCamera = ({ route }) => {
               borderWidth: 1,
             }}
           >
-            <TextInput value={price} onChangeText={setprice}></TextInput>
+            <TextInput 
+            value={price} 
+            onChangeText={setprice}　 
+            keyboardType="numeric" // 数字入力用キーボード
+            ></TextInput>
           </View>
           <Text>円</Text>
         </View>
@@ -413,6 +424,8 @@ export const CameraCamera = ({ route }) => {
         </View>
       </View>
     </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
