@@ -48,7 +48,7 @@ export class ConvertMethods {
       case 6:
         return { hour: 18, minute: 0 };
       case 7:
-        return { hour: 0, minute: 46 };
+        return { hour: 19, minute: 40 };
     }
   }
 
