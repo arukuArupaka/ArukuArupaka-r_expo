@@ -24,7 +24,7 @@ const ClassPeriodOption: FC<Props> = ({ data }) => {
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {data.classRoom}
+          {data.teacher}
         </Text>
       </View>
     </View>
