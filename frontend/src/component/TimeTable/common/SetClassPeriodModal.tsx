@@ -37,7 +37,7 @@ const SetClassPeriodModal: FC<Props> = ({
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
-  const [isNotify, setIsNotify] = useState<boolean>(data?.isNotify);
+  const [isNotify, setIsNotify] = useState<boolean>(data?.isNotify||true);
   const [notificationTime, setNotificationTime] = useState<number>(
     data?.notificationTime
   );
