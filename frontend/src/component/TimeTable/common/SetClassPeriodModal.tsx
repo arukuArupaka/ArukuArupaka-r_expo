@@ -212,29 +212,15 @@ const SetClassPeriodModal: FC<Props> = ({
                   }}
                 >
                   <Text style={styles.modalText}>何分前に通知</Text>
+                  {isNotify ?
                   <RNPickerSelect
                     value={notificationTime}
                     onValueChange={(value) => setNotificationTime(value)}
                     items={[
                       {
-                        label: "60",
-                        value: 60,
-                        key: "60",
-                      },
-                      {
-                        label: "50",
-                        value: 50,
-                        key: "50",
-                      },
-                      {
-                        label: "40",
-                        value: 40,
-                        key: "40",
-                      },
-                      {
-                        label: "30",
-                        value: 30,
-                        key: "30",
+                        label: "15",
+                        value: 15,
+                        key: "15",
                       },
                       {
                         label: "20",
@@ -242,20 +228,26 @@ const SetClassPeriodModal: FC<Props> = ({
                         key: "20",
                       },
                       {
-                        label: "15",
-                        value: 15,
-                        key: "15",
+                        label: "30",
+                        value: 30,
+                        key: "30",
                       },
                       {
-                        label: "10",
-                        value: 10,
-                        key: "10",
+                        label: "40",
+                        value: 40,
+                        key: "40",
                       },
                       {
-                        label: "5",
-                        value: 5,
-                        key: "5",
+                        label: "50",
+                        value: 50,
+                        key: "50",
                       },
+                      {
+                        label: "60",
+                        value: 60,
+                        key: "60",
+                      },
+
                     ]}
                     style={{
                       inputIOS: {
@@ -268,13 +260,19 @@ const SetClassPeriodModal: FC<Props> = ({
                         backgroundColor: isNotify ? "#D9D9D9" : "white",
                         color: isNotify ? "black" : "white",
                       },
+                      placeholder:{
+                        color:"black",
+                      },
                     }}
+                    
+    
                     placeholder={{
-                      label: "選択してください",
-                      value: 0,
+                      label: "10",
+                      value: 10,
                     }}
                     disabled={!isNotify}
                   />
+                  :<Text>-</Text>}
                 </View>
                 <View style={styles.buttonsContainer}>
                   <TouchableOpacity
