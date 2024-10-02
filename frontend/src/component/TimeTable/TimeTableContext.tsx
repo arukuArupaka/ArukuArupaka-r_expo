@@ -68,45 +68,46 @@ export const TimeTableProvider = ({ children }) => {
         0
       );
 
-      if (auth.currentUser.uid) {
-        try {
-          const classPeriodsDataRef = doc(
-            db,
-            `UserClassPeriodsData/${auth.currentUser.uid}`
-          );
-          // fireStoreはオブジェクトの中に一つでもundefinedのプロパティが存在したら保存できないから、undefinedの要素を消すための作業
-          const newData = userClassPeriodDatas
-            .map((el: ClassPeriod) => {
-              const filteredData: Partial<ClassPeriod> = {};
-
-              for (const key in el) {
-                if (el[key] !== undefined) {
-                  filteredData[key] = el[key];
-                }
-              }
-
-              return filteredData;
-            })
-            .filter((el) => Object.keys(el).length > 0);
-          await setDoc(
-            classPeriodsDataRef,
-            {
-              userId: auth.currentUser.uid,
-              classPeriods: newData,
-              department: userSettingContent.department,
-              semester: userSettingContent.semester,
-            },
-            { merge: true }
-          );
-        } catch (e) {
-          console.error(e.message);
-        }
-      }
-
       setUserSettingContent((data) => ({
         ...data,
         totalUnits: totalUnits,
       }));
+    }
+  };
+  const setClassPeriodDataInFireBase = async () => {
+    if (auth.currentUser.uid) {
+      try {
+        const classPeriodsDataRef = doc(
+          db,
+          `UserClassPeriodsData/${auth.currentUser.uid}`
+        );
+        // fireStoreはオブジェクトの中に一つでもundefinedのプロパティが存在したら保存できないから、undefinedの要素を消すための作業
+        const newData = userClassPeriodDatas
+          .map((el: ClassPeriod) => {
+            const filteredData: Partial<ClassPeriod> = {};
+
+            for (const key in el) {
+              if (el[key] !== undefined) {
+                filteredData[key] = el[key];
+              }
+            }
+
+            return filteredData;
+          })
+          .filter((el) => Object.keys(el).length > 0);
+        await setDoc(
+          classPeriodsDataRef,
+          {
+            userId: auth.currentUser.uid,
+            classPeriods: newData,
+            department: userSettingContent.department,
+            semester: userSettingContent.semester,
+          },
+          { merge: true }
+        );
+      } catch (e) {
+        console.error(e.message);
+      }
     }
   };
 
@@ -121,7 +122,11 @@ export const TimeTableProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    getTotalUnits();
+    const totalUnitsAndFirebase = async () => {
+      getTotalUnits();
+      setClassPeriodDataInFireBase();
+    };
+    totalUnitsAndFirebase();
   }, [
     userClassPeriodDatas,
     userSettingContent.department,
