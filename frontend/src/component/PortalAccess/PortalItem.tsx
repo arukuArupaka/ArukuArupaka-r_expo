@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity ,Linking} from 'react-native';
-import { EvilIcons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
 const PortalItem = (props) => {
   const navigation = useNavigation();
-  const [icon, setIcon] = React.useState("unlock");
+  const [icon, setIcon] = React.useState("pushpino");
 
   React.useEffect(() => {
-    setIcon(props.locksite ? 'lock' : 'unlock');
+    setIcon(props.locksite ? 'pushpin' : 'pushpino');
   }, [props.locksite]);
 
   const weblock = () => {
@@ -67,7 +67,7 @@ const PortalItem = (props) => {
           <Text style={styles.webTitle}>{props.name}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={weblock}>
-          <EvilIcons name={icon} size={60} color="black" />
+          <AntDesign name={icon} size={24} color="black" />
         </TouchableOpacity>
       </View>
     );
