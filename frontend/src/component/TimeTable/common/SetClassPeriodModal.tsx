@@ -37,9 +37,9 @@ const SetClassPeriodModal: FC<Props> = ({
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
-  const [isNotify, setIsNotify] = useState<boolean>(data?.isNotify||true);
+  const [isNotify, setIsNotify] = useState<boolean>(data?.isNotify || true);
   const [notificationTime, setNotificationTime] = useState<number>(
-    data?.notificationTime
+    data?.notificationTime || 10
   );
 
   const setUserClassPeriods = async (data: ClassPeriod) => {
@@ -212,67 +212,66 @@ const SetClassPeriodModal: FC<Props> = ({
                   }}
                 >
                   <Text style={styles.modalText}>何分前に通知</Text>
-                  {isNotify ?
-                  <RNPickerSelect
-                    value={notificationTime}
-                    onValueChange={(value) => setNotificationTime(value)}
-                    items={[
-                      {
-                        label: "15",
-                        value: 15,
-                        key: "15",
-                      },
-                      {
-                        label: "20",
-                        value: 20,
-                        key: "20",
-                      },
-                      {
-                        label: "30",
-                        value: 30,
-                        key: "30",
-                      },
-                      {
-                        label: "40",
-                        value: 40,
-                        key: "40",
-                      },
-                      {
-                        label: "50",
-                        value: 50,
-                        key: "50",
-                      },
-                      {
-                        label: "60",
-                        value: 60,
-                        key: "60",
-                      },
-
-                    ]}
-                    style={{
-                      inputIOS: {
-                        ...pickerSelectStyles.inputIOS,
-                        backgroundColor: isNotify ? "#D9D9D9" : "white",
-                        color: isNotify ? "black" : "white",
-                      },
-                      inputAndroid: {
-                        ...pickerSelectStyles.inputAndroid,
-                        backgroundColor: isNotify ? "#D9D9D9" : "white",
-                        color: isNotify ? "black" : "white",
-                      },
-                      placeholder:{
-                        color:"black",
-                      },
-                    }}
-                    
-    
-                    placeholder={{
-                      label: "10",
-                      value: 10,
-                    }}
-                    disabled={!isNotify}
-                  />
-                  :<Text>-</Text>}
+                  {isNotify && (
+                    <RNPickerSelect
+                      value={notificationTime}
+                      onValueChange={(value) => setNotificationTime(value)}
+                      items={[
+                        {
+                          label: "10",
+                          value: 10,
+                          key: "10",
+                        },
+                        {
+                          label: "15",
+                          value: 15,
+                          key: "15",
+                        },
+                        {
+                          label: "20",
+                          value: 20,
+                          key: "20",
+                        },
+                        {
+                          label: "30",
+                          value: 30,
+                          key: "30",
+                        },
+                        {
+                          label: "40",
+                          value: 40,
+                          key: "40",
+                        },
+                        {
+                          label: "50",
+                          value: 50,
+                          key: "50",
+                        },
+                        {
+                          label: "60",
+                          value: 60,
+                          key: "60",
+                        },
+                      ]}
+                      style={{
+                        inputIOS: {
+                          ...pickerSelectStyles.inputIOS,
+                          backgroundColor: isNotify ? "#D9D9D9" : "white",
+                          color: isNotify ? "black" : "white",
+                        },
+                        inputAndroid: {
+                          ...pickerSelectStyles.inputAndroid,
+                          backgroundColor: isNotify ? "#D9D9D9" : "white",
+                          color: isNotify ? "black" : "white",
+                        },
+                        placeholder: {
+                          color: "black",
+                        },
+                      }}
+                      placeholder={{}}
+                      disabled={!isNotify}
+                    />
+                  )}
                 </View>
                 <View style={styles.buttonsContainer}>
                   <TouchableOpacity
