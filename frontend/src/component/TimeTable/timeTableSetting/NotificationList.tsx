@@ -105,7 +105,13 @@ const NotificationList = () => {
           {notificationList.map((classPeriod: ClassPeriod, index) => (
             <View key={index} style={styles.notificationItem}>
               <View style={styles.itemTexts}>
-                <Text style={{ ...styles.textDesign, fontSize: 19 }}>
+                <Text
+                  style={{
+                    ...styles.textDesign,
+                    fontSize: 19,
+                    maxWidth: "90%",
+                  }}
+                >
                   {classPeriod.className}
                 </Text>
                 <Text style={styles.textDesign}>{classPeriod.classRoom}</Text>
