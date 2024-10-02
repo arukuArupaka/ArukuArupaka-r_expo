@@ -21,7 +21,7 @@ const ClassPeriodOptionsBody: FC<Props> = ({ classPeriodOptions, onPress }) => {
   return (
     <ScrollView style={styles.body}>
       <View style={{ flex: 1, marginBottom: 100 }}>
-        <MultipleSetting onPress={onPress} />
+        {/* <MultipleSetting onPress={onPress} /> */}
         {Array.isArray(classPeriodOptions) ? (
           classPeriodOptions.length > 0 ? (
             classPeriodOptions.map((data, index) => (
