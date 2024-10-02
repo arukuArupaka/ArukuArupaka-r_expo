@@ -79,6 +79,8 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
           </View>
           <ClassPeriodOptionsBody
             classPeriodOptions={classPeriodOptions}
+            weekOfTheDay={stringWeekOfTheDay}
+            period={period}
             onPress={openModal}
           />
           <SetClassPeriodModal

@@ -45,7 +45,7 @@ export class ClassDataFetcher {
         className: item.kamoku_name,
         classRoom: item.kamoku_class,
         memo: "",
-        isNotify: false,
+        isNotify: true,
         notificationTime: 10,
         department: item.kamoku_department,
         unit: item.kamoku_unit,

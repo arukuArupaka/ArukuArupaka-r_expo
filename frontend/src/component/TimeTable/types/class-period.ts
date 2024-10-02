@@ -20,24 +20,25 @@ export type ClassPeriod = {
   statusColor: string;
 };
 
-const TimeTable = {
+const multipleSettingTemporaryData = {
   year: 2024,
-  day: 0,
+  season: "",
+  weekOfTheDay: "",
   period: 0,
   className: "",
   classRoom: "",
   memo: "",
-  notifion: false,
-  notification: "",
+  isNotify: false,
+  notificationTime: 0,
   department: "",
   unit: 0,
   num: "",
   resume: "",
   teacher: "",
   status: "",
-  color: "#888888",
-  mulColor: "#888888",
-  statusColor: "#888888",
+  color: "",
+  mulColor: "",
+  statusColor: "",
 };
 
 export type ClassPeriodOptionDatas = {

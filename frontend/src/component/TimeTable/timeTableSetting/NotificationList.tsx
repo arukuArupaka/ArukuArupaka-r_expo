@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useTimeTable } from "../TimeTableContext";
 import { ClassPeriod } from "../types/class-period";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useEffect, useState } from "react";
 import { NotificationMethods } from "../classObject/notification-methods";
 import { AsyncFunctions } from "../classObject/async-functions";
@@ -151,7 +150,6 @@ const styles = StyleSheet.create({
   textDesign: {
     fontSize: 15,
     fontWeight: "bold",
-    maxWidth: "92%",
   },
   stopNotifyButton: {},
 });
