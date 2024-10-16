@@ -13,10 +13,10 @@ type Props = {
 };
 
 const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
-  const { userSettingContent, userClassPeriodDatas } = useTimeTable();
+  const { userSettingContent, userClassPeriodData } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const findInUserClassPeriodData: ClassPeriod = userClassPeriodDatas.find(
+  const findInUserClassPeriodData: ClassPeriod = userClassPeriodData.find(
     (data: ClassPeriod) =>
       data.weekOfTheDay ===
         ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
@@ -25,7 +25,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
       data.season === userSettingContent.semester
   );
 
-  const classPeriodIndex = userClassPeriodDatas.indexOf(
+  const classPeriodIndex = userClassPeriodData.indexOf(
     findInUserClassPeriodData
   );
 
@@ -42,7 +42,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
           backgroundColor: ColorSettingMethods.classPeriodBackColor(
             "entire",
             userSettingContent,
-            userClassPeriodDatas,
+            userClassPeriodData,
             classPeriodIndex
           ),
           alignItems: "center",
@@ -76,7 +76,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 color: ColorSettingMethods.classPeriodBackColor(
                   "text",
                   userSettingContent,
-                  userClassPeriodDatas,
+                  userClassPeriodData,
                   classPeriodIndex
                 ),
               }}
@@ -92,7 +92,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 backgroundColor: ColorSettingMethods.classPeriodBackColor(
                   "classRoom",
                   userSettingContent,
-                  userClassPeriodDatas,
+                  userClassPeriodData,
                   classPeriodIndex
                 ),
                 alignItems: "center",

@@ -15,10 +15,10 @@ import { AsyncFunctions } from "../classObject/async-functions";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const NotificationList = () => {
-  const { userClassPeriodDatas, setUserClassPeriodDatas, userSettingContent } =
+  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } =
     useTimeTable();
   const windowWidth = Dimensions.get("window").width;
-  const notificationClassPeriod: ClassPeriod[] = userClassPeriodDatas.filter(
+  const notificationClassPeriod: ClassPeriod[] = userClassPeriodData.filter(
     (el: ClassPeriod) =>
       el.department === userSettingContent.department &&
       el.season === userSettingContent.semester &&
@@ -31,13 +31,13 @@ const NotificationList = () => {
 
   useEffect(() => {
     setNotificationList(notificationClassPeriod);
-  }, [userClassPeriodDatas]);
+  }, [userClassPeriodData]);
 
   const stopIsNotify = async (classNumber: string) => {
     let updatedData;
 
     // ステートを更新
-    setUserClassPeriodDatas((classPeriods: ClassPeriod[]) => {
+    setUserClassPeriodData((classPeriods: ClassPeriod[]) => {
       const selectedData = classPeriods.find(
         (el: ClassPeriod) => el.num === classNumber
       );
@@ -62,8 +62,8 @@ const NotificationList = () => {
       await AsyncFunctions.saveData("@classPeriods", updatedData);
       await NotificationMethods.cancelNotification(
         classNumber,
-        userClassPeriodDatas,
-        setUserClassPeriodDatas
+        userClassPeriodData,
+        setUserClassPeriodData
       );
     } catch (error) {
       console.error("Failed to save or cancel notification:", error);

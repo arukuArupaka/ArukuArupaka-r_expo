@@ -1,8 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ClassPeriod } from "../types/class-period";
 import { TIME_TABLE_API_URL } from "@env";
-import { UserSettingContent } from "../types/user-setting-content";
-import * as Notifications from "expo-notifications";
 
 type Props = {
   department?: string;
@@ -24,7 +21,7 @@ export class ClassDataFetcher {
     this.season = season;
   }
 
-  async fetchClassDatas(): Promise<ClassPeriod[] | string> {
+  async fetchClassData(): Promise<ClassPeriod[] | string> {
     try {
       if (!this.department || !this.season) {
         return "not chosen your department or now season";

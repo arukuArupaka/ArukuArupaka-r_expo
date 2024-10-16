@@ -1,12 +1,12 @@
 import { RouteProp } from "@react-navigation/native";
 import { FC, useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
 import { ClassDataFetcher } from "../../component/TimeTable/classObject/TimeTableClassObject";
 import { ClassPeriod } from "../../component/TimeTable/types/class-period";
 import SearchBoxPressButton from "../../component/TimeTable/classPeriodOptions/SearchBoxPressButton";
-import ChoosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChoosenWeekOfTheDayAndPeriod";
+import ChosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChosenWeekOfTheDayAndPeriod";
 import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions/ClassPeriodOptionsBody";
 import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
@@ -41,7 +41,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
 
   // バックエンドデータベースに非同期で問い合わせる
   const fetchClassPeriodOptions = async () => {
-    const data = await classFetcher.fetchClassDatas();
+    const data = await classFetcher.fetchClassData();
     setClassPeriodOptions(data);
   };
 
@@ -71,7 +71,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
           <View style={styles.header}>
             <View style={styles.searchBoxContainer}>
               <SearchBoxPressButton onOpen={() => switchSearchScreen(true)} />
-              <ChoosenWeekOfTheDayAndPeriod
+              <ChosenWeekOfTheDayAndPeriod
                 stringWeekOfTheDay={stringWeekOfTheDay}
                 period={period}
               />
