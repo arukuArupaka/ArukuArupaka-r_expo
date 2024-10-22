@@ -42,6 +42,7 @@ export const CameraCamera = ({ route }) => {
   const [images, setImages] = useState(Array(4).fill(null));
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedCondition, setSelectedCondition] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
   const [conditionModalVisible, setConditionModalVisible] = useState(false);
   const [productName, setproductName] = useState("");
@@ -54,6 +55,7 @@ export const CameraCamera = ({ route }) => {
     if (product) {
       setproductName(product.productName);
       setSelectedDepartment(product.department);
+      setSelectedLocation(product.location);
       setSelectedCondition(product.condition);
       setdescription(product.description);
       setprice(product.price);
@@ -103,6 +105,7 @@ export const CameraCamera = ({ route }) => {
   const saveDraft = async (
     productName,
     department,
+    location,
     condition,
     description,
     price
@@ -112,6 +115,7 @@ export const CameraCamera = ({ route }) => {
         await updateDoc(doc(db, "freeMarket", product.id), {
           productName,
           department,
+          location,
           condition,
           description,
           price,
@@ -120,6 +124,7 @@ export const CameraCamera = ({ route }) => {
         const docRef = await addDoc(collection(db, "freeMarket"), {
           productName,
           department,
+          location,
           condition,
           description,
           price,
@@ -155,6 +160,7 @@ export const CameraCamera = ({ route }) => {
   const exhibit = async (
     productName,
     department,
+    location,
     condition,
     description,
     price
@@ -169,7 +175,7 @@ export const CameraCamera = ({ route }) => {
       const userId = auth.currentUser.uid;
 
       // 全ての項目が入力されているか確認する
-      if (!productName || !department || !condition || !description || !price) {
+      if (!productName || !department || !condition || !location || !description || !price) {
         Alert.alert("error", "全ての項目を入力してください");
         return; // 出品を中止する
       }
@@ -178,6 +184,7 @@ export const CameraCamera = ({ route }) => {
         const docRef = await addDoc(collection(db, "syuppinn"), {
           productName,
           department,
+          location,
           condition,
           description,
           price,
@@ -308,6 +315,28 @@ export const CameraCamera = ({ route }) => {
             value={selectedDepartment}
           />
         </View>
+
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text>キャンパス取引</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setSelectedLocation(value)}
+            placeholder={{ label: "選択されていません", value: null }}
+            items={[
+              { label: "衣笠キャンパス", value: "衣笠キャンパス" },
+              { label: "びわこ・くさつキャンパス(BKC)", value: "びわこ・くさつキャンパス(BKC)" },
+              { label: "大阪いばらきキャンパス", value: "大阪いばらきキャンパス" },
+
+              // 他の状態もここに追加できます
+            ]}
+            style={{
+              inputIOS: { marginLeft: "5%" },
+              inputAndroid: { marginLeft: "5%" },
+            }} // iOS & Android向けのスタイル調整
+            value={selectedLocation}
+          />
+        </View>    
+
+
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text>商品の状態</Text>
           <RNPickerSelect
@@ -330,7 +359,6 @@ export const CameraCamera = ({ route }) => {
           />
         </View>
         <Text>商品説明</Text>
-
         <View
           style={{
             width: "90%",
@@ -409,6 +437,7 @@ export const CameraCamera = ({ route }) => {
                       exhibit(
                         productName,
                         selectedDepartment,
+                        selectedLocation,
                         selectedCondition,
                         description,
                         price

@@ -126,6 +126,8 @@ export default function TextBookBuyDetail() {
         <Text style={{ fontSize: 20 }}>{TextBookData.description}</Text>
         <Text style={{ fontSize: 25, marginTop: 10 }}>商品情報</Text>
         <Text style={{ fontSize: 20 }}>{TextBookData.condition}</Text>
+        <Text style={{ fontSize: 25, marginTop: 10 }}>キャンパス</Text>
+        <Text style={{ fontSize: 20 }}>{(TextBookData.location)}</Text>
       </View>
       <View style={{ flexDirection: "row-reverse" }}>
         {!("buyUser" in TextBookData)&&<View>{!isMyTextBook ? (
