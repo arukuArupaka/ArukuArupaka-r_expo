@@ -24,7 +24,7 @@ type ClassPeriodDetailScreenRouteProp = RouteProp<
 const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   route,
 }) => {
-  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { classPeriodData } = route.params;
   const [isModalShow, setIsModalShow] = useState(false);
@@ -41,17 +41,17 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
     if (data.isNotify) {
       await NotificationMethods.cancelNotification(
         data.num,
-        userClassPeriodDatas,
-        setUserClassPeriodDatas
+        userClassPeriodData,
+        setUserClassPeriodData
       );
     }
-    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+    setUserClassPeriodData((prev: ClassPeriod[]) => {
       const deletePrevData: ClassPeriod[] = prev.filter(
         (el) => el.num !== data.num
       );
       return deletePrevData;
     });
-    const updatedClassPeriods = userClassPeriodDatas.filter(
+    const updatedClassPeriods = userClassPeriodData.filter(
       (el) => el.num !== data.num
     );
     await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);

@@ -1,4 +1,3 @@
-import { useTimeTable } from "../TimeTableContext";
 import { ClassPeriod } from "../types/class-period";
 import * as Notifications from "expo-notifications";
 
@@ -6,10 +5,10 @@ export class NotificationMethods {
   // スケジュールされた通知をキャンセルする関数
   static async cancelNotification(
     classNumber: string,
-    userClassPeriodDatas: ClassPeriod[],
-    setUserClassPeriodDatas: React.Dispatch<React.SetStateAction<ClassPeriod[]>>
+    userClassPeriodData: ClassPeriod[],
+    setUserClassPeriodData: React.Dispatch<React.SetStateAction<ClassPeriod[]>>
   ) {
-    const selectedClassPeriod = userClassPeriodDatas.find(
+    const selectedClassPeriod = userClassPeriodData.find(
       (classPeriod) => classPeriod.num === classNumber
     );
 
@@ -24,7 +23,7 @@ export class NotificationMethods {
     );
 
     // クラスのデータを更新
-    setUserClassPeriodDatas((classPeriods) =>
+    setUserClassPeriodData((classPeriods) =>
       classPeriods.map((classPeriod) =>
         classPeriod.num === classNumber
           ? { ...classPeriod, notificationId: null }

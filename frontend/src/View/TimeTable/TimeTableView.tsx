@@ -1,41 +1,37 @@
-import { View, StyleSheet,Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import WeekRow from "../../component/TimeTable/timeTableView/WeekRow";
 import ClassTimeColumn from "../../component/TimeTable/timeTableView/ClassTimeColumn";
 import React, { useEffect, useRef, useState } from "react";
 import TimeTableViewBody from "../../component/TimeTable/timeTableView/TimeTableViewBody";
 import Dialog from "react-native-dialog";
 import { Video } from "expo-av";
-import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-
-
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 
 const TimeTableView = () => {
   const [showTutorial1, setShowTutorial1] = useState(false);
   const videoRef = useRef(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+        const hasLaunched = await AsyncStorage.getItem("hasLaunched");
         if (hasLaunched === null) {
           // 初回起動
-          await AsyncStorage.setItem('hasLaunched', 'true');
+          await AsyncStorage.setItem("hasLaunched", "true");
           setShowTutorial1(true);
         } else {
           // 2回目以降の起動
         }
       } catch (error) {
-        console.log('Error checking first launch:', error);
+        console.log("Error checking first launch:", error);
       }
     };
 
     checkFirstLaunch();
   }, []);
-
-  
 
   return (
     <View style={{ flex: 1 }}>
@@ -69,7 +65,6 @@ const TimeTableView = () => {
               style={{ width: 175, height: 300 }}
               source={require("../../videos/notificationExample.mp4")}
               useNativeControls
-              resizeMode="contain"
               shouldPlay
               isLooping
               onPlaybackStatusUpdate={(status) => {}}
@@ -84,7 +79,6 @@ const TimeTableView = () => {
           />
         </Dialog.Container>
       )}
-      
     </View>
   );
 };

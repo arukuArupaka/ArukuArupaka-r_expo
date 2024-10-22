@@ -9,19 +9,19 @@ type Props = {
 };
 
 const ColorChange: FC<Props> = ({ currentClassPeriodData }) => {
-  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
   const colorOptions = ["#FFB74D", "#4DB6AC", "#64B5F6", "#AED581", "#BA68C8"];
-  const selectedClassPeriod: ClassPeriod = userClassPeriodDatas.find(
+  const selectedClassPeriod: ClassPeriod = userClassPeriodData.find(
     (el: ClassPeriod) =>
       el.department === currentClassPeriodData.department &&
       el.season === currentClassPeriodData.season &&
       el.weekOfTheDay === currentClassPeriodData.weekOfTheDay &&
       el.period === currentClassPeriodData.period
   );
-  const classPeriodIndex = userClassPeriodDatas.indexOf(selectedClassPeriod);
+  const classPeriodIndex = userClassPeriodData.indexOf(selectedClassPeriod);
 
   const changeUserClassPeriod = async (color: string) => {
-    setUserClassPeriodDatas((data) => {
+    setUserClassPeriodData((data) => {
       const newData = [...data];
       newData[classPeriodIndex] = {
         ...newData[classPeriodIndex],

@@ -2,18 +2,18 @@ import { ClassPeriod } from "../types/class-period";
 import { UserSettingContent } from "../types/user-setting-content";
 
 export class ColorSettingMethods {
-  // クラスのプロパティとして `userSettingContent`, `userClassPeriodDatas`, `classPeriodIndex` を扱う
+  // クラスのプロパティとして `userSettingContent`, `userClassPeriodData`, `classPeriodIndex` を扱う
   userSettingContent: any;
-  userClassPeriodDatas: any;
+  userClassPeriodData: any;
   classPeriodIndex: number;
 
   constructor(
     userSettingContent: any,
-    userClassPeriodDatas: any,
+    userClassPeriodData: any,
     classPeriodIndex: number
   ) {
     this.userSettingContent = userSettingContent;
-    this.userClassPeriodDatas = userClassPeriodDatas;
+    this.userClassPeriodData = userClassPeriodData;
     this.classPeriodIndex = classPeriodIndex;
   }
 
@@ -38,12 +38,12 @@ export class ColorSettingMethods {
   // プライベートな静的メソッド
   private static getColor(
     userSettingContent: UserSettingContent,
-    userClassPeriodDatas: ClassPeriod,
+    userClassPeriodData: ClassPeriod,
     classPeriodIndex: number,
     defaultColor: string
   ): string {
     const { colorBySubject, colorByUnits } = userSettingContent;
-    const classData = userClassPeriodDatas[classPeriodIndex];
+    const classData = userClassPeriodData[classPeriodIndex];
 
     if (colorBySubject) {
       return classData?.statusColor || "#d3d3d3";
@@ -57,12 +57,12 @@ export class ColorSettingMethods {
   // プライベートな静的メソッド
   private static textBlackOrWhite(
     userSettingContent: UserSettingContent,
-    userClassPeriodDatas: ClassPeriod,
+    userClassPeriodData: ClassPeriod,
     classPeriodIndex: number
   ): string {
     const color = this.getColor(
       userSettingContent,
-      userClassPeriodDatas,
+      userClassPeriodData,
       classPeriodIndex,
       "#d3d3d3"
     );
@@ -73,14 +73,14 @@ export class ColorSettingMethods {
   public static classPeriodBackColor(
     place: string,
     userSettingContent: UserSettingContent,
-    userClassPeriodDatas: ClassPeriod,
+    userClassPeriodData: ClassPeriod,
     classPeriodIndex: number
   ): string {
     switch (place) {
       case "entire":
         return this.getColor(
           userSettingContent,
-          userClassPeriodDatas,
+          userClassPeriodData,
           classPeriodIndex,
           "#d3d3d3"
         );
@@ -88,7 +88,7 @@ export class ColorSettingMethods {
         return this.classRoomColor(
           this.getColor(
             userSettingContent,
-            userClassPeriodDatas,
+            userClassPeriodData,
             classPeriodIndex,
             "#d3d3d3"
           )
@@ -96,13 +96,13 @@ export class ColorSettingMethods {
       case "text":
         return this.textBlackOrWhite(
           userSettingContent,
-          userClassPeriodDatas,
+          userClassPeriodData,
           classPeriodIndex
         );
       case "classNumber":
         return this.getColor(
           userSettingContent,
-          userClassPeriodDatas,
+          userClassPeriodData,
           classPeriodIndex,
           "#87ceeb"
         );

@@ -12,9 +12,9 @@ export const useTimeTable = () => useContext(TimeTableContext);
 
 export const TimeTableProvider = ({ children }) => {
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
-  const [userClassPeriodDatas, setUserClassPeriodDatas] = useState<
-    ClassPeriod[]
-  >([]);
+  const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
+    []
+  );
   const initialUserSettingContent = {
     department: "",
     semester: "",
@@ -26,12 +26,12 @@ export const TimeTableProvider = ({ children }) => {
   const [userSettingContent, setUserSettingContent] =
     useState<UserSettingContent>(initialUserSettingContent);
 
-  const getClassPeriodDatas = async () => {
-    const classPeriodDatas = await AsyncFunctions.getData<ClassPeriod[]>(
+  const getClassPeriodData = async () => {
+    const classPeriodData = await AsyncFunctions.getData<ClassPeriod[]>(
       "@classPeriods",
       "array"
     );
-    setUserClassPeriodDatas(classPeriodDatas);
+    setUserClassPeriodData(classPeriodData);
   };
 
   const getUserSettingContent = async () => {
@@ -51,12 +51,11 @@ export const TimeTableProvider = ({ children }) => {
       userSettingContent.department !== "" &&
       userSettingContent.semester !== ""
     ) {
-      const selectedAllClassPeriods: ClassPeriod[] =
-        userClassPeriodDatas.filter(
-          (el: ClassPeriod) =>
-            el.department === userSettingContent.department &&
-            el.season === userSettingContent.semester
-        );
+      const selectedAllClassPeriods: ClassPeriod[] = userClassPeriodData.filter(
+        (el: ClassPeriod) =>
+          el.department === userSettingContent.department &&
+          el.season === userSettingContent.semester
+      );
 
       const uniqueClassPeriods: ClassPeriod[] = selectedAllClassPeriods.filter(
         (value, index, self) =>
@@ -82,7 +81,7 @@ export const TimeTableProvider = ({ children }) => {
           `UserClassPeriodsData/${auth.currentUser.uid}`
         );
         // fireStoreはオブジェクトの中に一つでもundefinedのプロパティが存在したら保存できないから、undefinedの要素を消すための作業
-        const newData = userClassPeriodDatas
+        const newData = userClassPeriodData
           .map((el: ClassPeriod) => {
             const filteredData: Partial<ClassPeriod> = {};
 
@@ -113,7 +112,7 @@ export const TimeTableProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getClassPeriodDatas();
+      await getClassPeriodData();
       await getUserSettingContent();
       getTotalUnits();
     };
@@ -128,7 +127,7 @@ export const TimeTableProvider = ({ children }) => {
     };
     totalUnitsAndFirebase();
   }, [
-    userClassPeriodDatas,
+    userClassPeriodData,
     userSettingContent.department,
     userSettingContent.semester,
   ]);
@@ -148,8 +147,8 @@ export const TimeTableProvider = ({ children }) => {
       value={{
         unreadMessagesJSON,
         setUnreadMessagesJSON,
-        userClassPeriodDatas,
-        setUserClassPeriodDatas,
+        userClassPeriodData,
+        setUserClassPeriodData,
         userSettingContent,
         setUserSettingContent,
       }}

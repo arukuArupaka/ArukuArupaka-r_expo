@@ -6,7 +6,7 @@ type Props = {
   period: number;
 };
 
-const ChoosenWeekOfTheDayAndPeriod: FC<Props> = ({
+const ChosenWeekOfTheDayAndPeriod: FC<Props> = ({
   stringWeekOfTheDay,
   period,
 }) => {
@@ -18,7 +18,7 @@ const ChoosenWeekOfTheDayAndPeriod: FC<Props> = ({
     </View>
   );
 };
-export default ChoosenWeekOfTheDayAndPeriod;
+export default ChosenWeekOfTheDayAndPeriod;
 
 const styles = StyleSheet.create({
   weekOfDayAndPeriod: {

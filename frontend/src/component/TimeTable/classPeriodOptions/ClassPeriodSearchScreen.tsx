@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { ClassPeriod } from "../types/class-period";
-import { useTimeTable } from "../TimeTableContext";
 import ClassPeriodOptionsBody from "./ClassPeriodOptionsBody";
 import SetClassPeriodModal from "../common/SetClassPeriodModal";
 
@@ -21,7 +20,6 @@ const ClassPeriodSearchScreen: FC<Props> = ({
   onClose,
   classPeriodOptions,
 }) => {
-  const { userClassPeriodDatas } = useTimeTable();
   const [searchWord, setSearchWord] = useState<string>("");
   const [selectedData, setSelectedData] = useState<ClassPeriod | null>(null);
   const [isModalShow, setIsModalShow] = useState(false);

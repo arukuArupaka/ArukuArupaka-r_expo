@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import ClassPeriodDetailDataBodyItem from "./components/ClassPeriodDetailDatalBodyItem";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { FC } from "react";
 import { ClassPeriod } from "../types/class-period";
 import { useTimeTable } from "../TimeTableContext";
 import { ColorSettingMethods } from "../classObject/color-setting-methods";
+import ClassPeriodDetailDataBodyItem from "./components/ClassPeriodDetailDetailBodyItem";
 
 type Props = {
   onPress: () => void;
@@ -15,15 +15,15 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
   onPress,
   currentClassPeriodData,
 }) => {
-  const { userClassPeriodDatas, userSettingContent } = useTimeTable();
-  const selectedClassPeriod: ClassPeriod = userClassPeriodDatas.find(
+  const { userClassPeriodData, userSettingContent } = useTimeTable();
+  const selectedClassPeriod: ClassPeriod = userClassPeriodData.find(
     (el: ClassPeriod) =>
       el.department === currentClassPeriodData.department &&
       el.season === currentClassPeriodData.season &&
       el.weekOfTheDay === currentClassPeriodData.weekOfTheDay &&
       el.period === currentClassPeriodData.period
   );
-  const classPeriodIndex = userClassPeriodDatas.indexOf(selectedClassPeriod);
+  const classPeriodIndex = userClassPeriodData.indexOf(selectedClassPeriod);
   return (
     <View style={styles.classPeriodDetailBody}>
       <View style={styles.classPeriodNumAndEditContainer}>
@@ -33,7 +33,7 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
             backgroundColor: ColorSettingMethods.classPeriodBackColor(
               "classNumber",
               userSettingContent,
-              userClassPeriodDatas,
+              userClassPeriodData,
               classPeriodIndex
             ),
             borderRadius: 10,

@@ -1,12 +1,6 @@
-import {
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 import ClassPeriodOption from "./ClassPeriodOption";
-import NotChoosenDepartmentOrSeason from "./NotChoosenDepartmentOrSeason";
+import NotChosenDepartmentOrSeason from "./NotChosenDepartmentOrSeason";
 import { ClassPeriod } from "../types/class-period";
 import { FC } from "react";
 import MultipleSetting from "./component/MultipleSetting";
@@ -15,8 +9,8 @@ import { useTimeTable } from "../TimeTableContext";
 
 type Props = {
   classPeriodOptions: ClassPeriod[] | string;
-  weekOfTheDay: string;
-  period: number;
+  weekOfTheDay?: string;
+  period?: number;
   onPress: (data?: ClassPeriod) => void;
 };
 
@@ -65,7 +59,7 @@ const ClassPeriodOptionsBody: FC<Props> = ({
           )
         ) : (
           typeof classPeriodOptions === "string" && (
-            <NotChoosenDepartmentOrSeason />
+            <NotChosenDepartmentOrSeason />
           )
         )}
       </View>

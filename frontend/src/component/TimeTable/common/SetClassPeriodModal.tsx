@@ -33,7 +33,7 @@ const SetClassPeriodModal: FC<Props> = ({
   onClose,
   onUpdate,
 }) => {
-  const { userClassPeriodDatas, setUserClassPeriodDatas } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
@@ -43,17 +43,17 @@ const SetClassPeriodModal: FC<Props> = ({
   );
 
   const setUserClassPeriods = async (data: ClassPeriod) => {
-    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+    setUserClassPeriodData((prev: ClassPeriod[]) => {
       const updated = [...prev, data];
       return updated;
     });
 
-    const updatedClassPeriods = [...userClassPeriodDatas, data];
+    const updatedClassPeriods = [...userClassPeriodData, data];
     await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);
   };
 
   const changeUserClassPeriod = async (newData: ClassPeriod) => {
-    setUserClassPeriodDatas((prev: ClassPeriod[]) => {
+    setUserClassPeriodData((prev: ClassPeriod[]) => {
       const deletePrevData: ClassPeriod[] = prev.filter(
         (el) => el.num !== newData.num
       );
@@ -61,7 +61,7 @@ const SetClassPeriodModal: FC<Props> = ({
       return updated;
     });
     const updatedClassPeriods = [
-      ...userClassPeriodDatas.filter((el) => el.num !== newData.num),
+      ...userClassPeriodData.filter((el) => el.num !== newData.num),
       newData,
     ];
     await AsyncFunctions.saveData("@classPeriods", updatedClassPeriods);
@@ -97,8 +97,8 @@ const SetClassPeriodModal: FC<Props> = ({
       if (from === "classPeriodDetail") {
         await NotificationMethods.cancelNotification(
           data.num,
-          userClassPeriodDatas,
-          setUserClassPeriodDatas
+          userClassPeriodData,
+          setUserClassPeriodData
         );
         await changeUserClassPeriod(updatedData);
         if (onUpdate) onUpdate(updatedData);
