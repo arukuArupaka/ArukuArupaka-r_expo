@@ -45,6 +45,7 @@ import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
 import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
 import SearchBoxPressButton from "./src/component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
+import CalendarView from "./src/View/Calendar/CalendarView";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -284,6 +285,12 @@ function App() {
                 name="MapKitchenCarDetail"
                 component={KitchenCarDetailView}
                 options={() => ({ title: "" })}
+              />
+              <Stack.Screen
+                name="CalendarView"
+                component={CalendarView}
+                headerShown={false}
+                options={() => ({ title: "" ,headerShown: false})}
               />
             </Stack.Navigator>
           </NavigationContainer>

@@ -14,7 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeCarousel from "../component/Home/HomeViewCarousel.jsx";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
@@ -38,7 +38,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import NewAppList from "../component/Home/NewAppList.tsx";
-import { Foundation } from '@expo/vector-icons';
+import { Foundation } from "@expo/vector-icons";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -141,7 +141,7 @@ const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
-  const [userIconImageUri,setUserIconImageUri]=useState("")
+  const [userIconImageUri, setUserIconImageUri] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -161,7 +161,7 @@ const HomeView = (props) => {
               dispatch(handleLoginAction(user.emailVerified));
               dispatch(setUserUUIDAction(user.uid));
 
-              fetchUserObject(user.uid)
+              fetchUserObject(user.uid);
               // getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
               //   (getURI) => {
               //     setUserIconImageUri(getURI);
@@ -191,7 +191,7 @@ const HomeView = (props) => {
     const appUser = (await getDoc(refFiresrore)).data(); //appUserがデータベースから取得したオブジェクト
     getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
       .then((getURI) => {
-        setUserIconImageUri(getURI)
+        setUserIconImageUri(getURI);
         const data = {
           id: appUser.id,
           userName: appUser.userName,
@@ -220,8 +220,8 @@ const HomeView = (props) => {
         dispatch(setUserObject(data));
       });
   };
-console.log("image")
-console.log(userIconImageUri)
+  console.log("image");
+  console.log(userIconImageUri);
   return (
     <SafeAreaView>
       <ScrollView>
@@ -233,12 +233,17 @@ console.log(userIconImageUri)
             height: 80,
             borderRadius: 40,
             borderWidth: 4,
-            borderColor:'black',
+            borderColor: "black",
             top: 65,
             left: 20,
           }}
-          source={userIconImageUri?{
-            uri: userIconImageUri}:require('../image/Logo.png')}
+          source={
+            userIconImageUri
+              ? {
+                  uri: userIconImageUri,
+                }
+              : require("../image/Logo.png")
+          }
         />
         <View style={styles.headerListStyle}>
           <Headerlist props={props} iconName="settings-outline" />
@@ -297,15 +302,17 @@ console.log(userIconImageUri)
           />
         </View>
         <View style={styles.appListFlex}>
-        <NewAppList
+          <NewAppList
             appName="リンク一覧"
             color="#EB97A8"
             test={props}
             jumpPage="PortalAccess"
             iconName="page-copy"
-            item={()=><Foundation name="page-copy" size={30} color="#EB97A8" />}
+            item={() => (
+              <Foundation name="page-copy" size={30} color="#EB97A8" />
+            )}
           />
-           <AppList
+          <AppList
             appName="教科書     フリマ"
             color="#FFCB08"
             test={props}
@@ -313,7 +320,17 @@ console.log(userIconImageUri)
             iconName="book-multiple"
           />
         </View>
-       {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
+        <View style={styles.appListFlex}>
+          <NewAppList
+            appName="カレンダー"
+            color="#EB97A8"
+            test={props}
+            jumpPage="CalendarView"
+            iconName="calendar"
+            item={() => (
+              <Foundation name="calendar" size={30} color="#EB97A8" />
+            )}
+          />
           <AppList
             appName="教科書     フリマ"
             color="#FFCB08"
@@ -321,14 +338,25 @@ console.log(userIconImageUri)
             jumpPage="ホーム"
             iconName="book-multiple"
           />
-          <AppList
-            appName="Ritsu-  Match"
-            color="#30CB89"
-            test={props}
-            jumpPage="RitsuMatch"
-            iconName="contacts"
-          />
-        </View>}
+        </View>
+        {Platform.OS !== "ios" && (
+          <View style={styles.appListFlex}>
+            <AppList
+              appName="教科書     フリマ"
+              color="#FFCB08"
+              test={props}
+              jumpPage="ホーム"
+              iconName="book-multiple"
+            />
+            <AppList
+              appName="Ritsu-  Match"
+              color="#30CB89"
+              test={props}
+              jumpPage="RitsuMatch"
+              iconName="contacts"
+            />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
