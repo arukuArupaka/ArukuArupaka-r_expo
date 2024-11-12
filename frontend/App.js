@@ -45,6 +45,7 @@ import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
 import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
 import SearchBoxPressButton from "./src/component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
+import TimeTableFriendRegisterVIew from "./src/View/TimeTable/TimeTableFriendRegisterVIew";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -102,11 +103,21 @@ function App() {
                 options={({ navigation }) => ({
                   title: "",
                   headerRight: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TimeTableSetting")}
-                    >
-                      <AntDesign name="setting" size={24} color="black" />
-                    </TouchableOpacity>
+                    <>
+                      <TouchableOpacity
+                        style={{ marginRight: 10 }}
+                        onPress={() =>
+                          navigation.navigate("TimeTableFriendRegister")
+                        }
+                      >
+                        <AntDesign name="adduser" size={24} color="black" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("TimeTableSetting")}
+                      >
+                        <AntDesign name="setting" size={24} color="black" />
+                      </TouchableOpacity>
+                    </>
                   ),
                 })}
               />
@@ -120,6 +131,13 @@ function App() {
               <Stack.Screen
                 name="TimeTableSetting"
                 component={TimeTableSetting}
+                options={() => ({
+                  title: "",
+                })}
+              />
+              <Stack.Screen
+                name="TimeTableFriendRegister"
+                component={TimeTableFriendRegisterVIew}
                 options={() => ({
                   title: "",
                 })}

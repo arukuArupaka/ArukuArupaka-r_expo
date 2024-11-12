@@ -15,6 +15,9 @@ export const TimeTableProvider = ({ children }) => {
   const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
     []
   );
+  const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<ClassPeriod[]>(
+    []
+  );
   const initialUserSettingContent = {
     department: "",
     semester: "",
@@ -151,6 +154,8 @@ export const TimeTableProvider = ({ children }) => {
         setUserClassPeriodData,
         userSettingContent,
         setUserSettingContent,
+        friendsClassPeriodData,
+        setFriendsClassPeriodData
       }}
     >
       {children}

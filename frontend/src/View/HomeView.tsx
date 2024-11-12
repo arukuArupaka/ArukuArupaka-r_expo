@@ -192,32 +192,11 @@ const HomeView = (props) => {
     getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
       .then((getURI) => {
         setUserIconImageUri(getURI)
-        const data = {
-          id: appUser.id,
-          userName: appUser.userName,
-          faculty: appUser.faculty,
-          department: appUser.department,
-          grade: appUser.grade,
-          profile: appUser.profile,
-          userImage: getURI,
-        };
-        console.log("action");
-        console.log(data);
-        dispatch(setUserObject(data));
+        dispatch(setUserObject({...appUser, userImage: getURI}));
       })
       .catch((e) => {
         console.log(e.message);
-        const data = {
-          id: appUser.id,
-          userName: appUser.userName,
-          faculty: appUser.faculty,
-          department: appUser.department,
-          grade: appUser.grade,
-          profile: appUser.profile,
-        };
-        console.log("action");
-        console.log(data);
-        dispatch(setUserObject(data));
+        dispatch(setUserObject({...appUser, userImage: ""}));
       });
   };
 console.log("image")

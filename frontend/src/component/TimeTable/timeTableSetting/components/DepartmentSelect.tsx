@@ -17,6 +17,7 @@ const DepartmentSelect = () => {
               department: value, // departmentフィールドのみを更新
             }))
           }
+          Icon={() => (<Text style={{ position: 'absolute', right: 5, top: 10, fontSize: 18, color: '#789',width:200,textAlign:"right"}}>▼</Text>)}
           items={[
             { label: "法学部", value: "法学部", key: "hougaku" },
             { label: "経済学部", value: "経済学部", key: "keizai" },
