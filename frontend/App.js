@@ -40,6 +40,7 @@ import algoliasearch from "algoliasearch/lite";
 import RitsuMatch from "./src/View/RitsuMatch";
 import KitchenCarDetailView from "./src/component/Map/KitchenCarDetailView";
 import PortalAccess from "./src/View/PortalAccess";
+import CrowdRoom from "./src/component/CrowdRoom/CrowdRoom";
 import ClassPeriodOptions from "./src/View/TimeTable/ClassPeriodOptions";
 import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
 import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
@@ -142,15 +143,15 @@ function App() {
                       color="black"
                     />
                   ),
-                  headerRight: () => (
-                    <TouchableOpacity>
-                      <MaterialIcons
-                        name="question-mark"
-                        size={40}
-                        color="black"
-                      />
-                    </TouchableOpacity>
-                  ),
+                  // headerRight: () => (
+                  //   <TouchableOpacity>
+                  //     <MaterialIcons
+                  //       name="question-mark"
+                  //       size={40}
+                  //       color="black"
+                  //     />
+                  //   </TouchableOpacity>
+                  // ),
                   headerLeft: (props) => (
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
@@ -276,6 +277,39 @@ function App() {
                 name="ホーム"
                 component={TextbookNavigateRoot}
                 options={{ headerShown: false }}
+              />
+              
+              <Stack.Screen
+                name="CrowdRoom"
+                component={CrowdRoom}
+                options={{
+                  headerTitle: (props) => (
+                    <MaterialIcons
+                      name="people-alt"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerLeft: (props) => (
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => navigationRef.navigate("Home")}
+                      >
+                        <Ionicons
+                          name="chevron-back"
+                          style={{ marginRight: 10 }}
+                          size={30}
+                          color="black"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ),
+                  headerStyle: {
+                    backgroundColor: '#dda0dd', 
+                  },
+                }}
               />
 
               {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}

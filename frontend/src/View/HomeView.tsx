@@ -329,6 +329,22 @@ console.log(userIconImageUri)
             iconName="contacts"
           />
         </View>}
+        <View style={styles.appListFlex}>
+          <AppList
+            appName="混雑状況"
+            color="#CE56F8"
+            test={props}
+            jumpPage="CrowdRoom"
+            iconName="human-queue"
+          />
+          <AppList
+            appName="空き教室"
+            color="#4682b4"
+            test={props}
+            jumpPage=""
+            iconName="door"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

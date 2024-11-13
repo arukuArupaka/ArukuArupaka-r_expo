@@ -318,7 +318,24 @@ const HomeView = (props) => {
             jumpPage="RitsuMatch"
             iconName="contacts"
           />
-        </View>}
+        </View>
+        }
+        <View style={styles.appListFlex}>
+          <AppList
+            appName="混雑状況"
+            color="#CE56F8"
+            test={props}
+            jumpPage=""
+            iconName="fa-solid fa-users"
+          />
+          <AppList
+            appName="空き教室"
+            color="brown"
+            test={props}
+            jumpPage=""
+            iconName=""
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
