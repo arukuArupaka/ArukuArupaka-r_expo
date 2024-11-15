@@ -12,7 +12,7 @@ import { db ,storage} from '../../../firebase';
 import { setMapUserObject } from '../../redux/actions/mapUserActions';
 import QRCode from 'react-native-qrcode-svg';
 import {  ref, getDownloadURL } from "firebase/storage";
-import { BarCodeScanner } from "expo-barcode-scanner";
+// import { BarCodeScanner } from "expo-barcode-scanner";
 import { Dispatch } from 'redux';
 
 const MapFriendsView = ({ navigation }) => {
@@ -171,12 +171,12 @@ const friendRegist=async()=>{
           <TouchableOpacity style={{position:'absolute',top:10,right:10,zIndex:10}} onPress={()=>setShowCamera(false)}>
             <MaterialIcons name="cancel" size={30} color="white" />
             </TouchableOpacity>
-            <BarCodeScanner
+            {/* <BarCodeScanner
             style={{height:'100%'}}
             onBarCodeScanned={({ type, data }) => {
               readQRCode(data)
             }}
-          />
+          /> */}
           <View style={{
             position:'absolute',
             bottom:20,
