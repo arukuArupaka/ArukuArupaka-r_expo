@@ -8,12 +8,14 @@ import ClassPeriodDetailDataBodyItem from "./components/ClassPeriodDetailDetailB
 
 type Props = {
   onPress: () => void;
+  isFriends: boolean;
   currentClassPeriodData: ClassPeriod;
 };
 
 const ClassPeriodDetailDataBody: FC<Props> = ({
   onPress,
   currentClassPeriodData,
+  isFriends,
 }) => {
   const { userClassPeriodData, userSettingContent } = useTimeTable();
   const selectedClassPeriod: ClassPeriod = userClassPeriodData.find(
@@ -46,9 +48,10 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
             {currentClassPeriodData.num}
           </Text>
         </View>
-        <TouchableOpacity style={styles.classPeriodEdit} onPress={onPress}>
+        {!isFriends && (<TouchableOpacity style={styles.classPeriodEdit} onPress={onPress}>
           <AntDesign name="edit" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity>)
+          }
       </View>
       <View style={styles.classPeriodDataContainer}>
         <Text style={{ fontWeight: "bold", color: "black", fontSize: 25 }}>

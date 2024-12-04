@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useTimeTable } from "../../TimeTableContext";
 import { RootStackParamList } from "../../types/root-stack-param-list";
@@ -13,8 +13,35 @@ type Props = {
 };
 
 const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
-  const { userSettingContent, userClassPeriodData } = useTimeTable();
+  const { userSettingContent, userClassPeriodData, friendsClassPeriodData } =
+    useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const [classFindInPeriodData, setClassFindInPeriodData] = useState<
+    ClassPeriod[]
+  >([]);
+
+  useEffect(() => {
+    if (Object.keys(friendsClassPeriodData).length !== 0) {
+      const data = friendsClassPeriodData.find(
+        (data: ClassPeriod) =>
+          data.weekOfTheDay ===
+            ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
+          data.period === period
+      );
+      setClassFindInPeriodData(data);
+    } else {
+      const data = userClassPeriodData.find(
+        (data: ClassPeriod) =>
+          data.weekOfTheDay ===
+            ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
+          data.period === period &&
+          data.department === userSettingContent.department &&
+          data.season === userSettingContent.semester
+      );
+      setClassFindInPeriodData(data);
+    }
+  }, [userClassPeriodData, friendsClassPeriodData]);
 
   const findInUserClassPeriodData: ClassPeriod = userClassPeriodData.find(
     (data: ClassPeriod) =>
@@ -25,9 +52,9 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
       data.season === userSettingContent.semester
   );
 
-  const classPeriodIndex = userClassPeriodData.indexOf(
-    findInUserClassPeriodData
-  );
+  console.log(classFindInPeriodData);
+
+  const classPeriodIndex = userClassPeriodData.indexOf(classFindInPeriodData);
 
   return (
     <View
@@ -48,17 +75,17 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
           alignItems: "center",
         }}
         onPress={() => {
-          !findInUserClassPeriodData
+          !classFindInPeriodData
             ? navigation.navigate("ClassPeriodOptions", {
                 weekOfTheDay,
                 period,
               })
             : navigation.navigate("ClassPeriodDetail", {
-                classPeriodData: findInUserClassPeriodData,
+                classPeriodData: {...classFindInPeriodData,isFriends:Object.keys(friendsClassPeriodData).length !== 0},
               });
         }}
       >
-        {findInUserClassPeriodData && (
+        {classFindInPeriodData && (
           <View
             style={{
               width: "100%",
@@ -76,14 +103,14 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 color: ColorSettingMethods.classPeriodBackColor(
                   "text",
                   userSettingContent,
-                  userClassPeriodData,
+                  friendsClassPeriodData||userClassPeriodData,
                   classPeriodIndex
                 ),
               }}
               numberOfLines={3}
               ellipsizeMode="tail"
             >
-              {findInUserClassPeriodData.className}
+              {classFindInPeriodData.className}
             </Text>
             <View
               style={{
@@ -92,7 +119,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 backgroundColor: ColorSettingMethods.classPeriodBackColor(
                   "classRoom",
                   userSettingContent,
-                  userClassPeriodData,
+                  friendsClassPeriodData||userClassPeriodData,
                   classPeriodIndex
                 ),
                 alignItems: "center",
@@ -111,7 +138,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >
-                {findInUserClassPeriodData.classRoom}
+                {classFindInPeriodData.classRoom}
               </Text>
             </View>
           </View>

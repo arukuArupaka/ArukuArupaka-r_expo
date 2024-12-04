@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import WeekRow from "../../component/TimeTable/timeTableView/WeekRow";
 import ClassTimeColumn from "../../component/TimeTable/timeTableView/ClassTimeColumn";
 import React, { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import { Video } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
+import FriendSelectContainer from "../../component/TimeTable/common/FriendSelectContainer";
 
 const TimeTableView = () => {
   const [showTutorial1, setShowTutorial1] = useState(false);
@@ -35,9 +36,9 @@ const TimeTableView = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <FriendSelectContainer />
       <View
         style={{
-          marginTop: 50,
           height: "100%",
           flexDirection: "row",
           width: "100%",
