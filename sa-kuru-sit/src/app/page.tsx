@@ -30,7 +30,7 @@ export default function Home() {
 
           </p>
           {/* <Link href={"/EventPost"}>index</Link>
-           */}
+           */} 
             <div onClick={()=>router.push('/EventPost')}>
             aaaa
             </div>

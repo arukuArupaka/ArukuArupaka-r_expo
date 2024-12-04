@@ -3,9 +3,6 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from 'react';
 
-// Firebaseの初期化を行うためfirebaseAppをインポート
-import firebaseApp from 'C:/Users/PC_User/arupaka/ArukuArupaka-r_expo/sa-kuru-sit/src/firebase';
-
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

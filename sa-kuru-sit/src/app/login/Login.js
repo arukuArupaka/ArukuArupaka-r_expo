@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
-
-// Firebaseの初期化を行うためfirebaseAppをインポート
-import firebaseApp from 'C:/Users/PC_User/arupaka/ArukuArupaka-r_expo/sa-kuru-sit/src/firebase';
+import { auth } from "../../firebase.js"
 
 export default function Login() {
   const router = useRouter();
@@ -15,7 +12,7 @@ export default function Login() {
 
   // ユーザーがログインボタンを押したときにdoLogin関数が実行される
   const doLogin = () => {
-    const auth = getAuth();
+    // const auth = getAuth();
     
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
