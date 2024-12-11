@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
-import HomeCarousel from "../component/Home/HomeViewCarousel.jsx";
+import HomeCarousel from "../component/Home/HomeViewCarousel.tsx";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";

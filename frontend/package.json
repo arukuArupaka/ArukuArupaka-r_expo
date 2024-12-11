@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "postinstall": "patch-package",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -19,7 +20,6 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.25",
     "@types/react": "~18.3.12",
-    "@types/react-native-snap-carousel": "^3.8.11",
     "@types/redux-actions": "^2.6.5",
     "algoliasearch": "^4.22.1",
     "axios": "^1.6.7",

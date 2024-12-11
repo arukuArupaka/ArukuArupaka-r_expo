@@ -12,6 +12,9 @@ const FriendSelectContainer = () => {
   const friendList = useSelector(
     (state: any) => state.user.userObject.friendList || []
   );
+  const myName = useSelector(
+    (state: any) => state.user.userObject.userName || "My"
+  );
   const showFriendTimeTable = async (id) => {
     try {
       const docRef = await getDoc(doc(db, "UserClassPeriodsData", id));
@@ -51,6 +54,7 @@ const FriendSelectContainer = () => {
       friendList={friendList}
       showFriendTimeTable={showFriendTimeTable}
       showMineTimeTable={showMineTimeTable}
+      myName={myName}
     />
   );
 };

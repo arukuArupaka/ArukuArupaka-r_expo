@@ -66,7 +66,7 @@ const TimeTableSetting = () => {
         pagingEnabled={true}
         horizontal={true}
         ref={scrollViewRef}
-        style={{ width: windowWidth }}
+        style={{ width: windowWidth,flex:1 }}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
@@ -80,7 +80,7 @@ const TimeTableSetting = () => {
 export default TimeTableSetting;
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    
     justifyContent: "center",
     marginTop: 30,
   },

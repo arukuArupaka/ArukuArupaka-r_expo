@@ -2,12 +2,15 @@ import { View, Text, TouchableOpacity, Alert, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import TimeTableFriendListItem from "./TimeTableFriendListItem";
+import { auth } from "../../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
-const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable }) => {
-  const [showDataUser, setShowDataUser] = useState("自分");
+const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable ,myName}) => {
+  const navigation=useNavigation()
+  const [showDataUser, setShowDataUser] = useState(myName+"の時間割");
   const [isShowFriendList, setIsShowFriendList] = useState(false);
   const showNonFriendDialog = () => {
-    Alert.alert("友達がいません", "友達を追加してください", [
+    Alert.alert("友達がいません", "愛と勇気だけが友達ですか？\n友達を追加してください", [
       {
         text: "OK",
       },
@@ -15,6 +18,15 @@ const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable }) => {
   };
 
   const selectFriend = () => {
+    if (!auth.currentUser) {
+      Alert.alert("ログインしてください", "この機能を使用するにはログインが必要です", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("login")
+        },
+      ]);
+      return;
+    }
     if (friendList.length === 0) {
       showNonFriendDialog();
       return
@@ -22,13 +34,13 @@ const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable }) => {
     setIsShowFriendList(!isShowFriendList);
   };
   const onSelectFriend = (userData) => {
-    setShowDataUser(userData.userName);
+    setShowDataUser(userData.userName+"の時間割");
     setIsShowFriendList(false);
     showFriendTimeTable(userData.id);
   };
 
   const onSelectMine = () => {
-    setShowDataUser("自分");
+    setShowDataUser(myName+"の時間割");
     setIsShowFriendList(false);
     showMineTimeTable()
   };
@@ -52,7 +64,8 @@ const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable }) => {
             flex: 1,
           }}
         >
-          {showDataUser}の時間割を表示
+          {/* My時間割 */}
+          {showDataUser}
         </Text>
         <AntDesign
           name="caretdown"
@@ -79,7 +92,7 @@ const FriendSelect = ({ friendList,showMineTimeTable,showFriendTimeTable }) => {
             onPress={onSelectMine}
             style={{ flexDirection: "row", gap: 10, padding: 10 }}
           >
-            <Text style={{ fontSize: 25 }}>自分の時間割を表示</Text>
+            <Text style={{ fontSize: 25 }}>{myName}の時間割</Text>
           </TouchableOpacity>
           {friendList.map((friendID: any, key) => {
             return (

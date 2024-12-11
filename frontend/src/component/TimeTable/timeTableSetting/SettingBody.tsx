@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
-import { View, Text, Switch, StyleSheet, Dimensions } from "react-native";
+import React, { useEffect,useState } from "react";
+import {
+  View,
+  Text,
+  Switch,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import { UserSettingContent } from "../types/user-setting-content";
 import { useTimeTable } from "../TimeTableContext";
 import DepartmentSelect from "./components/DepartmentSelect";
@@ -38,54 +45,67 @@ const SettingBody = () => {
     saveUserSettingContent();
   }, [userSettingContent]);
 
+  const [isEnabledShare, setIsEnabledShere] = useState(false);
+
   return (
-    <View style={styles.body}>
-      <View style={styles.bodyContent}>
-        <DepartmentSelect />
-        <SemesterSelect />
-        <DisplayCountSelect />
-        <View style={styles.toggleContainer}>
-          <Text style={styles.textType}>単位数ごとに自動で色分け</Text>
-          <View style={styles.toggleSwitchContainer}>
-            <Switch
-              onValueChange={() => toggleSwitchAction("units")}
-              value={userSettingContent.colorByUnits}
-            />
+    <ScrollView style={{ flex: 1 }}>
+      <View style={styles.body}>
+        <View style={styles.bodyContent}>
+          <DepartmentSelect />
+          <SemesterSelect />
+          <DisplayCountSelect />
+          <View style={styles.toggleContainer}>
+            <Text style={styles.textType}>単位数ごとに自動で色分け</Text>
+            <View style={styles.toggleSwitchContainer}>
+              <Switch
+                onValueChange={() => toggleSwitchAction("units")}
+                value={userSettingContent.colorByUnits}
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.toggleContainer}>
-          <Text style={styles.textType}>科目の種類ごとに自動で色分け</Text>
-          <View style={styles.toggleSwitchContainer}>
-            <Switch
-              onValueChange={() => toggleSwitchAction("subjects")}
-              value={userSettingContent.colorBySubject}
-            />
+          <View style={styles.toggleContainer}>
+            <Text style={styles.textType}>科目の種類ごとに自動で色分け</Text>
+            <View style={styles.toggleSwitchContainer}>
+              <Switch
+                onValueChange={() => toggleSwitchAction("subjects")}
+                value={userSettingContent.colorBySubject}
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.totalUnitsContainer}>
-          <Text style={styles.textType}>合計単位数</Text>
-          <View style={styles.totalUnitsValueContainer}>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              {userSettingContent.totalUnits}
-            </Text>
+          <View style={styles.totalUnitsContainer}>
+            <Text style={styles.textType}>合計単位数</Text>
+            <View style={styles.totalUnitsValueContainer}>
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                {userSettingContent.totalUnits}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.toggleContainer}>
+            <Text style={styles.textType}>時間割共有</Text>
+            <View style={styles.toggleSwitchContainer}>
+              <Switch
+                onValueChange={setIsEnabledShere}
+                value={isEnabledShare}
+              />
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 export default SettingBody;
 
 const styles = StyleSheet.create({
   body: {
-    flex: 8,
     marginTop: 20,
     alignItems: "center",
     width: windowWidth,
   },
   bodyContent: {
+    height: 700,
     width: "90%",
-    height: "90%",
+    // height: "90%",
   },
   toggleContainer: {
     flex: 1,
