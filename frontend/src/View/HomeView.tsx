@@ -113,22 +113,23 @@ const ShowDate = () => {
           justifyContent: "flex-end",
           alignItems: "flex-end",
           marginRight: 16,
+          marginBottom: 5,
         }}
       >
-        <Text style={{ fontSize: 24 }}>{month}</Text>
-        <Text style={{ fontSize: 20 }}>月</Text>
-        <Text style={{ fontSize: 24 }}>{date}</Text>
-        <Text style={{ fontSize: 20 }}>日</Text>
-        <Text style={{ fontSize: 24 }}>（</Text>
-        <Text style={{ fontSize: 24 }}>{weekItems[week]}</Text>
-        <Text style={{ fontSize: 24 }}>）</Text>
+        <Text style={{ marginBottom: 5,fontSize: 24 }}>{month}</Text>
+        <Text style={{ marginBottom: 5,fontSize: 20 }}>月</Text>
+        <Text style={{ marginBottom: 5,fontSize: 24 }}>{date}</Text>
+        <Text style={{ marginBottom: 5,fontSize: 20 }}>日</Text>
+        <Text style={{ marginBottom: 5,fontSize: 24 }}>（</Text>
+        <Text style={{ marginBottom: 5,fontSize: 24 }}>{weekItems[week]}</Text>
+        <Text style={{ marginBottom: 5,fontSize: 24 }}>）</Text>
       </View>
       <View
         style={{
           borderBottomWidth: 1,
           width: "60%",
           position: "absolute",
-          bottom: "0%",
+          bottom: "10%",
           right: "0%",
         }}
       ></View>
@@ -213,7 +214,7 @@ console.log(userIconImageUri)
             borderRadius: 40,
             borderWidth: 4,
             borderColor:'black',
-            top: 65,
+            top: 55,
             left: 20,
           }}
           source={userIconImageUri?{
@@ -227,22 +228,20 @@ console.log(userIconImageUri)
           <Text style={styles.titleText}>マイページ</Text>
         </View>
         <ShowDate></ShowDate>
-        <Text style={styles.title}>新着情報</Text>
         <HomeCarousel navigation={props.navigation}></HomeCarousel>
-        <Text style={styles.title}>特設ページ</Text>
         <View
           style={{
             width: "100%",
             flexDirection: "row",
             justifyContent: "center",
             display: "flex",
+
           }}
         >
           <View>
             <Specialsite navigation={props.navigation} />
           </View>
         </View>
-        <Text style={styles.title}>機能一覧</Text>
         <View style={styles.appListFlex}>
           <AppList
             appName="駐輪場"
@@ -335,7 +334,7 @@ const styles = StyleSheet.create({
   },
   topScreen: {
     width: "100%",
-    height: 80,
+    height: 50,
     backgroundColor: "rgba(235, 54, 55, 0.30)",
   },
   profileIcon: {
@@ -355,6 +354,7 @@ const styles = StyleSheet.create({
   appListFlex: {
     flexDirection: "row",
     width: "100%",
+    height: 80,
     justifyContent: "center",
     display: "flex",
   },
