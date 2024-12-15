@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "1.0.1",
+    "version": "11.4.3",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",
@@ -17,19 +17,31 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
-      "buildNumber": "1.0.0",
+      "buildNumber": "11.4.2",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "config": {
-        "googleMapsApiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+        "googleMapsApiKey": "AIzaSyCPSG4CAkxNfBtYI-gewsbFCCTnYpGExCs"
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ],
+        "NSLocationWhenInUseUsageDescription": "位置情報を共有機能とマップ上にあなたの位置を表示するために必要です。",
+        "NSLocationAlwaysUsageDescription": "キャンパス内での位置情報共有に使用します。",
+        "NSLocalNotificationUsageDescription": "教室の場所を通知します。",
+        "NSMicrophoneUsageDescription": "アプリ内で使用する写真をアップロードします。",
+        "NSPhotoLibraryUsageDescription": "フリーマーケットの商品説明のために写真をアップロードします。",
+        "NSCameraUsageDescription": "QRコードの読み取りに使用します。"
       }
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyD4TdlLxu4vUI6tynUinx1Q6nvMO_gT05Y"
+          "apiKey": "AIzaSyBwagFd9ysris-L-Lm2Ad5Rt6PZyy5Kme0"
         }
       },
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
         "CAMERA",
         "WRITE_EXTERNAL_STORAGE",
@@ -48,8 +60,32 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "eas": {}
+      "eas": {
+        "projectId": "fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
+      }
     },
-    "owner": "arukuarupakabuild"
+    "owner": "arukuarupakabuild",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fa7660a3-47f4-4186-8a48-d3a3c416b0ea"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "extraPods": [
+              {
+                "name": "GoogleUserMessagingPlatform",
+                "version": "2.4.0"
+              }
+            ]
+          }
+        }
+      ]
+    ]
   }
 }
