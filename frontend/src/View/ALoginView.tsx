@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth } from "../../firebase";
 import { handleLoginAction } from "../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
+import Checkbox from "expo-checkbox";
 
 const ALoginView = (props) => {
   const [isCreateAcount, setIsCreateAcount] = useState(true);
@@ -78,14 +79,18 @@ const ALoginView = (props) => {
   const [password, setPassword] = useState("");
 
   const configureTerms = () =>
-    Alert.alert('利用規約に同意しますか？', 'このアプリは学生チームにより開発されました。情報流出などいかなる損害が発生した場合も保証はできません。自己責任でご利用ください。https://docs.google.com/document/d/1mPBbzClm3-SVotQPHO_ugpcpKfsJcyGZ0YDraOyhoEk/edit', [
-      {
-        text: '同意しない',
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {text: '同意', onPress: () => handleRegister()},
-    ]);
+    Alert.alert(
+      "利用規約に同意しますか？",
+      "このアプリは学生チームにより開発されました。情報流出などいかなる損害が発生した場合も保証はできません。自己責任でご利用ください。https://docs.google.com/document/d/1mPBbzClm3-SVotQPHO_ugpcpKfsJcyGZ0YDraOyhoEk/edit",
+      [
+        {
+          text: "同意しない",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "同意", onPress: () => handleRegister() },
+      ]
+    );
 
   const handleRegister = async () => {
     try {
@@ -295,6 +300,8 @@ const ALoginView = (props) => {
       });
   };
 
+  const [isChecked, setIsChecked] = useState(true);
+
   return (
     <View
       style={{
@@ -475,27 +482,56 @@ const ALoginView = (props) => {
                   <Text style={{textAlign:'center',color:'#C8252B'}}>メールを認証したらクリック</Text>
                 </TouchableOpacity>} */}
           {!showRegisterBotton ? (
-            <TouchableOpacity
-              disabled={!email || !password}
-              style={{
-                marginTop: 20,
-                backgroundColor:
-                  email && password.length >= 6 ? "#C8252B" : "#FFAFB2",
-                padding: 5,
-                borderRadius: 5,
-              }}
-              onPress={configureTerms}
-            >
-              <Text
+            <>
+              <View
                 style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontWeight: "700",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginHorizontal: "auto",
                 }}
               >
-                確認メールを送信
-              </Text>
-            </TouchableOpacity>
+                <Checkbox
+                  value={isChecked}
+                  onValueChange={(v) => setIsChecked(v)}
+                />
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "利用規約",
+                      "利用規約第1条（目的）\n本利用規約は、歩くアルパカ制作委員会（以下「当委員会」といいます）が提供するアプリ「歩くアルパカ+R」（以下「本アプリ」といいます）に関して、ユーザーの利用条件を定めるものです。\n\n第2条（定義）\n本規約において使用される用語の定義は、以下の通りです。\n「ユーザー」とは、本アプリを利用する個人をいいます。\n「本サービス」とは、本アプリを通じて提供される全てのサービスをいいます。\n\n第3条（個人情報の取り扱い）\n ユーザーが本アプリに登録または共有した時間割データは、当委員会がサービスの改善や研究目的で自由に利用することができます。\n時間割データの収集および利用に関連して発生した情報漏洩やトラブルについて、当委員会は一切の責任を負いません\n\n第4条（禁止事項）\nユーザーは、本アプリの利用に際して以下の行為を行ってはなりません。\n法令または公序良俗に反する行為\nサーバーやネットワークに支障をきたす行為\n他のユーザーに不利益、損害を与える行為\n当委員会の承認なく商業目的で本アプリを利用する行為\n\n第5条（免責事項）\n当委員会は、本アプリの提供にあたり、以下の事項について一切の責任を負いません。\nユーザー間で教科書の受け渡しに関して発生したトラブルについて、当委員会は一切の責任を負いません。\nユーザーが共有した情報が第三者により閲覧・悪用された場合、当委員会はその責任を負いません。 \n本アプリの提供を終了する場合があり、予告なく終了することがあります。\n当委員会は、いかなる状況においても、ユーザーが本アプリを利用することによって発生したいかなる損害についても一切の責任を負いません。\nサービス提供の遅延または中断、その他の予期しない問題についても責任を負いません。\n\n第6条（利用規約の変更）\n当委員会は、必要に応じて本規約を変更することがあります。変更後の規約は、アプリ内または公式サイトで告知した時点で効力を生じるものとします。\n\n"
+                    )
+                  }
+                >
+                  <Text style={{ marginLeft: 10, color: "blue" }}>
+                    利用規約
+                  </Text>
+                </TouchableOpacity>
+                <Text>に同意しますか？</Text>
+              </View>
+              <TouchableOpacity
+                disabled={!email || !password}
+                style={{
+                  marginTop: 20,
+                  backgroundColor:
+                    isChecked && email && password.length >= 6
+                      ? "#C8252B"
+                      : "#FFAFB2",
+                  padding: 5,
+                  borderRadius: 5,
+                }}
+                onPress={handleRegister}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontWeight: "700",
+                  }}
+                >
+                  確認メールを送信
+                </Text>
+              </TouchableOpacity>
+            </>
           ) : (
             <TouchableOpacity
               onPress={completeCreateAccount}
