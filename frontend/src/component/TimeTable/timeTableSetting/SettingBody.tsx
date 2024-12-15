@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
+  Alert,
 } from "react-native";
 import { UserSettingContent } from "../types/user-setting-content";
 import { useTimeTable } from "../TimeTableContext";
@@ -13,11 +14,15 @@ import DepartmentSelect from "./components/DepartmentSelect";
 import SemesterSelect from "./components/SemesterSelect";
 import DisplayCountSelect from "./components/DisplayCountSelect";
 import { AsyncFunctions } from "../classObject/async-functions";
+import { useSelector } from "react-redux";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const windowWidth = Dimensions.get("window").width;
 const SettingBody = () => {
   const { userSettingContent, setUserSettingContent } = useTimeTable();
-
+  const navigation = useNavigation();
   const saveUserSettingContent = async () => {
     await AsyncFunctions.saveData<UserSettingContent>(
       "@userSettingContent",
@@ -46,6 +51,124 @@ const SettingBody = () => {
   }, [userSettingContent]);
 
   const [isEnabledShare, setIsEnabledShere] = useState(false);
+
+  const userObject = useSelector((state: any) => state.user.userObject);
+
+  useEffect(() => {
+    if (userObject) {
+      getUserDataIsEnabledShare();
+    }
+  }, [userObject]);
+
+  const getUserDataIsEnabledShare = async () => {
+    try {
+      console.log(userObject, 46);
+      const docRef = doc(db, "users", userObject.id);
+
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) return;
+      console.log(docSnap.data(), 47);
+
+      if ("EnabledTimeTableShare" in docSnap.data()) {
+        console.log(docSnap.data(), 47);
+        setIsEnabledShere(docSnap.data().EnabledTimeTableShare);
+        return;
+      }
+
+      initialSetting();
+    } catch (e) {
+      console.log(e, 77);
+    }
+  };
+
+  const setEnabledShare = async () => {
+    try {
+      setDoc(
+        doc(db, "users", userObject.id),
+        {
+          EnabledTimeTableShare: true,
+        },
+        { merge: true }
+      );
+      setIsEnabledShere(true);
+    } catch (e) {
+      Alert.alert(
+        "ログインしてください",
+        "この機能を使用するにはログインが必要です",
+        [
+          {
+            text: "OK",
+          },
+          {
+            text: "ログイン画面へ",
+            onPress: () => navigation.navigate("login"),
+          },
+        ]
+      );
+      console.log(e, 92);
+    }
+  };
+
+  const setDisableShare = async () => {
+    try {
+      setDoc(
+        doc(db, "users", userObject.id),
+        {
+          EnabledTimeTableShare: false,
+        },
+        { merge: true }
+      );
+      setIsEnabledShere(false);
+    } catch (e) {
+      Alert.alert(
+        "ログインしてください",
+        "この機能を使用するにはログインが必要です",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("login"),
+          },
+        ]
+      );
+      console.log(e, 92);
+    }
+  };
+
+  const onChangeIsEnabledShare = (value) => {
+    if (value) {
+      setEnabledShare();
+    } else {
+      setDisableShare();
+    }
+  };
+
+  const initialSetting = async () => {
+    try {
+      setDoc(
+        doc(db, "users", userObject.id),
+        {
+          EnabledTimeTableShare: true,
+        },
+        { merge: true }
+      );
+      setIsEnabledShere(true);
+    } catch (e) {
+      Alert.alert(
+        "ログインしてください",
+        "この機能を使用するにはログインが必要です",
+        [
+          {
+            text: "OK",
+          },
+          {
+            text: "ログイン画面へ",
+            onPress: () => navigation.navigate("login"),
+          },
+        ]
+      );
+      console.log(e, 92);
+    }
+  };
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -84,7 +207,7 @@ const SettingBody = () => {
             <Text style={styles.textType}>時間割共有</Text>
             <View style={styles.toggleSwitchContainer}>
               <Switch
-                onValueChange={setIsEnabledShere}
+                onValueChange={onChangeIsEnabledShare}
                 value={isEnabledShare}
               />
             </View>

@@ -34,6 +34,7 @@ const FriendSelectContainer = () => {
         );
       }
     } catch (e) {
+      Alert.alert("エラー", "権限がありません")
       console.log(e);
     }
   };

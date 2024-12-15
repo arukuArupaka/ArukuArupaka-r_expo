@@ -84,6 +84,7 @@ const FriendRegisterCamera = ({
               borderRadius: 10,
             }}
           >
+            <Text style={{textAlign:"center"}}>お互いにQRコードを読み合ってください</Text>
             <TouchableOpacity onPress={() => setIsShowQR(false)}>
               <MaterialIcons
                 style={{ textAlign: "right" }}
