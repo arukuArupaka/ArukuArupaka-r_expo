@@ -14,7 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeCarousel from "../component/Home/HomeViewCarousel.tsx";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
@@ -38,7 +38,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import NewAppList from "../component/Home/NewAppList.tsx";
-import { Foundation } from '@expo/vector-icons';
+import { Foundation } from "@expo/vector-icons";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -46,6 +46,7 @@ const Headerlist = (props) => {
     <TouchableOpacity
       style={{
         margin: 4,
+        zIndex: 100,
         width: 40,
         height: 40,
         borderWidth: 1,
@@ -116,13 +117,13 @@ const ShowDate = () => {
           marginBottom: 5,
         }}
       >
-        <Text style={{ marginBottom: 5,fontSize: 24 }}>{month}</Text>
-        <Text style={{ marginBottom: 5,fontSize: 20 }}>月</Text>
-        <Text style={{ marginBottom: 5,fontSize: 24 }}>{date}</Text>
-        <Text style={{ marginBottom: 5,fontSize: 20 }}>日</Text>
-        <Text style={{ marginBottom: 5,fontSize: 24 }}>（</Text>
-        <Text style={{ marginBottom: 5,fontSize: 24 }}>{weekItems[week]}</Text>
-        <Text style={{ marginBottom: 5,fontSize: 24 }}>）</Text>
+        <Text style={{ marginBottom: 5, fontSize: 24 }}>{month}</Text>
+        <Text style={{ marginBottom: 5, fontSize: 20 }}>月</Text>
+        <Text style={{ marginBottom: 5, fontSize: 24 }}>{date}</Text>
+        <Text style={{ marginBottom: 5, fontSize: 20 }}>日</Text>
+        <Text style={{ marginBottom: 5, fontSize: 24 }}>（</Text>
+        <Text style={{ marginBottom: 5, fontSize: 24 }}>{weekItems[week]}</Text>
+        <Text style={{ marginBottom: 5, fontSize: 24 }}>）</Text>
       </View>
       <View
         style={{
@@ -142,7 +143,7 @@ const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
-  const [userIconImageUri,setUserIconImageUri]=useState("")
+  const [userIconImageUri, setUserIconImageUri] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -162,7 +163,7 @@ const HomeView = (props) => {
               dispatch(handleLoginAction(user.emailVerified));
               dispatch(setUserUUIDAction(user.uid));
 
-              fetchUserObject(user.uid)
+              fetchUserObject(user.uid);
               // getDownloadURL(ref(storage, `users/${user.uid}/mainPicture`)).then(
               //   (getURI) => {
               //     setUserIconImageUri(getURI);
@@ -192,33 +193,41 @@ const HomeView = (props) => {
     const appUser = (await getDoc(refFiresrore)).data(); //appUserがデータベースから取得したオブジェクト
     getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
       .then((getURI) => {
-        setUserIconImageUri(getURI)
-        dispatch(setUserObject({...appUser, userImage: getURI}));
+        setUserIconImageUri(getURI);
+        dispatch(setUserObject({ ...appUser, userImage: getURI }));
       })
       .catch((e) => {
         console.log(e.message);
-        dispatch(setUserObject({...appUser, userImage: ""}));
+        dispatch(setUserObject({ ...appUser, userImage: "" }));
       });
   };
-console.log("image")
-console.log(userIconImageUri)
+  console.log("image");
+  console.log(userIconImageUri);
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <>
+      <SafeAreaView style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }}/>
+      <ScrollView
+        bounces={false} // オーバースクロールを有効化
+      >
         <View style={styles.topScreen}></View>
         <Image
           style={{
             position: "absolute",
-            width: 80,
-            height: 80,
+            width: 70,
+            height: 70,
             borderRadius: 40,
             borderWidth: 4,
-            borderColor:'black',
+            borderColor: "black",
             top: 55,
             left: 20,
           }}
-          source={userIconImageUri?{
-            uri: userIconImageUri}:require('../image/Logo.png')}
+          source={
+            userIconImageUri
+              ? {
+                  uri: userIconImageUri,
+                }
+              : require("../image/Logo.png")
+          }
         />
         <View style={styles.headerListStyle}>
           <Headerlist props={props} iconName="settings-outline" />
@@ -235,80 +244,86 @@ console.log(userIconImageUri)
             flexDirection: "row",
             justifyContent: "center",
             display: "flex",
-
           }}
         >
           <View>
             <Specialsite navigation={props.navigation} />
           </View>
         </View>
-        <View style={styles.appListFlex}>
-          <AppList
-            appName="駐輪場"
-            color="#F36F21"
-            test={props}
-            jumpPage="Bike"
-            iconName="bicycle"
-          />
-          <AppList
-            appName="天気予報"
-            color="#EB3637"
-            test={props}
-            jumpPage="weather"
-            iconName="weather-partly-cloudy"
-          />
+        <View style={{backgroundColor:"",flex:1}}>
+          <View style={styles.appListFlex}>
+            <AppList
+              appName="駐輪場"
+              color="#F36F21"
+              test={props}
+              jumpPage="Bike"
+              iconName="bicycle"
+            />
+            <AppList
+              appName="天気予報"
+              color="#EB3637"
+              test={props}
+              jumpPage="weather"
+              iconName="weather-partly-cloudy"
+            />
+          </View>
+          <View style={styles.appListFlex}>
+            <AppList
+              appName="マップ"
+              color="#1BB1E7"
+              test={props}
+              jumpPage="Map"
+              iconName="map-marker-radius-outline"
+            />
+            <AppList
+              appName="時間割"
+              color="#00A651"
+              test={props}
+              jumpPage="TimeTable"
+              iconName="file-table"
+            />
+          </View>
+          <View style={styles.appListFlex}>
+            <NewAppList
+              appName="リンク一覧"
+              color="#EB97A8"
+              test={props}
+              jumpPage="PortalAccess"
+              iconName="page-copy"
+              item={() => (
+                <Foundation name="page-copy" size={30} color="#EB97A8" />
+              )}
+            />
+            <AppList
+              appName="教科書     フリマ"
+              color="#FFCB08"
+              test={props}
+              jumpPage="ホーム"
+              iconName="book-multiple"
+            />
+          </View>
+          {Platform.OS !== "ios" && (
+            <View style={styles.appListFlex}>
+              <AppList
+                appName="教科書     フリマ"
+                color="#FFCB08"
+                test={props}
+                jumpPage="ホーム"
+                iconName="book-multiple"
+              />
+              <AppList
+                appName="Ritsu-  Match"
+                color="#30CB89"
+                test={props}
+                jumpPage="RitsuMatch"
+                iconName="contacts"
+              />
+            </View>
+          )}
         </View>
-        <View style={styles.appListFlex}>
-          <AppList
-            appName="マップ"
-            color="#1BB1E7"
-            test={props}
-            jumpPage="Map"
-            iconName="map-marker-radius-outline"
-          />
-          <AppList
-            appName="時間割"
-            color="#00A651"
-            test={props}
-            jumpPage="TimeTable"
-            iconName="file-table"
-          />
-        </View>
-        <View style={styles.appListFlex}>
-        <NewAppList
-            appName="リンク一覧"
-            color="#EB97A8"
-            test={props}
-            jumpPage="PortalAccess"
-            iconName="page-copy"
-            item={()=><Foundation name="page-copy" size={30} color="#EB97A8" />}
-          />
-           <AppList
-            appName="教科書     フリマ"
-            color="#FFCB08"
-            test={props}
-            jumpPage="ホーム"
-            iconName="book-multiple"
-          />
-        </View>
-       {Platform.OS!=="ios"&& <View style={styles.appListFlex}>
-          <AppList
-            appName="教科書     フリマ"
-            color="#FFCB08"
-            test={props}
-            jumpPage="ホーム"
-            iconName="book-multiple"
-          />
-          <AppList
-            appName="Ritsu-  Match"
-            color="#30CB89"
-            test={props}
-            jumpPage="RitsuMatch"
-            iconName="contacts"
-          />
-        </View>}
       </ScrollView>
-    </SafeAreaView>
+      <SafeAreaView />
+    </>
   );
 };
 
@@ -334,7 +349,7 @@ const styles = StyleSheet.create({
   },
   topScreen: {
     width: "100%",
-    height: 50,
+    height: 35,
     backgroundColor: "rgba(235, 54, 55, 0.30)",
   },
   profileIcon: {
