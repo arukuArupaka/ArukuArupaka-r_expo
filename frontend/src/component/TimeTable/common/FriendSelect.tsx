@@ -94,7 +94,7 @@ const FriendSelect = ({
         <View
           style={{
             display: isShowFriendList ? "flex" : "none", // 表示・非表示を切り替え
-            position: "absolute",
+            // position: "absolute",
             backgroundColor: "white",
             width: "100%",
             maxHeight: 420,
@@ -119,6 +119,159 @@ const FriendSelect = ({
             >
               <Text style={{ fontSize: 25 }}>{myName}の時間割</Text>
             </TouchableOpacity>
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
+            {friendList.map((friendID: any, key) => {
+              return (
+                <TimeTableFriendListItem
+                  key={key}
+                  id={friendID}
+                  onSelect={onSelectFriend}
+                />
+              );
+            })}
             {friendList.map((friendID: any, key) => {
               return (
                 <TimeTableFriendListItem

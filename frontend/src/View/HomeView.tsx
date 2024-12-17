@@ -205,9 +205,12 @@ const HomeView = (props) => {
   console.log(userIconImageUri);
   return (
     <>
-      <SafeAreaView style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }}/>
+      <SafeAreaView
+        style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }}
+      />
       <ScrollView
         bounces={false} // オーバースクロールを有効化
+        style={{ flex: 1 }}
       >
         <View style={styles.topScreen}></View>
         <Image
@@ -220,6 +223,7 @@ const HomeView = (props) => {
             borderColor: "black",
             top: 55,
             left: 20,
+            zIndex: 1000,
           }}
           source={
             userIconImageUri
@@ -229,12 +233,16 @@ const HomeView = (props) => {
               : require("../image/Logo.png")
           }
         />
-        <View style={styles.headerListStyle}>
-          <Headerlist props={props} iconName="settings-outline" />
-        </View>
-        <View style={{ marginTop: 5 }}>
-          <Text style={[styles.titleText, { fontSize: 16 }]}>歩くアルパカ</Text>
-          <Text style={styles.titleText}>マイページ</Text>
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ marginTop: 5 }}>
+            <Text style={[styles.titleText, { fontSize: 16 }]}>
+              歩くアルパカ
+            </Text>
+            <Text style={styles.titleText}>マイページ</Text>
+          </View>
+          <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
+            <Headerlist props={props} iconName="settings-outline" />
+          </View>
         </View>
         <ShowDate></ShowDate>
         <HomeCarousel navigation={props.navigation}></HomeCarousel>
@@ -250,7 +258,7 @@ const HomeView = (props) => {
             <Specialsite navigation={props.navigation} />
           </View>
         </View>
-        <View style={{backgroundColor:"",flex:1}}>
+        <View style={{ backgroundColor: "", flex: 1 }}>
           <View style={styles.appListFlex}>
             <AppList
               appName="駐輪場"
@@ -343,7 +351,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "flex-end",
-    position: "absolute",
+    // position: "absolute",
     top: 50,
     right: 16,
   },

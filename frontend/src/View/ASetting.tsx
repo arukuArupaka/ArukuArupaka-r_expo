@@ -178,7 +178,7 @@ const ASetting = (props) => {
         console.log(oldDate);
         setOldData(compareDate);
         // // Firestoreにユーザーデータを保存
-        setDoc(ref, appUser).then(() => {
+        setDoc(ref, appUser,{merge:true}).then(() => {
           // 保存に成功したらコンテクストにユーザーデータを格納
           console.log("appUser");
         });
