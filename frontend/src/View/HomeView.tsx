@@ -46,7 +46,7 @@ const Headerlist = (props) => {
     <TouchableOpacity
       style={{
         margin: 4,
-        zIndex: 100,
+        zIndex: 1000,
         width: 40,
         height: 40,
         borderWidth: 1,

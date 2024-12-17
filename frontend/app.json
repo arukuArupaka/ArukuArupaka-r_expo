@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "11.4.3",
+    "version": "11.5.0",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",
@@ -17,8 +17,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
-      "buildNumber": "11.4.2",
-      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "11.5.0",
+      // "googleServicesFile": "./GoogleService-Info.plist",
       "config": {
         "googleMapsApiKey": "AIzaSyCPSG4CAkxNfBtYI-gewsbFCCTnYpGExCs"
       },

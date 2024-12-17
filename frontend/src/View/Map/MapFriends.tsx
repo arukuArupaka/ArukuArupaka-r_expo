@@ -12,7 +12,6 @@ import { db ,storage} from '../../../firebase';
 import { setMapUserObject } from '../../redux/actions/mapUserActions';
 import QRCode from 'react-native-qrcode-svg';
 import {  ref, getDownloadURL } from "firebase/storage";
-// import { BarCodeScanner } from "expo-barcode-scanner";
 import { Dispatch } from 'redux';
 
 const MapFriendsView = ({ navigation }) => {
