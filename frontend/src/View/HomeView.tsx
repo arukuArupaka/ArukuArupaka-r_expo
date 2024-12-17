@@ -188,7 +188,7 @@ const HomeView = (props) => {
         const savedEmail = await AsyncStorage.getItem("email");
         const savedPassword = await AsyncStorage.getItem("password");
         if (savedEmail && savedPassword) {
-          signInWithEmailAndPassword(auth, savedEmail, savedPassword)
+          signInWithEmailAndPassword(auth, savedEmail+"@ed.ritsumei.ac.jp", savedPassword)
             .then((userCredential) => {
               // ログイン成功時の処理
               const user = userCredential.user;
