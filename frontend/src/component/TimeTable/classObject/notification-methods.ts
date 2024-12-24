@@ -1,5 +1,6 @@
 import { ClassPeriod } from "../types/class-period";
 import * as Notifications from "expo-notifications";
+import {SchedulableTriggerInputTypes} from 'expo-notifications';
 
 export class NotificationMethods {
   // スケジュールされた通知をキャンセルする関数
@@ -60,6 +61,7 @@ export class NotificationMethods {
         sound: true,
       },
       trigger: {
+        type: SchedulableTriggerInputTypes.CALENDAR,
         weekday: weekday, // 1: 日曜日, 2: 月曜日, ..., 7: 土曜日
         hour: notificationHour,
         minute: notificationMinute,
