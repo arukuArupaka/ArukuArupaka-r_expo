@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import {
   collection,
@@ -148,7 +149,7 @@ export const TextbookHome = () => {
       <ScrollView
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        style={{ maxHeight: 80 }}
+        style={{ maxHeight: 50 }}
       >
         {departmentList.map((department) => (
           <DepartmentSelectBotton
@@ -159,6 +160,42 @@ export const TextbookHome = () => {
           />
         ))}
       </ScrollView>
+      <View
+        style={{
+          padding: 10,
+          flexDirection: "row",
+          // justifyContent: "space-between",
+        }}
+      >
+        <TextInput
+          style={{
+            flex: 1,
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            paddingLeft: 8,
+            borderRadius: 5,
+          }}
+          placeholder="検索"
+          onChangeText={(text) => {
+            // Implement search functionality here
+          }}
+        />
+        <TouchableOpacity
+          style={{
+            backgroundColor: "orange",
+            padding: 10,
+            borderRadius: 5,
+            alignItems: "center",
+            // marginTop: 10,
+          }}
+          onPress={() => {
+            // Implement search functionality here
+          }}
+        >
+          <Text style={{ color: "white" }}>検索</Text>
+        </TouchableOpacity>
+      </View>
       {!isLoading && textbookArray.length !== 0 ? (
         <ScrollView
           onMomentumScrollEnd={(e) => scrollPosition(e)}
