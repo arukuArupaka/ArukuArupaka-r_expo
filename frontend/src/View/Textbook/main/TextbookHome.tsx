@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,16 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import { collection, query, where, getDocs ,limit,startAfter, orderBy,startAt} from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+  startAfter,
+  orderBy,
+  startAt,
+} from "firebase/firestore";
 import { db } from "../../../../firebase";
 import DepartmentSelectBotton from "../../../component/Textbook/departmentSelectBotton";
 import { useNavigation } from "@react-navigation/native";
@@ -33,16 +42,15 @@ const departmentList = [
   { departmantName: "生命科学部" },
   { departmantName: "薬学部" },
 ];
-  let lastDoc ;
+let lastDoc;
 export const TextbookHome = () => {
-
   const navigation = useNavigation();
-
 
   const [selectedDepartment, setSelectedDepartment] =
     useState<string>("すべて");
   const [textbookArray, setTextBookArray] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isEndLoading, setIsEndLoading] = useState<boolean>(false);
 
   const getdata = async () => {
     try {
@@ -50,7 +58,11 @@ export const TextbookHome = () => {
       const textbookArray = [];
       let q;
       if (selectedDepartment === "すべて") {
-        q = query(collection(db, "syuppinn"), orderBy("createdAt", "desc"), limit(8));
+        q = query(
+          collection(db, "syuppinn"),
+          orderBy("createdAt", "desc"),
+          limit(8)
+        );
       } else {
         q = query(
           collection(db, "syuppinn"),
@@ -59,12 +71,12 @@ export const TextbookHome = () => {
           limit(8)
         );
       }
-  
+
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         textbookArray.push({ id: doc.id, ...doc.data() });
       });
-  
+
       // クエリで取得した最後のドキュメントを保存
       if (!querySnapshot.empty) {
         lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -76,17 +88,17 @@ export const TextbookHome = () => {
       setIsLoading(false);
     }
   };
-  
+
   const getNextData = async () => {
     try {
-      setIsLoading(true);
+      setIsEndLoading(true);
       const textbookArray = [];
       let q;
       if (selectedDepartment === "すべて") {
         q = query(
-          collection(db, "syuppinn"), 
-          orderBy("createdAt", "desc"),  
-          startAfter(lastDoc),  // lastDocからスタート
+          collection(db, "syuppinn"),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc), // lastDocからスタート
           limit(8) // 追加の制限
         );
       } else {
@@ -98,40 +110,38 @@ export const TextbookHome = () => {
           limit(8)
         );
       }
-  
+
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         textbookArray.push({ id: doc.id, ...doc.data() });
-
-      });  
+      });
       // 新しいデータがあればlastDocを更新
       if (!querySnapshot.empty) {
         lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
       }
-  
-      setTextBookArray(prevArray => [...prevArray, ...textbookArray]);
+
+      setTextBookArray((prevArray) => [...prevArray, ...textbookArray]);
     } catch (e) {
       console.log(e);
     } finally {
-      setIsLoading(false);
+      setIsEndLoading(false);
     }
   };
-
 
   useEffect(() => {
     getdata();
   }, [selectedDepartment]);
 
-  const scrollPosition= (e: any)=> {
-    let offsetY = e.nativeEvent.contentOffset.y // スクロール距離
-    let contentSizeHeight = e.nativeEvent.contentSize.height // scrollView contentSizeの高さ
-    let scrollViewHeight = e.nativeEvent.layoutMeasurement.height // scrollViewの高さ
+  const scrollPosition = (e: any) => {
+    let offsetY = e.nativeEvent.contentOffset.y; // スクロール距離
+    let contentSizeHeight = e.nativeEvent.contentSize.height; // scrollView contentSizeの高さ
+    let scrollViewHeight = e.nativeEvent.layoutMeasurement.height; // scrollViewの高さ
 
-    if (offsetY + scrollViewHeight >= contentSizeHeight-40) {
-      console.log('End Scroll')
-      getNextData()
+    if (offsetY + scrollViewHeight >= contentSizeHeight - 40) {
+      console.log("End Scroll");
+      getNextData();
     }
-  }
+  };
 
   return (
     <View style={{ flex: 1, height: "100%" }}>
@@ -150,12 +160,24 @@ export const TextbookHome = () => {
         ))}
       </ScrollView>
       {!isLoading && textbookArray.length !== 0 ? (
-        <ScrollView           onMomentumScrollEnd={e=>scrollPosition(e)}
-         style={{ flex: 1 }}>
+        <ScrollView
+          onMomentumScrollEnd={(e) => scrollPosition(e)}
+          style={{ flex: 1 }}
+        >
           <View style={styles.row}>
             {textbookArray.map((textbook, index) => (
-              <TouchableOpacity onPress={()=>navigation.navigate("TextBookDetail",{...textbook})} key={index} style={styles.textbookContainer}>
-                <Text>{textbook.productName}</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("TextBookDetail", { ...textbook })
+                }
+                key={index}
+                style={styles.textbookContainer}
+              >
+                <Text
+                  numberOfLines={2} // 表示する最大行数を指定（ここでは1行）
+                >
+                  {textbook.productName}
+                </Text>
                 {/* <Text>{textbook.id}</Text> */}
                 {textbook.images && (
                   <Image
@@ -169,11 +191,35 @@ export const TextbookHome = () => {
                 )}
                 <Text>¥{textbook.price}</Text>
                 <Text>{textbook.condition}</Text>
-                {textbook.hasOwnProperty("buyUser")&&<View style={{position:"absolute",top:'50%',width:'100%',marginHorizontal:10}}>
-                  <Text style={{textAlign:'center',width:'100%',color:'white',fontWeight:'800',borderRadius:7,transform:[{rotate:'25deg'}],backgroundColor:'red'}}>購入交渉中</Text>
-                </View>}
+                {textbook.hasOwnProperty("buyUser") && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      width: "100%",
+                      marginHorizontal: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        color: "white",
+                        fontWeight: "800",
+                        borderRadius: 7,
+                        transform: [{ rotate: "25deg" }],
+                        backgroundColor: "red",
+                      }}
+                    >
+                      購入交渉中
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
+          </View>
+          <View>
+            {isEndLoading && <ActivityIndicator size="large" color="orange" />}
           </View>
         </ScrollView>
       ) : (
@@ -203,7 +249,7 @@ const styles = StyleSheet.create({
   },
   textbookContainer: {
     width: "25%", // 横に4つ並べるため
-    marginBottom: 10,
+    marginBottom: 5,
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
