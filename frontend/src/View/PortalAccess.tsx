@@ -56,7 +56,7 @@ const PortalAccess = () => {
     },
     {
         logoMark: 'https://www.ritsumei.ac.jp/image.jsp?id=228380',
-        name: 'BKC体育館・ジム',
+        name: 'ジム',
         webnavigate: 'https://www.ritsumei.ac.jp/lifecareer/activity/facility/gym/bkc/',
         category: ['学内施設'],
         herf: '体育館, ジム, 学内施設, 運動, フィットネス, トレーニング, スポーツ, エクササイズ, 体力作り, 健康, ワークアウト, スポーツ施設, フィットネスセンター, ジム利用, スポーツサポート, 運動機器, 体育活動, 学生運動, スポーツクラブ',
@@ -91,6 +91,22 @@ const PortalAccess = () => {
         category: ['学びサポート', '留学'],
         herf: '英語, 留学, 学び, 英語学習, 海外, 言語学習, 英語スキル, 英会話, 英語教材, 海外留学, 語学, TOEFL, IELTS, 留学準備, 英語サポート, 英語教育, 英語能力, 英語力向上',
         id: '1'
+    },
+    {
+        logoMark: 'https://illustration-free.net/thumb/svg/ifn0891.svg',
+        name: 'JR遅延証明',
+        webnavigate: 'https://delay.trafficinfo.westjr.co.jp/pc',
+        category: ['学生生活'],
+        herf: '電車, 遅延, jr',
+        id: '100'
+    },
+    {
+        logoMark: 'https://illustration-free.net/thumb/svg/ifn0891.svg',
+        name: '阪急遅延証明',
+        webnavigate: 'https://www.hankyu.co.jp/delay/index.html',
+        category: ['学生生活'],
+        herf: '電車, 遅延, 阪急',
+        id: '100'
     }
 ];
   const limitItem = [
