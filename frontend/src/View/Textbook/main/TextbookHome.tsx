@@ -209,7 +209,7 @@ export const TextbookHome = () => {
   const fetchDB = async (searchWord: string): Promise<textBookDataDB[]> => {
     try {
       const response = await fetch(
-        `http://192.168.0.120:3001/listing_item/search_item/${searchWord}`
+        `http://192.168.0.120:3001/listing_item/search_item?name=${searchWord}`
       );
 
       if (!response.ok) {
