@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import {
   collection,
@@ -17,6 +18,7 @@ import {
   startAfter,
   orderBy,
   startAt,
+  documentId,
 } from "firebase/firestore";
 import { db } from "../../../../firebase";
 import DepartmentSelectBotton from "../../../component/Textbook/departmentSelectBotton";
@@ -43,12 +45,71 @@ const departmentList = [
   { departmantName: "薬学部" },
 ];
 let lastDoc;
+
+export type Condition =
+  | "BRAND_NEW" //新品、未使用
+  | "LIKE_NEW" //未使用に近い
+  | "GOOD" //目立った傷や汚れなし
+  | "FAIR" //やや傷や汚れあり
+  | "POOR" //傷や汚れあり
+  | "BAD"; //全体的に状態が悪い
+
+export type Department =
+  | "すべて"
+  | "教養科目"
+  | "法学部"
+  | "産業社会学部"
+  | "国際関係学部"
+  | "文学部"
+  | "経営学部"
+  | "政策科学部"
+  | "総合心理学部"
+  | "グローバル教養学部"
+  | "映像学部"
+  | "情報理工学部"
+  | "理工学部"
+  | "経済学部"
+  | "スポーツ経済学部"
+  | "食マネージメント学部"
+  | "生命科学部"
+  | "薬学部";
+
+export interface textBookData {
+  //Firebaseの商品情報の型、フロント側ではこの型で商品情報を扱っている
+  id: String;
+  buyAt?: Date;
+  buyUser?: String;
+  condition: Condition;
+  createdAt: Date;
+  department: Department;
+  description?: String;
+  images: String;
+  price: String;
+  productName: String;
+  userID: String;
+}
+
+export interface textBookDataDB {
+  //DB側の商品情報の型と同じもの
+  id: Number;
+  documentId: String;
+  purchasedAt?: Date;
+  purchasedUserId?: String;
+  condition: Condition;
+  createdAt: Date;
+  department: Department;
+  description?: String;
+  imageUrl: String;
+  price: Number;
+  name: String;
+}
+
 export const TextbookHome = () => {
   const navigation = useNavigation();
 
   const [selectedDepartment, setSelectedDepartment] =
     useState<string>("すべて");
-  const [textbookArray, setTextBookArray] = useState([]);
+  const [textbookArray, setTextBookArray] = useState<textBookData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEndLoading, setIsEndLoading] = useState<boolean>(false);
 
@@ -143,12 +204,58 @@ export const TextbookHome = () => {
     }
   };
 
+  const textInputRef = useRef("");
+
+  const fetchDB = async (searchWord: string): Promise<textBookDataDB[]> => {
+    try {
+      const response = await fetch(
+        `http://192.168.0.120:3001/listing_item/search_item?name=${searchWord}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error Status:${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("APIの取得に失敗:", error);
+    }
+  };
+
+  const getFromFireBase = async (products: textBookDataDB[]) => {
+    try {
+      setIsLoading(true);
+      const idList = products.map((product) => {
+        return product.documentId;
+      });
+      const q = query(
+        collection(db, "syuppinn"),
+        where(documentId(), "in", idList),
+        orderBy("createdAt", "desc")
+      );
+      setTextBookArray([]);
+      const querySnapshot = (await getDocs(q)).forEach((doc) => {
+        //newDocのエラーは恐らく、...doc.dataの中身をtypescriptが認識していないため
+        //firebaseに入ってるdocumentはtextBookData型に必要なプロパティをちゃんと持っているため、恐らく問題ない
+        const newDoc: textBookData = { id: doc.id, ...doc.data() };
+        setTextBookArray((prevTexts) => {
+          return [...prevTexts, newDoc];
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <View style={{ flex: 1, height: "100%" }}>
       <ScrollView
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        style={{ maxHeight: 80 }}
+        style={{ maxHeight: 50 }}
       >
         {departmentList.map((department) => (
           <DepartmentSelectBotton
@@ -159,6 +266,44 @@ export const TextbookHome = () => {
           />
         ))}
       </ScrollView>
+      <View
+        style={{
+          padding: 10,
+          flexDirection: "row",
+          // justifyContent: "space-between",
+        }}
+      >
+        <TextInput
+          style={{
+            flex: 1,
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            paddingLeft: 8,
+            borderRadius: 5,
+          }}
+          placeholder="検索"
+          onChangeText={(text) => {
+            textInputRef.current = text;
+          }}
+        />
+        <TouchableOpacity
+          style={{
+            backgroundColor: "orange",
+            padding: 10,
+            borderRadius: 5,
+            alignItems: "center",
+            // marginTop: 10,
+          }}
+          onPress={async () => {
+            fetchDB(textInputRef.current).then((data) => {
+              getFromFireBase(data);
+            });
+          }}
+        >
+          <Text style={{ color: "white" }}>検索</Text>
+        </TouchableOpacity>
+      </View>
       {!isLoading && textbookArray.length !== 0 ? (
         <ScrollView
           onMomentumScrollEnd={(e) => scrollPosition(e)}
