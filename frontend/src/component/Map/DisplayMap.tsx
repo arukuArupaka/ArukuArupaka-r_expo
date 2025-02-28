@@ -87,44 +87,44 @@ const DisplayMap = (props) => {
     }
   }, []);
 
-  TaskManager.defineTask(
-    "BACKGROUND_FETCH_TASK",
-    ({ data: { locations }, error }) => {
-      console.log("watchPositionAsyncBackGround");
-      if (error) {
-        // check `error.message` for more details.
-        return;
-      }
-      console.log("Received new locations", locations);
+  // TaskManager.defineTask(
+  //   "BACKGROUND_FETCH_TASK",
+  //   ({ data: { locations }, error }) => {
+  //     console.log("watchPositionAsyncBackGround");
+  //     if (error) {
+  //       // check `error.message` for more details.
+  //       return;
+  //     }
+  //     console.log("Received new locations", locations);
 
-      let longitude = "経度:" + JSON.stringify(locations[0].coords.longitude);
-      let latitude = "緯度:" + JSON.stringify(locations[0].coords.latitude);
+  //     let longitude = "経度:" + JSON.stringify(locations[0].coords.longitude);
+  //     let latitude = "緯度:" + JSON.stringify(locations[0].coords.latitude);
 
-      console.log(latitude);
+  //     console.log(latitude);
 
-      if (
-        judgeInclusion(
-          {
-            latitude: locations[0].coords.latitude,
-            longitude: locations[0].coords.longitude,
-          },
-          props.campusData.campusAria
-        ) &&
-        mapUserObject.locationSharingFriends.length !== 0
-      ) {
-        const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-        updateDoc(refFiresrore, {
-          myLocation: {
-            latitude: locations[0].coords.latitude,
-            longitude: locations[0].coords.longitude,
-          },
-          timestamp: serverTimestamp(),
-        }).then(() => {
-          console.log("watchPositionAsyncBackGround");
-        });
-      }
-    }
-  );
+  //     if (
+  //       judgeInclusion(
+  //         {
+  //           latitude: locations[0].coords.latitude,
+  //           longitude: locations[0].coords.longitude,
+  //         },
+  //         props.campusData.campusAria
+  //       ) &&
+  //       mapUserObject.locationSharingFriends.length !== 0
+  //     ) {
+  //       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
+  //       updateDoc(refFiresrore, {
+  //         myLocation: {
+  //           latitude: locations[0].coords.latitude,
+  //           longitude: locations[0].coords.longitude,
+  //         },
+  //         timestamp: serverTimestamp(),
+  //       }).then(() => {
+  //         console.log("watchPositionAsyncBackGround");
+  //       });
+  //     }
+  //   }
+  // );
 
   const dispatch = useDispatch();
 
@@ -162,7 +162,7 @@ const DisplayMap = (props) => {
 
     const watchPositionAsync = async () => {
       await Location.requestForegroundPermissionsAsync();
-      await Location.requestBackgroundPermissionsAsync();
+      //await Location.requestBackgroundPermissionsAsync();
 
       if (!props.campusData.campusAria) {
         return;
@@ -243,24 +243,24 @@ const DisplayMap = (props) => {
     };
 
     const toggleFetchTask = async () => {
-      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-      }
-      let { status } = await Location.requestBackgroundPermissionsAsync();
+      // if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+      //   TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+      // }
+     // let { status } = await Location.requestBackgroundPermissionsAsync();
       if (!status) {
         setShareInfoMassage("権限エラー");
       }
 
-      Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 100000,
-        distanceInterval: 50,
-        foregroundService: {
-          notificationTitle: "En ligne ... ",
-          notificationBody: "Mise à jour de votre position en cours ...",
-        },
-      }).then((location) => {});
-    };
+    //   Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
+    //     accuracy: Location.Accuracy.BestForNavigation,
+    //     timeInterval: 100000,
+    //     distanceInterval: 50,
+    //     foregroundService: {
+    //       notificationTitle: "En ligne ... ",
+    //       notificationBody: "Mise à jour de votre position en cours ...",
+    //     },
+    //   }).then((location) => {});
+     };
 
     watchPositionAsync();
     if (
@@ -279,27 +279,27 @@ const DisplayMap = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!mapUserObject.isLocationShare) {
-      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-      }
-    } else {
-      if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-        TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-      }
+ // useEffect(() => {
+    // if (!mapUserObject.isLocationShare) {
+    //   if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+    //     TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+    //   }
+    // } else {
+    //   if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
+    //     TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
+    //   }
 
-      Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 100000,
-        distanceInterval: 20,
-        foregroundService: {
-          notificationTitle: "En ligne ... ",
-          notificationBody: "Mise à jour de votre position en cours ...",
-        },
-      }).then((location) => {});
-    }
-  }, [mapUserObject.isLocationShare]);
+    //   Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
+    //     accuracy: Location.Accuracy.BestForNavigation,
+    //     timeInterval: 100000,
+    //     distanceInterval: 20,
+    //     foregroundService: {
+    //       notificationTitle: "En ligne ... ",
+    //       notificationBody: "Mise à jour de votre position en cours ...",
+    //     },
+  //     }).then((location) => {});
+  //   }
+  // }, [mapUserObject.isLocationShare]);
 
   const onSelectBuilding = (data) => {
     dispatch(setMapSearchWord(""));

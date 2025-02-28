@@ -23,6 +23,8 @@ import ASettingToPage from "./src/View/ASettingToPage";
 import * as Notifications from "expo-notifications";
 import React from "react";
 import HomeWebSite from "./src/View/HomeWebSite";
+import { Platform } from "react-native";
+
 import {
   MaterialIcons,
   MaterialCommunityIcons,
@@ -53,6 +55,7 @@ const searchClient = algoliasearch(
 ); //algoliaのapplicationIDとadmin API key
 
 const Stack = createNativeStackNavigator();
+console.log("Current Platform:", Platform.OS); // これを追加
 
 function App() {
   const navigationRef = useNavigationContainerRef();
@@ -149,42 +152,32 @@ function App() {
                   title: "",
                 })}
               />
-              <Stack.Screen
-                name="Bike"
-                component={BikeView}
-                options={{
-                  headerTitle: (props) => (
-                    <MaterialIcons
-                      name="directions-bike"
-                      size={40}
-                      color="black"
-                    />
-                  ),
-                  headerRight: () => (
-                    <TouchableOpacity>
-                      <MaterialIcons
-                        name="question-mark"
-                        size={40}
-                        color="black"
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerLeft: (props) => (
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => navigationRef.navigate("Home")}
-                      >
-                        <Ionicons
-                          name="chevron-back"
-                          style={{ marginRight: 10 }}
-                          size={30}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ),
+               <Stack.Screen
+      name="Bike"
+      component={BikeView}
+      options={{
+        headerTitle: () => (
+          <MaterialIcons name="directions-bike" size={40} color="black" />
+        ),
+        headerRight: Platform.OS === "ios" ? () => (
+          <TouchableOpacity>
+            <MaterialIcons name="question-mark" size={40} color="black" />
+          </TouchableOpacity>
+        ) : null,
+        headerLeft: Platform.OS === "ios" 
+        ? () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
+                <Ionicons
+                  name="chevron-back"
+                  style={{ marginRight: 10 }}
+                  size={30}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+          )
+        : undefined,
                 }}
               />
               <Stack.Screen
@@ -238,22 +231,20 @@ function App() {
                 component={PortalAccess}
                 options={{
                   headerTitle: (props) => "",
-                  headerLeft: (props) => (
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => navigationRef.navigate("Home")}
-                      >
-                        <Ionicons
-                          name="chevron-back"
-                          style={{ marginRight: 10 }}
-                          size={30}
-                          color="black"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ),
+                  headerLeft: Platform.OS === "ios" 
+                  ? () => (
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
+                          <Ionicons
+                            name="chevron-back"
+                            style={{ marginRight: 10 }}
+                            size={30}
+                            color="black"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    )
+                  : undefined,
                 }}
               />
               {/* <Stack.Screen
