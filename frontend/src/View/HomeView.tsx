@@ -310,24 +310,8 @@ const HomeView = (props) => {
               iconName="book-multiple"
             />
           </View>
-          {Platform.OS !== "ios" && (
-            <View style={styles.appListFlex}>
-              <AppList
-                appName="教科書     フリマ"
-                color="#FFCB08"
-                test={props}
-                jumpPage="ホーム"
-                iconName="book-multiple"
-              />
-              <AppList
-                appName="Ritsu-  Match"
-                color="#30CB89"
-                test={props}
-                jumpPage="RitsuMatch"
-                iconName="contacts"
-              />
-            </View>
-          )}
+        
+          
         </View>
       </ScrollView>
       <SafeAreaView />
