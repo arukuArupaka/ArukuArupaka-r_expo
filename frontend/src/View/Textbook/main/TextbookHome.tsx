@@ -23,6 +23,10 @@ import {
 import { db } from "../../../../firebase";
 import DepartmentSelectBotton from "../../../component/Textbook/departmentSelectBotton";
 import { useNavigation } from "@react-navigation/native";
+import {
+  TextBookData,
+  TextBookDataDB,
+} from "../../../component/Textbook/interface/textBookData";
 
 const departmentList = [
   { departmantName: "すべて" },
@@ -46,70 +50,12 @@ const departmentList = [
 ];
 let lastDoc;
 
-export type Condition =
-  | "BRAND_NEW" //新品、未使用
-  | "LIKE_NEW" //未使用に近い
-  | "GOOD" //目立った傷や汚れなし
-  | "FAIR" //やや傷や汚れあり
-  | "POOR" //傷や汚れあり
-  | "BAD"; //全体的に状態が悪い
-
-export type Department =
-  | "すべて"
-  | "教養科目"
-  | "法学部"
-  | "産業社会学部"
-  | "国際関係学部"
-  | "文学部"
-  | "経営学部"
-  | "政策科学部"
-  | "総合心理学部"
-  | "グローバル教養学部"
-  | "映像学部"
-  | "情報理工学部"
-  | "理工学部"
-  | "経済学部"
-  | "スポーツ経済学部"
-  | "食マネージメント学部"
-  | "生命科学部"
-  | "薬学部";
-
-export interface textBookData {
-  //Firebaseの商品情報の型、フロント側ではこの型で商品情報を扱っている
-  id: String;
-  buyAt?: Date;
-  buyUser?: String;
-  condition: Condition;
-  createdAt: Date;
-  department: Department;
-  description?: String;
-  images: String;
-  price: String;
-  productName: String;
-  userID: String;
-}
-
-export interface textBookDataDB {
-  //DB側の商品情報の型と同じもの
-  id: Number;
-  documentId: String;
-  purchasedAt?: Date;
-  purchasedUserId?: String;
-  condition: Condition;
-  createdAt: Date;
-  department: Department;
-  description?: String;
-  imageUrl: String;
-  price: Number;
-  name: String;
-}
-
 export const TextbookHome = () => {
   const navigation = useNavigation();
 
   const [selectedDepartment, setSelectedDepartment] =
     useState<string>("すべて");
-  const [textbookArray, setTextBookArray] = useState<textBookData[]>([]);
+  const [textbookArray, setTextBookArray] = useState<TextBookData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEndLoading, setIsEndLoading] = useState<boolean>(false);
 
@@ -206,7 +152,7 @@ export const TextbookHome = () => {
 
   const textInputRef = useRef("");
 
-  const fetchDB = async (searchWord: string): Promise<textBookDataDB[]> => {
+  const fetchDB = async (searchWord: string): Promise<TextBookDataDB[]> => {
     try {
       const response = await fetch(
         `http://192.168.0.120:3001/listing_item/search_item?name=${searchWord}`
@@ -223,7 +169,7 @@ export const TextbookHome = () => {
     }
   };
 
-  const getFromFireBase = async (products: textBookDataDB[]) => {
+  const getFromFireBase = async (products: TextBookDataDB[]) => {
     try {
       setIsLoading(true);
       const idList = products.map((product) => {
@@ -237,8 +183,8 @@ export const TextbookHome = () => {
       setTextBookArray([]);
       const querySnapshot = (await getDocs(q)).forEach((doc) => {
         //newDocのエラーは恐らく、...doc.dataの中身をtypescriptが認識していないため
-        //firebaseに入ってるdocumentはtextBookData型に必要なプロパティをちゃんと持っているため、恐らく問題ない
-        const newDoc: textBookData = { id: doc.id, ...doc.data() };
+        //firebaseに入ってるdocumentはTextBookData型に必要なプロパティをちゃんと持っているため、恐らく問題ない
+        const newDoc: TextBookData = { id: doc.id, ...doc.data() };
         setTextBookArray((prevTexts) => {
           return [...prevTexts, newDoc];
         });
