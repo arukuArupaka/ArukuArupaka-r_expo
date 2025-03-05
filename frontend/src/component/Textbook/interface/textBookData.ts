@@ -1,3 +1,8 @@
+export type Campus =
+  | "衣笠キャンパス"
+  | "びわこ・くさつキャンパス(BKC)"
+  | "大阪いばらきキャンパス"
+
 export type Condition =
   | "BRAND_NEW" //新品、未使用
   | "LIKE_NEW" //未使用に近い
@@ -91,7 +96,7 @@ export interface TextBookDataPostDB {
   condition: Condition;
   department: DepartmentDb;
   description?: string;
-  imageUrl: string[];
+  imageUrls: string[];
   price: number;
   name: string;
   firebaseUserId: string;
@@ -101,4 +106,51 @@ export interface TextBookDataDB extends TextBookDataPostDB {
   //DB側の商品情報の型と同じもの
   id: number;
   createdAt: Date;
+}
+
+
+export const convertTextBookData = (data: TextBookData): TextBookDataPostDB => {
+  if(!data.buyAt||!data.buyUser){
+    return{
+      documentId: data.id,
+      condition: data.condition, //商品の状態
+      department: translateDepartment(data.department), //学部
+      description: data.description, //商品の説明
+      imageUrls: data.images, //商品の画像のURL
+      price: Number(data.price), //商品の価格
+      name: data.productName, //商品
+      firebaseUserId: data.id,
+    };
+  }
+  return {
+    documentId: data.id,
+    purchasedAt: data.buyAt, //購入した日時
+    purchasedUserId: data.buyUser, //購入したユーザーのid
+    condition: data.condition, //商品の状態
+    department: translateDepartment(data.department), //学部
+    description: data.description, //商品の説明
+    imageUrls: data.images, //商品の画像のURL
+    price: Number(data.price), //商品の価格
+    name: data.productName, //商品
+    firebaseUserId: data.id,
+  };
+};
+
+
+export const translateCondition = (data: any): Condition => {
+  const newdata:Condition =  data === "新品、未使用"? "BRAND_NEW":
+         data === "未使用に近い"? "LIKE_NEW":
+         data === "目立った傷や汚れなし"? "GOOD":
+         data === "やや傷や汚れあり"? "FAIR":
+         data === "傷や汚れあり"? "POOR": "BAD"
+  return newdata;
+};
+
+export const checkImageFalsy = (urls:string[]) => {
+  const newUrls= urls.filter((url)=>url != null);
+  return newUrls.length!==0? newUrls:["nourl"]
+}
+
+const translateDepartment = (department: Department): DepartmentDb =>{
+  return departmentTranslations[department] || null; // マッピングがない場合はnull
 }

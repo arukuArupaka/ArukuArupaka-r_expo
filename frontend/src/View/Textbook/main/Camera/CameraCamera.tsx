@@ -37,36 +37,21 @@ import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
 import faculties from "../../../../data/faculties.json";
 import {
-  Condition,
-  Department,
-  DepartmentDb,
-  departmentTranslations,
   TextBookData,
-  TextBookDataDB,
-  TextBookDataPostDB,
+  convertTextBookData,
+  Department,
+  Condition,
+  translateCondition,
+  checkImageFalsy,
+  Campus
 } from "../../../../component/Textbook/interface/textBookData";
 
-const convertTextBookData = (data: TextBookData): TextBookDataPostDB => {
-  return {
-    documentId: data.id,
-    purchasedAt: data.buyAt, //購入した日時
-    purchasedUserId: data.buyUser, //購入したユーザーのid
-    condition: data.condition, //商品の状態
-    department: translateDepartment(data.department), //学部
-    description: data.description, //商品の説明
-    imageUrl: data.images, //商品の画像のURL
-    price: Number(data.price), //商品の価格
-    name: data.productName, //商品
-    firebaseUserId: data.id,
-  };
-};
+const localDbAdress = "http://192.168.0.103:3001/listing_item/create_item";
 
-const uploadDb = async (data: TextBookData) => {
+const uploadArupakaDb = async (data: TextBookData) => {
   const dataDb = convertTextBookData(data);
   try {
-    const response = await fetch(
-      "http://192.168.0.103:3001/listing_item/create_item",
-      {
+    const response = await fetch(localDbAdress,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +59,6 @@ const uploadDb = async (data: TextBookData) => {
         body: JSON.stringify(dataDb), // JavaScriptオブジェクトをJSON文字列に変換
       }
     );
-
     if (!response.ok) {
       throw new Error(`Error Status:${response.status}`);
     }
@@ -83,36 +67,18 @@ const uploadDb = async (data: TextBookData) => {
   }
 };
 
-const translateCondition = (data: any): Condition => {
-  const newdata:Condition =  data === "新品、未使用"? "BRAND_NEW":
-         data === "未使用に近い"? "LIKE_NEW":
-         data === "目立った傷や汚れなし"? "GOOD":
-         data === "やや傷や汚れあり"? "FAIR":
-         data === "傷や汚れあり"? "POOR": "BAD"
-  return newdata;
-};
-
-const checkImageFalsy = (urls:string[]) => {
-  const newUrls= urls.filter((url)=>url != null);
-  return newUrls.length!==0? newUrls:["nourl"]
-} 
-
-const translateDepartment = (department: Department): DepartmentDb =>{
-  return departmentTranslations[department] || null; // マッピングがない場合はnull
-}
-
 export const CameraCamera = ({ route }) => {
   const navigation = useNavigation();
 
-  const [images, setImages] = useState(Array(4).fill(null));
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [selectedCondition, setSelectedCondition] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [images, setImages] = useState<string[]>(Array(4).fill(null));
+  const [selectedDepartment, setSelectedDepartment] = useState<Department>(null);
+  const [selectedCondition, setSelectedCondition] = useState<Condition>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Campus>(null);
   const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
   const [conditionModalVisible, setConditionModalVisible] = useState(false);
-  const [productName, setproductName] = useState("");
-  const [description, setdescription] = useState("");
-  const [price, setprice] = useState("");
+  const [productName, setproductName] = useState<string>("");
+  const [description, setdescription] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
 
   const { product } = route.params || {};
 
@@ -123,7 +89,7 @@ export const CameraCamera = ({ route }) => {
       setSelectedLocation(product.location);
       setSelectedCondition(product.condition);
       setdescription(product.description);
-      setprice(product.price);
+      setPrice(product.price);
       setImages(product.images || Array(4).fill(null));
     }
   }, [product]);
@@ -169,70 +135,18 @@ export const CameraCamera = ({ route }) => {
     }
   };
 
-  const saveDraft = async (
-    productName,
-    department,
-    location,
-    condition,
-    description,
-    price
+  const exhibitProduct = async (
+    productName:string,
+    department:Department,
+    location:Campus,
+    condition:Condition,
+    description:string,
+    price:string
   ) => {
-    try {
-      if (product) {
-        await updateDoc(doc(db, "freeMarket", product.id), {
-          productName,
-          department,
-          location,
-          condition,
-          description,
-          price,
-        });
-      } else {
-        const docRef = await addDoc(collection(db, "freeMarket"), {
-          productName,
-          department,
-          location,
-          condition,
-          description,
-          price,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      }
-
-      // 画像をアップロードしてURLを取得し、Firestoreに保存
-      const imageUrls = await Promise.all(
-        images.map(async (image, index) => {
-          if (image) {
-            const blob = await fetch(image).then((response) => response.blob());
-            const storageRef = ref(
-              storage,
-              `syouhin/${product ? product.id : docRef.id}/image${index}`
-            );
-            await uploadBytes(storageRef, blob);
-            return getDownloadURL(storageRef);
-          }
-          return null;
-        })
-      );
-
-      // Firestoreに画像のURLを保存
-      await updateDoc(doc(db, "freeMarket", product ? product.id : docRef.id), {
-        images: imageUrls.filter((url) => url !== null),
-      });
-    } catch (e) {
-      console.error("Error adding document: ", e);
+    if(Number(price)<0||isNaN(Number(price))){
+      Alert.alert("error","価格が不正な値です");
+      return;
     }
-  };
-
-  const exhibit = async (
-    productName,
-    department,
-    location,
-    condition,
-    description,
-    price
-  ) => {
-    if(Number(price)<0){console.log('price<0,早期リターン');return;}
     // ユーザーのログイン状態を確認する
     try {
       setIsLoading(true);
@@ -287,7 +201,7 @@ export const CameraCamera = ({ route }) => {
         if (product) {
           await deleteDoc(doc(db, "freeMarket", product.id));
         }
-        uploadDb({
+        uploadArupakaDb({
           id: docRef.id,
           condition: translateCondition(condition),//フロント内では日本語で扱われているので変換
           createdAt: new Date(),
@@ -316,15 +230,6 @@ export const CameraCamera = ({ route }) => {
     }
   };
 
-  const handleDepartmentSelect = (department) => {
-    setSelectedDepartment(department);
-    setDepartmentModalVisible(false);
-  };
-
-  const handleConditionSelect = (condition) => {
-    setSelectedCondition(condition);
-    setConditionModalVisible(false);
-  };
 
   return (
     <KeyboardAvoidingView
@@ -461,15 +366,9 @@ export const CameraCamera = ({ route }) => {
             onValueChange={setSelectedLocation}
             placeholder={{ label: "※必須", value: null }}
             items={[
-              { label: "衣笠キャンパス", value: "衣笠キャンパス" },
-              {
-                label: "びわこ・くさつキャンパス",
-                value: "びわこ・くさつキャンパス(BKC)",
-              },
-              {
-                label: "大阪いばらきキャンパス",
-                value: "大阪いばらきキャンパス",
-              },
+              {label: "衣笠キャンパス", value: "衣笠キャンパス"},
+              {label: "びわこ・くさつキャンパス", value: "びわこ・くさつキャンパス(BKC)",},
+              {label: "大阪いばらきキャンパス", value: "大阪いばらきキャンパス",},
             ]}
             style={{
               inputIOS: {
@@ -505,12 +404,12 @@ export const CameraCamera = ({ route }) => {
             onValueChange={setSelectedCondition}
             placeholder={{ label: "※必須", value: null }}
             items={[
-              { label: "新品、未使用", value: "新品、未使用" },
-              { label: "未使用に近い", value: "未使用に近い" },
-              { label: "目立った傷や汚れなし", value: "目立った傷や汚れなし" },
-              { label: "やや傷や汚れあり", value: "やや傷や汚れあり" },
-              { label: "傷や汚れあり", value: "傷や汚れあり" },
-              { label: "全体的に状態が悪い", value: "全体的に状態が悪い" },
+              { label: "新品、未使用", value: "BRAND_NEW" },
+              { label: "未使用に近い", value: "LIKE_NEW" },
+              { label: "目立った傷や汚れなし", value: "GOOD" },
+              { label: "やや傷や汚れあり", value: "FAIR" },
+              { label: "傷や汚れあり", value: "POOR" },
+              { label: "全体的に状態が悪い", value: "BAD" },
             ]}
             style={{
               inputIOS: {
@@ -560,7 +459,7 @@ export const CameraCamera = ({ route }) => {
             backgroundColor: "#FFF",
           }}
           value={price}
-          onChangeText={setprice}
+          onChangeText={setPrice}
           keyboardType="numeric"
           placeholder="※必須"
         />
@@ -580,7 +479,7 @@ export const CameraCamera = ({ route }) => {
               {
                 text: "出品する",
                 onPress: () =>
-                  exhibit(
+                  exhibitProduct(
                     productName,
                     selectedDepartment,
                     selectedLocation,
