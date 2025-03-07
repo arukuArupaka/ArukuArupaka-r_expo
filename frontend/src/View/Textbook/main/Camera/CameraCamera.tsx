@@ -373,7 +373,6 @@ export const CameraCamera = ({ route }) => {
             style={{
               inputIOS: {
                 fontSize: 16,
-                textAlign: "center",
                 height: 40,
                 width: 200,
                 textAlign: "right",
@@ -414,7 +413,6 @@ export const CameraCamera = ({ route }) => {
             style={{
               inputIOS: {
                 fontSize: 16,
-                textAlign: "center",
                 height: 40,
                 width: 150,
                 textAlign: "right",
