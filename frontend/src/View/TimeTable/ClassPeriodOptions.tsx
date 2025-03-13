@@ -3,7 +3,6 @@ import { FC, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import SetClassPeriodModal from "../../component/TimeTable/common/SetClassPeriodModal";
-import { ClassDataFetcher } from "../../component/TimeTable/classObject/TimeTableClassObject";
 import { ClassPeriod } from "../../component/TimeTable/types/class-period";
 import SearchBoxPressButton from "../../component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ChosenWeekOfTheDayAndPeriod from "../../component/TimeTable/classPeriodOptions/ChosenWeekOfTheDayAndPeriod";
@@ -11,6 +10,7 @@ import ClassPeriodOptionsBody from "../../component/TimeTable/classPeriodOptions
 import ClassPeriodSearchScreen from "../../component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 import { ConvertMethods } from "../../component/TimeTable/classObject/convert-methods";
+import { ClassDataFetcher } from "../../component/TimeTable/classObject/timeTableClassObject";
 
 type ClassPeriodOptionsScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -33,7 +33,8 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
     department: userSettingContent.department,
     weekOfTheDay: ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay),
     period: period,
-    season: userSettingContent.semester,
+    semester: userSettingContent.semester,
+    schoolYear: userSettingContent.schoolYear,
   });
 
   const stringWeekOfTheDay =

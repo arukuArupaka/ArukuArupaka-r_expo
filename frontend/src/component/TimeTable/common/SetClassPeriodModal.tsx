@@ -263,6 +263,7 @@ const SetClassPeriodModal: FC<Props> = ({
                           ...pickerSelectStyles.inputAndroid,
                           backgroundColor: isNotify ? "#D9D9D9" : "white",
                           color: isNotify ? "black" : "white",
+                          width: "70%",
                         },
                         placeholder: {
                           color: "black",

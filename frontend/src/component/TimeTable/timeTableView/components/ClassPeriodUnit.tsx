@@ -81,7 +81,10 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 period,
               })
             : navigation.navigate("ClassPeriodDetail", {
-                classPeriodData: {...classFindInPeriodData,isFriends:Object.keys(friendsClassPeriodData).length !== 0},
+                classPeriodData: {
+                  ...classFindInPeriodData,
+                  isFriends: Object.keys(friendsClassPeriodData).length !== 0,
+                },
               });
         }}
       >
@@ -103,7 +106,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 color: ColorSettingMethods.classPeriodBackColor(
                   "text",
                   userSettingContent,
-                  friendsClassPeriodData||userClassPeriodData,
+                  friendsClassPeriodData || userClassPeriodData,
                   classPeriodIndex
                 ),
               }}
@@ -119,7 +122,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
                 backgroundColor: ColorSettingMethods.classPeriodBackColor(
                   "classRoom",
                   userSettingContent,
-                  friendsClassPeriodData||userClassPeriodData,
+                  friendsClassPeriodData || userClassPeriodData,
                   classPeriodIndex
                 ),
                 alignItems: "center",

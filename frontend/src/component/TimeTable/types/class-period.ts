@@ -1,6 +1,6 @@
 export type ClassPeriod = {
   year: number;
-  season: string;
+  season: boolean;
   weekOfTheDay: string;
   period: number;
   className: string;

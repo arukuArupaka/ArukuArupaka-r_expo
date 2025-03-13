@@ -15,16 +15,17 @@ export const TimeTableProvider = ({ children }) => {
   const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
     []
   );
-  const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<ClassPeriod[]>(
-    []
-  );
+  const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<
+    ClassPeriod[]
+  >([]);
   const initialUserSettingContent = {
     department: "",
-    semester: "",
+    semester: undefined,
     displayCount: 5,
     colorByUnits: false,
     colorBySubject: false,
     totalUnits: 0,
+    schoolYear: 2025,
   };
   const [userSettingContent, setUserSettingContent] =
     useState<UserSettingContent>(initialUserSettingContent);
@@ -52,7 +53,7 @@ export const TimeTableProvider = ({ children }) => {
   const getTotalUnits = async () => {
     if (
       userSettingContent.department !== "" &&
-      userSettingContent.semester !== ""
+      userSettingContent.semester !== undefined
     ) {
       const selectedAllClassPeriods: ClassPeriod[] = userClassPeriodData.filter(
         (el: ClassPeriod) =>
@@ -155,7 +156,7 @@ export const TimeTableProvider = ({ children }) => {
         userSettingContent,
         setUserSettingContent,
         friendsClassPeriodData,
-        setFriendsClassPeriodData
+        setFriendsClassPeriodData,
       }}
     >
       {children}

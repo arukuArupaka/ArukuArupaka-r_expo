@@ -17,51 +17,85 @@ const DepartmentSelect = () => {
               department: value, // departmentフィールドのみを更新
             }))
           }
-          Icon={() => (<Text style={{ position: 'absolute', right: 5, top: 10, fontSize: 18, color: '#789',width:200,textAlign:"right"}}>▼</Text>)}
+          Icon={() => (
+            <Text
+              style={{
+                position: "absolute",
+                right: 5,
+                top: 10,
+                fontSize: 18,
+                color: "#789",
+                width: 200,
+                textAlign: "right",
+              }}
+            >
+              ▼
+            </Text>
+          )}
           items={[
-            { label: "法学部", value: "法学部", key: "hougaku" },
-            { label: "経済学部", value: "経済学部", key: "keizai" },
-            { label: "経営学部", value: "経営学部", key: "keiei" },
+            { label: "法学部", value: "Law", key: "Law" },
+            { label: "経済学部", value: "Economics", key: "Economics" },
+            {
+              label: "経営学部",
+              value: "Business",
+              key: "Business",
+            },
             {
               label: "産業社会学部",
-              value: "産業社会学部",
-              key: "sansha",
+              value: "SocialSciences",
+              key: "SocialSciences",
             },
             {
               label: "国際関係学部",
-              value: "国際関係学部",
-              key: "kokusai",
+              value: "InternationalRelations",
+              key: "InternationalRelations",
             },
-            { label: "政策科学部", value: "政策科学部", key: "seisaku" },
-            { label: "文学部", value: "文学部", key: "bun" },
-            { label: "映像学部", value: "映像学部", key: "eizou" },
+            {
+              label: "政策科学部",
+              value: "PolicyScience",
+              key: "PolicyScience",
+            },
+            { label: "文学部", value: "LiberalArts", key: "LiberalArts" },
+            {
+              label: "映像学部",
+              value: "Film",
+              key: "Film",
+            },
             {
               label: "総合心理学部",
-              value: "総合心理学部",
-              key: "sougou",
+              value: "Psychology",
+              key: "Psychology",
             },
-            { label: "理工学部", value: "理工学部", key: "rikou" },
+            {
+              label: "理工学部",
+              value: "ScienceAndTechnology",
+              key: "ScienceAndTechnology",
+            },
             {
               label: "グローバル教養学部",
-              value: "グローバル教養学部",
-              key: "gurokyou",
+              value: "GlobalLiberalArts",
+              key: "GlobalLiberalArts",
             },
             {
               label: "食マネジメント学部",
-              value: "食マネジメント学部",
-              key: "shokumane",
+              value: "FoodManagement",
+              key: "FoodManagement",
             },
             {
               label: "情報理工学部",
-              value: "情報理工学部",
-              key: "jouri",
+              value: "InformationScience",
+              key: "InformationScience",
             },
-            { label: "生命科学部", value: "生命科学部", key: "seimei" },
-            { label: "薬学部", value: "薬学部", key: "yakugaku" },
+            { label: "生命科学部", value: "LifeSciences", key: "LifeSciences" },
+            {
+              label: "薬学部",
+              value: "Pharmacy",
+              key: "Pharmacy",
+            },
             {
               label: "スポーツ健康学部",
-              value: "スポーツ健康学部",
-              key: "supoken",
+              value: "SportsHealthScience",
+              key: "SportsHealthScience",
             },
           ]}
           style={pickerSelectStyles}

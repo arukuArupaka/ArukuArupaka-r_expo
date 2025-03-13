@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
 import { useNavigation } from "@react-navigation/native";
+import SchoolYearSelect from "./components/SchoolYearSelect";
 
 const windowWidth = Dimensions.get("window").width;
 const SettingBody = () => {
@@ -175,6 +176,7 @@ const SettingBody = () => {
       <View style={styles.body}>
         <View style={styles.bodyContent}>
           <DepartmentSelect />
+          <SchoolYearSelect />
           <SemesterSelect />
           <DisplayCountSelect />
           <View style={styles.toggleContainer}>

@@ -98,20 +98,23 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
             onPress={() => setIsModalShow(true)}
             currentClassPeriodData={currentClassPeriodData}
             isFriends={classPeriodData.isFriends}
-          />{!classPeriodData.isFriends&&
-          <ColorChange currentClassPeriodData={currentClassPeriodData} />}
+          />
+          {!classPeriodData.isFriends && (
+            <ColorChange currentClassPeriodData={currentClassPeriodData} />
+          )}
           <ActionButton
             onPress={() => setIsVisible(true)}
             color={"black"}
             label={"シラバスにアクセスする"}
           />
-          {!classPeriodData.isFriends&&
-          <ActionButton
-            onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
-            color={"red"}
-            label={"削除する"}
-          />}
-          
+          {!classPeriodData.isFriends && (
+            <ActionButton
+              onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
+              color={"red"}
+              label={"削除する"}
+            />
+          )}
+
           <SetClassPeriodModal
             from={"classPeriodDetail"}
             isShow={isModalShow}

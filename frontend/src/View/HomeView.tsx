@@ -39,6 +39,7 @@ import {
 } from "firebase/auth";
 import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
+import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -83,7 +84,14 @@ const AppList = (props) => {
         display: "flex",
       }}
       onPress={() => {
-        props.test.navigation.navigate(props.jumpPage);
+        if (!props.headerTitle) {
+          props.test.navigation.navigate(props.jumpPage);
+          return;
+        }
+
+        props.test.navigation.navigate(props.jumpPage, {
+          headerTitle: props.headerTitle,
+        });
       }}
     >
       <MaterialCommunityIcons
@@ -144,6 +152,7 @@ const HomeView = (props) => {
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
   const [userIconImageUri, setUserIconImageUri] = useState("");
+  const { userSettingContent } = useTimeTable();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -205,9 +214,7 @@ const HomeView = (props) => {
   console.log(userIconImageUri);
   return (
     <>
-      <SafeAreaView
-        style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }}
-      />
+      <SafeAreaView style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }} />
       <ScrollView
         bounces={false} // オーバースクロールを有効化
         style={{ flex: 1 }}
@@ -289,6 +296,7 @@ const HomeView = (props) => {
               test={props}
               jumpPage="TimeTable"
               iconName="file-table"
+              headerTitle={userSettingContent.semester}
             />
           </View>
           <View style={styles.appListFlex}>
@@ -310,8 +318,6 @@ const HomeView = (props) => {
               iconName="book-multiple"
             />
           </View>
-        
-          
         </View>
       </ScrollView>
       <SafeAreaView />

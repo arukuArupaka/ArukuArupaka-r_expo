@@ -48,10 +48,11 @@ const ClassPeriodDetailDataBody: FC<Props> = ({
             {currentClassPeriodData.num}
           </Text>
         </View>
-        {!isFriends && (<TouchableOpacity style={styles.classPeriodEdit} onPress={onPress}>
-          <AntDesign name="edit" size={24} color="black" />
-        </TouchableOpacity>)
-          }
+        {!isFriends && (
+          <TouchableOpacity style={styles.classPeriodEdit} onPress={onPress}>
+            <AntDesign name="edit" size={24} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.classPeriodDataContainer}>
         <Text style={{ fontWeight: "bold", color: "black", fontSize: 25 }}>

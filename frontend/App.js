@@ -103,7 +103,7 @@ function App() {
               <Stack.Screen
                 name="TimeTable"
                 component={TimeTableView}
-                options={({ navigation }) => ({
+                options={({ route, navigation }) => ({
                   title: "",
                   headerRight: () => (
                     <>
@@ -122,6 +122,9 @@ function App() {
                       </TouchableOpacity>
                     </>
                   ),
+                  headerTintColor: "#000",
+                  headerBackTitle: "Back",
+                  headerTitle: route.params?.headerTitle || "あなたの時間割",
                 })}
               />
               <Stack.Screen
@@ -152,32 +155,51 @@ function App() {
                   title: "",
                 })}
               />
-               <Stack.Screen
-      name="Bike"
-      component={BikeView}
-      options={{
-        headerTitle: () => (
-          <MaterialIcons name="directions-bike" size={40} color="black" />
-        ),
-        headerRight: Platform.OS === "ios" ? () => (
-          <TouchableOpacity>
-            <MaterialIcons name="question-mark" size={40} color="black" />
-          </TouchableOpacity>
-        ) : null,
-        headerLeft: Platform.OS === "ios" 
-        ? () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
-                <Ionicons
-                  name="chevron-back"
-                  style={{ marginRight: 10 }}
-                  size={30}
-                  color="black"
-                />
-              </TouchableOpacity>
-            </View>
-          )
-        : undefined,
+              <Stack.Screen
+                name="Bike"
+                component={BikeView}
+                options={{
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="directions-bike"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity>
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
                 }}
               />
               <Stack.Screen
@@ -231,20 +253,28 @@ function App() {
                 component={PortalAccess}
                 options={{
                   headerTitle: (props) => "",
-                  headerLeft: Platform.OS === "ios" 
-                  ? () => (
-                      <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
-                          <Ionicons
-                            name="chevron-back"
-                            style={{ marginRight: 10 }}
-                            size={30}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )
-                  : undefined,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
                 }}
               />
               {/* <Stack.Screen

@@ -7,19 +7,26 @@ import { db } from "../../../../firebase";
 import { useTimeTable } from "../TimeTableContext";
 
 const FriendSelectContainer = () => {
-  const {  setFriendsClassPeriodData } = useTimeTable();
+  const { setFriendsClassPeriodData } = useTimeTable();
 
   const friendList = useSelector(
     (state: any) => state.user.userObject.friendList || []
   );
   const myName = useSelector(
-    (state: any) => state.user.userObject.userName || "My"
+    (state: any) => state.user.userObject.userName || "自分"
   );
-  const showFriendTimeTable = async (id) => {
+  const showFriendTimeTable = async (id: string) => {
     try {
       const docRef = await getDoc(doc(db, "UserClassPeriodsData", id));
       if (docRef.exists()) {
-        const data=docRef.data().classPeriods.filter(obj => obj.department === docRef.data().department && obj.season === docRef.data().semester&& obj.year == "2024");
+        const data = docRef
+          .data()
+          .classPeriods.filter(
+            (obj) =>
+              obj.department === docRef.data().department &&
+              obj.season === docRef.data().semester &&
+              obj.year == "2024"
+          );
         setFriendsClassPeriodData(data);
         return;
       } else {
@@ -34,7 +41,7 @@ const FriendSelectContainer = () => {
         );
       }
     } catch (e) {
-      Alert.alert("エラー", "権限がありません")
+      Alert.alert("エラー", "権限がありません");
       console.log(e);
     }
   };
@@ -43,13 +50,12 @@ const FriendSelectContainer = () => {
     setFriendsClassPeriodData([]);
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     return () => {
       setFriendsClassPeriodData({});
     };
-  }, [])
+  }, []);
 
-  
   return (
     <FriendSelect
       friendList={friendList}
@@ -61,4 +67,3 @@ const FriendSelectContainer = () => {
 };
 
 export default FriendSelectContainer;
-
