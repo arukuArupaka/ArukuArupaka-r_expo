@@ -74,4 +74,51 @@ export class ConvertMethods {
         return "#AED581";
     }
   }
+
+  static convertDepartmentFromJapaneseToEnglish(department: string): string {
+    console.log(department);
+    switch (department) {
+      case "法学部":
+        return "Law";
+      case "経済学部":
+        return "Economics";
+      case "経営学部":
+        return "Business";
+      case "産業社会学部":
+        return "SocialSciences";
+      case "国際関係学部":
+        return "InternationalRelations";
+      case "政策科学部":
+        return "PolicyScience";
+      case "文学部":
+        return "Literature";
+      case "映像学部":
+        return "Film";
+      case "総合心理学部":
+        return "Psychology";
+      case "理工学部":
+        return "ScienceAndTechnology";
+      case "グローバル教養学部":
+        return "GlobalLiberalArts";
+      case "食マネジメント学部":
+        return "FoodManagement";
+      case "情報理工学部":
+        return "InformationScience";
+      case "生命科学部":
+        return "LifeSciences";
+      case "薬学部":
+        return "Pharmacy";
+      case "スポーツ健康学部":
+        return "SportsHealthScience";
+    }
+  }
+
+  static convertSemester(semester: string): string {
+    switch (semester) {
+      case "春セメスター":
+        return "Spring";
+      case "秋セメスター":
+        return "Autumn";
+    }
+  }
 }

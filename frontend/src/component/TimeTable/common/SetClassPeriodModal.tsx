@@ -110,6 +110,7 @@ const SetClassPeriodModal: FC<Props> = ({
           statusColor: ConvertMethods.setClassPeriodStatusColor(data),
           mulColor: ConvertMethods.setClassPeriodUnitColor(data),
         };
+        console.log("updatedData", updatedData);
         await setUserClassPeriods(updatedData);
         navigation.navigate("TimeTable");
       }

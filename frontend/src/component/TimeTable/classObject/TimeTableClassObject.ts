@@ -1,5 +1,6 @@
 import { ClassPeriod } from "../types/class-period";
 import { ARUPAKA_BACKEND_URL } from "@env";
+import { ConvertMethods } from "./convert-methods";
 
 type Props = {
   department?: string;
@@ -43,7 +44,13 @@ export class ClassDataFetcher {
       }
       console.log(ARUPAKA_BACKEND_URL);
       const response = await fetch(
-        `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${this.schoolYear}&academic=${this.department}&weekday=${this.weekOfTheDay}&period=${this.period}&semester=${this.semester}`
+        `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${
+          this.schoolYear
+        }&academic=${ConvertMethods.convertDepartmentFromJapaneseToEnglish(
+          this.department
+        )}&weekday=${this.weekOfTheDay}&period=${
+          this.period
+        }&semester=${ConvertMethods.convertSemester(this.semester)}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -52,7 +59,7 @@ export class ClassDataFetcher {
 
       const processedData: ClassPeriod[] = json.map((item: any) => ({
         year: item.schoolYear,
-        season: item.semester,
+        season: this.semester,
         weekOfTheDay: item.weekday,
         period: item.period,
         className: item.name,
@@ -60,7 +67,7 @@ export class ClassDataFetcher {
         memo: "",
         isNotify: true,
         notificationTime: 10,
-        department: item.academic,
+        department: this.department,
         unit: item.credits,
         num: item.classCode,
         resume: item.syllabus,

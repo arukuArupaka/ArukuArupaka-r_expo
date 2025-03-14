@@ -33,69 +33,49 @@ const DepartmentSelect = () => {
             </Text>
           )}
           items={[
-            { label: "法学部", value: "Law", key: "Law" },
-            { label: "経済学部", value: "Economics", key: "Economics" },
-            {
-              label: "経営学部",
-              value: "Business",
-              key: "Business",
-            },
+            { label: "法学部", value: "法学部", key: "hougaku" },
+            { label: "経済学部", value: "経済学部", key: "keizai" },
+            { label: "経営学部", value: "経営学部", key: "keiei" },
             {
               label: "産業社会学部",
-              value: "SocialSciences",
-              key: "SocialSciences",
+              value: "産業社会学部",
+              key: "sansha",
             },
             {
               label: "国際関係学部",
-              value: "InternationalRelations",
-              key: "InternationalRelations",
+              value: "国際関係学部",
+              key: "kokusai",
             },
-            {
-              label: "政策科学部",
-              value: "PolicyScience",
-              key: "PolicyScience",
-            },
-            { label: "文学部", value: "LiberalArts", key: "LiberalArts" },
-            {
-              label: "映像学部",
-              value: "Film",
-              key: "Film",
-            },
+            { label: "政策科学部", value: "政策科学部", key: "seisaku" },
+            { label: "文学部", value: "文学部", key: "bun" },
+            { label: "映像学部", value: "映像学部", key: "eizou" },
             {
               label: "総合心理学部",
-              value: "Psychology",
-              key: "Psychology",
+              value: "総合心理学部",
+              key: "sougou",
             },
-            {
-              label: "理工学部",
-              value: "ScienceAndTechnology",
-              key: "ScienceAndTechnology",
-            },
+            { label: "理工学部", value: "理工学部", key: "rikou" },
             {
               label: "グローバル教養学部",
-              value: "GlobalLiberalArts",
-              key: "GlobalLiberalArts",
+              value: "グローバル教養学部",
+              key: "gurokyou",
             },
             {
               label: "食マネジメント学部",
-              value: "FoodManagement",
-              key: "FoodManagement",
+              value: "食マネジメント学部",
+              key: "shokumane",
             },
             {
               label: "情報理工学部",
-              value: "InformationScience",
-              key: "InformationScience",
+              value: "情報理工学部",
+              key: "jouri",
             },
-            { label: "生命科学部", value: "LifeSciences", key: "LifeSciences" },
-            {
-              label: "薬学部",
-              value: "Pharmacy",
-              key: "Pharmacy",
-            },
+            { label: "生命科学部", value: "生命科学部", key: "seimei" },
+            { label: "薬学部", value: "薬学部", key: "yakugaku" },
             {
               label: "スポーツ健康学部",
-              value: "SportsHealthScience",
-              key: "SportsHealthScience",
+              value: "スポーツ健康学部",
+              key: "supoken",
             },
           ]}
           style={pickerSelectStyles}

@@ -35,10 +35,10 @@ const SemesterSelect = () => {
           items={[
             {
               label: "春セメスター",
-              value: "Spring",
+              value: "春セメスター",
               key: "spring",
             },
-            { label: "秋セメスター", value: "Autumn", key: "fall" },
+            { label: "秋セメスター", value: "秋セメスター", key: "fall" },
           ]}
           style={pickerSelectStyles}
           placeholder={{
