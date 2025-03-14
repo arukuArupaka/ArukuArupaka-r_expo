@@ -296,7 +296,7 @@ const HomeView = (props) => {
               test={props}
               jumpPage="TimeTable"
               iconName="file-table"
-              headerTitle={userSettingContent.semester}
+              headerTitle={`${userSettingContent.schoolYear} ${userSettingContent.semester}`}
             />
           </View>
           <View style={styles.appListFlex}>

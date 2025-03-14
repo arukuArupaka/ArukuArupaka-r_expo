@@ -132,6 +132,8 @@ function App() {
                 component={ClassPeriodOptions}
                 options={() => ({
                   title: "",
+                  headerBackTitle: "Back",
+                  headerTintColor: "#000",
                 })}
               />
               <Stack.Screen
@@ -139,6 +141,8 @@ function App() {
                 component={TimeTableSetting}
                 options={() => ({
                   title: "",
+                  headerBackTitle: "Back",
+                  headerTintColor: "#000",
                 })}
               />
               <Stack.Screen
