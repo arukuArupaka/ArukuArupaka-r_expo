@@ -73,8 +73,6 @@ const SetClassPeriodModal: FC<Props> = ({
       const weekOfTheDay = ConvertMethods.convertWeekOfTheDayToNumber(
         data.weekOfTheDay
       );
-      console.log(data);
-      console.log(weekOfTheDay);
 
       let updatedData = {
         ...data,

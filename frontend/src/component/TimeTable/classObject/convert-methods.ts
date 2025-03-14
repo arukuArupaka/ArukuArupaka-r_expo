@@ -4,15 +4,15 @@ export class ConvertMethods {
   static convertNumberToWeekOfTheDay(weekNumber: number): string {
     switch (weekNumber) {
       case 1:
-        return "Monday";
+        return "月";
       case 2:
-        return "Tuesday";
+        return "火";
       case 3:
-        return "Wednesday";
+        return "水";
       case 4:
-        return "Thursday";
+        return "木";
       case 5:
-        return "Friday";
+        return "金";
       default:
         return "Invalid day"; // エラーハンドリング
     }
@@ -20,16 +20,46 @@ export class ConvertMethods {
 
   static convertWeekOfTheDayToNumber(weekOfTheDay: string): number {
     switch (weekOfTheDay) {
-      case "Monday":
+      case "月":
         return 2;
-      case "Tuesday":
+      case "火":
         return 3;
-      case "Wednesday":
+      case "水":
         return 4;
-      case "Thursday":
+      case "木":
         return 5;
-      case "Friday":
+      case "金":
         return 6;
+    }
+  }
+
+  static convertWeekdayFromEnglishToJapanese(weekday: string): string {
+    switch (weekday) {
+      case "Monday":
+        return "月";
+      case "Tuesday":
+        return "火";
+      case "Wednesday":
+        return "水";
+      case "Thursday":
+        return "木";
+      case "Friday":
+        return "金";
+    }
+  }
+
+  static convertWeekdayFromJapaneseToEnglish(weekday: string): string {
+    switch (weekday) {
+      case "月":
+        return "Monday";
+      case "火":
+        return "Tuesday";
+      case "水":
+        return "Wednesday";
+      case "木":
+        return "Thursday";
+      case "金":
+        return "Friday";
     }
   }
 
@@ -76,7 +106,6 @@ export class ConvertMethods {
   }
 
   static convertDepartmentFromJapaneseToEnglish(department: string): string {
-    console.log(department);
     switch (department) {
       case "法学部":
         return "Law";
@@ -113,12 +142,21 @@ export class ConvertMethods {
     }
   }
 
-  static convertSemester(semester: string): string {
+  static convertSemesterFromJapaneseToEnglish(semester: string): string {
     switch (semester) {
       case "春セメスター":
         return "Spring";
       case "秋セメスター":
         return "Autumn";
+    }
+  }
+
+  static convertSemesterFromEnglishToJapanese(semester: string): string {
+    switch (semester) {
+      case "Spring":
+        return "春セメスター";
+      case "Autumn":
+        return "秋セメスター";
     }
   }
 }

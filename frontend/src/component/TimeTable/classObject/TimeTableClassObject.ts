@@ -33,24 +33,18 @@ export class ClassDataFetcher {
 
   async fetchClassData(): Promise<ClassPeriod[] | string> {
     try {
-      console.log(this.department);
-      console.log(this.weekOfTheDay);
-      console.log(this.period);
-      console.log(this.semester);
-      console.log(this.schoolYear);
       if (!this.department || !this.semester) {
         console.log("not chosen your department or now semester");
         return "not chosen your department or now semester";
       }
-      console.log(ARUPAKA_BACKEND_URL);
+      const convertedDepartment =
+        ConvertMethods.convertDepartmentFromJapaneseToEnglish(this.department);
+      const convertedSemester =
+        ConvertMethods.convertSemesterFromJapaneseToEnglish(this.semester);
+      const convertedWeekday =
+        ConvertMethods.convertWeekdayFromJapaneseToEnglish(this.weekOfTheDay);
       const response = await fetch(
-        `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${
-          this.schoolYear
-        }&academic=${ConvertMethods.convertDepartmentFromJapaneseToEnglish(
-          this.department
-        )}&weekday=${this.weekOfTheDay}&period=${
-          this.period
-        }&semester=${ConvertMethods.convertSemester(this.semester)}`
+        `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${this.schoolYear}&academic=${convertedDepartment}&weekday=${convertedWeekday}&period=${this.period}&semester=${convertedSemester}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -60,7 +54,9 @@ export class ClassDataFetcher {
       const processedData: ClassPeriod[] = json.map((item: any) => ({
         year: item.schoolYear,
         season: this.semester,
-        weekOfTheDay: item.weekday,
+        weekOfTheDay: ConvertMethods.convertWeekdayFromEnglishToJapanese(
+          item.weekday
+        ),
         period: item.period,
         className: item.name,
         classRoom: item.rawClassroom,
