@@ -18,6 +18,7 @@ export type ClassPeriod = {
   color: string;
   mulColor: string;
   statusColor: string;
+  isFriends?: boolean;
 };
 
 const multipleSettingTemporaryData = {

@@ -25,7 +25,7 @@ const FriendSelectContainer = () => {
             (obj) =>
               obj.department === docRef.data().department &&
               obj.season === docRef.data().semester &&
-              obj.year == "2024"
+              obj.year === (docRef.data().schoolYear ?? "2025")
           );
         setFriendsClassPeriodData(data);
         return;

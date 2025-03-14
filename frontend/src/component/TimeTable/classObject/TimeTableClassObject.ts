@@ -45,20 +45,15 @@ export class ClassDataFetcher {
       const response = await fetch(
         `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${this.schoolYear}&academic=${this.department}&weekday=${this.weekOfTheDay}&period=${this.period}&semester=${this.semester}`
       );
-      console.log(response);
       if (!response.ok) {
-        console.log(
-          `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${this.schoolYear}&academic=${this.department}&weekday=${this.weekOfTheDay}&period=${this.period}&semester=${this.semester}`
-        );
         throw new Error("Network response was not ok");
       }
       const json = await response.json();
-      console.log(json);
 
       const processedData: ClassPeriod[] = json.map((item: any) => ({
         year: item.schoolYear,
         season: item.semester,
-        weekOfTheDay: item.weekyday,
+        weekOfTheDay: item.weekday,
         period: item.period,
         className: item.name,
         classRoom: item.rawClassroom,

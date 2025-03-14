@@ -5,4 +5,5 @@ export type RootStackParamList = {
   ClassPeriodDetail: { classPeriodData: ClassPeriod };
   TimeTable: undefined;
   TimeTableSetting: undefined;
+  login: undefined;
 };

@@ -12,16 +12,21 @@ type Props = {
   period: number;
 };
 
+/**
+ * 時間割の一コマを表示するコンポーネント
+ * @param param0
+ * @returns
+ */
 const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
   const { userSettingContent, userClassPeriodData, friendsClassPeriodData } =
     useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [classFindInPeriodData, setClassFindInPeriodData] = useState<
-    ClassPeriod[]
-  >([]);
+  const [classFindInPeriodData, setClassFindInPeriodData] =
+    useState<ClassPeriod>();
 
   useEffect(() => {
+    // 友達の時間割が存在する場合は友達の時間割から探す
     if (Object.keys(friendsClassPeriodData).length !== 0) {
       const data = friendsClassPeriodData.find(
         (data: ClassPeriod) =>
@@ -37,22 +42,12 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
             ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
           data.period === period &&
           data.department === userSettingContent.department &&
-          data.season === userSettingContent.semester
+          data.season === userSettingContent.semester &&
+          data.year === userSettingContent.schoolYear
       );
       setClassFindInPeriodData(data);
     }
-  }, [userClassPeriodData, friendsClassPeriodData]);
-
-  const findInUserClassPeriodData: ClassPeriod = userClassPeriodData.find(
-    (data: ClassPeriod) =>
-      data.weekOfTheDay ===
-        ConvertMethods.convertNumberToWeekOfTheDay(weekOfTheDay) &&
-      data.period === period &&
-      data.department === userSettingContent.department &&
-      data.season === userSettingContent.semester
-  );
-
-  console.log(classFindInPeriodData);
+  }, [userClassPeriodData, friendsClassPeriodData, userSettingContent]);
 
   const classPeriodIndex = userClassPeriodData.indexOf(classFindInPeriodData);
 

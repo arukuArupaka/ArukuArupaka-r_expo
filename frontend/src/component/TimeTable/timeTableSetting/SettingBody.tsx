@@ -17,13 +17,15 @@ import { AsyncFunctions } from "../classObject/async-functions";
 import { useSelector } from "react-redux";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import SchoolYearSelect from "./components/SchoolYearSelect";
+import { RootStackParamList } from "../types/root-stack-param-list";
 
 const windowWidth = Dimensions.get("window").width;
 const SettingBody = () => {
   const { userSettingContent, setUserSettingContent } = useTimeTable();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   const saveUserSettingContent = async () => {
     await AsyncFunctions.saveData<UserSettingContent>(
       "@userSettingContent",

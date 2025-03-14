@@ -12,6 +12,7 @@ export const useTimeTable = () => useContext(TimeTableContext);
 
 export const TimeTableProvider = ({ children }) => {
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
+  // ユーザーが登録した全ての時間割データ
   const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
     []
   );
@@ -105,6 +106,7 @@ export const TimeTableProvider = ({ children }) => {
             classPeriods: newData,
             department: userSettingContent.department,
             semester: userSettingContent.semester,
+            year: userSettingContent.schoolYear,
           },
           { merge: true }
         );
