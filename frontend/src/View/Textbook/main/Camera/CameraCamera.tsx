@@ -46,12 +46,12 @@ import {
   Campus
 } from "../../../../component/Textbook/interface/textBookData";
 
-const localDbAdress = "http://192.168.0.103:3001/listing_item/create_item";
+const arupakaDbAdress = "https://db-manager-api.arupaka.uk/listing_item/create_item";
 
 const uploadArupakaDb = async (data: TextBookData) => {
   const dataDb = convertTextBookData(data);
   try {
-    const response = await fetch(localDbAdress,{
+    const response = await fetch(arupakaDbAdress,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
