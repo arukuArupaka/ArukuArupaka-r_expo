@@ -322,7 +322,7 @@ export const CameraCamera = ({ route }) => {
           }}
         >
           <Text style={{ fontSize: 16, marginRight: 10, flex: 1 }}>
-            使用学部
+            カテゴリー
           </Text>
           <View style={{ width: 100 }}>
             <RNPickerSelect
