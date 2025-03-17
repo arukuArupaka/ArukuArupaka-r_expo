@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import {
   collection,
@@ -27,6 +28,7 @@ import {
   TextBookData,
   TextBookDataDB,
 } from "../../../component/Textbook/interface/textBookData";
+import { FontAwesome } from "@expo/vector-icons"; // アイコン用
 
 const departmentList = [
   { departmantName: "すべて" },
@@ -155,7 +157,7 @@ export const TextbookHome = () => {
   const fetchDB = async (searchWord: string): Promise<TextBookDataDB[]> => {
     try {
       const response = await fetch(
-        `http://192.168.0.120:3001/listing_item/search_item?name=${searchWord}`
+        `https://db-manager-api.arupaka.uk/listing_item/search_item?name=${searchWord}`
       );
 
       if (!response.ok) {
@@ -172,6 +174,10 @@ export const TextbookHome = () => {
   const getFromFireBase = async (products: TextBookDataDB[]) => {
     try {
       setIsLoading(true);
+      if(products.length === 0){
+        Alert.alert("商品が見つかりませんでした")
+        return
+      }
       const idList = products.map((product) => {
         return product.documentId;
       });
@@ -219,96 +225,183 @@ export const TextbookHome = () => {
           // justifyContent: "space-between",
         }}
       >
-        <TextInput
+        <View
           style={{
-            flex: 1,
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            paddingLeft: 8,
-            borderRadius: 5,
-          }}
-          placeholder="検索"
-          onChangeText={(text) => {
-            textInputRef.current = text;
-          }}
-        />
-        <TouchableOpacity
-          style={{
-            backgroundColor: "orange",
-            padding: 10,
-            borderRadius: 5,
+            width: "100%",
+            flexDirection: "row",
             alignItems: "center",
-            // marginTop: 10,
-          }}
-          onPress={async () => {
-            fetchDB(textInputRef.current).then((data) => {
-              getFromFireBase(data);
-            });
+            backgroundColor: "#f1f1f1", // 背景を淡いグレーにしてフラットなデザインに
+            borderRadius: 10,
+            paddingHorizontal: 10,
+            height: 40, // 高さ統一
+            marginBottom: 10, // 検索バーの下に余白
           }}
         >
-          <Text style={{ color: "white" }}>検索</Text>
-        </TouchableOpacity>
+          {/* 検索アイコン */}
+          <FontAwesome
+            name="search"
+            size={16}
+            color="gray"
+            style={{ marginRight: 8 }}
+          />
+
+          {/* 入力フィールド */}
+          <TextInput
+            style={{
+              flex: 1,
+              height: 40,
+              fontSize: 14,
+              color: "#333", // 文字色を濃く
+            }}
+            placeholder="検索"
+            placeholderTextColor="#999" // メルカリ風の薄いグレー
+            onChangeText={(text) => {
+              textInputRef.current = text;
+            }}
+          />
+
+          {/* 検索ボタン */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: "orange",
+              paddingVertical: 8,
+              paddingHorizontal: 15,
+              borderRadius: 8,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={async () => {
+              fetchDB(textInputRef.current).then((data) => {
+                console.log(data)
+                getFromFireBase(data);
+              });
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 14 }}>
+              検索
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {!isLoading && textbookArray.length !== 0 ? (
         <ScrollView
           onMomentumScrollEnd={(e) => scrollPosition(e)}
           style={{ flex: 1 }}
         >
-          <View style={styles.row}>
-            {textbookArray.map((textbook, index) => (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("TextBookDetail", { ...textbook })
-                }
-                key={index}
-                style={styles.textbookContainer}
-              >
-                <Text
-                  numberOfLines={2} // 表示する最大行数を指定（ここでは1行）
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "flex-start", // 左詰めにする
+              paddingHorizontal: 5, // 画面端の余白を最小限に
+            }}
+          >
+            {textbookArray.map((textbook, index) => {
+              const isNegotiating = textbook.hasOwnProperty("buyUser");
+
+              return (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("TextBookDetail", { ...textbook })
+                  }
+                  key={index}
+                  style={{
+                    width: "24%", // 4列均等
+                    marginRight: "1%", // 4の倍数だけ右マージンなし
+                    backgroundColor: "#fff",
+                    borderRadius: 10,
+                    overflow: "hidden",
+                    marginBottom: 10,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    elevation: 3, // Android用
+                    opacity: isNegotiating ? 0.6 : 1, // 交渉中アイテムを暗くする
+                    // pointerEvents: isNegotiating ? "none" : "auto", // クリック無効化
+                  }}
                 >
-                  {textbook.productName}
-                </Text>
-                {/* <Text>{textbook.id}</Text> */}
-                {textbook.images && (
-                  <Image
-                    source={
-                      textbook.images.length != 0
-                        ? { uri: textbook.images[0] }
-                        : require("../../../image/textbook/no_Image.png")
-                    }
-                    style={styles.image}
-                  />
-                )}
-                <Text>¥{textbook.price}</Text>
-                <Text>{textbook.condition}</Text>
-                {textbook.hasOwnProperty("buyUser") && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      width: "100%",
-                      marginHorizontal: 10,
-                    }}
-                  >
-                    <Text
+                  {/* 商品画像 */}
+                  <View style={{ position: "relative" }}>
+                    <Image
+                      source={
+                        textbook.images?.length
+                          ? { uri: textbook.images[0] }
+                          : require("../../../image/textbook/no_Image.png")
+                      }
                       style={{
-                        textAlign: "center",
                         width: "100%",
-                        color: "white",
-                        fontWeight: "800",
-                        borderRadius: 7,
-                        transform: [{ rotate: "25deg" }],
-                        backgroundColor: "red",
+                        height: 140, // 画像を強調
+                        resizeMode: "cover",
+                      }}
+                    />
+
+                    {/* 購入交渉中ラベル */}
+                    {isNegotiating && (
+                      <View
+                        style={{
+                          position: "absolute",
+                          top: "40%",
+                          left: "10%",
+                          backgroundColor: "red",
+                          paddingVertical: 5,
+                          paddingHorizontal: 10,
+                          borderRadius: 5,
+                          transform: [{ rotate: "-10deg" }], // 斜めにしてメルカリ風
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: 14,
+                            textAlign: "center",
+                          }}
+                        >
+                          購入交渉中
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* 商品情報 */}
+                  <View style={{ padding: 5 }}>
+                    <Text
+                      numberOfLines={2}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minHeight: 32, // タイトルの高さを固定しガタつきをなくす
                       }}
                     >
-                      購入交渉中
+                      {textbook.productName}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        color: "#FF4444",
+                        marginTop: 2,
+                      }}
+                    >
+                      ¥{textbook.price.toLocaleString()}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        color: "#666",
+                        marginTop: 2,
+                      }}
+                    >
+                      {textbook.condition}
                     </Text>
                   </View>
-                )}
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              );
+            })}
           </View>
+
           <View>
             {isEndLoading && <ActivityIndicator size="large" color="orange" />}
           </View>
