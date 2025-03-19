@@ -6,4 +6,5 @@ export type RootStackParamList = {
   TimeTable: { headerTitle: string };
   TimeTableSetting: undefined;
   login: undefined;
+  FirebaseNotificationList: { firebaseNotificationList: any[] };
 };

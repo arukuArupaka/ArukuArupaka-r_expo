@@ -4,6 +4,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   limit,
   query,
@@ -16,11 +17,10 @@ import { setUserObject } from "../../../redux/actions/userAction";
 import FriendRegisterCamera from "./FriendRegisterCamera";
 
 const FriendRegisterCameraContainer = () => {
-
-  const user = useSelector((state:any) => state.user.userObject);
+  const user = useSelector((state: any) => state.user.userObject);
   const dispatch = useDispatch();
 
-  const [confirmFriendData, setConfirmFriendData] = useState({});
+  const [confirmFriendData, setConfirmFriendData] = useState(null);
 
   const firebaseUserAddFriendConvertToken = async (friendConvertToken) => {
     try {
@@ -86,24 +86,37 @@ const FriendRegisterCameraContainer = () => {
     isReading.current = false;
   };
 
-  const addFriend = async (friendID) => {
+  /**
+   * 対象ユーザーのドキュメント内の、自分宛てに来たフレンド申請一覧に自分のIDを追加する
+   * @param friendID
+   */
+  const addFriend = async (friendData) => {
     try {
-      const docRef = doc(db, "users", `${auth.currentUser.uid}`);
+      // すでに対象ユーザーにフレンド申請を送っていた場合
+      if (
+        friendData.receivedFriendRequests.some(
+          (el) => el.id === auth.currentUser.uid
+        )
+      ) {
+        throw new Error("Already requested");
+      }
+      const myDocRef = doc(db, "users", auth.currentUser.uid);
+      const myDoc = await getDoc(myDocRef); // ここは今後要修正（おそらくreduxで自分のドキュメントを管理しているんだろうけど、やり方分からんから修正求む）
+      const myDocument = myDoc.data();
+      const docRef = doc(db, "users", `${friendData.id}`);
       await setDoc(
         docRef,
         {
-          friendList: arrayUnion(friendID), // friendList に friendID を追加
+          receivedFriendRequests: arrayUnion({
+            id: auth.currentUser.uid,
+            name: myDocument.userName,
+            requestedAt: new Date(),
+          }), // friendList に friendID を追加
         },
         { merge: true } // 既存のデータを保持して更新
       );
 
       setConfirmFriendData({});
-      dispatch(
-        setUserObject({
-          ...user,
-          friendList: [...(user.friendList || []), friendID], // friendList が存在しない場合は空配列を使用
-        })
-      );
       isReading.current = false;
     } catch (error) {
       console.error("Error adding friend: ", error);

@@ -3,7 +3,15 @@ import { ClassPeriod } from "./types/class-period";
 import { UserSettingContent } from "./types/user-setting-content";
 import * as Notifications from "expo-notifications";
 import { AsyncFunctions } from "./classObject/async-functions";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  limit,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db } from "../../../firebase";
 
 const TimeTableContext = createContext(null);
@@ -16,6 +24,8 @@ export const TimeTableProvider = ({ children }) => {
   const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
     []
   );
+  const [hasNewFirebaseNotification, setHasNewFirebaseNotification] =
+    useState(false);
   const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<
     ClassPeriod[]
   >([]);
@@ -30,6 +40,9 @@ export const TimeTableProvider = ({ children }) => {
   };
   const [userSettingContent, setUserSettingContent] =
     useState<UserSettingContent>(initialUserSettingContent);
+  const [firebaseNotificationList, setFirebaseNotificationList] = useState<
+    any[]
+  >([]);
 
   const getClassPeriodData = async () => {
     const classPeriodData = await AsyncFunctions.getData<ClassPeriod[]>(
@@ -148,6 +161,49 @@ export const TimeTableProvider = ({ children }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    const fetchFirebaseNotificationData = async () => {
+      console.log("fetchFirebaseNotificationData");
+      const localNotificationList = await AsyncFunctions.getData(
+        "@firebaseNotificationList",
+        "array"
+      );
+      const dockRef = doc(db, "users", auth.currentUser.uid);
+      const userDocument = await getDoc(dockRef);
+      const data = userDocument.data();
+      const receivedFriendRequests = data.receivedFriendRequests
+        .map((el) => {
+          return {
+            ...el,
+            requestedAt: el.requestedAt.toDate(),
+            isRead: false,
+          };
+        })
+        .sort((a, b) => {
+          return b.requestedAt - a.requestedAt;
+        }); // 未読のフレンドリクエストを取得し時系列降順でソート
+
+      if (receivedFriendRequests.length > 0) {
+        setHasNewFirebaseNotification(true);
+      }
+
+      const friendRequestList = receivedFriendRequests.concat(
+        localNotificationList
+      );
+      console.log("friendRequestList:", friendRequestList);
+
+      setFirebaseNotificationList(friendRequestList);
+
+      await AsyncFunctions.saveData(
+        "@firebaseNotificationList",
+        friendRequestList
+      );
+    };
+    auth.onAuthStateChanged((currentUser) => {
+      fetchFirebaseNotificationData();
+    });
+  }, []);
+
   return (
     <TimeTableContext.Provider
       value={{
@@ -159,6 +215,7 @@ export const TimeTableProvider = ({ children }) => {
         setUserSettingContent,
         friendsClassPeriodData,
         setFriendsClassPeriodData,
+        firebaseNotificationList,
       }}
     >
       {children}

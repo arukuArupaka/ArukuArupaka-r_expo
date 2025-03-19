@@ -59,9 +59,27 @@ const Headerlist = (props) => {
         justifyContent: "center",
       }}
       onPress={() => {
-        props.props.navigation.navigate("settings");
+        props.props.navigation.navigate(props.navigation, {
+          ...(props.navigation === "FirebaseNotificationList" && {
+            firebaseNotificationList: props.firebaseNotificationList,
+          }),
+        });
       }}
     >
+      {props.hasNewNotification &&
+        props.navigation === "FirebaseNotificationList" && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              backgroundColor: "red",
+              borderRadius: 100,
+              width: 10,
+              height: 10,
+            }}
+          ></View>
+        )}
       <Ionicons name={props.iconName} size={24} color={"#EB3637"} />
     </TouchableOpacity>
   );
@@ -152,7 +170,11 @@ const HomeView = (props) => {
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
   const [userIconImageUri, setUserIconImageUri] = useState("");
-  const { userSettingContent } = useTimeTable();
+  const {
+    userSettingContent,
+    hasNewFirebaseNotification,
+    firebaseNotificationList,
+  } = useTimeTable();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -247,8 +269,27 @@ const HomeView = (props) => {
             </Text>
             <Text style={styles.titleText}>マイページ</Text>
           </View>
-          <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
-            <Headerlist props={props} iconName="settings-outline" />
+          <View
+            style={{
+              flex: 1,
+              alignItems: "flex-end",
+              justifyContent: "flex-end",
+              marginRight: 10,
+              flexDirection: "row",
+            }}
+          >
+            <Headerlist
+              props={props}
+              iconName="notifications-outline"
+              navigation="FirebaseNotificationList"
+              hasNewNotification={hasNewFirebaseNotification}
+              firebaseNotificationList={firebaseNotificationList}
+            />
+            <Headerlist
+              props={props}
+              iconName="settings-outline"
+              navigation="settings"
+            />
           </View>
         </View>
         <ShowDate></ShowDate>

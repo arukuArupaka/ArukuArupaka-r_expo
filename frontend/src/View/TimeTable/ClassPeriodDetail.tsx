@@ -83,17 +83,6 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
     <View style={{ flex: 1 }}>
       {!isVisible ? (
         <View style={{ flexDirection: "column", alignItems: "center" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              color: "black",
-              fontSize: 25,
-              paddingVertical: 15,
-            }}
-          >
-            {currentClassPeriodData.weekOfTheDay}曜
-            {currentClassPeriodData.period}限
-          </Text>
           <ClassPeriodDetailDataBody
             onPress={() => setIsModalShow(true)}
             currentClassPeriodData={currentClassPeriodData}

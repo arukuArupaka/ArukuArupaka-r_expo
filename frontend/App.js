@@ -48,6 +48,7 @@ import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
 import SearchBoxPressButton from "./src/component/TimeTable/classPeriodOptions/SearchBoxPressButton";
 import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import TimeTableFriendRegisterVIew from "./src/View/TimeTable/TimeTableFriendRegisterVIew";
+import FirebaseNotificationList from "./src/View/FirebaseNotification";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -123,7 +124,7 @@ function App() {
                     </>
                   ),
                   headerTintColor: "#000",
-                  headerBackTitle: "Back",
+                  headerBackTitleVisible: false,
                   headerTitle: route.params?.headerTitle || "あなたの時間割",
                 })}
               />
@@ -132,7 +133,7 @@ function App() {
                 component={ClassPeriodOptions}
                 options={() => ({
                   title: "",
-                  headerBackTitle: "Back",
+                  headerBackTitleVisible: false,
                   headerTintColor: "#000",
                 })}
               />
@@ -141,7 +142,7 @@ function App() {
                 component={TimeTableSetting}
                 options={() => ({
                   title: "",
-                  headerBackTitle: "Back",
+                  headerBackTitleVisible: false,
                   headerTintColor: "#000",
                 })}
               />
@@ -155,8 +156,23 @@ function App() {
               <Stack.Screen
                 name="ClassPeriodDetail"
                 component={ClassPeriodDetail}
+                options={({ route }) => ({
+                  title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                  headerTitle: `${route.params?.classPeriodData.weekOfTheDay}曜${route.params?.classPeriodData.period}限`,
+                  headerTitleStyle: {
+                    fontSize: 20,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="FirebaseNotificationList"
+                component={FirebaseNotificationList}
                 options={() => ({
                   title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
                 })}
               />
               <Stack.Screen

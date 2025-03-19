@@ -3,17 +3,23 @@ import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db, storage } from "../../../../firebase";
 import { getDownloadURL, ref } from "firebase/storage";
+import { FriendData } from "./types/friendData";
 
 const TimeTableFriendListItem = ({ id, onSelect }) => {
   useEffect(() => {
     getFriendData(id);
   }, [id]);
-  const [friendData, setFriendData] = useState({});
-  const getFriendData = async (id) => {
+  const [friendData, setFriendData] = useState<FriendData>(null);
+  const getFriendData = async (id: string) => {
     try {
       const docRef = await getDoc(doc(db, "users", id));
       if (docRef.exists()) {
-        setFriendData(docRef.data());
+        const data = docRef.data();
+        if (data && typeof data.userName === "string") {
+          setFriendData(data as FriendData);
+        } else {
+          console.error("Invalid data format:", data);
+        }
       } else {
         console.log("No such document!");
       }

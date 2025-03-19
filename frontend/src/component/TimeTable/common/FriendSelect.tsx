@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import TimeTableFriendListItem from "./TimeTableFriendListItem";
 import { auth } from "../../../../firebase";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../types/root-stack-param-list";
 
 const FriendSelect = ({
   friendList,
@@ -11,7 +12,7 @@ const FriendSelect = ({
   showFriendTimeTable,
   myName,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [showDataUser, setShowDataUser] = useState(myName + "の時間割");
   const [isShowFriendList, setIsShowFriendList] = useState(false);
   const showNonFriendDialog = () => {
