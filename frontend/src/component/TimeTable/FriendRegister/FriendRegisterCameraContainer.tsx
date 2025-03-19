@@ -92,18 +92,31 @@ const FriendRegisterCameraContainer = () => {
    */
   const addFriend = async (friendData) => {
     try {
+      console.log("friendData", friendData);
       // すでに対象ユーザーにフレンド申請を送っていた場合
       if (
-        friendData.receivedFriendRequests.some(
+        !!friendData[0].receivedFriendRequests &&
+        friendData[0].receivedFriendRequests.some(
           (el) => el.id === auth.currentUser.uid
         )
       ) {
+        Alert.alert("エラー", "すでにフレンド申請を送っています", [
+          {
+            text: "OK",
+            onPress: () => {
+              isReading.current = false;
+            },
+          },
+        ]);
         throw new Error("Already requested");
       }
+      console.log(friendData.receivedFriendRequests, auth.currentUser.uid);
       const myDocRef = doc(db, "users", auth.currentUser.uid);
       const myDoc = await getDoc(myDocRef); // ここは今後要修正（おそらくreduxで自分のドキュメントを管理しているんだろうけど、やり方分からんから修正求む）
       const myDocument = myDoc.data();
-      const docRef = doc(db, "users", `${friendData.id}`);
+      console.log("id", friendData[0].id);
+      const docRef = doc(db, "users", `${friendData[0].id}`);
+      console.log("docRef", docRef);
       await setDoc(
         docRef,
         {
@@ -112,9 +125,12 @@ const FriendRegisterCameraContainer = () => {
             name: myDocument.userName,
             requestedAt: new Date(),
           }), // friendList に friendID を追加
+          hello: "hello",
         },
         { merge: true } // 既存のデータを保持して更新
       );
+      const updatedData = await getDoc(docRef);
+      console.log("updatedData", updatedData.data());
 
       setConfirmFriendData({});
       isReading.current = false;
