@@ -8,6 +8,8 @@ import {
   Button,
   ScrollView,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { ClassPeriod } from "../../component/TimeTable/types/class-period";
@@ -117,85 +119,102 @@ const TimeTableFriendSearch = () => {
   };
 
   return (
-    <View
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss}
+      accessible={false}
       style={{
         flexDirection: "column",
         flex: 1,
         alignItems: "center",
       }}
     >
-      <View style={styles.header}>
-        <View style={styles.searchBoxContainer}>
-          <View style={styles.searchBox}>
-            <View style={styles.searchBox2}>
-              <FontAwesome
-                name="search"
-                size={24}
-                color="black"
-                style={{ marginLeft: 10 }}
-              />
-              <TextInput
-                ref={textInputRef} // TextInputの参照を設定
-                onChangeText={(text) => {
-                  setSearchWord(text);
-                }}
-                value={searchWord}
-                placeholder="ユーザーIDを入力"
+      <View
+        style={{
+          flexDirection: "column",
+          flex: 1,
+          alignItems: "center",
+        }}
+      >
+        <View style={styles.header}>
+          <View style={styles.searchBoxContainer}>
+            <View style={styles.searchBox}>
+              <View style={styles.searchBox2}>
+                <FontAwesome
+                  name="search"
+                  size={24}
+                  color="black"
+                  style={{ marginLeft: 10 }}
+                />
+                <TextInput
+                  ref={textInputRef} // TextInputの参照を設定
+                  onChangeText={(text) => {
+                    setSearchWord(text);
+                  }}
+                  value={searchWord}
+                  placeholder="ユーザーIDを入力"
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 5,
+                    width: "80%",
+                    fontWeight: "bold",
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={async () => await searchUserDocument()}
                 style={{
-                  fontSize: 20,
-                  marginLeft: 5,
-                  width: "80%",
-                  fontWeight: "bold",
+                  padding: 8,
+                  backgroundColor: "#d3d3d3",
+                  borderRadius: 10,
+                  marginLeft: 10,
                 }}
-              />
+              >
+                <Text style={{ fontWeight: "bold", margin: 10, fontSize: 15 }}>
+                  検索
+                </Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={async () => await searchUserDocument()}
+          </View>
+        </View>
+        <View>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+              あなたのユーザーID:
+            </Text>
+            <View
               style={{
-                padding: 8,
-                backgroundColor: "#d3d3d3",
-                borderRadius: 10,
-                marginLeft: 10,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Text style={{ fontWeight: "bold", margin: 10, fontSize: 15 }}>
-                検索
+              <Text>
+                {!!userDocument ? `${userDocument.friendConvertToken}` : ""}
               </Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={pbcopy} style={{ marginLeft: 10 }}>
+                <Feather name="copy" size={20} color="blue" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-      <View>
-        <View style={{ flexDirection: "column", alignItems: "center" }}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-            あなたのユーザーID:
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>
-              {!!userDocument ? `${userDocument.friendConvertToken}` : ""}
-            </Text>
-            <TouchableOpacity onPress={pbcopy} style={{ marginLeft: 10 }}>
-              <Feather name="copy" size={20} color="blue" />
-            </TouchableOpacity>
-          </View>
+        <View>
+          {!!searchResult && (
+            <FriendAddConfirmDialog
+              confirmFriendData={searchResult}
+              onClose={onClose}
+              onConfirm={addFriend}
+            />
+          )}
+          {!searchResult && (
+            <View style={{ alignItems: "center", marginTop: 80 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                ユーザーが見つかりません
+              </Text>
+            </View>
+          )}
         </View>
       </View>
-      <ScrollView>
-        {!!searchResult && (
-          <FriendAddConfirmDialog
-            confirmFriendData={searchResult}
-            onClose={onClose}
-            onConfirm={addFriend}
-          />
-        )}
-      </ScrollView>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 export default TimeTableFriendSearch;
