@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "12.2.2",
+    "version": "13.0.0",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",
@@ -24,6 +24,8 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
+          "fetch",
+          "location",
           "fetch"
         ],
         "NSLocationWhenInUseUsageDescription": "位置情報を共有機能とマップ上にあなたの位置を表示するために必要です。",
@@ -31,7 +33,8 @@
         "NSLocalNotificationUsageDescription": "教室の場所を通知します。",
         "NSMicrophoneUsageDescription": "アプリ内で使用する写真をアップロードします。",
         "NSPhotoLibraryUsageDescription": "フリーマーケットの商品説明のために写真をアップロードします。",
-        "NSCameraUsageDescription": "QRコードの読み取りに使用します。"
+        "NSCameraUsageDescription": "QRコードの読み取りに使用します。",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
