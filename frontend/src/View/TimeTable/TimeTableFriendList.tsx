@@ -17,7 +17,7 @@ const TimeTableFriendList = ({ route }) => {
             width: "65%",
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
             自分の時間割に戻す
           </Text>
         </TouchableOpacity>

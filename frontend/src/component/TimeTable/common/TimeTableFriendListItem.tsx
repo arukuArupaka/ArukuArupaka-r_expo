@@ -56,6 +56,8 @@ const TimeTableFriendListItem = ({ id, onSelect }) => {
         paddingVertical: 10,
         alignItems: "center",
         marginLeft: 10,
+        borderBottomWidth: 0.8,
+        borderBottomColor: "#d3d3d3",
       }}
     >
       <Image

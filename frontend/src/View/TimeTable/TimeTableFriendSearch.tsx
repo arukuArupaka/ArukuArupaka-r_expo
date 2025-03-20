@@ -27,11 +27,7 @@ import * as Clipboard from "expo-clipboard";
 import FriendAddConfirmDialog from "../../component/TimeTable/FriendRegister/FriendAddConfirmDialog";
 import Feather from "@expo/vector-icons/Feather";
 
-type Props = {
-  classPeriodOptions: ClassPeriod[];
-};
-
-const ClassPeriodSearchScreen: FC<Props> = ({ classPeriodOptions }) => {
+const TimeTableFriendSearch = () => {
   const [searchWord, setSearchWord] = useState<string>("");
   const [searchResult, setSearchResult] = useState<any>(null);
   const [userDocument, setUserDocument] = useState<any>(null);
@@ -202,7 +198,7 @@ const ClassPeriodSearchScreen: FC<Props> = ({ classPeriodOptions }) => {
     </View>
   );
 };
-export default ClassPeriodSearchScreen;
+export default TimeTableFriendSearch;
 
 const styles = StyleSheet.create({
   header: {
