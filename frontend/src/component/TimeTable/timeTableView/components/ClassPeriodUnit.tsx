@@ -26,6 +26,7 @@ const ClassPeriodUnit: FC<Props> = ({ weekOfTheDay, period }) => {
     useState<ClassPeriod>();
 
   useEffect(() => {
+    console.log(friendsClassPeriodData);
     // 友達の時間割が存在する場合は友達の時間割から探す
     if (Object.keys(friendsClassPeriodData).length !== 0) {
       const data = friendsClassPeriodData.find(

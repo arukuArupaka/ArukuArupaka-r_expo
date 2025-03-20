@@ -40,6 +40,7 @@ import {
 import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
+import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -59,11 +60,7 @@ const Headerlist = (props) => {
         justifyContent: "center",
       }}
       onPress={() => {
-        props.props.navigation.navigate(props.navigation, {
-          ...(props.navigation === "FirebaseNotificationList" && {
-            firebaseNotificationList: props.firebaseNotificationList,
-          }),
-        });
+        props.props.navigation.navigate(props.navigation);
       }}
     >
       {props.hasNewNotification &&
@@ -169,11 +166,12 @@ const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
-  const [userIconImageUri, setUserIconImageUri] = useState("");
   const {
     userSettingContent,
     hasNewFirebaseNotification,
-    firebaseNotificationList,
+    fetchFirebaseNotificationData,
+    userIconImageUri,
+    setUserIconImageUri,
   } = useTimeTable();
 
   useEffect(() => {
@@ -182,6 +180,7 @@ const HomeView = (props) => {
         // ユーザーがログインしている場合
         dispatch(handleLoginAction(user.emailVerified));
         dispatch(setUserUUIDAction(user.uid));
+        await fetchFirebaseNotificationData();
       } else {
         // ユーザーがログインしていない場合、保存されたemailとpasswordを使用してログインを試みる
         const savedEmail = await AsyncStorage.getItem("email");
@@ -283,7 +282,6 @@ const HomeView = (props) => {
               iconName="notifications-outline"
               navigation="FirebaseNotificationList"
               hasNewNotification={hasNewFirebaseNotification}
-              firebaseNotificationList={firebaseNotificationList}
             />
             <Headerlist
               props={props}
@@ -337,7 +335,9 @@ const HomeView = (props) => {
               test={props}
               jumpPage="TimeTable"
               iconName="file-table"
-              headerTitle={`${userSettingContent.schoolYear} ${userSettingContent.semester}`}
+              headerTitle={`${userSettingContent?.schoolYear || "未設定"} ${
+                userSettingContent?.semester || "未設定"
+              }`}
             />
           </View>
           <View style={styles.appListFlex}>

@@ -7,7 +7,8 @@ import { db } from "../../../../firebase";
 import { useTimeTable } from "../TimeTableContext";
 
 const FriendSelectContainer = () => {
-  const { setFriendsClassPeriodData } = useTimeTable();
+  const { friendsClassPeriodData, setFriendsClassPeriodData, imageUri } =
+    useTimeTable();
 
   const friendList = useSelector(
     (state: any) => state.user.userObject.friendList || []
@@ -25,7 +26,7 @@ const FriendSelectContainer = () => {
             (obj) =>
               obj.department === docRef.data().department &&
               obj.season === docRef.data().semester &&
-              obj.year === (docRef.data().schoolYear ?? "2025")
+              obj.year === (docRef.data().year ?? "2025")
           );
         setFriendsClassPeriodData(data);
         return;
@@ -55,6 +56,10 @@ const FriendSelectContainer = () => {
       setFriendsClassPeriodData({});
     };
   }, []);
+
+  useEffect(() => {
+    console.log(setFriendsClassPeriodData);
+  }, [friendsClassPeriodData]);
 
   return (
     <FriendSelect

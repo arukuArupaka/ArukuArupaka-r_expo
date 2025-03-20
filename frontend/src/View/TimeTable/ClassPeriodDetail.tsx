@@ -24,7 +24,8 @@ type ClassPeriodDetailScreenRouteProp = RouteProp<
 const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   route,
 }) => {
-  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } =
+    useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { classPeriodData } = route.params;
   const [isModalShow, setIsModalShow] = useState(false);
@@ -71,7 +72,11 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
           text: "削除",
           onPress: () => {
             deleteUserClassPeriod(data);
-            navigation.navigate("TimeTable");
+            navigation.navigate("TimeTable", {
+              headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+                userSettingContent?.semester || "未設定"
+              }`,
+            });
           },
         },
       ],

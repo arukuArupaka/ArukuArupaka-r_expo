@@ -49,14 +49,22 @@ const TimeTableFriendListItem = ({ id, onSelect }) => {
 
   return (
     <TouchableOpacity
-        onPress={()=>onSelect(friendData)}
-      style={{ flexDirection: "row", gap: 10, paddingVertical: 10 }}
+      onPress={() => onSelect(friendData)}
+      style={{
+        flexDirection: "row",
+        gap: 10,
+        paddingVertical: 10,
+        alignItems: "center",
+        marginLeft: 10,
+      }}
     >
       <Image
         source={{ uri: imageUri }}
         style={{ width: 50, height: 50, borderRadius: 25 }}
       />
-      <Text style={{ fontSize: 25 }}>{friendData.userName}</Text>
+      <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+        {friendData?.userName}
+      </Text>
     </TouchableOpacity>
   );
 };

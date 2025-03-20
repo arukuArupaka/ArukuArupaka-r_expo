@@ -33,7 +33,8 @@ const SetClassPeriodModal: FC<Props> = ({
   onClose,
   onUpdate,
 }) => {
-  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } =
+    useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
@@ -110,8 +111,10 @@ const SetClassPeriodModal: FC<Props> = ({
         };
         console.log("updatedData", updatedData);
         await setUserClassPeriods(updatedData);
-        navigation.navigate("TimeTable", { 
-          headerTitle:`${userSettingContent.schoolYear} ${userSettingContent.semester}`
+        navigation.navigate("TimeTable", {
+          headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+            userSettingContent?.semester || "未設定"
+          }`,
         });
       }
 

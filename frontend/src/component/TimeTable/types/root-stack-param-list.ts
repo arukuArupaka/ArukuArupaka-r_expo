@@ -6,5 +6,10 @@ export type RootStackParamList = {
   TimeTable: { headerTitle: string };
   TimeTableSetting: undefined;
   login: undefined;
-  FirebaseNotificationList: { firebaseNotificationList: any[] };
+  FirebaseNotificationList: undefined;
+  TimeTableFriendList: {
+    friendList: any[];
+    onSelectFriend: (userData: any) => void;
+    onSelectMine: () => void;
+  };
 };

@@ -1,10 +1,17 @@
-import { View, Text, TouchableOpacity, Alert, ScrollView } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  Image,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import TimeTableFriendListItem from "./TimeTableFriendListItem";
 import { auth } from "../../../../firebase";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../types/root-stack-param-list";
+import { useTimeTable } from "../TimeTableContext";
 
 const FriendSelect = ({
   friendList,
@@ -13,8 +20,9 @@ const FriendSelect = ({
   myName,
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [showDataUser, setShowDataUser] = useState(myName + "の時間割");
+  const [showDataUser, setShowDataUser] = useState(myName);
   const [isShowFriendList, setIsShowFriendList] = useState(false);
+  const { imageUri, userIconImageUri, userSettingContent } = useTimeTable();
   const showNonFriendDialog = () => {
     Alert.alert(
       "友達がいません",
@@ -45,22 +53,49 @@ const FriendSelect = ({
       showNonFriendDialog();
       return;
     }
-    setIsShowFriendList(!isShowFriendList);
+    navigation.navigate("TimeTableFriendList", {
+      friendList: friendList,
+      onSelectFriend: onSelectFriend,
+      onSelectMine: onSelectMine,
+    });
   };
   const onSelectFriend = (userData) => {
-    setShowDataUser(userData.userName + "の時間割");
+    setShowDataUser(userData.userName);
     setIsShowFriendList(false);
     showFriendTimeTable(userData.id);
+    navigation.navigate("TimeTable", {
+      headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+        userSettingContent?.semester || "未設定"
+      }`,
+    });
   };
 
   const onSelectMine = () => {
-    setShowDataUser(myName + "の時間割");
+    setShowDataUser(myName);
     setIsShowFriendList(false);
     showMineTimeTable();
+    navigation.navigate("TimeTable", {
+      headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+        userSettingContent?.semester || "未設定"
+      }`,
+    });
   };
 
+  useEffect(() => {
+    console.log("imageUri:", userIconImageUri);
+  }, []);
+
   return (
-    <View>
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        margin: 10,
+        borderRadius: 100,
+        display: "flex",
+      }}
+    >
       <TouchableOpacity
         onPress={selectFriend}
         style={{
@@ -68,70 +103,26 @@ const FriendSelect = ({
           backgroundColor: "white",
           paddingHorizontal: 10,
           flexDirection: "row",
+          borderRadius: 100,
+          display: "flex",
+          alignItems: "center",
         }}
       >
+        <Image
+          source={{ uri: userIconImageUri }}
+          style={{ width: 30, height: 30, borderRadius: 25, marginRight: 5 }}
+        />
         <Text
           style={{
             fontSize: 18,
             marginVertical: "auto",
             fontWeight: "600",
-            flex: 1,
           }}
         >
           {/* My時間割 */}
           {showDataUser}
         </Text>
-        <AntDesign
-          name="caretdown"
-          size={24}
-          color="black"
-          style={{
-            marginVertical: "auto",
-            transform: [{ rotate: !isShowFriendList ? "0deg" : "180deg" }],
-          }}
-        />
       </TouchableOpacity>
-      <View>
-        <View
-          style={{
-            display: isShowFriendList ? "flex" : "none", // 表示・非表示を切り替え
-            // position: "absolute",
-            backgroundColor: "white",
-            width: "100%",
-            maxHeight: 420,
-            zIndex: 1000,
-          }}
-        >
-          <ScrollView
-            style={
-              {
-                // display: isShowFriendList ? "flex" : "none", // 表示・非表示を切り替え
-                // position: "absolute",
-                // backgroundColor: "white",
-                // width: "100%",
-                // maxHeight: 420,
-                // zIndex: 10,
-              }
-            }
-          >
-            <TouchableOpacity
-              onPress={onSelectMine}
-              style={{ flexDirection: "row", gap: 10, padding: 10 }}
-            >
-              <Text style={{ fontSize: 25 }}>{myName}の時間割</Text>
-            </TouchableOpacity>
-            {friendList.map((friendID: any, key) => {
-              return (
-                <TimeTableFriendListItem
-                  key={key}
-                  id={friendID}
-                  onSelect={onSelectFriend}
-                />
-              );
-            })}
-          </ScrollView>
-        </View>
-      </View>
     </View>
   );
 };
