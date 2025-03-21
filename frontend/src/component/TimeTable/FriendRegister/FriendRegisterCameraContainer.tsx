@@ -114,9 +114,18 @@ const FriendRegisterCameraContainer = () => {
       const myDocRef = doc(db, "users", auth.currentUser.uid);
       const myDoc = await getDoc(myDocRef); // ここは今後要修正（おそらくreduxで自分のドキュメントを管理しているんだろうけど、やり方分からんから修正求む）
       const myDocument = myDoc.data();
-      console.log("id", friendData[0].id);
+      if (myDocument.friendList.some((el) => el.id === friendData[0].id)) {
+        Alert.alert("エラー", "すでにフレンドです", [
+          {
+            text: "OK",
+            onPress: () => {
+              isReading.current = false;
+            },
+          },
+        ]);
+        throw new Error("Already friend");
+      }
       const docRef = doc(db, "users", `${friendData[0].id}`);
-      console.log("docRef", docRef);
       await setDoc(
         docRef,
         {
@@ -129,8 +138,6 @@ const FriendRegisterCameraContainer = () => {
         },
         { merge: true } // 既存のデータを保持して更新
       );
-      const updatedData = await getDoc(docRef);
-      console.log("updatedData", updatedData.data());
 
       setConfirmFriendData({});
       isReading.current = false;

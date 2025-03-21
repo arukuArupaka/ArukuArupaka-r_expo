@@ -23,17 +23,6 @@ const FriendSelect = ({
   const [showDataUser, setShowDataUser] = useState(myName);
   const [isShowFriendList, setIsShowFriendList] = useState(false);
   const { imageUri, userIconImageUri, userSettingContent } = useTimeTable();
-  const showNonFriendDialog = () => {
-    Alert.alert(
-      "友達がいません",
-      "愛と勇気だけが友達ですか？\n友達を追加してください",
-      [
-        {
-          text: "OK",
-        },
-      ]
-    );
-  };
 
   const selectFriend = () => {
     if (!auth.currentUser) {
@@ -47,10 +36,6 @@ const FriendSelect = ({
           },
         ]
       );
-      return;
-    }
-    if (friendList.length === 0) {
-      showNonFriendDialog();
       return;
     }
     navigation.navigate("TimeTableFriendList", {
