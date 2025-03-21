@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useCallback, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -74,18 +74,14 @@ const FirebaseNotificationList = () => {
     );
   };
 
-  function formatDate(isoDate: string): string {
+  const formatDate = useCallback((isoDate: string): string => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
     // 月は0始まりなので+1し、2桁にするために"0"を埋める
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const day = ("0" + date.getDate()).slice(-2);
     return `${year}/${month}/${day}`;
-  }
-
-  useEffect(() => {
-    console.log("firebaseNotificationList:", firebaseNotificationList);
-  }, [firebaseNotificationList]);
+  }, []);
 
   return (
     <View
