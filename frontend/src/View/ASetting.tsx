@@ -56,6 +56,8 @@ const ASetting = (props) => {
   const [profile, setProfile] = useState("");
   const [oldDate, setOldData] = useState({});
   const [campus, setCanpus] = useState("");
+  const [friendList, setFriendList] = useState([]);
+  const [receivedFriendRequests, setReceivedFriendRequests] = useState([]);
 
   //ログインしてるかチェックするコード探しに来た人へ　ここから
 
@@ -76,68 +78,67 @@ const ASetting = (props) => {
   useEffect(() => {
     console.log("effect");
     const getUserDate = async () => {
-      if (isLogin) {
-        // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-        const refFiresrore = doc(db, `users/${userUUID}`);
-        console.log("Asetting on 63 getDoc");
-        const snap = await getDoc(refFiresrore);
+      if (!isLogin) return;
+      // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
+      const refFiresrore = doc(db, `users/${userUUID}`);
+      console.log("Asetting on 63 getDoc");
+      const snap = await getDoc(refFiresrore);
 
-        if (snap.exists()) {
-          // ユーザーデータを取得して格納
-          const appUser = snap.data() as User; //appUserがデータベースから取得したオブジェクト
-          // const appUser = (await getDoc(refFiresrore)).data() as User;//appUserがデータベースから取得したオブジェクト
-          console.log(appUser);
-
-          setUserName(appUser.userName);
-          setFaculty(appUser.faculty);
-          setDepartment(appUser.department);
-          setGrade(appUser.grade);
-          setProfile(appUser.profile);
-          setCanpus(appUser.campus);
-
-          const oldSettingdata = {
-            id: appUser.id,
-            school: "立命館大学",
-            campus: campus,
-            userName: appUser.userName,
-            faculty: appUser.faculty,
-            department: appUser.department,
-            grade: appUser.grade,
-            profile: appUser.profile,
-          };
-          setOldData(oldSettingdata);
-
-          getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
-            .then((getURI) => {
-              setImage(getURI);
-              setIsCompress(true);
-            })
-            .catch((e) => {
-              console.log(e.message);
-
-              switch (e.message) {
-                case `Firebase Storage: Object 'users/${userUUID}/mainPicture' does not exist. (storage/object-not-found)`:
-                  //setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
-                  setIsCompress(false);
-              }
-            });
-          console.log(
-            await getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
-          );
-        } else {
-          setCanpus("");
-          setUserName("未登録");
-          setFaculty("未登録");
-          setDepartment("未登録");
-          setGrade("未登録");
-          setProfile("未登録");
-          setImage(
-            "https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012"
-          );
-          setIsCompress(false);
-        }
-      } else {
+      if (!snap.exists()) {
+        setCanpus("");
+        setUserName("未登録");
+        setFaculty("未登録");
+        setDepartment("未登録");
+        setGrade("未登録");
+        setProfile("未登録");
+        setImage(
+          "https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012"
+        );
+        setIsCompress(false);
+        setFriendList([]);
+        setReceivedFriendRequests([]);
+        return;
       }
+      // ユーザーデータを取得して格納
+      const appUser = snap.data() as User; //appUserがデータベースから取得したオブジェクト
+
+      setUserName(appUser.userName);
+      setFaculty(appUser.faculty);
+      setDepartment(appUser.department);
+      setGrade(appUser.grade);
+      setProfile(appUser.profile);
+      setCanpus(appUser.campus);
+      setFriendList(appUser.friendList || []);
+      setReceivedFriendRequests(appUser.receivedFriendRequests || []);
+
+      const oldSettingdata = {
+        id: appUser.id,
+        school: "立命館大学",
+        campus: campus,
+        userName: appUser.userName,
+        faculty: appUser.faculty,
+        department: appUser.department,
+        grade: appUser.grade,
+        profile: appUser.profile,
+        friendList: appUser.friendList || [],
+        receivedFriendRequests: appUser.receivedFriendRequests || [],
+      };
+      setOldData(oldSettingdata);
+
+      getDownloadURL(ref(storage, `users/${userUUID}/mainPicture`))
+        .then((getURI) => {
+          setImage(getURI);
+          setIsCompress(true);
+        })
+        .catch((e) => {
+          console.log(e.message);
+
+          switch (e.message) {
+            case `Firebase Storage: Object 'users/${userUUID}/mainPicture' does not exist. (storage/object-not-found)`:
+              //setImage('https://media.discordapp.net/attachments/1210241561095573504/1210846190124531782/DALLE_2024-02-12_18.38.18_-_Create_a_colorful_illustration_of_an_alpaca_facing_left_standing_directly_in_front_of_a_.jpeg?ex=65ec0b64&is=65d99664&hm=ef893886242657f90f84a93b7de86f6ebe1176f010b0212116a7c91b30d1d789&=&format=webp&width=1012&height=1012')
+              setIsCompress(false);
+          }
+        });
     };
     getUserDate();
 
@@ -158,6 +159,8 @@ const ASetting = (props) => {
         department: department,
         grade: grade,
         profile: profile,
+        friendList: friendList,
+        receivedFriendRequests: receivedFriendRequests,
         createdAt: Date.now(),
       };
       const compareDate = {
@@ -169,6 +172,8 @@ const ASetting = (props) => {
         department: department,
         grade: grade,
         profile: profile,
+        friendList: friendList,
+        receivedFriendRequests: receivedFriendRequests,
       };
       if (
         JSON.stringify(Object.entries(compareDate).sort()) !==
@@ -178,7 +183,7 @@ const ASetting = (props) => {
         console.log(oldDate);
         setOldData(compareDate);
         // // Firestoreにユーザーデータを保存
-        setDoc(ref, appUser,{merge:true}).then(() => {
+        setDoc(ref, appUser, { merge: true }).then(() => {
           // 保存に成功したらコンテクストにユーザーデータを格納
           console.log("appUser");
         });

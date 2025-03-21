@@ -45,9 +45,6 @@ export const QRView: FC<Props> = ({ setIsShowQR, user }) => {
             <QRCode value={user.friendConvertToken} size={230} />
           )}
         </View>
-        <Text style={{ textAlign: "center", marginVertical: "10%" }}>
-          お互いにQRコードを読み合ってください
-        </Text>
       </View>
     </View>
   );
