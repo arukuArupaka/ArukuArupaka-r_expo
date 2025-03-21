@@ -33,7 +33,8 @@ const SetClassPeriodModal: FC<Props> = ({
   onClose,
   onUpdate,
 }) => {
-  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } =
+    useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [className, setClassName] = useState(data?.className);
   const [classRoom, setClassRoom] = useState(data?.classRoom);
@@ -108,8 +109,13 @@ const SetClassPeriodModal: FC<Props> = ({
           statusColor: ConvertMethods.setClassPeriodStatusColor(data),
           mulColor: ConvertMethods.setClassPeriodUnitColor(data),
         };
+        console.log("updatedData", updatedData);
         await setUserClassPeriods(updatedData);
-        navigation.navigate("TimeTable");
+        navigation.navigate("TimeTable", {
+          headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+            userSettingContent?.semester || "未設定"
+          }`,
+        });
       }
 
       onClose();
@@ -263,6 +269,7 @@ const SetClassPeriodModal: FC<Props> = ({
                           ...pickerSelectStyles.inputAndroid,
                           backgroundColor: isNotify ? "#D9D9D9" : "white",
                           color: isNotify ? "black" : "white",
+                          width: "70%",
                         },
                         placeholder: {
                           color: "black",

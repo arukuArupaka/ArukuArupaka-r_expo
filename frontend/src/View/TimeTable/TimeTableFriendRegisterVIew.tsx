@@ -1,10 +1,11 @@
 import { View, Text } from "react-native";
 import React, { Dispatch, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import State from "../../redux/states/userState";
 import { handleLoginAfterPageName } from "../../redux/actions/commonAction";
 import FriendRegisterCameraContainer from "../../component/TimeTable/FriendRegister/FriendRegisterCameraContainer";
+import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 
 const TimeTableFriendRegisterVIew = () => {
   const isLogin: boolean = useSelector(
@@ -13,9 +14,9 @@ const TimeTableFriendRegisterVIew = () => {
   const isLoginNotVerificationEmail: boolean = useSelector(
     (state: State) => state.user.isLoginNotVerificationEmail || false
   );
-  const dispatch: Dispatch = useDispatch();
+  const dispatch: Dispatch<any> = useDispatch();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   useEffect(() => {
     if (!isLogin || isLoginNotVerificationEmail) {
       dispatch(handleLoginAfterPageName("TimeTableFriendRegister")); //ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね import { handleLoginAfterPageName } from '../../redux/actions/commonAction';←これいる

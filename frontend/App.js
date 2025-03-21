@@ -24,7 +24,6 @@ import * as Notifications from "expo-notifications";
 import React from "react";
 import HomeWebSite from "./src/View/HomeWebSite";
 import { Platform } from "react-native";
-
 import {
   MaterialIcons,
   MaterialCommunityIcons,
@@ -45,9 +44,12 @@ import PortalAccess from "./src/View/PortalAccess";
 import ClassPeriodOptions from "./src/View/TimeTable/ClassPeriodOptions";
 import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
 import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
-import SearchBoxPressButton from "./src/component/TimeTable/classPeriodOptions/SearchBoxPressButton";
+import SearchBoxPressButton from "./src/component/TimeTable/common/SearchBoxPressButton";
 import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import TimeTableFriendRegisterVIew from "./src/View/TimeTable/TimeTableFriendRegisterVIew";
+import FirebaseNotificationList from "./src/View/FirebaseNotification";
+import TimeTableFriendList from "./src/View/TimeTable/TimeTableFriendList";
+import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -103,18 +105,10 @@ function App() {
               <Stack.Screen
                 name="TimeTable"
                 component={TimeTableView}
-                options={({ navigation }) => ({
+                options={({ route, navigation }) => ({
                   title: "",
                   headerRight: () => (
                     <>
-                      <TouchableOpacity
-                        style={{ marginRight: 10 }}
-                        onPress={() =>
-                          navigation.navigate("TimeTableFriendRegister")
-                        }
-                      >
-                        <AntDesign name="adduser" size={24} color="black" />
-                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => navigation.navigate("TimeTableSetting")}
                       >
@@ -122,6 +116,9 @@ function App() {
                       </TouchableOpacity>
                     </>
                   ),
+                  headerTintColor: "#000",
+                  headerBackTitleVisible: false,
+                  headerTitle: route.params?.headerTitle || "あなたの時間割",
                 })}
               />
               <Stack.Screen
@@ -129,6 +126,8 @@ function App() {
                 component={ClassPeriodOptions}
                 options={() => ({
                   title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
                 })}
               />
               <Stack.Screen
@@ -136,48 +135,128 @@ function App() {
                 component={TimeTableSetting}
                 options={() => ({
                   title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
                 })}
               />
               <Stack.Screen
                 name="TimeTableFriendRegister"
                 component={TimeTableFriendRegisterVIew}
                 options={() => ({
-                  title: "",
+                  title: "QRでフレンド登録",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                })}
+              />
+              <Stack.Screen
+                name="TimeTableFriendSearch"
+                component={TimeTableFriendSearch}
+                options={() => ({
+                  title: "フレンド検索",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                  headerRight: () => (
+                    <>
+                      <TouchableOpacity
+                        style={{ marginRight: 10 }}
+                        onPress={() =>
+                          navigationRef.navigate("TimeTableFriendRegister")
+                        }
+                      >
+                        <Feather name="camera" size={24} color="black" />
+                      </TouchableOpacity>
+                    </>
+                  ),
+                })}
+              />
+              <Stack.Screen
+                name="TimeTableFriendList"
+                component={TimeTableFriendList}
+                options={() => ({
+                  title: "フレンド一覧",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                  headerRight: () => (
+                    <>
+                      <TouchableOpacity
+                        style={{ marginRight: 10 }}
+                        onPress={() =>
+                          navigationRef.navigate("TimeTableFriendSearch")
+                        }
+                      >
+                        <AntDesign name="adduser" size={24} color="black" />{" "}
+                      </TouchableOpacity>
+                    </>
+                  ),
                 })}
               />
               <Stack.Screen
                 name="ClassPeriodDetail"
                 component={ClassPeriodDetail}
-                options={() => ({
+                options={({ route }) => ({
                   title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                  headerTitle: `${route.params?.classPeriodData.weekOfTheDay}曜${route.params?.classPeriodData.period}限`,
+                  headerTitleStyle: {
+                    fontSize: 20,
+                  },
                 })}
               />
-               <Stack.Screen
-      name="Bike"
-      component={BikeView}
-      options={{
-        headerTitle: () => (
-          <MaterialIcons name="directions-bike" size={40} color="black" />
-        ),
-        headerRight: Platform.OS === "ios" ? () => (
-          <TouchableOpacity>
-            <MaterialIcons name="question-mark" size={40} color="black" />
-          </TouchableOpacity>
-        ) : null,
-        headerLeft: Platform.OS === "ios" 
-        ? () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
-                <Ionicons
-                  name="chevron-back"
-                  style={{ marginRight: 10 }}
-                  size={30}
-                  color="black"
-                />
-              </TouchableOpacity>
-            </View>
-          )
-        : undefined,
+              <Stack.Screen
+                name="FirebaseNotificationList"
+                component={FirebaseNotificationList}
+                options={() => ({
+                  title: "",
+                  headerBackTitleVisible: false,
+                  headerTintColor: "#000",
+                })}
+              />
+              <Stack.Screen
+                name="Bike"
+                component={BikeView}
+                options={{
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="directions-bike"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity>
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
                 }}
               />
               <Stack.Screen
@@ -231,20 +310,28 @@ function App() {
                 component={PortalAccess}
                 options={{
                   headerTitle: (props) => "",
-                  headerLeft: Platform.OS === "ios" 
-                  ? () => (
-                      <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <TouchableOpacity onPress={() => navigationRef.navigate("Home")}>
-                          <Ionicons
-                            name="chevron-back"
-                            style={{ marginRight: 10 }}
-                            size={30}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )
-                  : undefined,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
                 }}
               />
               {/* <Stack.Screen

@@ -1,6 +1,6 @@
 import { ClassPeriod } from "../types/class-period";
 import * as Notifications from "expo-notifications";
-import {SchedulableTriggerInputTypes} from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from "expo-notifications";
 
 export class NotificationMethods {
   // スケジュールされた通知をキャンセルする関数

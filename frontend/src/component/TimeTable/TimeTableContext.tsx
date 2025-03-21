@@ -3,8 +3,17 @@ import { ClassPeriod } from "./types/class-period";
 import { UserSettingContent } from "./types/user-setting-content";
 import * as Notifications from "expo-notifications";
 import { AsyncFunctions } from "./classObject/async-functions";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  limit,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db } from "../../../firebase";
+import { FirebaseNotification } from "./types/firebase-notification";
 
 const TimeTableContext = createContext(null);
 
@@ -12,22 +21,31 @@ export const useTimeTable = () => useContext(TimeTableContext);
 
 export const TimeTableProvider = ({ children }) => {
   const [unreadMessagesJSON, setUnreadMessagesJSON] = useState([]);
+  // ユーザーが登録した全ての時間割データ
   const [userClassPeriodData, setUserClassPeriodData] = useState<ClassPeriod[]>(
     []
   );
-  const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<ClassPeriod[]>(
-    []
-  );
+  const [hasNewFirebaseNotification, setHasNewFirebaseNotification] =
+    useState(false);
+  const [friendsClassPeriodData, setFriendsClassPeriodData] = useState<
+    ClassPeriod[]
+  >([]);
   const initialUserSettingContent = {
     department: "",
-    semester: "",
+    semester: undefined,
     displayCount: 5,
     colorByUnits: false,
     colorBySubject: false,
     totalUnits: 0,
+    schoolYear: 2025,
   };
   const [userSettingContent, setUserSettingContent] =
     useState<UserSettingContent>(initialUserSettingContent);
+  const [firebaseNotificationList, setFirebaseNotificationList] = useState<
+    any[]
+  >([]);
+  // 自分のアイコン画像のURI
+  const [userIconImageUri, setUserIconImageUri] = useState("");
 
   const getClassPeriodData = async () => {
     const classPeriodData = await AsyncFunctions.getData<ClassPeriod[]>(
@@ -52,7 +70,7 @@ export const TimeTableProvider = ({ children }) => {
   const getTotalUnits = async () => {
     if (
       userSettingContent.department !== "" &&
-      userSettingContent.semester !== ""
+      userSettingContent.semester !== undefined
     ) {
       const selectedAllClassPeriods: ClassPeriod[] = userClassPeriodData.filter(
         (el: ClassPeriod) =>
@@ -104,6 +122,7 @@ export const TimeTableProvider = ({ children }) => {
             classPeriods: newData,
             department: userSettingContent.department,
             semester: userSettingContent.semester,
+            year: userSettingContent.schoolYear,
           },
           { merge: true }
         );
@@ -145,6 +164,56 @@ export const TimeTableProvider = ({ children }) => {
     })();
   }, []);
 
+  const fetchFirebaseNotificationData = async () => {
+    console.log("fetchFirebaseNotificationData");
+    const localNotificationList = await AsyncFunctions.getData<
+      FirebaseNotification[]
+    >("@firebaseNotificationList", "array");
+    const dockRef = doc(db, "users", auth.currentUser.uid);
+    const userDocument = await getDoc(dockRef);
+    console.log("userDocument:", userDocument.data().receivedFriendRequests);
+    const data = userDocument.data();
+    console.log(localNotificationList);
+    const receivedFriendRequests = data.receivedFriendRequests
+      .map((el) => {
+        if (
+          localNotificationList &&
+          !localNotificationList.map((ntf) => ntf?.id).includes(el.id)
+        ) {
+          return {
+            ...el,
+            requestedAt: el.requestedAt.toDate(),
+            isAccepted: false,
+          };
+        }
+        return false;
+      })
+      .filter((el) => el !== false)
+      .sort((a, b) => {
+        return b.requestedAt - a.requestedAt;
+      }); // 未読のフレンドリクエストを取得し時系列降順でソート
+
+    console.log("receivedFriendRequests:", receivedFriendRequests);
+
+    if (receivedFriendRequests.length > 0) {
+      setHasNewFirebaseNotification(true);
+    }
+
+    console.log("fetchedFriendRequests:", receivedFriendRequests);
+
+    const friendRequestList = receivedFriendRequests.concat(
+      localNotificationList
+    );
+    console.log("friendRequestList:", friendRequestList);
+
+    setFirebaseNotificationList(friendRequestList);
+
+    await AsyncFunctions.saveData(
+      "@firebaseNotificationList",
+      friendRequestList
+    );
+  };
+
   return (
     <TimeTableContext.Provider
       value={{
@@ -155,7 +224,14 @@ export const TimeTableProvider = ({ children }) => {
         userSettingContent,
         setUserSettingContent,
         friendsClassPeriodData,
-        setFriendsClassPeriodData
+        setFriendsClassPeriodData,
+        firebaseNotificationList,
+        setFirebaseNotificationList,
+        hasNewFirebaseNotification,
+        setHasNewFirebaseNotification,
+        fetchFirebaseNotificationData,
+        userIconImageUri,
+        setUserIconImageUri,
       }}
     >
       {children}
