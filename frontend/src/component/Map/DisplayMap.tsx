@@ -1,505 +1,126 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-  Alert,
-} from "react-native";
-import * as Location from "expo-location";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import MapUserIcon from "./mapUserIcon";
-import { useSelector } from "react-redux";
-import { doc, updateDoc, serverTimestamp } from "@firebase/firestore";
-import { db } from "../../../firebase";
-import MapFriendIconContainer from "./mapFriendIconConteiner";
-import MapBuildingListItem from "./MapBuildingListItem";
-import MapBuildingIcon from "./MapBuildingIcon";
-import { useDispatch } from "react-redux";
-import { setMapSearchWord } from "../../redux/actions/mapUserActions";
-import { judgeInclusion } from "./inRangDiscrimination";
-import * as TaskManager from "expo-task-manager";
-import KitchenCarIconContainer from "./KitchenCarIconContainer";
-import KitchenCarListItem from "./KitchenCarListItem";
+import { View, Image } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { useNavigation } from "@react-navigation/native";
 
-const DisplayMap = (props) => {
-  const [kitchenCarJSON, setKitchenCarJSON] = useState([]);
+const pinImage = require("../../image/map/image1.png");
 
-  useEffect(() => {
-    const url =
-      "https://firestore.googleapis.com/v1/projects/arupaka-kitchen-car/databases/(default)/documents:runQuery";
+const CAMPUSES = {
+  "びわこくさつキャンパス": { key: "BKC", latitude: 34.9805, longitude: 135.9635 },
+  "衣笠キャンパス": { key: "KIC", latitude: 35.0330, longitude: 135.7230 },
+  "大阪いばらきキャンパス": { key: "OIC", latitude: 34.8105, longitude: 135.5615 },
+};
 
-    async function fetchCarPosition() {
-      try {
-        // 今日の日付の0時0分0秒を取得
-        const now = new Date();
-        const startOfDay = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
-        );
-        const startOfDayTimestamp = {
-          seconds: Math.floor(startOfDay.getTime() / 1000),
-          nanos: (startOfDay.getTime() % 1000) * 1e6,
-        };
+const getSemester = () => {
+  const month = new Date().getMonth() + 1;
+  return month >= 4 && month <= 8 ? "Spring" : "Autumn";
+};
 
-        // クエリの構築
-        const query = {
-          structuredQuery: {
-            from: [{ collectionId: "car_position_BKC" }],
-            where: {
-              fieldFilter: {
-                field: { fieldPath: "time" },
-                op: "GREATER_THAN_OR_EQUAL",
-                value: { timestampValue: startOfDayTimestamp },
-              },
-            },
-          },
-        };
+const BUILDINGS = [
+  { name: "京都衣笠体育館", latitude: 35.03260685626769, longitude: 135.72137243247462, color: "#FF0000" },
+  { name: "明学館", latitude: 35.03248308641657, longitude: 135.7218558422674, color: "#00FF00" },
+  { name: "恒心館", latitude: 35.032857400531455, longitude: 135.72187373062124, color: "#0000FF" },
+  { name: "洋洋館", latitude: 35.03341132423693, longitude: 135.7221711441208, color: "#FFFF00" },
+  { name: "諒友館", latitude: 35.033162954893704, longitude: 135.7224808017929, color: "#FF00FF" },
+  { name: "啓明館", latitude: 35.03247981626899, longitude: 135.72246561526225, color: "#00FFFF" },
+  { name: "尽心館", latitude: 35.032232331672624, longitude: 135.72241828644417, color: "#800000" },
+  { name: "敬学館", latitude: 35.032224309856886, longitude: 135.72228619973652, color: "#808000" },
+  { name: "清心館", latitude: 35.03242281638815, longitude: 135.72305892876838, color: "#008000" },
+  { name: "研心館", latitude: 35.032951805200035, longitude: 135.72320462053875, color: "#800080" },
+  { name: "有心館", latitude: 35.03309347005321, longitude: 135.72386770177542, color: "#008080" },
+  { name: "尚学館", latitude: 35.03995832031566, longitude: 135.72651385950047, color: "#FFA500" },
+  { name: "存心館", latitude: 35.03367933549287, longitude: 135.72427139385243, color: "#FFC0CB" },
+  { name: "学生会館", latitude: 35.03548952800499, longitude: 135.72491370651827, color: "#A52A2A" },
+  { name: "歴史都市防災研究所", latitude: 35.03363364938425, longitude: 135.72669485758783, color: "#556B2F" },
+  { name: "末川記念会館", latitude: 35.03406465832097, longitude: 135.72602571343052, color: "#2F4F4F" },
+  { name: "フォレストハウス", latitude: 34.980875, longitude: 135.964152, color: "#DC143C" },
+  { name: "リンクスクエア", latitude: 34.980199, longitude: 135.964152, color: "#1E90FF" },
+  { name: "コラーニングハウス1", latitude: 34.980129, longitude: 135.962768, color: "#228B22" },
+  { name: "コラーニングハウス2", latitude: 34.979665, longitude: 135.963211, color: "#FF69B4" },
+  { name: "プリズムハウス", latitude: 34.981076, longitude: 135.963350, color: "#9932CC" },
+  { name: "アドセミナリオ", latitude: 34.980661, longitude: 135.961819, color: "#8B0000" },
+  { name: "アクロスウィング", latitude: 34.981435, longitude: 135.961583, color: "#FF8C00" },
+  { name: "A", latitude: 34.810874, longitude: 135.561179, color: "#8A2BE2" },
+  { name: "B", latitude: 34.809960, longitude: 135.562718, color: "#FFD700" },
+  { name: "C", latitude: 34.809967, longitude: 135.561321, color: "#32CD32" },
+  { name: "D", latitude: 34.809516, longitude: 135.560746, color: "#FF4500" },
+  { name: "E", latitude: 34.810492, longitude: 135.560514, color: "#4682B4" },
+  { name: "F", latitude: 34.808944, longitude: 135.559923, color: "#D2691E" },
+  { name: "G", latitude: 34.810781, longitude: 135.561705, color: "#6A5ACD" },
+  { name: "H", latitude: 34.808995, longitude: 135.561481, color: "#8B4513" },
+];
 
-        // POSTリクエストの送信
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(query),
-        });
 
-        if (!response.ok) {
-          throw new Error("ネットワーク応答に問題がありました");
-        }
+const DisplayMap = () => {
+  const navigation = useNavigation();
+  const [selectedCampus, setSelectedCampus] = useState("びわこくさつキャンパス");
+  const [classrooms, setClassrooms] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [period, setPeriod] = useState(1); // 0: 空き教室, 1: 授業中
 
-        // レスポンスの解析
-        const data = await response.json();
-        const documents = data.map((doc) => doc.document);
-        if (documents[0] !== undefined) {
-          setKitchenCarJSON(documents);
-        }
-      } catch (error) {
-        console.error("フェッチエラー:", error);
-      }
+"https://db-manager-api.arupaka.uk/lecture/get-occupied-classrooms?campus=BKC&schoolYear=2025&semester=Spring&weekday=Monday&period=1"
+
+// console.log(new Date().getDay())
+
+const fetchOccupiedClassrooms = async (weekday, campus, schoolYear, semester, period) => {
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await fetch(
+      `https://db-manager-api.arupaka.uk/lecture/get-occupied-classrooms?campus=${campus}&schoolYear=${schoolYear}&semester=${semester}&weekday=${weekday}&period=${period}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data = await response.json();
+    setClassrooms(data);
+  } catch (error) {
+    console.error("Error fetching classrooms:", error);
+    setError("データ取得に失敗しました。再試行してください。");
+  }
+  setLoading(false);
+};
 
-    if (props.campusData.id === "ritsumei_BKC") {
-      fetchCarPosition();
-    }
-  }, []);
+useEffect(() => {
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const todayWeekday = weekdays[new Date().getDay()];
+  const schoolYear = new Date().getFullYear();
+  const semester = getSemester();
+  const campus = CAMPUSES[selectedCampus].key;
 
-  // TaskManager.defineTask(
-  //   "BACKGROUND_FETCH_TASK",
-  //   ({ data: { locations }, error }) => {
-  //     console.log("watchPositionAsyncBackGround");
-  //     if (error) {
-  //       // check `error.message` for more details.
-  //       return;
-  //     }
-  //     console.log("Received new locations", locations);
+  fetchOccupiedClassrooms(todayWeekday, campus, schoolYear, semester, period);
+}, [selectedCampus, period]);
 
-  //     let longitude = "経度:" + JSON.stringify(locations[0].coords.longitude);
-  //     let latitude = "緯度:" + JSON.stringify(locations[0].coords.latitude);
 
-  //     console.log(latitude);
-
-  //     if (
-  //       judgeInclusion(
-  //         {
-  //           latitude: locations[0].coords.latitude,
-  //           longitude: locations[0].coords.longitude,
-  //         },
-  //         props.campusData.campusAria
-  //       ) &&
-  //       mapUserObject.locationSharingFriends.length !== 0
-  //     ) {
-  //       const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-  //       updateDoc(refFiresrore, {
-  //         myLocation: {
-  //           latitude: locations[0].coords.latitude,
-  //           longitude: locations[0].coords.longitude,
-  //         },
-  //         timestamp: serverTimestamp(),
-  //       }).then(() => {
-  //         console.log("watchPositionAsyncBackGround");
-  //       });
-  //     }
-  //   }
-  // );
-
-  const dispatch = useDispatch();
-
-  var { width, height } = Dimensions.get("window");
-
-  const userUUID: boolean = useSelector(
-    (state: State) => state.user.userUUID || ""
-  );
-  const userObject = useSelector((state) => state.user.userObject);
-  const mapUserObject = useSelector((state) => state.map.mapUserObject);
-  const mapSearchWord = useSelector((state) => state.map.mapSearchWord);
-  const isLogin = useSelector((state) => state.user.isLogin);
-
-  const [isShareLocation, setIsSharelocation] = useState<boolean>(false);
-
-  const [myLocation, setMyLocation] = useState({});
-  const [mapCenterLocation, setMapCenterLocation] = useState({
-    latitude: props.campusData.location.latitude
-      ? props.campusData.location.latitude
-      : 0,
-    longitude: props.campusData.location.longitude
-      ? props.campusData.location.longitude
-      : 0,
-    latitudeDelta: 0.005,
-    longitudeDelta: 0.005,
-  });
-  const [showBuildingIcon, setShowBuildIcon] = useState(false);
-  const [shareInfoMessage, setShareInfoMassage] = useState<string>("");
-  const [shareTime, setShareTime] = useState("");
-
-  useEffect(() => {
-    let subscription;
-
-    getLocationAsync();
-
-    const watchPositionAsync = async () => {
-      await Location.requestForegroundPermissionsAsync();
-      //await Location.requestBackgroundPermissionsAsync();
-
-      if (!props.campusData.campusAria) {
-        return;
-      }
-      subscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 100000,
-          distanceInterval: 50,
-        },
-        (location) => {
-          if (Math.floor(Math.random() * 10) === 1) {
-            console.log("watchPositionAsync");
-
-            let longitude = "経度:" + JSON.stringify(location.coords.longitude);
-            let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
-            console.log(longitude);
-            console.log(latitude);
-
-            setMyLocation({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            });
-
-            if (
-              isLogin &&
-              props.campusData.campusAria &&
-              judgeInclusion(
-                {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                },
-                props.campusData.campusAria
-              ) &&
-              mapUserObject.isLocationShare &&
-              mapUserObject.locationSharingFriends.length !== 0
-            ) {
-              const refFiresrore = doc(db, `mapGPS/${userUUID}`);
-              updateDoc(refFiresrore, {
-                myLocation: {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                },
-                timestamp: serverTimestamp(),
-              })
-                .then(() => {
-                  setIsSharelocation(true);
-                  setShareTime(
-                    new Date().getHours() + ":" + new Date().getMinutes()
-                  );
-                })
-                .catch((e) => {
-                  setIsSharelocation(false);
-                });
-            } else {
-              setIsSharelocation(false);
-              if (
-                !judgeInclusion(
-                  {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                  },
-                  props.campusData.campusAria
-                )
-              ) {
-                setShareInfoMassage("キャンパス外");
-              } else if (!isLogin) {
-                setShareInfoMassage("未ログイン");
-              } else if (!mapUserObject.isLocationShare) {
-                setShareInfoMassage("共有を停止する");
-              } else if (mapUserObject.locationSharingFriends.length == 0) {
-                setShareInfoMassage("共有する相手がいません");
-              }
-            }
-          }
-        }
-      );
-    };
-
-    const toggleFetchTask = async () => {
-      // if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-      //   TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-      // }
-     // let { status } = await Location.requestBackgroundPermissionsAsync();
-      if (!status) {
-        setShareInfoMassage("権限エラー");
-      }
-
-    //   Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
-    //     accuracy: Location.Accuracy.BestForNavigation,
-    //     timeInterval: 100000,
-    //     distanceInterval: 50,
-    //     foregroundService: {
-    //       notificationTitle: "En ligne ... ",
-    //       notificationBody: "Mise à jour de votre position en cours ...",
-    //     },
-    //   }).then((location) => {});
-     };
-
-    watchPositionAsync();
-    if (
-      isLogin &&
-      mapUserObject.isLocationShare &&
-      mapUserObject.locationSharingFriends.length !== 0
-    ) {
-      toggleFetchTask();
-    }
-
-    return () => {
-      subscription?.remove();
-      if (isLogin && mapUserObject.isLocationShare) {
-        // toggleFetchTask();
-      }
-    };
-  }, []);
-
- // useEffect(() => {
-    // if (!mapUserObject.isLocationShare) {
-    //   if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-    //     TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-    //   }
-    // } else {
-    //   if (TaskManager.isTaskRegisteredAsync("BACKGROUND_FETCH_TASK")) {
-    //     TaskManager.unregisterTaskAsync("BACKGROUND_FETCH_TASK");
-    //   }
-
-    //   Location.startLocationUpdatesAsync("BACKGROUND_FETCH_TASK", {
-    //     accuracy: Location.Accuracy.BestForNavigation,
-    //     timeInterval: 100000,
-    //     distanceInterval: 20,
-    //     foregroundService: {
-    //       notificationTitle: "En ligne ... ",
-    //       notificationBody: "Mise à jour de votre position en cours ...",
-    //     },
-  //     }).then((location) => {});
-  //   }
-  // }, [mapUserObject.isLocationShare]);
-
-  const onSelectBuilding = (data) => {
-    dispatch(setMapSearchWord(""));
-    setMapCenterLocation({
-      ...data.buildingLocation,
-      latitudeDelta: 0.001,
-      longitudeDelta: 0.001,
-    });
-    setShowBuildIcon(true);
-  };
-
-  const handleRegionChangeComplete = (region, gesture, name) => {
-    // regionオブジェクトからlongitudeDeltaを取得
-    var zoom = Math.log2(360 * (width / 256 / region.longitudeDelta));
-    if (zoom > 18.2) {
-      setShowBuildIcon(true);
-      return;
-    }
-    setShowBuildIcon(false);
-  };
-
-  // // 現在位置の取得
-  const getLocationAsync = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setShareInfoMassage("権限エラー");
-    } else if (status === "granted") {
-      await Location.getCurrentPositionAsync({})
-        .then((location) => {
-          console.log("getCurrentPositionAsync");
-          let longitude = "経度:" + JSON.stringify(location.coords.longitude);
-          let latitude = "緯度:" + JSON.stringify(location.coords.latitude);
-          console.log(longitude);
-          console.log(latitude);
-          setMyLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
-        })
-        .catch((e) => {
-          console.log("現在位置取得失敗");
-          console.log(e);
-        });
-    }
-  };
 
   return (
     <View>
       <MapView
-        onPress={(event) =>
-          props.onPickLongitudeLatitude(event.nativeEvent.coordinate)
-        }
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-        //  provider={PROVIDER_GOOGLE}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
         initialRegion={{
-          latitude: props.campusData.location.latitude
-            ? props.campusData.location.latitude
-            : 0,
-          longitude: props.campusData.location.longitude
-            ? props.campusData.location.longitude
-            : 0,
+          latitude: CAMPUSES[selectedCampus].latitude,
+          longitude: CAMPUSES[selectedCampus].longitude,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
-        region={{
-          ...mapCenterLocation,
-        }}
-        userInterfaceStyle={"light"}
-        onRegionChange={handleRegionChangeComplete}
       >
-        {!props.isEditBuilding &&
-          mapUserObject.mapShowFriends.map((friend) => (
-            <MapFriendIconContainer
-              friendUUID={friend}
-            ></MapFriendIconContainer>
-          ))}
-        {!props.isEditBuilding && (
-          <MapUserIcon
-            imageURI={userObject.userImage}
-            title={userObject.userName ? userObject.userName : "あなた"}
-            location={myLocation}
-          />
-        )}
-        {showBuildingIcon &&
-          props.campusBuildingsArray.map((buildingData) => (
-            <MapBuildingIcon buildingData={buildingData} />
-          ))}
-        {kitchenCarJSON &&
-          kitchenCarJSON.length != 0 &&
-          kitchenCarJSON.map((kitchenCarObject, index) => (
-            <KitchenCarIconContainer
-              kitchenCarObject={kitchenCarObject ? kitchenCarObject.fields : {}}
-              key={index}
-            />
-          ))}
+        {BUILDINGS.map((building, index) => (
+          <Marker
+            key={index}
+            coordinate={{ latitude: building.latitude, longitude: building.longitude }}
+            title={building.name}
+            onPress={() => navigation.navigate("BuildingDetails", { building })}
+          >
+            <Image source={pinImage} style={{ width: 40, height: 40, tintColor: building.color }} />
+          </Marker>
+        ))}
       </MapView>
-      <View
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          width: 100,
-          backgroundColor: "white",
-          borderRadius: 10,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          paddingVertical: 5,
-          elevation: 10,
-        }}
-      >
-        <Text style={{ textAlign: "center", marginBottom: 3 }}>
-          {isShareLocation ? "位置情共有中" : "位置共有停止"}
-        </Text>
-        {shareInfoMessage && (
-          <Text style={{ textAlign: "center", color: "red" }}>
-            {shareInfoMessage}
-          </Text>
-        )}
-        <Text style={{ textAlign: "center" }}>
-          {shareTime ? shareTime + "に共有" : "--:--に共有"}
-        </Text>
-      </View>
-      {mapSearchWord && (
-        <ScrollView
-          style={{
-            width: "100%",
-            paddingTop: 20,
-            paddingHorizontal: 20,
-            position: "absolute",
-            backgroundColor: "white",
-          }}
-        >
-          {kitchenCarJSON
-            .filter(
-              (word) => {
-                if(mapSearchWord=="キッチンカー"){
-                  return kitchenCarJSON
-                }
-                return(JSON.stringify(word.fields.storeName).indexOf(mapSearchWord) !== -1)}
-            ).concat(
-              kitchenCarJSON
-            .filter(
-              (word) => JSON.stringify(word.fields.herf).indexOf(mapSearchWord) !== -1
-            ))
-            .concat(
-              kitchenCarJSON
-            .filter(
-              (word) => JSON.stringify(word.fields.message).indexOf(mapSearchWord) !== -1
-            ))
-            .map((kitchenCarObject) => (
-              <TouchableOpacity
-                onPress={() =>
-                  setMapCenterLocation({
-                    latitude:
-                      kitchenCarObject.fields.position.mapValue.fields.latitude
-                        .stringValue,
-                    longitude:
-                        kitchenCarObject.fields.position.mapValue.fields
-                        .longitude.stringValue,
-                    latitudeDelta: 0.001,
-                    longitudeDelta: 0.001,
-                  })
-                }
-              >
-                <KitchenCarListItem kitchenCarObject={kitchenCarObject} />
-              </TouchableOpacity>
-            ))}
-          {props.campusBuildingsArray
-            .filter(
-              (word) => JSON.stringify(word).indexOf(mapSearchWord) !== -1
-            )
-            .map((buildingData) => (
-              <TouchableOpacity onPress={() => onSelectBuilding(buildingData)}>
-                <MapBuildingListItem buildingData={buildingData} />
-              </TouchableOpacity>
-            ))}
-        </ScrollView>
-      )}
-      {props.isEditBuilding && (
-        <Text
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: "30%",
-            textShadowOffset: { width: 3, height: 3 },
-            textShadowRadius: 4,
-          }}
-        >
-          登録する建物の場所をタップ
-        </Text>
-      )}
     </View>
   );
 };
+
 export default DisplayMap;
