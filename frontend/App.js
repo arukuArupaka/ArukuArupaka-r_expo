@@ -185,7 +185,7 @@ function App() {
                           navigationRef.navigate("TimeTableFriendSearch")
                         }
                       >
-                        <AntDesign name="adduser" size={24} color="black" />{" "}
+                        <AntDesign name="adduser" size={24} color="black" />
                       </TouchableOpacity>
                     </>
                   ),
