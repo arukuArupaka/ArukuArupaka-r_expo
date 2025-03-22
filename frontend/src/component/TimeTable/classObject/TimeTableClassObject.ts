@@ -1,5 +1,5 @@
+import { ARUPAKA_BACKEND_URL } from "../../../../env";
 import { ClassPeriod } from "../types/class-period";
-import { ARUPAKA_BACKEND_URL } from "@env";
 import { ConvertMethods } from "./convert-methods";
 
 type Props = {

@@ -43,22 +43,22 @@ import {
   Condition,
   translateCondition,
   checkImageFalsy,
-  Campus
+  Campus,
 } from "../../../../component/Textbook/interface/textBookData";
 
-const arupakaDbAdress = "https://db-manager-api.arupaka.uk/listing_item/create_item";
+const arupakaDbAdress =
+  "https://db-manager-api.arupaka.uk/listing_item/create_item";
 
 const uploadArupakaDb = async (data: TextBookData) => {
   const dataDb = convertTextBookData(data);
   try {
-    const response = await fetch(arupakaDbAdress,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataDb), // JavaScriptオブジェクトをJSON文字列に変換
-      }
-    );
+    const response = await fetch(arupakaDbAdress, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataDb), // JavaScriptオブジェクトをJSON文字列に変換
+    });
     if (!response.ok) {
       throw new Error(`Error Status:${response.status}`);
     }
@@ -71,7 +71,8 @@ export const CameraCamera = ({ route }) => {
   const navigation = useNavigation();
 
   const [images, setImages] = useState<string[]>(Array(4).fill(null));
-  const [selectedDepartment, setSelectedDepartment] = useState<Department>(null);
+  const [selectedDepartment, setSelectedDepartment] =
+    useState<Department>(null);
   const [selectedCondition, setSelectedCondition] = useState<Condition>(null);
   const [selectedLocation, setSelectedLocation] = useState<Campus>(null);
   const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
@@ -136,15 +137,15 @@ export const CameraCamera = ({ route }) => {
   };
 
   const exhibitProduct = async (
-    productName:string,
-    department:Department,
-    location:Campus,
-    condition:Condition,
-    description:string,
-    price:string
+    productName: string,
+    department: Department,
+    location: Campus,
+    condition: Condition,
+    description: string,
+    price: string
   ) => {
-    if(Number(price)<0||isNaN(Number(price))){
-      Alert.alert("error","価格が不正な値です");
+    if (Number(price) < 0 || isNaN(Number(price))) {
+      Alert.alert("error", "価格が不正な値です");
       return;
     }
     // ユーザーのログイン状態を確認する
@@ -158,7 +159,14 @@ export const CameraCamera = ({ route }) => {
       const userId = auth.currentUser.uid;
 
       // 全ての項目が入力されているか確認する
-      if (!productName ||!department ||!condition ||!location ||!description ||!price) {
+      if (
+        !productName ||
+        !department ||
+        !condition ||
+        !location ||
+        !description ||
+        !price
+      ) {
         Alert.alert("error", "全ての項目を入力してください");
         return; // 出品を中止する
       }
@@ -174,7 +182,6 @@ export const CameraCamera = ({ route }) => {
           userId: userId,
           createdAt: serverTimestamp(),
         });
-        console.log("Document written with ID: ", docRef.id);
 
         const imageUrls = await Promise.all(
           images.map(async (image, index) => {
@@ -197,13 +204,28 @@ export const CameraCamera = ({ route }) => {
           images: imageUrls.filter((url) => url !== null),
         });
 
-        // Delete the document from the freeMarket collection
+        //Delete the document from the freeMarket collection
         if (product) {
           await deleteDoc(doc(db, "freeMarket", product.id));
         }
+
+        console.log(
+          "add arupaka db textbook" +
+            {
+              id: docRef.id,
+              condition: translateCondition(condition), //フロント内では日本語で扱われているので変換
+              createdAt: new Date(),
+              department: department,
+              description: description,
+              images: checkImageFalsy(imageUrls),
+              price: price,
+              productName: productName,
+              userID: userId,
+            }
+        );
         uploadArupakaDb({
           id: docRef.id,
-          condition: translateCondition(condition),//フロント内では日本語で扱われているので変換
+          condition: translateCondition(condition), //フロント内では日本語で扱われているので変換
           createdAt: new Date(),
           department: department,
           description: description,
@@ -229,7 +251,6 @@ export const CameraCamera = ({ route }) => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <KeyboardAvoidingView
@@ -366,9 +387,15 @@ export const CameraCamera = ({ route }) => {
             onValueChange={setSelectedLocation}
             placeholder={{ label: "※必須", value: null }}
             items={[
-              {label: "衣笠キャンパス", value: "衣笠キャンパス"},
-              {label: "びわこ・くさつキャンパス", value: "びわこ・くさつキャンパス(BKC)",},
-              {label: "大阪いばらきキャンパス", value: "大阪いばらきキャンパス",},
+              { label: "衣笠キャンパス", value: "衣笠キャンパス" },
+              {
+                label: "びわこ・くさつキャンパス",
+                value: "びわこ・くさつキャンパス(BKC)",
+              },
+              {
+                label: "大阪いばらきキャンパス",
+                value: "大阪いばらきキャンパス",
+              },
             ]}
             style={{
               inputIOS: {
