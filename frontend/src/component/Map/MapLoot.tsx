@@ -36,7 +36,7 @@ function MapLoot({navigation}) {
                         </TouchableOpacity>
                       ),
                 }} />
-            <Tab.Screen name='friends' component={MapFriendsView}
+            {/* <Tab.Screen name='friends' component={MapFriendsView}
                 options={{
                     tabBarIcon: () => (<MaterialIcons name="person-add-alt" size={24} color="black" />
                     ),
@@ -46,7 +46,7 @@ function MapLoot({navigation}) {
                           <Ionicons name="chevron-back" style={{marginRight:10}} size={30} color="black" />
                         </TouchableOpacity>
                       ),
-                }} />
+                }} /> */}
         </Tab.Navigator>
     );
 } export default MapLoot
