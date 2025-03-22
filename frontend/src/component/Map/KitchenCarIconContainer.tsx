@@ -1,12 +1,12 @@
-import { View, Text, Image ,TouchableOpacity} from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Marker } from "react-native-maps";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 const KitchenCarIconContainer = (props) => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
-    const [description,setDescription]=useState("")
+  const [description, setDescription] = useState("");
 
   return (
     <Marker
@@ -33,16 +33,21 @@ const KitchenCarIconContainer = (props) => {
       title={props.kitchenCarObject.storeName.stringValue}
       description="アイコンを長押しして詳細表示"
     >
-        <TouchableOpacity
-        onLongPress={()=>navigation.navigate("MapKitchenCarDetail",{kitchenCarObject:props.kitchenCarObject})}>
-      <Image
-        style={{ height: 40, width: 40 }}
-        source={
-          props.kitchenCarObject.imageURI.stringValue
-            ? { uri: props.kitchenCarObject.imageURI.stringValue }
-            : require("../../image/Logo.png")
+      <TouchableOpacity
+        onLongPress={() =>
+          navigation.navigate("MapKitchenCarDetail", {
+            kitchenCarObject: props.kitchenCarObject,
+          })
         }
-      />
+      >
+        <Image
+          style={{ height: 40, width: 40 }}
+          source={
+            props.kitchenCarObject.imageURI.stringValue
+              ? { uri: props.kitchenCarObject.imageURI.stringValue }
+              : require("../../image/Logo.png")
+          }
+        />
       </TouchableOpacity>
     </Marker>
   );

@@ -10,6 +10,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"; // 追加
+import KitchenCarIconContainer from "./KitchenCarIconContainer";
 
 const pinImage = require("../../image/map/image1.png");
 
@@ -181,7 +182,6 @@ const DisplayMap = (props) => {
   const [error, setError] = useState(null);
 
   const fetchOccupiedClassrooms = async (period) => {
-
     setLoading(true);
     setError(null);
 
@@ -207,7 +207,7 @@ const DisplayMap = (props) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setClassrooms(data);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
@@ -341,7 +341,77 @@ const DisplayMap = (props) => {
     });
   };
 
-  // console.log(findNoClassroomsByBuilding("コラーニングⅠ"))
+
+
+  // キッチンカー表示ロジック
+
+  const [kitchenCarJSON, setKitchenCarJSON] = useState([]);
+  useEffect(() => {
+    const url =
+      "https://firestore.googleapis.com/v1/projects/arupaka-kitchen-car/databases/(default)/documents:runQuery";
+  
+    async function fetchCarPosition() {
+      try {
+        // 今日の0時0分0秒（ISO文字列）を取得
+        const now = new Date();
+        const startOfDay = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const startOfDayISO = startOfDay.toISOString(); // ← ISO8601形式へ変換
+  
+        // クエリの構築（timestampValueにISO文字列を使用）
+        const query = {
+          structuredQuery: {
+            from: [{ collectionId: "car_position_BKC" }],
+            where: {
+              fieldFilter: {
+                field: { fieldPath: "time" },
+                op: "GREATER_THAN_OR_EQUAL",
+                value: { timestampValue: startOfDayISO },
+              },
+            },
+          },
+        };
+  
+        // POSTリクエストの送信
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(query),
+        });
+  
+        if (!response.ok) {
+          throw new Error("ネットワーク応答に問題がありました");
+        }
+  
+        // レスポンスの解析
+        const data = await response.json();
+        const documents = data
+          .map((doc) => doc.document)
+          .filter((doc) => doc !== undefined);
+  
+        console.log("取得したドキュメント：", documents);
+  
+        if (documents.length > 0) {
+          setKitchenCarJSON(documents);
+        } else {
+          console.log("本日のキッチンカー位置データは存在しません");
+        }
+      } catch (error) {
+        console.error("フェッチエラー:", error);
+      }
+    }
+  
+    fetchCarPosition();
+  }, []);
+  
+  // キッチンカーロジックここまで
+
+
   return (
     <View>
       {/* マップ */}
@@ -358,7 +428,7 @@ const DisplayMap = (props) => {
         }}
         onTouchStart={handleMapTouch} // マップタッチでオーバーレイを表示
       >
-        {/* ピンの描画 */}
+        {/* 授業建物表示 */}
         {BUILDINGS.map((building, index) => (
           <Marker
             key={index}
@@ -366,8 +436,9 @@ const DisplayMap = (props) => {
               latitude: building.latitude,
               longitude: building.longitude,
             }}
+            description="アイコンをタップして詳細表示"
             title={building.name}
-            onPress={()=>goToBuildingDetails(building)}
+            onPress={() => goToBuildingDetails(building)}
           >
             <View style={{ alignItems: "center" }}>
               {/* アイコン */}
@@ -413,6 +484,18 @@ const DisplayMap = (props) => {
             </View>
           </Marker>
         ))}
+        {/* 授業建物表示ここまで */}
+
+        {/* キッチンカー表示 */}
+        {kitchenCarJSON &&
+          kitchenCarJSON.length != 0 &&
+          kitchenCarJSON.map((kitchenCarObject, index) => (
+            <KitchenCarIconContainer
+              kitchenCarObject={kitchenCarObject ? kitchenCarObject.fields : {}}
+              key={index}
+            />
+          ))}
+        {/* キッチンカー表示ここまで */}
       </MapView>
 
       {/* 日時 & 限目のオーバーレイ */}
@@ -420,7 +503,7 @@ const DisplayMap = (props) => {
         <View
           style={{
             position: "absolute",
-            top: 50,
+            top: 25,
             left: 10,
             right: 10,
             backgroundColor: "rgba(0,0,0,0.6)",
@@ -431,20 +514,15 @@ const DisplayMap = (props) => {
             justifyContent: "space-between",
           }}
         >
-          {/* 左ボタン */}
-
-          {/* 日付・時間・限目表示 */}
           <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
             {currentDate} {currentTime}
           </Text>
-
           <TouchableOpacity onPress={() => changePeriod(-1)}>
             <Text style={{ color: "#fff", fontSize: 24 }}>◀</Text>
           </TouchableOpacity>
           <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
             {period}限
           </Text>
-          {/* 右ボタン */}
           <TouchableOpacity onPress={() => changePeriod(1)}>
             <Text style={{ color: "#fff", fontSize: 24 }}>▶</Text>
           </TouchableOpacity>
