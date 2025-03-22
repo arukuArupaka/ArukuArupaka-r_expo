@@ -58,9 +58,7 @@ const ClassPeriodOptionsBody: FC<Props> = ({
             <NoHits />
           )
         ) : (
-          typeof classPeriodOptions === "string" && (
-            <NotChosenDepartmentOrSeason />
-          )
+          <NotChosenDepartmentOrSeason />
         )}
       </View>
     </ScrollView>
