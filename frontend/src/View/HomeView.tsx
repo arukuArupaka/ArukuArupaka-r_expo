@@ -41,6 +41,7 @@ import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
+import { onAppStart } from "../services/onAppStart";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -175,6 +176,7 @@ const HomeView = (props) => {
   } = useTimeTable();
 
   useEffect(() => {
+    onAppStart();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // ユーザーがログインしている場合

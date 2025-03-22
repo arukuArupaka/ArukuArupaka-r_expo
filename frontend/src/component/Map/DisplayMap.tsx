@@ -292,7 +292,7 @@ const DisplayMap = (props) => {
         });
 
         if (!response.ok) {
-          throw new Error("ネットワーク応答に問題がありました");
+          // throw new Error("ネットワーク応答に問題がありました");
         }
 
         // レスポンスの解析
@@ -309,7 +309,7 @@ const DisplayMap = (props) => {
           console.log("本日のキッチンカー位置データは存在しません");
         }
       } catch (error) {
-        console.error("フェッチエラー:", error);
+        // console.error("フェッチエラー:", error);
       }
     }
 
@@ -374,7 +374,7 @@ const DisplayMap = (props) => {
         }}
         onTouchStart={handleMapTouch} // マップタッチでオーバーレイを表示
       >
-        //静的建物データ
+        {/* 静的建物データ */}
         {mapObjectData.map((building, index) => (
           <Marker
             key={index}
@@ -384,7 +384,6 @@ const DisplayMap = (props) => {
             }}
             title={building.name}
             description={building.type.join(", ")}
-            // onPress={() => navigation.navigate("Web", { url: marker.url })}
           >
             <TouchableOpacity
               onLongPress={() =>
