@@ -39,6 +39,8 @@ import {
 } from "firebase/auth";
 import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
+import { useTimeTable } from "../component/TimeTable/TimeTableContext";
+import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -58,9 +60,23 @@ const Headerlist = (props) => {
         justifyContent: "center",
       }}
       onPress={() => {
-        props.props.navigation.navigate("settings");
+        props.props.navigation.navigate(props.navigation);
       }}
     >
+      {props.hasNewNotification &&
+        props.navigation === "FirebaseNotificationList" && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              backgroundColor: "red",
+              borderRadius: 100,
+              width: 10,
+              height: 10,
+            }}
+          ></View>
+        )}
       <Ionicons name={props.iconName} size={24} color={"#EB3637"} />
     </TouchableOpacity>
   );
@@ -83,7 +99,14 @@ const AppList = (props) => {
         display: "flex",
       }}
       onPress={() => {
-        props.test.navigation.navigate(props.jumpPage);
+        if (!props.headerTitle) {
+          props.test.navigation.navigate(props.jumpPage);
+          return;
+        }
+
+        props.test.navigation.navigate(props.jumpPage, {
+          headerTitle: props.headerTitle,
+        });
       }}
     >
       <MaterialCommunityIcons
@@ -143,7 +166,13 @@ const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
-  const [userIconImageUri, setUserIconImageUri] = useState("");
+  const {
+    userSettingContent,
+    hasNewFirebaseNotification,
+    fetchFirebaseNotificationData,
+    userIconImageUri,
+    setUserIconImageUri,
+  } = useTimeTable();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -151,6 +180,7 @@ const HomeView = (props) => {
         // ユーザーがログインしている場合
         dispatch(handleLoginAction(user.emailVerified));
         dispatch(setUserUUIDAction(user.uid));
+        await fetchFirebaseNotificationData();
       } else {
         // ユーザーがログインしていない場合、保存されたemailとpasswordを使用してログインを試みる
         const savedEmail = await AsyncStorage.getItem("email");
@@ -205,9 +235,7 @@ const HomeView = (props) => {
   console.log(userIconImageUri);
   return (
     <>
-      <SafeAreaView
-        style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }}
-      />
+      <SafeAreaView style={{ backgroundColor: "rgba(235, 54, 55, 0.30)" }} />
       <ScrollView
         bounces={false} // オーバースクロールを有効化
         style={{ flex: 1 }}
@@ -240,8 +268,26 @@ const HomeView = (props) => {
             </Text>
             <Text style={styles.titleText}>マイページ</Text>
           </View>
-          <View style={{ flex: 1, alignItems: "flex-end", marginRight: 10 }}>
-            <Headerlist props={props} iconName="settings-outline" />
+          <View
+            style={{
+              flex: 1,
+              alignItems: "flex-end",
+              justifyContent: "flex-end",
+              marginRight: 10,
+              flexDirection: "row",
+            }}
+          >
+            <Headerlist
+              props={props}
+              iconName="notifications-outline"
+              navigation="FirebaseNotificationList"
+              hasNewNotification={hasNewFirebaseNotification}
+            />
+            <Headerlist
+              props={props}
+              iconName="settings-outline"
+              navigation="settings"
+            />
           </View>
         </View>
         <ShowDate></ShowDate>
@@ -289,6 +335,9 @@ const HomeView = (props) => {
               test={props}
               jumpPage="TimeTable"
               iconName="file-table"
+              headerTitle={`${userSettingContent?.schoolYear || "未設定"} ${
+                userSettingContent?.semester || "未設定"
+              }`}
             />
           </View>
           <View style={styles.appListFlex}>
@@ -310,8 +359,6 @@ const HomeView = (props) => {
               iconName="book-multiple"
             />
           </View>
-        
-          
         </View>
       </ScrollView>
       <SafeAreaView />

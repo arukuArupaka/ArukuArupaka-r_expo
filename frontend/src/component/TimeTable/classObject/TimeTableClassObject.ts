@@ -1,33 +1,50 @@
 import { ClassPeriod } from "../types/class-period";
-import { TIME_TABLE_API_URL } from "@env";
+import { ARUPAKA_BACKEND_URL } from "@env";
+import { ConvertMethods } from "./convert-methods";
 
 type Props = {
   department?: string;
   weekOfTheDay: string;
   period: number;
-  season?: string;
+  semester?: string;
+  schoolYear: number;
 };
 
 export class ClassDataFetcher {
   department?: string;
   weekOfTheDay: string;
   period: number;
-  season?: string;
+  semester?: string;
+  schoolYear: number;
 
-  constructor({ department, weekOfTheDay, period, season }: Props) {
+  constructor({
+    department,
+    weekOfTheDay,
+    period,
+    semester,
+    schoolYear,
+  }: Props) {
     this.department = department;
     this.weekOfTheDay = weekOfTheDay;
     this.period = period;
-    this.season = season;
+    this.semester = semester;
+    this.schoolYear = schoolYear;
   }
 
   async fetchClassData(): Promise<ClassPeriod[] | string> {
     try {
-      if (!this.department || !this.season) {
-        return "not chosen your department or now season";
+      if (!this.department || !this.semester) {
+        console.log("not chosen your department or now semester");
+        return "not chosen your department or now semester";
       }
+      const convertedDepartment =
+        ConvertMethods.convertDepartmentFromJapaneseToEnglish(this.department);
+      const convertedSemester =
+        ConvertMethods.convertSemesterFromJapaneseToEnglish(this.semester);
+      const convertedWeekday =
+        ConvertMethods.convertWeekdayFromJapaneseToEnglish(this.weekOfTheDay);
       const response = await fetch(
-        `${TIME_TABLE_API_URL}?kamoku_department=${this.department}&kamoku_day=${this.weekOfTheDay}&kamoku_time=${this.period}&kamoku_season=${this.season}`
+        `${ARUPAKA_BACKEND_URL}/lecture/get-lectures?schoolYear=${this.schoolYear}&academic=${convertedDepartment}&weekday=${convertedWeekday}&period=${this.period}&semester=${convertedSemester}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -35,21 +52,23 @@ export class ClassDataFetcher {
       const json = await response.json();
 
       const processedData: ClassPeriod[] = json.map((item: any) => ({
-        year: 2024,
-        season: item.kamoku_season,
-        weekOfTheDay: item.kamoku_day,
-        period: item.kamoku_time,
-        className: item.kamoku_name,
-        classRoom: item.kamoku_class,
+        year: item.schoolYear,
+        season: this.semester,
+        weekOfTheDay: ConvertMethods.convertWeekdayFromEnglishToJapanese(
+          item.weekday
+        ),
+        period: item.period,
+        className: item.name,
+        classRoom: item.rawClassroom,
         memo: "",
         isNotify: true,
         notificationTime: 10,
-        department: item.kamoku_department,
-        unit: item.kamoku_unit,
-        num: item.kamoku_num,
-        resume: item.kamoku_resume,
-        teacher: item.kamoku_teacher,
-        status: item.kamoku_status,
+        department: this.department,
+        unit: item.credits,
+        num: item.classCode,
+        resume: item.syllabus,
+        teacher: item.teacher,
+        status: item.category,
         color: "",
         mulColor: "",
         statusColor: "",

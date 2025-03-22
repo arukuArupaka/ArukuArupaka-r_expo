@@ -6,6 +6,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Crypto from "expo-crypto";
 import { useSelector } from "react-redux";
 import FriendAddConfirmDialog from "./FriendAddConfirmDialog";
+import { QRView } from "./component/QRView";
+import { QRShowButton } from "./component/QRShowButton";
 
 const FriendRegisterCamera = ({
   firebaseUserAddFriendConvertToken,
@@ -46,63 +48,30 @@ const FriendRegisterCamera = ({
           />
         </>
       )}
-      <View style={{ width: "100%", alignItems: "center" }}>
-        <TouchableOpacity
+      {isShowQR && <QRView setIsShowQR={setIsShowQR} user={user} />}
+      {!isShowQR && <QRShowButton showQRCode={showQRCode} />}
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          height: 200,
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
           style={{
-            position: "absolute",
-            backgroundColor: "white",
-            bottom: 120,
-            marginHorizontal: 20,
-            paddingVertical: 10,
-            paddingHorizontal: 50,
-            borderRadius: 10,
-            zIndex: 10,
+            textAlign: "center",
+            fontSize: 15,
+            color: "white",
+            width: "90%",
           }}
-          onPress={showQRCode}
         >
-          <Text style={{ fontSize: 30, fontWeight: "800" }}>QRで友達登録</Text>
-        </TouchableOpacity>
+          QRコードを読み取って友達申請を送ることができます。
+        </Text>
       </View>
-      {isShowQR && (
-        <View
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-            zIndex: 100,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "white",
-              width: 270,
-              height: 300,
-              paddingTop: 5,
-              marginRight: "auto",
-              marginLeft: "auto",
-              borderRadius: 10,
-            }}
-          >
-            <Text style={{textAlign:"center"}}>お互いにQRコードを読み合ってください</Text>
-            <TouchableOpacity onPress={() => setIsShowQR(false)}>
-              <MaterialIcons
-                style={{ textAlign: "right" }}
-                name="cancel"
-                size={30}
-                color="black"
-              />
-            </TouchableOpacity>
-            <View
-              style={{ marginRight: "auto", marginLeft: "auto", marginTop: 5 }}
-            >
-              {user.hasOwnProperty("friendConvertToken") && (
-                <QRCode value={user.friendConvertToken} size={230} />
-              )}
-            </View>
-          </View>
-        </View>
-      )}
       <FriendAddConfirmDialog
         confirmFriendData={confirmFriendData}
         onClose={onCloseConfirmDialog}

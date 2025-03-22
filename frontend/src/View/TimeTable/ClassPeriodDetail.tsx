@@ -24,7 +24,8 @@ type ClassPeriodDetailScreenRouteProp = RouteProp<
 const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
   route,
 }) => {
-  const { userClassPeriodData, setUserClassPeriodData } = useTimeTable();
+  const { userClassPeriodData, setUserClassPeriodData, userSettingContent } =
+    useTimeTable();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { classPeriodData } = route.params;
   const [isModalShow, setIsModalShow] = useState(false);
@@ -71,7 +72,11 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
           text: "削除",
           onPress: () => {
             deleteUserClassPeriod(data);
-            navigation.navigate("TimeTable");
+            navigation.navigate("TimeTable", {
+              headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${
+                userSettingContent?.semester || "未設定"
+              }`,
+            });
           },
         },
       ],
@@ -83,35 +88,27 @@ const ClassPeriodDetail: FC<{ route: ClassPeriodDetailScreenRouteProp }> = ({
     <View style={{ flex: 1 }}>
       {!isVisible ? (
         <View style={{ flexDirection: "column", alignItems: "center" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              color: "black",
-              fontSize: 25,
-              paddingVertical: 15,
-            }}
-          >
-            {currentClassPeriodData.weekOfTheDay}曜
-            {currentClassPeriodData.period}限
-          </Text>
           <ClassPeriodDetailDataBody
             onPress={() => setIsModalShow(true)}
             currentClassPeriodData={currentClassPeriodData}
             isFriends={classPeriodData.isFriends}
-          />{!classPeriodData.isFriends&&
-          <ColorChange currentClassPeriodData={currentClassPeriodData} />}
+          />
+          {!classPeriodData.isFriends && (
+            <ColorChange currentClassPeriodData={currentClassPeriodData} />
+          )}
           <ActionButton
             onPress={() => setIsVisible(true)}
             color={"black"}
             label={"シラバスにアクセスする"}
           />
-          {!classPeriodData.isFriends&&
-          <ActionButton
-            onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
-            color={"red"}
-            label={"削除する"}
-          />}
-          
+          {!classPeriodData.isFriends && (
+            <ActionButton
+              onPress={() => deleteClassPeriodDialog(currentClassPeriodData)}
+              color={"red"}
+              label={"削除する"}
+            />
+          )}
+
           <SetClassPeriodModal
             from={"classPeriodDetail"}
             isShow={isModalShow}

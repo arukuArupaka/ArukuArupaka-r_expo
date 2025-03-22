@@ -17,7 +17,21 @@ const SemesterSelect = () => {
               semester: value, // departmentフィールドのみを更新
             }))
           }
-          Icon={() => (<Text style={{ position: 'absolute', right: 5, top: 10, fontSize: 18, color: '#789',width:200,textAlign:"right"}}>▼</Text>)}
+          Icon={() => (
+            <Text
+              style={{
+                position: "absolute",
+                right: 5,
+                top: 10,
+                fontSize: 18,
+                color: "#789",
+                width: 200,
+                textAlign: "right",
+              }}
+            >
+              ▼
+            </Text>
+          )}
           items={[
             {
               label: "春セメスター",

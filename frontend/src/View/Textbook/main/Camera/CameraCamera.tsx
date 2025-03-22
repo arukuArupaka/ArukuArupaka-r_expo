@@ -10,6 +10,8 @@ import {
   Platform,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import { HeaderforTextbook3 } from "../../../../component/Textbook/HeaderforTextbook3";
 import DepartmentPicker from "../../../../component/Textbook/DepartmentPicker";
@@ -34,20 +36,49 @@ import { FieldValue, serverTimestamp } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
 import faculties from "../../../../data/faculties.json";
-import {KeyboardAvoidingView, } from "react-native";
+import {
+  TextBookData,
+  convertTextBookData,
+  Department,
+  Condition,
+  translateCondition,
+  checkImageFalsy,
+  Campus
+} from "../../../../component/Textbook/interface/textBookData";
+
+const arupakaDbAdress = "https://db-manager-api.arupaka.uk/listing_item/create_item";
+
+const uploadArupakaDb = async (data: TextBookData) => {
+  const dataDb = convertTextBookData(data);
+  try {
+    const response = await fetch(arupakaDbAdress,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataDb), // JavaScriptオブジェクトをJSON文字列に変換
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Error Status:${response.status}`);
+    }
+  } catch (error) {
+    console.error("APIにデータを送信できませんでした:", error);
+  }
+};
 
 export const CameraCamera = ({ route }) => {
   const navigation = useNavigation();
 
-  const [images, setImages] = useState(Array(4).fill(null));
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [selectedCondition, setSelectedCondition] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [images, setImages] = useState<string[]>(Array(4).fill(null));
+  const [selectedDepartment, setSelectedDepartment] = useState<Department>(null);
+  const [selectedCondition, setSelectedCondition] = useState<Condition>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Campus>(null);
   const [departmentModalVisible, setDepartmentModalVisible] = useState(false);
   const [conditionModalVisible, setConditionModalVisible] = useState(false);
-  const [productName, setproductName] = useState("");
-  const [description, setdescription] = useState("");
-  const [price, setprice] = useState("");
+  const [productName, setproductName] = useState<string>("");
+  const [description, setdescription] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
 
   const { product } = route.params || {};
 
@@ -58,10 +89,12 @@ export const CameraCamera = ({ route }) => {
       setSelectedLocation(product.location);
       setSelectedCondition(product.condition);
       setdescription(product.description);
-      setprice(product.price);
+      setPrice(product.price);
       setImages(product.images || Array(4).fill(null));
     }
   }, [product]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (product && images.every((image) => image === null)) {
@@ -102,71 +135,21 @@ export const CameraCamera = ({ route }) => {
     }
   };
 
-  const saveDraft = async (
-    productName,
-    department,
-    location,
-    condition,
-    description,
-    price
+  const exhibitProduct = async (
+    productName:string,
+    department:Department,
+    location:Campus,
+    condition:Condition,
+    description:string,
+    price:string
   ) => {
-    try {
-      if (product) {
-        await updateDoc(doc(db, "freeMarket", product.id), {
-          productName,
-          department,
-          location,
-          condition,
-          description,
-          price,
-        });
-      } else {
-        const docRef = await addDoc(collection(db, "freeMarket"), {
-          productName,
-          department,
-          location,
-          condition,
-          description,
-          price,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      }
-
-      // 画像をアップロードしてURLを取得し、Firestoreに保存
-      const imageUrls = await Promise.all(
-        images.map(async (image, index) => {
-          if (image) {
-            const blob = await fetch(image).then((response) => response.blob());
-            const storageRef = ref(
-              storage,
-              `syouhin/${product ? product.id : docRef.id}/image${index}`
-            );
-            await uploadBytes(storageRef, blob);
-            return getDownloadURL(storageRef);
-          }
-          return null;
-        })
-      );
-
-      // Firestoreに画像のURLを保存
-      await updateDoc(doc(db, "freeMarket", product ? product.id : docRef.id), {
-        images: imageUrls.filter((url) => url !== null),
-      });
-    } catch (e) {
-      console.error("Error adding document: ", e);
+    if(Number(price)<0||isNaN(Number(price))){
+      Alert.alert("error","価格が不正な値です");
+      return;
     }
-  };
-
-  const exhibit = async (
-    productName,
-    department,
-    location,
-    condition,
-    description,
-    price
-  ) => {
     // ユーザーのログイン状態を確認する
     try {
+      setIsLoading(true);
       if (!auth.currentUser) {
         Alert.alert("ログイン白や", "出品するにはログインが必要です");
         return;
@@ -175,7 +158,7 @@ export const CameraCamera = ({ route }) => {
       const userId = auth.currentUser.uid;
 
       // 全ての項目が入力されているか確認する
-      if (!productName || !department || !condition || !location || !description || !price) {
+      if (!productName ||!department ||!condition ||!location ||!description ||!price) {
         Alert.alert("error", "全ての項目を入力してください");
         return; // 出品を中止する
       }
@@ -218,7 +201,17 @@ export const CameraCamera = ({ route }) => {
         if (product) {
           await deleteDoc(doc(db, "freeMarket", product.id));
         }
-
+        uploadArupakaDb({
+          id: docRef.id,
+          condition: translateCondition(condition),//フロント内では日本語で扱われているので変換
+          createdAt: new Date(),
+          department: department,
+          description: description,
+          images: checkImageFalsy(imageUrls),
+          price: price,
+          productName: productName,
+          userID: userId,
+        });
         // 出品成功時のみダイアログを表示
         Alert.alert("成功", "出品しました", [
           {
@@ -232,227 +225,272 @@ export const CameraCamera = ({ route }) => {
       }
     } catch (e) {
       console.error("Error: ", e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDepartmentSelect = (department) => {
-    setSelectedDepartment(department);
-    setDepartmentModalVisible(false);
-  };
-
-  const handleConditionSelect = (condition) => {
-    setSelectedCondition(condition);
-    setConditionModalVisible(false);
-  };
 
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-    style={{ flex: 1 }}
-  >
-    <ScrollView>
-    <View>
-      <View style={styles.infomation}>
-        <Ionicons
-          name="information-circle"
-          size={26}
-          style={{ height: 30, marginLeft: "4%" }}
-        ></Ionicons>
-        <Text style={{ fontSize: 15, marginLeft: "2%", marginTop: "0.5%" }}>
-          商品情報
-        </Text>
-      </View>
-      <View style={styles.imageContainer}>
-        {images.map((image, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.imageWrapper}
-            onPress={() => pickImage(index)}
-          >
-            {image ? (
-              <Image source={{ uri: image }} style={styles.image} />
-            ) : (
-              <View style={styles.placeholder}>
-                <Ionicons
-                  name="camera"
-                  size={50}
-                  color="white"
-                  style={{ marginLeft: "17%", marginTop: "13%" }}
-                />
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.productname}>
-        <FontAwesome
-          name="tag"
-          size={22}
-          style={{ height: 20, paddingLeft: "5%", marginTop: "4%" }}
-        ></FontAwesome>
-        <TextInput
-          style={{ marginLeft: "3%", flex: 1 }}
-          placeholder="商品名"
-          value={productName}
-          onChangeText={setproductName}
-        ></TextInput>
-      </View>
-
-      <View style={styles.syousai}>
-        <Text>商品情報</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text>使用学部</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setSelectedDepartment(value)}
-            placeholder={{ label: "選択されていません", value: null }}
-            items={Object.keys(faculties.学部).map((key) => ({
-              label: faculties.学部[key].名称,
-              value: faculties.学部[key].名称,
-            }))}
-            style={{ inputIOS: { marginLeft: "5%" } }} // iOS向けのスタイル調整
-            value={selectedDepartment}
-          />
-        </View>
-
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text>キャンパス取引</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setSelectedLocation(value)}
-            placeholder={{ label: "選択されていません", value: null }}
-            items={[
-              { label: "衣笠キャンパス", value: "衣笠キャンパス" },
-              { label: "びわこ・くさつキャンパス(BKC)", value: "びわこ・くさつキャンパス(BKC)" },
-              { label: "大阪いばらきキャンパス", value: "大阪いばらきキャンパス" },
-
-              // 他の状態もここに追加できます
-            ]}
-            style={{
-              inputIOS: { marginLeft: "5%" },
-              inputAndroid: { marginLeft: "5%" },
-            }} // iOS & Android向けのスタイル調整
-            value={selectedLocation}
-          />
-        </View>    
-
-
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text>商品の状態</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setSelectedCondition(value)}
-            placeholder={{ label: "選択されていません", value: null }}
-            items={[
-              { label: "新品、未使用", value: "新品、未使用" },
-              { label: "未使用に近い", value: "未使用に近い" },
-              { label: "目立った傷や汚れなし", value: "目立った傷や汚れなし" },
-              { label: "やや傷や汚れあり", value: "やや傷や汚れあり" },
-              { label: "傷や汚れあり", value: "傷や汚れあり" },
-              { label: "全体的に状態が悪い", value: "全体的に状態が悪い" },
-              // 他の状態もここに追加できます
-            ]}
-            style={{
-              inputIOS: { marginLeft: "5%" },
-              inputAndroid: { marginLeft: "5%" },
-            }} // iOS & Android向けのスタイル調整
-            value={selectedCondition}
-          />
-        </View>
-        <Text>商品説明</Text>
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "#F8F8F8" }}
+      keyboardVerticalOffset={50}
+    >
+      {isLoading && (
         <View
           style={{
-            width: "90%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             height: "100%",
-            marginLeft: "5%",
-            marginBottom: "5%",
-            borderWidth: 1,
-            borderRadius: 5,
+            zIndex: 1000,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.3)", // 半透明の背景
           }}
         >
-          <TextInput
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-            value={description}
-            onChangeText={setdescription}
-          ></TextInput>
+          <ActivityIndicator size="large" color="white" />
         </View>
-        <View
-          style={{ flexDirection: "row", marginTop: "5%", marginLeft: "2.5%" }}
-        >
-          <Text>値段</Text>
-          <View
-            style={{
-              width: "40%",
-              height: "80%",
-              borderWidth: 1,
-            }}
-          >
-            <TextInput 
-            value={price} 
-            onChangeText={setprice}　 
-            keyboardType="numeric" // 数字入力用キーボード
-            ></TextInput>
+      )}
+      <View
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      ></View>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* 商品画像 */}
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {images.map((image, index) => (
+              <TouchableOpacity
+                key={index}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 8,
+                  backgroundColor: "#E0E0E0",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: 4,
+                }}
+                onPress={() => pickImage(index)}
+              >
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: "100%", height: "100%", borderRadius: 8 }}
+                  />
+                ) : (
+                  <Ionicons name="camera" size={40} color="#888" />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
-          <Text>円</Text>
+        </ScrollView>
+
+        {/* 商品名 */}
+        <Text style={{ fontSize: 16, fontWeight: "bold", marginTop: 20 }}>
+          商品名
+        </Text>
+        <TextInput
+          style={{
+            borderColor: "#CCC",
+            borderWidth: 1,
+            borderRadius: 8,
+            height: 40,
+            paddingHorizontal: 10,
+            backgroundColor: "#FFF",
+          }}
+          value={productName}
+          placeholder="※必須"
+          onChangeText={setproductName}
+        />
+
+        {/* 商品詳細 */}
+        <Text style={{ fontSize: 16, fontWeight: "bold", marginTop: 20 }}>
+          商品情報
+        </Text>
+
+        {/* 使用学部 */}
+        <View
+          style={{
+            marginVertical: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            // backgroundColor:"red"
+          }}
+        >
+          <Text style={{ fontSize: 16, marginRight: 10, flex: 1 }}>
+            カテゴリー
+          </Text>
+          <View style={{ width: 100 }}>
+            <RNPickerSelect
+              onValueChange={setSelectedDepartment}
+              placeholder={{ label: "※必須", value: null }}
+              items={Object.keys(faculties.学部).map((key) => ({
+                label: faculties.学部[key].名称,
+                value: faculties.学部[key].名称,
+              }))}
+              style={{
+                inputIOS: {
+                  fontSize: 16,
+                  textAlign: "center",
+                  height: 40,
+                  width: 100,
+                }, // iOS向け調整
+                inputAndroid: { fontSize: 16, textAlign: "center", height: 40 }, // Android向け調整
+              }}
+              Icon={() => (
+                <View style={{ position: "absolute", right: 3, top: 6 }}>
+                  <FontAwesome name="angle-down" size={25} color="black" />
+                </View>
+              )}
+            />
+          </View>
         </View>
-        <View>
-          {/* <TouchableOpacity
-            onPress={() => {
-              saveDraft(
-                productName,
-                selectedDepartment,
-                selectedCondition,
-                description,
-                price
-              );
-            }}
-          >
-            <Text>下書きを保存する</Text>
-          </TouchableOpacity> */}
-          <TouchableOpacity
+
+        <View
+          style={{
+            marginVertical: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            // backgroundColor:"red"
+          }}
+        >
+          {/* 取引キャンパス */}
+          <Text style={{ fontSize: 16, marginRight: 10, flex: 1 }}>
+            キャンパス取引
+          </Text>
+          <RNPickerSelect
+            onValueChange={setSelectedLocation}
+            placeholder={{ label: "※必須", value: null }}
+            items={[
+              {label: "衣笠キャンパス", value: "衣笠キャンパス"},
+              {label: "びわこ・くさつキャンパス", value: "びわこ・くさつキャンパス(BKC)",},
+              {label: "大阪いばらきキャンパス", value: "大阪いばらきキャンパス",},
+            ]}
             style={{
-              backgroundColor: "orange",
-              width: "90%",
-              height: 30,
-              marginLeft: "5%",
-              marginTop: "5%",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 5,
+              inputIOS: {
+                fontSize: 16,
+                height: 40,
+                width: 200,
+                textAlign: "right",
+                marginRight: 30,
+              }, // iOS向け調整
+              inputAndroid: { fontSize: 16, textAlign: "center", height: 40 }, // Android向け調整
             }}
-            onPress={() => {
-              Alert.alert(
-                "出品しますか？",
-                "出品すると元に戻すことはできません",
-                [
-                  {
-                    text: "キャンセル",
-                    style: "cancel",
-                  },
-                  {
-                    text: "出品する",
-                    onPress: () => {
-                      exhibit(
-                        productName,
-                        selectedDepartment,
-                        selectedLocation,
-                        selectedCondition,
-                        description,
-                        price
-                      );
-                    },
-                  },
-                ]
-              );
-            }}
-          >
-            <Text style={{ color: "white", fontWeight: "700" }}>出品する</Text>
-          </TouchableOpacity>
+            Icon={() => (
+              <View style={{ position: "absolute", right: 3, top: 6 }}>
+                <FontAwesome name="angle-down" size={25} color="black" />
+              </View>
+            )}
+          />
         </View>
-      </View>
-    </View>
+        {/* 商品の状態 */}
+        <View
+          style={{
+            marginVertical: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            // backgroundColor:"red"
+          }}
+        >
+          <Text style={{ fontSize: 16, marginRight: 10, flex: 1 }}>
+            商品の状態
+          </Text>
+          <RNPickerSelect
+            onValueChange={setSelectedCondition}
+            placeholder={{ label: "※必須", value: null }}
+            items={[
+              { label: "新品、未使用", value: "BRAND_NEW" },
+              { label: "未使用に近い", value: "LIKE_NEW" },
+              { label: "目立った傷や汚れなし", value: "GOOD" },
+              { label: "やや傷や汚れあり", value: "FAIR" },
+              { label: "傷や汚れあり", value: "POOR" },
+              { label: "全体的に状態が悪い", value: "BAD" },
+            ]}
+            style={{
+              inputIOS: {
+                fontSize: 16,
+                height: 40,
+                width: 150,
+                textAlign: "right",
+                marginRight: 30,
+              }, // iOS向け調整
+              inputAndroid: { fontSize: 16, textAlign: "center", height: 40 }, // Android向け調整
+            }}
+            Icon={() => (
+              <View style={{ position: "absolute", right: 3, top: 6 }}>
+                <FontAwesome name="angle-down" size={25} color="black" />
+              </View>
+            )}
+          />
+        </View>
+
+        {/* 商品説明 */}
+        <Text style={{ marginTop: 10 }}>商品説明</Text>
+        <TextInput
+          style={{
+            borderColor: "#CCC",
+            borderWidth: 1,
+            borderRadius: 8,
+            padding: 10,
+            backgroundColor: "#FFF",
+            height: 80,
+          }}
+          value={description}
+          onChangeText={setdescription}
+          placeholder="※必須"
+          multiline
+        />
+
+        {/* 価格 */}
+        <Text style={{ marginTop: 10 }}>価格</Text>
+        <TextInput
+          style={{
+            borderColor: "#CCC",
+            borderWidth: 1,
+            borderRadius: 8,
+            height: 40,
+            paddingHorizontal: 10,
+            backgroundColor: "#FFF",
+          }}
+          value={price}
+          onChangeText={setPrice}
+          keyboardType="numeric"
+          placeholder="※必須"
+        />
+
+        {/* 出品ボタン */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: "orange",
+            padding: 15,
+            borderRadius: 8,
+            alignItems: "center",
+            marginTop: 20,
+          }}
+          onPress={() => {
+            Alert.alert("出品しますか？", "出品すると元に戻せません", [
+              { text: "キャンセル", style: "cancel" },
+              {
+                text: "出品する",
+                onPress: () =>
+                  exhibitProduct(
+                    productName,
+                    selectedDepartment,
+                    selectedLocation,
+                    selectedCondition,
+                    description,
+                    price
+                  ),
+              },
+            ]);
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>出品する</Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );

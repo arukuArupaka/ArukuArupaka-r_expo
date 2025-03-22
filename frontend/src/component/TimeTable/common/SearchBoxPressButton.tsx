@@ -4,9 +4,11 @@ import { FC } from "react";
 
 type Props = {
   onOpen: () => void;
+  from: string;
 };
 
-const SearchBoxPressButton: FC<Props> = ({ onOpen }) => {
+const SearchBoxPressButton: FC<Props> = ({ onOpen, from }) => {
+  const pressVarWord = from === "friendSearch" ? "友達" : "授業";
   return (
     <TouchableOpacity style={styles.searchBox} onPress={() => onOpen()}>
       <FontAwesome
@@ -23,7 +25,7 @@ const SearchBoxPressButton: FC<Props> = ({ onOpen }) => {
           color: "gray",
         }}
       >
-        どの授業をお探しですか？
+        どの{`${pressVarWord}`}をお探しですか？
       </Text>
     </TouchableOpacity>
   );

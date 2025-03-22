@@ -1,7 +1,7 @@
 export type UserSettingContent = {
-  year?: number;
+  schoolYear?: number;
   department: string;
-  semester: string;
+  semester: boolean;
   displayCount: number;
   colorByUnits: boolean;
   colorBySubject: boolean;
