@@ -47,6 +47,7 @@ import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
 import SearchBoxPressButton from "./src/component/TimeTable/common/SearchBoxPressButton";
 import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import TimeTableFriendRegisterVIew from "./src/View/TimeTable/TimeTableFriendRegisterVIew";
+import BuildingDetailsScreen from "./src/component/Map/BuildingDetailsScreen";
 import FirebaseNotificationList from "./src/View/FirebaseNotification";
 import TimeTableFriendList from "./src/View/TimeTable/TimeTableFriendList";
 import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
@@ -380,6 +381,11 @@ function App() {
                 name="MapKitchenCarDetail"
                 component={KitchenCarDetailView}
                 options={() => ({ title: "" })}
+              />
+              <Stack.Screen
+                name="BuildingDetails"
+                options={() => ({ title: "建物詳細" })}
+                component={BuildingDetailsScreen}
               />
             </Stack.Navigator>
           </NavigationContainer>

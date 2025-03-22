@@ -54,7 +54,7 @@ const MapMainView = () => {
       console.log(await isLogin);
       if (await isLogin) {
         // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
-        console.log('getDoc:inMapMain 57')
+        console.log("getDoc:inMapMain 57");
         const refFiresrore = doc(db, `mapGPS/${userUUID}`);
         const snap = await getDoc(refFiresrore);
 
@@ -100,8 +100,7 @@ const MapMainView = () => {
   const userObject = useSelector((state) => state.user.userObject);
 
   const onOpenActionSheet = () => {
-
-    pickImage()
+    pickImage();
 
     // if (Platform.OS == "android") {
     //   pickImage();
@@ -145,7 +144,7 @@ const MapMainView = () => {
       return;
     }
     const refFiresrore = doc(db, `mapBuildings/${campusData.id}`);
-    console.log('getDoc:inMapMain 151')
+    console.log("getDoc:inMapMain 151");
     await getDoc(refFiresrore)
       .then((deforeData) => {
         //compareSetMapBuildings(data,cloneArray)
@@ -291,7 +290,7 @@ const MapMainView = () => {
           //     longitude: 135.96364694774536,
           //   },
           // });
-          setCampusData(CampusLocationData[0])
+          setCampusData(CampusLocationData[0]);
           setShowCanpusSelect(false);
           break;
         case "KIC":
@@ -304,7 +303,7 @@ const MapMainView = () => {
           //     longitude: 135.7240146,
           //   },
           // });
-          setCampusData(CampusLocationData[1])
+          setCampusData(CampusLocationData[1]);
           setShowCanpusSelect(false);
           break;
         case "OIC":
@@ -317,7 +316,7 @@ const MapMainView = () => {
           //     longitude: 135.5612411,
           //   },
           // });
-          setCampusData(CampusLocationData[2])
+          setCampusData(CampusLocationData[2]);
           setShowCanpusSelect(false);
           break;
       }
@@ -329,7 +328,7 @@ const MapMainView = () => {
 
     const getCampusBuildingData = async () => {
       const refFiresrore = doc(db, `mapBuildings/${campusData.id}`);
-      console.log('getDoc:inMapMain 335')
+      console.log("getDoc:inMapMain 335");
       await getDoc(refFiresrore)
         .then((data) => {
           //console.log(data.data().cloneArray)
@@ -351,6 +350,7 @@ const MapMainView = () => {
   const CampusLocationData = [
     {
       id: "ritsumei_BKC",
+      apiQuery:"BKC",
       name: "びわこくさつキャンパス",
       imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469182",
       location: {
@@ -373,6 +373,7 @@ const MapMainView = () => {
     {
       id: "ritsumei_KIC",
       name: "衣笠キャンパス",
+      apiQuery:"KIC",
       imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469181",
       location: {
         latitude: 35.0325428,
@@ -389,6 +390,7 @@ const MapMainView = () => {
     {
       id: "ritsumei_OIC",
       name: "大阪いばらきキャンパス",
+      apiQuery:"OIC",
       imageURL: "https://www.ritsumei.ac.jp/image.jsp?id=469183",
       location: {
         latitude: 34.8108499,
@@ -479,6 +481,8 @@ const MapMainView = () => {
           )}
         </View>
       )}
+
+      
       {/* //建物追加 */}
       {!showMap && !showEditBuilding && (
         <TouchableOpacity
