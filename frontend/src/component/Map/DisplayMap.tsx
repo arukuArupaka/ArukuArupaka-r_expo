@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
@@ -180,7 +181,6 @@ const DisplayMap = (props) => {
   const [error, setError] = useState(null);
 
   const fetchOccupiedClassrooms = async (period) => {
-    console.log("fetchOccupiedClassrooms");
 
     setLoading(true);
     setError(null);
@@ -194,8 +194,7 @@ const DisplayMap = (props) => {
       "Friday",
       "Saturday",
     ];
-    // const todayWeekday = weekdays[new Date().getDay()];
-    const todayWeekday = weekdays[1]; // 月曜日固定
+    const todayWeekday = weekdays[new Date().getDay()];
 
     const schoolYear = new Date().getFullYear();
     const semester = getSemester();
@@ -218,7 +217,6 @@ const DisplayMap = (props) => {
   };
 
   useEffect(() => {
-
     fetchOccupiedClassrooms(period);
   }, [selectedCampus, period]);
 
@@ -332,6 +330,17 @@ const DisplayMap = (props) => {
     [classrooms]
   );
 
+  const goToBuildingDetails = (building) => {
+    if (loading) {
+      Alert.alert("データ取得中です。しばらくお待ちください。");
+      return;
+    }
+    navigation.navigate("BuildingDetails", {
+      building: building,
+      classrooms: findClassroomsByBuilding(building.name),
+    });
+  };
+
   // console.log(findNoClassroomsByBuilding("コラーニングⅠ"))
   return (
     <View>
@@ -358,12 +367,7 @@ const DisplayMap = (props) => {
               longitude: building.longitude,
             }}
             title={building.name}
-            onPress={() =>
-              navigation.navigate("BuildingDetails", {
-                building: building,
-                classrooms: findClassroomsByBuilding(building.name),
-              })
-            }
+            onPress={()=>goToBuildingDetails(building)}
           >
             <View style={{ alignItems: "center" }}>
               {/* アイコン */}
@@ -374,40 +378,38 @@ const DisplayMap = (props) => {
               />
 
               {/* 数字バッジ */}
-              {true && (
-                <View
-                  style={{
-                    position: "absolute",
-                    top: -5,
-                    right: -4,
-                    backgroundColor: "red",
-                    borderRadius: 10,
-                    paddingHorizontal: 6,
-                    paddingVertical: 2,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    elevation: 3, // Android影
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4, // iOS影
-                  }}
-                >
-                  {loading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 14,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {findNoClassroomsByBuilding(building.name).length}
-                    </Text>
-                  )}
-                </View>
-              )}
+              <View
+                style={{
+                  position: "absolute",
+                  top: -5,
+                  right: -4,
+                  backgroundColor: "red",
+                  borderRadius: 10,
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  elevation: 3, // Android影
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4, // iOS影
+                }}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {findNoClassroomsByBuilding(building.name).length}
+                  </Text>
+                )}
+              </View>
             </View>
           </Marker>
         ))}
