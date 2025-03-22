@@ -410,6 +410,69 @@ const DisplayMap = (props) => {
 
   // キッチンカーロジックここまで
 
+  // firebase建物表示ロジック
+
+  const [buildingDataFirebase, setBuildingDataFirebase] = useState([]);
+
+  useEffect(() => {
+    const url =
+      "https://firestore.googleapis.com/v1/projects/arupaka-map-building/databases/(default)/documents:runQuery";
+
+    async function fetchCarPosition() {
+      try {
+        // 今日の0時0分0秒（ISO文字列）を取得
+        const now = new Date();
+        const startOfDay = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const startOfDayISO = startOfDay.toISOString(); // ← ISO8601形式へ変換
+
+        // クエリの構築（timestampValueにISO文字列を使用）
+        const query = {
+          structuredQuery: {
+            from: [{ collectionId: "building_position_BKC" }],
+          },
+        };
+        
+
+        // POSTリクエストの送信
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(query),
+        });
+
+        if (!response.ok) {
+          throw new Error("ネットワーク応答に問題がありました");
+        }
+
+        // レスポンスの解析
+        const data = await response.json();
+        const documents = data
+          .map((doc) => doc.document)
+          .filter((doc) => doc !== undefined);
+
+        console.log("取得したドキュメント：", documents);
+
+        if (documents.length > 0) {
+          setBuildingDataFirebase(documents);
+        } else {
+          console.log("本日のキッチンカー位置データは存在しません");
+        }
+      } catch (error) {
+        console.error("フェッチエラー:", error);
+      }
+    }
+
+    fetchCarPosition();
+  }, []);
+
+  // firebase建物ロジックここまで
+
   return (
     <View>
       {/* マップ */}
@@ -516,6 +579,19 @@ const DisplayMap = (props) => {
             />
           ))}
         {/* キッチンカー表示ここまで */}
+
+
+        {/* firebase建物表示 */}
+        {buildingDataFirebase &&
+          buildingDataFirebase.length != 0 &&
+          buildingDataFirebase.map((kitchenCarObject, index) => (
+            <KitchenCarIconContainer
+              kitchenCarObject={kitchenCarObject ? kitchenCarObject.fields : {}}
+              key={index}
+            />
+          ))}
+        {/* キッチンカー表示ここまで */}
+
       </MapView>
 
       {/* 日時 & 限目のオーバーレイ */}
