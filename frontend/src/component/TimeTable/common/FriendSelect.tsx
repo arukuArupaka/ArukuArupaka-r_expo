@@ -93,10 +93,22 @@ const FriendSelect = ({
           alignItems: "center",
         }}
       >
-        <Image
-          source={{ uri: userIconImageUri }}
-          style={{ width: 30, height: 30, borderRadius: 25, marginRight: 5 }}
-        />
+        {!!userIconImageUri ? (
+          <Image
+            source={{ uri: userIconImageUri }}
+            style={{ width: 30, height: 30, borderRadius: 25, marginRight: 5 }}
+          />
+        ) : (
+          <View
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 25,
+              marginRight: 5,
+              backgroundColor: "#c0c0c0",
+            }}
+          ></View>
+        )}
         <Text
           style={{
             fontSize: 18,
