@@ -68,15 +68,16 @@ const ASetting = (props) => {
   const isLoginNotVerificationEmail: boolean = useSelector(
     (state: State) => state.user.isLoginNotVerificationEmail || false
   );
-  if (!isLogin || isLoginNotVerificationEmail) {
-    //dispatch(handleLoginAfterPageName('Home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではちゃんと定義してね
-    props.navigation.navigate("login"); //なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
-  }
 
+  useEffect(() => {
+    if (!isLogin || isLoginNotVerificationEmail) {
+      props.navigation.navigate("login");
+    }
+  }, [isLogin, isLoginNotVerificationEmail]);
   //ここまでコピーしてね
 
   useEffect(() => {
-    console.log("effect");
+    console.log("Asetting on 63 userUUID:", userUUID);
     const getUserDate = async () => {
       if (!isLogin) return;
       // ログインしていた場合、ユーザーコレクションからユーザーデータを参照
