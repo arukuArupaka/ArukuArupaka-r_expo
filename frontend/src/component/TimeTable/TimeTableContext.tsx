@@ -159,7 +159,7 @@ export const TimeTableProvider = ({ children }) => {
     (async () => {
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== "granted") {
-        alert("通知の許可が必要です！");
+        // alert("通知の許可が必要です！");
       }
     })();
   }, []);

@@ -63,10 +63,13 @@ const ASettingToPage = (props) => {
   const isLoginNotVerificationEmail: boolean = useSelector(
     (state: State) => state.user.isLoginNotVerificationEmail || false
   );
-  if (!isLogin || isLoginNotVerificationEmail) {
-    //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
-    props.navigation.navigate("login"); //なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
-  }
+
+  useEffect(() => {
+    if (!isLogin || isLoginNotVerificationEmail) {
+      //dispatch(handleLoginAfterPageName('home'))//ログイン後にどこの画面に遷移するのか、app.js で定義してる名前を入力 他のところではコメントアウトはずしてね
+      props.navigation.navigate("login"); //なんとかして、app.js で定義してるloginって名前のコンポーネントに画面遷移させて
+    }
+  }, [isLogin, isLoginNotVerificationEmail]);
 
   //ここまでコピーしてね
 
