@@ -15,6 +15,13 @@ export const postDeviceId = async (deviceToken: string): Promise<boolean> => {
 
         if (!response.ok) {
             console.error('送信失敗:', response.status);
+
+            if (response.status == 400) {
+                await onUpdataThisFunction(IS_POST_DEVICE_ID);
+                console.error('送信失敗: 400エラー');
+                return true;
+            }
+
             return false;
         }
 
