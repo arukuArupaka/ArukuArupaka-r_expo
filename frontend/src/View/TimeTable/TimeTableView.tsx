@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import WeekRow from "../../component/TimeTable/timeTableView/WeekRow";
 import ClassTimeColumn from "../../component/TimeTable/timeTableView/ClassTimeColumn";
 import React, { useEffect, useRef, useState } from "react";
@@ -9,9 +9,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../component/TimeTable/types/root-stack-param-list";
 import FriendSelectContainer from "../../component/TimeTable/common/FriendSelectContainer";
+import { useTimeTable } from "../../component/TimeTable/TimeTableContext";
 
 const TimeTableView = () => {
   const [showTutorial1, setShowTutorial1] = useState(false);
+  const { userSettingContent } = useTimeTable();
   const videoRef = useRef(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -34,9 +36,53 @@ const TimeTableView = () => {
     checkFirstLaunch();
   }, []);
 
+  useEffect(() => {
+    console.log("userSettingContent:", userSettingContent);
+  }, [userSettingContent]);
+
   return (
     <View style={{ flex: 1 }}>
-      <FriendSelectContainer />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-end",
+        }}
+      >
+        {(!userSettingContent.department ||
+          !userSettingContent.semester ||
+          !userSettingContent.schoolYear) && (
+          <View
+            style={{
+              backgroundColor: "#D32F2F", // 明るい黄色
+              borderRadius: 10,
+              paddingVertical: 5,
+              paddingHorizontal: 15,
+              marginHorizontal: 10, // 左右に余白を確保
+              // 影をつける（iOS用）
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 3,
+              // Android用
+              elevation: 4,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 15,
+                color: "#FFEB3B", // 濃い赤
+                textAlign: "center",
+              }}
+            >
+              {"⚠️学部かセメスターか年度\nが選択されていません。"}
+            </Text>
+          </View>
+        )}
+        <FriendSelectContainer />
+      </View>
       <View
         style={{
           height: "100%",

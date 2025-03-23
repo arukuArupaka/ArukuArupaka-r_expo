@@ -1,4 +1,10 @@
-import { ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import ClassPeriodOption from "./ClassPeriodOption";
 import NotChosenDepartmentOrSeason from "./NotChosenDepartmentOrSeason";
 import { ClassPeriod } from "../types/class-period";
@@ -57,8 +63,10 @@ const ClassPeriodOptionsBody: FC<Props> = ({
           ) : (
             <NoHits />
           )
-        ) : (
+        ) : typeof classPeriodOptions === "string" ? (
           <NotChosenDepartmentOrSeason />
+        ) : (
+          <ActivityIndicator size="small" color="#0000ff" />
         )}
       </View>
     </ScrollView>
