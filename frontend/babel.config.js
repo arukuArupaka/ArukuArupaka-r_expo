@@ -14,6 +14,14 @@ module.exports = function (api) {
           allowUndefined: true,
         },
       ],
+      [
+        "module-resolver",
+        {
+          alias: {
+            "@src": "./src", // ← ここを追加！
+          },
+        },
+      ],
     ],
   };
 };

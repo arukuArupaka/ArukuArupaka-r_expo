@@ -391,7 +391,7 @@ const DisplayMap = (props) => {
               }
             >
               <Image
-                source={require("../../image/map/bus_stand.png")}
+                source={require("@src/image/map/bus_stand.png")}
                 style={{ width: 18, height: 36 }}
               />
               <View style={{ width: 18, height: 36 }} />
