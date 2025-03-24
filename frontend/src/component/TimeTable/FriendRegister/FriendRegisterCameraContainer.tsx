@@ -134,7 +134,6 @@ const FriendRegisterCameraContainer = () => {
             name: myDocument.userName,
             requestedAt: new Date(),
           }), // friendList に friendID を追加
-          hello: "hello",
         },
         { merge: true } // 既存のデータを保持して更新
       );
@@ -145,7 +144,6 @@ const FriendRegisterCameraContainer = () => {
       console.error("Error adding friend: ", error);
     }
   };
-  console.log(user);
 
   return (
     <FriendRegisterCamera

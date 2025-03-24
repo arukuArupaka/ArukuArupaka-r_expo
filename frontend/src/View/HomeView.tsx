@@ -16,6 +16,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeCarousel from "../component/Home/HomeViewCarousel.tsx";
+import * as Crypto from "expo-crypto";
 import Specialsite from "../component/Home/HomeViewSpecial";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -26,7 +27,7 @@ import {
   setUserObject,
 } from "../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
-import { doc, getDoc } from "@firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "@firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage, db } from "../../firebase";
 import {
@@ -41,7 +42,6 @@ import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
-import { onAppStart } from "../services/onAppStart";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -175,14 +175,41 @@ const HomeView = (props) => {
     setUserIconImageUri,
   } = useTimeTable();
 
+  const user = useSelector((state: any) => state.user.userObject);
+
+  const firebaseUserAddFriendConvertToken = async (friendConvertToken) => {
+    try {
+      // Firestoreの "friends" コレクションにドキュメントを追加
+      await setDoc(
+        doc(collection(db, "users"), `${auth.currentUser.uid}`),
+        {
+          friendConvertToken: friendConvertToken,
+        },
+        { merge: true }
+      );
+      dispatch(
+        setUserObject({ ...user, friendConvertToken: friendConvertToken })
+      );
+    } catch (error) {
+      console.error("Error adding friend convert token: ", error);
+      throw error; // エラーハンドリング
+    }
+  };
+
+  const setFriendConvertToken = async () => {
+    if (!user.hasOwnProperty("friendConvertToken")) {
+      await firebaseUserAddFriendConvertToken(Crypto.randomUUID());
+    }
+  };
+
   useEffect(() => {
-    onAppStart();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // ユーザーがログインしている場合
         dispatch(handleLoginAction(user.emailVerified));
         dispatch(setUserUUIDAction(user.uid));
         await fetchFirebaseNotificationData();
+        await setFriendConvertToken();
       } else {
         // ユーザーがログインしていない場合、保存されたemailとpasswordを使用してログインを試みる
         const savedEmail = await AsyncStorage.getItem("email");
