@@ -44,8 +44,6 @@ import PortalAccess from "./src/View/PortalAccess";
 import ClassPeriodOptions from "./src/View/TimeTable/ClassPeriodOptions";
 import TimeTableSetting from "./src/View/TimeTable/TimeTableSetting";
 import ClassPeriodDetail from "./src/View/TimeTable/ClassPeriodDetail";
-import SearchBoxPressButton from "./src/component/TimeTable/common/SearchBoxPressButton";
-import ClassPeriodSearchScreen from "./src/component/TimeTable/classPeriodOptions/ClassPeriodSearchScreen";
 import TimeTableFriendRegisterVIew from "./src/View/TimeTable/TimeTableFriendRegisterVIew";
 import BuildingDetailsScreen from "./src/component/Map/BuildingDetailsScreen";
 import FirebaseNotificationList from "./src/View/FirebaseNotification";
