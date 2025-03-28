@@ -5,7 +5,10 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_KOTLIN_VERSION": "1.9.25"
+      }
     },
     "development-simulator": {
       "developmentClient": true,
@@ -23,6 +26,9 @@
     },
     "device": {
       "distribution": "internal",
+      "env": {
+        "EXPO_KOTLIN_VERSION": "1.9.25"
+      },
       "android": {
         "buildType": "apk"
       }
