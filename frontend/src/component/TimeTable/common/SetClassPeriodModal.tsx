@@ -108,8 +108,8 @@ const SetClassPeriodModal: FC<Props> = ({
           ...updatedData,
           statusColor: ConvertMethods.setClassPeriodStatusColor(data),
           mulColor: ConvertMethods.setClassPeriodUnitColor(data),
+          year: userSettingContent?.schoolYear,
         };
-        console.log("updatedData", updatedData);
         await setUserClassPeriods(updatedData);
         navigation.navigate("TimeTable", {
           headerTitle: `${userSettingContent?.schoolYear || "未設定"} ${

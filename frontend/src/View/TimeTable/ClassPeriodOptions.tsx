@@ -74,6 +74,7 @@ const ClassPeriodOptions: FC<{ route: ClassPeriodOptionsScreenRouteProp }> = ({
               <SearchBoxPressButton
                 onOpen={() => switchSearchScreen(true)}
                 from={"TimeTableOptions"}
+                disabled={!!classPeriodOptions ? false : true}
               />
               <ChosenWeekOfTheDayAndPeriod
                 stringWeekOfTheDay={stringWeekOfTheDay}

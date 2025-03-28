@@ -5,12 +5,17 @@ import { FC } from "react";
 type Props = {
   onOpen: () => void;
   from: string;
+  disabled: boolean;
 };
 
-const SearchBoxPressButton: FC<Props> = ({ onOpen, from }) => {
+const SearchBoxPressButton: FC<Props> = ({ onOpen, from, disabled }) => {
   const pressVarWord = from === "friendSearch" ? "友達" : "授業";
   return (
-    <TouchableOpacity style={styles.searchBox} onPress={() => onOpen()}>
+    <TouchableOpacity
+      style={styles.searchBox}
+      onPress={() => onOpen()}
+      disabled={disabled}
+    >
       <FontAwesome
         name="search"
         size={24}
