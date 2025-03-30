@@ -14,7 +14,11 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import HomeCarousel from "../component/Home/HomeViewCarousel.tsx";
 import * as Crypto from "expo-crypto";
 import Specialsite from "../component/Home/HomeViewSpecial";
@@ -342,12 +346,15 @@ const HomeView = (props) => {
               jumpPage="Bike"
               iconName="bicycle"
             />
-            <AppList
-              appName="天気予報"
+            <NewAppList
+              appName="カレンダー"
               color="#EB3637"
               test={props}
-              jumpPage="weather"
-              iconName="weather-partly-cloudy"
+              jumpPage="ACalendar"
+              iconName="page-copy"
+              item={() => (
+                <FontAwesome name="calendar" size={24} color="#F36F21" />
+              )}
             />
           </View>
           <View style={styles.appListFlex}>

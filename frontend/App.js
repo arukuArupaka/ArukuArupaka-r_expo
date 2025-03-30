@@ -49,6 +49,7 @@ import BuildingDetailsScreen from "./src/component/Map/BuildingDetailsScreen";
 import FirebaseNotificationList from "./src/View/FirebaseNotification";
 import TimeTableFriendList from "./src/View/TimeTable/TimeTableFriendList";
 import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
+import ACalendar from "./src/View/ACalender";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -384,6 +385,29 @@ function App() {
                 name="BuildingDetails"
                 options={() => ({ title: "建物詳細" })}
                 component={BuildingDetailsScreen}
+              />
+              <Stack.Screen
+                name="ACalendar"
+                component={ACalendar}
+                options={({ navigation }) => ({
+                  title: "カレンダー",
+                  headerStyle: {
+                    backgroundColor: "#fff", // 白背景
+                  },
+                  headerTintColor: "#000", // 戻るボタンやタイトルの色を黒に
+                  headerTitleStyle: {
+                    fontWeight: "bold",
+                  },
+                  headerBackTitleVisible: false, // 「戻る」テキストを非表示
+                  headerBackImage: () => (
+                    <Ionicons
+                      name="arrow-back"
+                      size={24}
+                      color="black"
+                      style={{ marginLeft: 10 }}
+                    />
+                  ),
+                })}
               />
             </Stack.Navigator>
           </NavigationContainer>
