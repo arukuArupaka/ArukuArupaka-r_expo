@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../../../firebase";
 import { FirebaseNotification } from "./types/firebase-notification";
+import { onAppStart } from "../../services/onAppStart";
 
 const TimeTableContext = createContext(null);
 
@@ -162,6 +163,7 @@ export const TimeTableProvider = ({ children }) => {
         // alert("通知の許可が必要です！");
       }
     })();
+    onAppStart();
   }, []);
 
   const fetchFirebaseNotificationData = async () => {
