@@ -46,6 +46,7 @@ import NewAppList from "../component/Home/NewAppList.tsx";
 import { Foundation } from "@expo/vector-icons";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
+import HomeAdmobFooter from "../component/Home/HomeAdmobFooter";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -398,6 +399,7 @@ const HomeView = (props) => {
         </View>
       </ScrollView>
       <SafeAreaView />
+      <HomeAdmobFooter />
     </>
   );
 };
