@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "13.0.3",
+    "version": "13.0.4",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",
@@ -78,6 +78,7 @@
         "expo-build-properties",
         {
           "ios": {
+            "deploymentTarget": "16.0",
             "useFrameworks": "static",
             "extraPods": [
               {
@@ -90,5 +91,11 @@
       ],
       "expo-font"
     ]
+  },
+  "react-native-google-mobile-ads": {
+    "ios_app_id": "ca-app-pub-7782777506427620~5838158769",
+    "android_app_id": "ca-app-pub-3940256099942544~3347511713",
+    "delay_app_measurement_init": true,
+    "user_tracking_usage_description": "許可することで、より関連性の高い広告を表示することができるようになります。"
   }
 }
