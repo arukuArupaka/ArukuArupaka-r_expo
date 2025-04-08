@@ -29,6 +29,7 @@ import {
   TextBookDataDB,
 } from "../../../component/Textbook/interface/textBookData";
 import { FontAwesome } from "@expo/vector-icons"; // アイコン用
+import { ARUPAKA_BACKEND_URL } from "../../../../env";
 
 const departmentList = [
   { departmantName: "すべて" },
@@ -157,7 +158,7 @@ export const TextbookHome = () => {
   const fetchDB = async (searchWord: string): Promise<TextBookDataDB[]> => {
     try {
       const response = await fetch(
-        `https://db-manager-api.arupaka.uk/listing_item/search_item?name=${searchWord}`
+        `${ARUPAKA_BACKEND_URL}/listing_item/search_item?name=${searchWord}`
       );
 
       if (!response.ok) {
@@ -174,9 +175,9 @@ export const TextbookHome = () => {
   const getFromFireBase = async (products: TextBookDataDB[]) => {
     try {
       setIsLoading(true);
-      if(products.length === 0){
-        Alert.alert("商品が見つかりませんでした")
-        return
+      if (products.length === 0) {
+        Alert.alert("商品が見つかりませんでした");
+        return;
       }
       const idList = products.map((product) => {
         return product.documentId;
@@ -272,7 +273,7 @@ export const TextbookHome = () => {
             }}
             onPress={async () => {
               fetchDB(textInputRef.current).then((data) => {
-                console.log(data)
+                console.log(data);
                 getFromFireBase(data);
               });
             }}
