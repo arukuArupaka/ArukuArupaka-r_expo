@@ -1,1 +1,0 @@
-export const ARUPAKA_BACKEND_URL = "https://db-manager-api.arupaka.uk";
