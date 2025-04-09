@@ -68,17 +68,17 @@ export class ConvertMethods {
       case 1:
         return { hour: 9, minute: 0 };
       case 2:
-        return { hour: 10, minute: 40 };
+        return { hour: 10, minute: 45 };
       case 3:
-        return { hour: 13, minute: 0 };
+        return { hour: 13, minute: 10 };
       case 4:
-        return { hour: 14, minute: 40 };
+        return { hour: 14, minute: 55 };
       case 5:
-        return { hour: 16, minute: 20 };
+        return { hour: 16, minute: 40 };
       case 6:
-        return { hour: 18, minute: 0 };
+        return { hour: 18, minute: 25 };
       case 7:
-        return { hour: 19, minute: 40 };
+        return { hour: 20, minute: 10 };
     }
   }
 
