@@ -13,6 +13,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import KitchenCarIconContainer from "./KitchenCarIconContainer";
 import { BUILDINGS, CAMPUSES, mapObjectData } from "./buildingData";
 import * as Location from "expo-location";
+import { ARUPAKA_BACKEND_URL } from "../../../env";
 
 const pinImage = require("../../image/map/image1.png");
 
@@ -48,7 +49,7 @@ const DisplayMap = (props) => {
 
     try {
       const response = await fetch(
-        `https://db-manager-api.arupaka.uk/lecture/get-occupied-classrooms?campus=${props.campusData.apiQuery}&schoolYear=${schoolYear}&semester=${semester}&weekday=${todayWeekday}&period=${period}`
+        `${ARUPAKA_BACKEND_URL}/lecture/get-occupied-classrooms?campus=${props.campusData.apiQuery}&schoolYear=${schoolYear}&semester=${semester}&weekday=${todayWeekday}&period=${period}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
