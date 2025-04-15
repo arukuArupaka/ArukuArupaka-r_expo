@@ -10,7 +10,7 @@ const HomeAdmobFooter = () => {
   return (
     <View style={{ alignItems: "center" }}>
       <BannerAd
-        unitId={"ca-app-pub-7782777506427620/3276047368"} // ★ 本番はここを本物のAd Unit IDに置き換える
+        unitId={"ca-app-pub-7782777506427620/1528362176"} // ★ 本番はここを本物のAd Unit IDに置き換える
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,

@@ -1,0 +1,1 @@
+export const ARUPAKA_BACKEND_URL = "https://arupaka-db-manager.onrender.com";
