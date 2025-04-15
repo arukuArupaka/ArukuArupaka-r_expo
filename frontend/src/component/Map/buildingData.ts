@@ -9,7 +9,7 @@ export const mapObjectData = [
             longitude: 135.948703
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E9%87%8E%E8%B7%AF%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222355&dgmpl=%E9%87%8E%E8%B7%AF%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1%3A0&p=0%2C8%2C10"
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480081&course-sequence=0007900503-2"
     },
     {
         name: "野路(南草津方面)",
@@ -21,7 +21,7 @@ export const mapObjectData = [
             longitude: 135.948359
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E9%87%8E%E8%B7%AF%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222355&mapmode=2&mape=%E9%87%8E%E8%B7%AF%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1&dgmpl=%E9%87%8E%E8%B7%AF%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A2&p=0%2C8%2C10%2C12%2C17"
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480081&course-sequence=0007900483-8"
     },
     {
         name: "南田山(立命館方面)",
@@ -45,8 +45,8 @@ export const mapObjectData = [
             longitude: 135.947877
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E5%8D%97%E7%94%B0%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222353&dgmpl=%E5%8D%97%E7%94%B0%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A2%3A5&p=0%2C8%2C10"
-    },
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480081&course-sequence=0007900483-8"
+        },
     {
         "name": "玉川小学校前(立命館方面)",
         "type": [
@@ -57,7 +57,7 @@ export const mapObjectData = [
             "longitude": 135.949963
         },
         "image": require("@src/image/map/bus_stand.png"),
-        "url": "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E7%8E%89%E5%B7%9D%E5%B0%8F%E5%AD%A6%E6%A0%A1%E5%89%8D%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222048&dgmpl=%E7%8E%89%E5%B7%9D%E5%B0%8F%E5%AD%A6%E6%A0%A1%E5%89%8D%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1%3A0&p=0%2C8%2C10"
+        "url": "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480047&course-sequence=0007900503-4"
     },
     {
         "name": "玉川小学校前(南草津方面)",
@@ -69,7 +69,7 @@ export const mapObjectData = [
             "longitude": 135.949786
         },
         "image": require("@src/image/map/bus_stand.png"),
-        "url": "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E7%8E%89%E5%B7%9D%E5%B0%8F%E5%AD%A6%E6%A0%A1%E5%89%8D%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222048&dgmpl=%E7%8E%89%E5%B7%9D%E5%B0%8F%E5%AD%A6%E6%A0%A1%E5%89%8D%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1%3A0&p=0%2C8%2C10"
+        "url": "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480047&course-sequence=0007900502-4"
     },
     {
         "name": "小野山(立命館方面)",
@@ -81,7 +81,7 @@ export const mapObjectData = [
             "longitude": 135.951351
         },
         "image": require("@src/image/map/bus_stand.png"),
-        "url": "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222049&dgmpl=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1%3A0&p=0%2C8%2C10"
+        "url": "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480051&course-sequence=0007900503-5"
     },
     {
         "name": "小野山(南草津方面)",
@@ -93,7 +93,7 @@ export const mapObjectData = [
             "longitude": 135.951191
         },
         "image": require("@src/image/map/bus_stand.png"),
-        "url": "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222350&dgmpl=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A2%3A6&p=0%2C8%2C10"
+        "url": "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480051&course-sequence=0007900502-3"
     },
     {
         name: "パナソニック東口(立命館方面)",
@@ -105,7 +105,7 @@ export const mapObjectData = [
             longitude: 135.955291
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222049&dgmpl=%E5%B0%8F%E9%87%8E%E5%B1%B1%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A1%3A0&p=0%2C8%2C10"
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480078&course-sequence=0007900503-6"
     },
     {
         name: "パナソニック東口(西口経由立命館方面)",
@@ -118,7 +118,7 @@ export const mapObjectData = [
 
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E3%83%91%E3%83%8A%E3%82%BD%E3%83%8B%E3%83%83%E3%82%AF%E6%9D%B1%E5%8F%A3%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222052&dgmpl=%E3%83%91%E3%83%8A%E3%82%BD%E3%83%8B%E3%83%83%E3%82%AF%E6%9D%B1%E5%8F%A3%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A3&p=0%2C8%2C10%2C12"
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480078&course-sequence=0007900502-2"
     },
     {
         name: "パナソニック東口(南草津方面)",
@@ -130,7 +130,7 @@ export const mapObjectData = [
             longitude: 135.955116
         },
         image: require("@src/image/map/bus_stand.png"),
-        url: "https://ohmitetudo-bus.jorudan.biz/diagrampoledtl?mode=1&fr=%E3%83%91%E3%83%8A%E3%82%BD%E3%83%8B%E3%83%83%E3%82%AF%E6%9D%B1%E5%8F%A3%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95&frsk=B&tosk=&dt=202503222052&dgmpl=%E3%83%91%E3%83%8A%E3%82%BD%E3%83%8B%E3%83%83%E3%82%AF%E6%9D%B1%E5%8F%A3%E3%80%94%E8%BF%91%E6%B1%9F%E9%89%84%E9%81%93%E3%83%BB%E6%B9%96%E5%9B%BD%E3%83%90%E3%82%B9%E3%80%95%3A2&p=0%2C8%2C10%2C12"
+        url: "https://transfer-cloud.navitime.biz/ohmitetudo/courses/timetables?busstop=00480078&course-sequence=0007900508-6"
     },
     {
         name: "パナソニック前",
