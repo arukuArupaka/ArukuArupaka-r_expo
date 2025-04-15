@@ -228,6 +228,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
     width: windowWidth,
+    backgroundColor:'white',
   },
   bodyContent: {
     height: 700,
