@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Touchable, TouchableOpacity } from "react-native";
 import WeekRow from "../../component/TimeTable/timeTableView/WeekRow";
 import ClassTimeColumn from "../../component/TimeTable/timeTableView/ClassTimeColumn";
 import React, { useEffect, useRef, useState } from "react";
@@ -51,11 +51,12 @@ const TimeTableView = () => {
         {(!userSettingContent.department ||
           !userSettingContent.semester ||
           !userSettingContent.schoolYear) && (
-          <View
+          <TouchableOpacity onPress={() => {navigation.navigate("TimeTableSetting")}}
             style={{
               backgroundColor: "#D32F2F", // 明るい黄色
               borderRadius: 10,
               paddingVertical: 5,
+              marginTop: 10,
               paddingHorizontal: 15,
               marginHorizontal: 10, // 左右に余白を確保
               // 影をつける（iOS用）
@@ -69,6 +70,7 @@ const TimeTableView = () => {
               justifyContent: "center",
             }}
           >
+            
             <Text
               style={{
                 fontWeight: "bold",
@@ -79,7 +81,7 @@ const TimeTableView = () => {
             >
               {"⚠️学部かセメスターか年度\nが選択されていません。"}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
         <FriendSelectContainer />
       </View>
