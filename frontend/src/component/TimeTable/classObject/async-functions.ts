@@ -31,6 +31,8 @@ export class AsyncFunctions {
             return [] as T;
           case "object":
             return null;
+          case "string":
+            return "" as T;
           default:
             return null;
         }

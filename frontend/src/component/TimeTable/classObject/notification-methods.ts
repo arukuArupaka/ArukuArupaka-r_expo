@@ -40,7 +40,7 @@ export class NotificationMethods {
     minute: number,
     minutesBefore: number,
     classPeriod: ClassPeriod
-  ) {
+  ): Promise<string> {
     // 指定された時間の数分前を計算
     let notificationHour = hour;
     let notificationMinute = minute - minutesBefore;

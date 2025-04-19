@@ -163,7 +163,11 @@ export const TimeTableProvider = ({ children }) => {
         // alert("通知の許可が必要です！");
       }
     })();
-    onAppStart();
+    onAppStart({
+      userClassPeriodData,
+      setUserClassPeriodData,
+      userSettingContent,
+    });
   }, []);
 
   const fetchFirebaseNotificationData = async () => {
