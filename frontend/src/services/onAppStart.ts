@@ -64,7 +64,7 @@ export const onAppStart = async (props: Props) => {
             data.weekOfTheDay
           );
 
-          let updatedData = {
+          let updatedData: ClassPeriod = {
             ...data,
           };
 
@@ -94,7 +94,16 @@ export const onAppStart = async (props: Props) => {
    */
   const version = await AsyncFunctions.getData<string>("@version", "string");
 
-  if (!version || Number(version) < 1308) {
+  /**
+   * 初回ログインかどうかを判定するためのフラグ
+   */
+  const hasLaunched = await AsyncFunctions.getData<string>(
+    "hasLaunched",
+    "string"
+  );
+
+  if ((!version || Number(version) < 1308) && !!hasLaunched) {
+    console.log("hasLaunched:", !!hasLaunched);
     Alert.alert("時間割通知時間更新", "通知時間を新時間割に調整しますか？", [
       {
         text: "キャンセル",
