@@ -11,7 +11,7 @@ const HomeCarousel = ({ navigation }) => {
   useEffect(() => {
     // Django APIからデータを取得
     axios
-      .get("https://render-test-db-h83h.onrender.com/home/photo/")
+      .get("https://arukuarupaka-r-expo-0ktv.onrender.com/home/photo/")
       .then((response) => {
         setImages(response.data);
       });
@@ -26,23 +26,33 @@ const HomeCarousel = ({ navigation }) => {
           navigation.navigate("HomeWebSite", { uri: item.carousel_url });
         }}
       >
-        {item.image?<Image
-          source={{ uri: item.image }}
-          style={{
-            height: 200,
-            width: 300,
-            borderRadius: 10,
-            borderWidth: 0.9,
-            borderColor: "black",
-          }}
-        />:  <View 
-        style={{
-          height: 200,
-          width: 300,
-          borderRadius: 10,
-          borderWidth: 0.9,
-          paddingVertical:100
-          }}><ActivityIndicator size="large" style={{marginVertical:'auto'}}></ActivityIndicator></View>      }
+        {item.image ? (
+          <Image
+            source={{ uri: item.image }}
+            style={{
+              height: 200,
+              width: 300,
+              borderRadius: 10,
+              borderWidth: 0.9,
+              borderColor: "black",
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              height: 200,
+              width: 300,
+              borderRadius: 10,
+              borderWidth: 0.9,
+              paddingVertical: 100,
+            }}
+          >
+            <ActivityIndicator
+              size="large"
+              style={{ marginVertical: "auto" }}
+            ></ActivityIndicator>
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -50,22 +60,32 @@ const HomeCarousel = ({ navigation }) => {
   return (
     <View>
       <View style={{ position: "relative", alignItems: "center" }}>
-      {images.length?<Carousel
-          ref={_carousel}
-          data={images}
-          renderItem={_renderItem}
-          itemWidth={300}
-          sliderWidth={450}
-          onSnapToItem={(index) => setActiveDotIndex(index)}
-          loop={true}
-        ></Carousel>:  <View 
-        style={{
-          height: 200,
-          width: 300,
-          borderRadius: 10,
-          borderWidth: 0.9,
-          paddingVertical:100
-          }}><ActivityIndicator size="large" style={{marginVertical:'auto'}}></ActivityIndicator></View>      }
+        {images.length ? (
+          <Carousel
+            ref={_carousel}
+            data={images}
+            renderItem={_renderItem}
+            itemWidth={300}
+            sliderWidth={450}
+            onSnapToItem={(index) => setActiveDotIndex(index)}
+            loop={true}
+          ></Carousel>
+        ) : (
+          <View
+            style={{
+              height: 200,
+              width: 300,
+              borderRadius: 10,
+              borderWidth: 0.9,
+              paddingVertical: 100,
+            }}
+          >
+            <ActivityIndicator
+              size="large"
+              style={{ marginVertical: "auto" }}
+            ></ActivityIndicator>
+          </View>
+        )}
         <TouchableOpacity
           style={{
             position: "absolute",
