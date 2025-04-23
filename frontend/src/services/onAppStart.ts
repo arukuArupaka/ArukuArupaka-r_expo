@@ -68,6 +68,7 @@ export const onAppStart = async (props: Props) => {
             ...data,
           };
 
+          // 新たな通知をセット
           const notificationId =
             await NotificationMethods.scheduleWeeklyNotification(
               weekOfTheDay,
@@ -77,6 +78,8 @@ export const onAppStart = async (props: Props) => {
               data
             );
           updatedData.notificationId = notificationId;
+
+          // 古い通知を削除
           await NotificationMethods.cancelNotification(
             data.num,
             props.userClassPeriodData,
