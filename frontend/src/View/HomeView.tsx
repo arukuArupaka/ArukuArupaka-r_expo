@@ -338,6 +338,13 @@ const HomeView = (props) => {
             <Specialsite navigation={props.navigation} />
           </View>
         </View>
+        <AppList
+          appName="時刻表"
+          color="#F36F21"
+          test={props}
+          jumpPage="TransitScheduleMain"
+          iconName="bicycle"
+        />
         <View style={{ backgroundColor: "", flex: 1 }}>
           <View style={styles.appListFlex}>
             <AppList

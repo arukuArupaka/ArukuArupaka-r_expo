@@ -50,6 +50,8 @@ import FirebaseNotificationList from "./src/View/FirebaseNotification";
 import TimeTableFriendList from "./src/View/TimeTable/TimeTableFriendList";
 import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 import ACalendar from "./src/View/ACalender";
+import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitScheduleMain";
+import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -385,6 +387,16 @@ function App() {
                 name="BuildingDetails"
                 options={() => ({ title: "建物詳細" })}
                 component={BuildingDetailsScreen}
+              />
+              <Stack.Screen
+                name="TransitScheduleMain"
+                options={() => ({ title: "建物詳細", headerShown: false })}
+                component={TransitScheduleMain}
+              />
+              <Stack.Screen
+                name="TransitScheduleWebView"
+                options={() => ({ title: "建物詳細", headerShown: false })}
+                component={TransitScheduleWebView}
               />
               <Stack.Screen
                 name="ACalendar"
