@@ -1,12 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 
-const NewAppList = (props) => {
+const LargeAppListItem = (props) => {
   return (
     <TouchableOpacity
       style={{
         height: 75,
-        width: 160,
+        width: "320",
         borderColor: props.color,
         borderWidth: 2,
         borderRadius: 10,
@@ -28,4 +28,4 @@ const NewAppList = (props) => {
   );
 };
 
-export default NewAppList;
+export default LargeAppListItem;

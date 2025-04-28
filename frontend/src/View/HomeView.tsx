@@ -16,6 +16,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   FontAwesome,
+  FontAwesome5,
+  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
@@ -47,6 +49,7 @@ import { Foundation } from "@expo/vector-icons";
 import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
 import HomeAdmobFooter from "../component/Home/HomeAdmobFooter";
+import LargeAppListItem from "../component/Home/LargeAppListItem";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -338,14 +341,28 @@ const HomeView = (props) => {
             <Specialsite navigation={props.navigation} />
           </View>
         </View>
-        <AppList
-          appName="時刻表"
-          color="#F36F21"
-          test={props}
-          jumpPage="TransitScheduleMain"
-          iconName="bicycle"
-        />
+
         <View style={{ backgroundColor: "", flex: 1 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: 10,
+            }}
+          >
+            <LargeAppListItem
+              appName="時刻表"
+              color="#7A1C23"
+              test={props}
+              jumpPage="TransitScheduleMain"
+              iconName="page-copy"
+              item={() => (
+                <>
+                  <FontAwesome5 name="bus" size={30} color="#7A1C23" />
+                </>
+              )}
+            />
+          </View>
           <View style={styles.appListFlex}>
             <AppList
               appName="駐輪場"
