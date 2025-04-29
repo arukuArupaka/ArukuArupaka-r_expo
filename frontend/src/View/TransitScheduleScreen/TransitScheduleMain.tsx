@@ -6,8 +6,7 @@ import {
   ScrollView,
   StatusBar,
   SafeAreaView,
-  Linking,
-  InteractionManager,
+  Dimensions,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,10 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TIMETABLES } from "../../data/transitSchedule";
 
 // ===== 定数データ =====
-const campuses = [
-  "BKC",
-  //  ,"KIC", "OIC"
-];
+const campuses = ["BKC", "OIC", "KIC"];
 
 const routes = {
   BKC: [
@@ -39,24 +35,22 @@ const TEXT_COLOR = "#333";
 const SUBTEXT_COLOR = "#888";
 const BG_COLOR = "#F5F5F5";
 
+const { width: screenWidth } = Dimensions.get("window");
+
 const TransitScheduleMain = () => {
   const [selectedCampus, setSelectedCampus] = useState("BKC");
   const [selectedRoute, setSelectedRoute] = useState(routes["BKC"][0]);
   const [selectedDay, setSelectedDay] = useState("平日");
 
-  const timetableData = TIMETABLES[selectedRoute] || {
-    weekday: [],
-    weekend: [],
-  };
-  const timetable =
-    selectedDay === "平日" ? timetableData.weekday : timetableData.weekend;
-
   const navigation = useNavigation();
+  const scrollRefHorizontal = useRef(null);
+  const scrollRefVertical = useRef(null);
+  const nowLineRef = useRef(null);
 
   useEffect(() => {
     const loadCampus = async () => {
       const savedCampus = await AsyncStorage.getItem("selectedCampus");
-      if (savedCampus) {
+      if (savedCampus && routes[savedCampus]) {
         setSelectedCampus(savedCampus);
         setSelectedRoute(routes[savedCampus][0]);
       }
@@ -68,6 +62,29 @@ const TransitScheduleMain = () => {
     setSelectedCampus(campus);
     setSelectedRoute(routes[campus][0]);
     await AsyncStorage.setItem("selectedCampus", campus);
+
+    if (scrollRefHorizontal.current) {
+      scrollRefHorizontal.current.scrollTo({ x: 0, animated: false });
+    }
+  };
+
+  const handleRouteTabPress = (route: string) => {
+    const index = routes[selectedCampus].indexOf(route);
+    if (scrollRefHorizontal.current) {
+      scrollRefHorizontal.current.scrollTo({
+        x: index * screenWidth,
+        animated: true,
+      });
+    }
+    setSelectedRoute(route);
+  };
+
+  const handleHorizontalScrollEnd = (e) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
+    const newRoute = routes[selectedCampus][index];
+    if (newRoute && newRoute !== selectedRoute) {
+      setSelectedRoute(newRoute);
+    }
   };
 
   // 現在時刻取得
@@ -77,29 +94,14 @@ const TransitScheduleMain = () => {
     .toString()
     .padStart(2, "0")}`;
 
-  // ===== 時間ごとにグループ化 =====
-  const groupedTimetable = timetable.reduce((acc, entry) => {
-    const hour = entry.time.split(":")[0] + "時台";
-    if (!acc[hour]) acc[hour] = [];
-    acc[hour].push(entry);
-    return acc;
-  }, {});
-
-  let nowLineInserted = false; // 全体で1回だけ表示するフラグ
-
-  // スクロール制御系
-
-  const scrollRef = useRef(null); // ScrollView用のref
-  const nowLineRef = useRef(null);
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (nowLineRef.current && scrollRef.current) {
+      if (nowLineRef.current && scrollRefVertical.current) {
         nowLineRef.current.measure((fx, fy, width, height, px, py) => {
-          scrollRef.current.scrollTo({ y: py - 300, animated: true });
+          scrollRefVertical.current.scrollTo({ y: py - 300, animated: true });
         });
       }
-    }, 100); // 100ms 待つと安定するケースが多い
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [selectedCampus, selectedDay, selectedRoute]);
@@ -200,7 +202,7 @@ const TransitScheduleMain = () => {
 
         {/* ===== メインコンテンツ ===== */}
         <View style={{ flex: 1, padding: 16 }}>
-          {/* 行き先・到着地 */}
+          {/* 行き先タブ */}
           <View style={{ marginVertical: 16 }}>
             <ScrollView
               horizontal
@@ -210,7 +212,7 @@ const TransitScheduleMain = () => {
               {routes[selectedCampus].map((item) => (
                 <TouchableOpacity
                   key={item}
-                  onPress={() => setSelectedRoute(item)}
+                  onPress={() => handleRouteTabPress(item)}
                   style={{ marginRight: 20 }}
                 >
                   <Text
@@ -261,141 +263,175 @@ const TransitScheduleMain = () => {
             ))}
           </View>
 
-          {/* ===== 時刻表リスト（デザイン改良版） ===== */}
+          {/* 横スクロールで各路線ごとの時刻表 */}
           <ScrollView
-            ref={scrollRef}
-            style={{ backgroundColor: "#fff", borderRadius: 12, padding: 8 }}
+            ref={scrollRefHorizontal}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleHorizontalScrollEnd}
+            contentContainerStyle={{
+              width: (screenWidth - 32) * routes[selectedCampus].length,
+            }}
           >
-            {Object.entries(groupedTimetable).map(([hour, entries]) => (
-              <View key={hour}>
-                {/* 時間帯ラベル */}
-                <Text
+            {routes[selectedCampus].map((route) => {
+              const timetableData = TIMETABLES[route] || {
+                weekday: [],
+                weekend: [],
+              };
+              const timetable =
+                selectedDay === "平日"
+                  ? timetableData.weekday
+                  : timetableData.weekend;
+              const groupedTimetable = timetable.reduce((acc, entry) => {
+                const hour = entry.time.split(":")[0] + "時台";
+                if (!acc[hour]) acc[hour] = [];
+                acc[hour].push(entry);
+                return acc;
+              }, {});
+
+              let nowLineInserted = false;
+
+              return (
+                <ScrollView
+                  key={route}
                   style={{
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    marginVertical: 6,
-                    color: THEME_COLOR,
+                    width: screenWidth,
+                    backgroundColor: "#fff",
+                    borderRadius: 12,
+                    padding: 8,
                   }}
+                  ref={route === selectedRoute ? scrollRefVertical : undefined}
                 >
-                  ◆ {hour}
-                </Text>
-
-                {entries.map((entry, index) => {
-                  const entryMinutes =
-                    parseInt(entry.time.split(":")[0]) * 60 +
-                    parseInt(entry.time.split(":")[1]);
-                  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-                  // const nowMinutes = 14 * 60 + 30; // 14時30分をハードコーディ*
-
-                  const shouldInsertNowLine =
-                    !nowLineInserted && entryMinutes > nowMinutes;
-
-                  if (shouldInsertNowLine) {
-                    nowLineInserted = true;
-                  }
-
-                  return (
-                    <View key={index}>
-                      {/* 現在時刻ライン */}
-                      {shouldInsertNowLine && (
-                        <View
-                          style={{
-                            alignItems: "center",
-                            marginVertical: 10,
-                            position: "relative",
-                          }}
-                          ref={nowLineRef}
-                        >
-                          {/* 太めのライン */}
-                          <View
-                            style={{
-                              height: 2.5, // 太さUP
-                              backgroundColor: THEME_COLOR,
-                              width: "100%",
-                              borderRadius: 2,
-                              position: "absolute",
-                              top: "50%",
-                            }}
-                          />
-                          {/* 中央のテキストバッジ */}
-                          <View
-                            style={{
-                              backgroundColor: "#fff",
-                              paddingHorizontal: 10,
-                              zIndex: 1,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 12,
-                                color: THEME_COLOR,
-                                fontWeight: "bold",
-                                letterSpacing: 1,
-                              }}
-                            >
-                              現在 {currentTime}
-                            </Text>
-                          </View>
-                        </View>
-                      )}
-
-                      {/* 時刻表アイテム */}
-                      <TouchableOpacity
-                        onPress={() => {
-                          if (entry.link) {
-                            navigation.navigate("TransitScheduleWebView", {
-                              url: entry.link,
-                            });
-                          }
-                        }}
-                        disabled={!entry.link}
+                  {Object.entries(groupedTimetable).map(([hour, entries]) => (
+                    <View key={hour}>
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          paddingVertical: 6,
-                          borderBottomWidth: 1,
-                          borderColor: "#eee",
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          marginVertical: 6,
+                          color: THEME_COLOR,
                         }}
                       >
-                        {/* 時刻 */}
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            fontWeight: "bold",
-                            color: TEXT_COLOR,
-                            width: 70, // 固定幅で時刻を揃える
-                          }}
-                        >
-                          {entry.time} 発
-                        </Text>
+                        ◆ {hour}
+                      </Text>
 
-                        {/* 詳細情報 */}
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            color: SUBTEXT_COLOR,
-                            flex: 1,
-                          }}
-                          numberOfLines={1}
-                        >
-                          {entry.detail}
-                        </Text>
+                      {entries.map((entry, index) => {
+                        const entryMinutes =
+                          parseInt(entry.time.split(":")[0]) * 60 +
+                          parseInt(entry.time.split(":")[1]);
+                        const nowMinutes =
+                          now.getHours() * 60 + now.getMinutes();
+                        // const nowMinutes = 14 * 60 + 30;
 
-                        {/* リンクアイコン */}
-                        {entry.link && (
-                          <Entypo
-                            name="chevron-right"
-                            size={16}
-                            color={THEME_COLOR}
-                            style={{ marginLeft: 8 }}
-                          />
-                        )}
-                      </TouchableOpacity>
+                        const shouldInsertNowLine =
+                          !nowLineInserted && entryMinutes > nowMinutes;
+
+                        if (shouldInsertNowLine) {
+                          nowLineInserted = true;
+                        }
+
+                        return (
+                          <View key={index}>
+                            {shouldInsertNowLine && (
+                              <View
+                                style={{
+                                  alignItems: "center",
+                                  marginVertical: 10,
+                                  position: "relative",
+                                }}
+                                ref={nowLineRef}
+                              >
+                                <View
+                                  style={{
+                                    height: 2.5,
+                                    backgroundColor: THEME_COLOR,
+                                    width: "100%",
+                                    borderRadius: 2,
+                                    position: "absolute",
+                                    top: "50%",
+                                  }}
+                                />
+                                <View
+                                  style={{
+                                    backgroundColor: "#fff",
+                                    paddingHorizontal: 10,
+                                    zIndex: 1,
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      fontSize: 12,
+                                      color: THEME_COLOR,
+                                      fontWeight: "bold",
+                                      letterSpacing: 1,
+                                    }}
+                                  >
+                                    現在 {currentTime}
+                                  </Text>
+                                </View>
+                              </View>
+                            )}
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                if (entry.link) {
+                                  navigation.navigate(
+                                    "TransitScheduleWebView",
+                                    {
+                                      url: entry.link,
+                                    }
+                                  );
+                                }
+                              }}
+                              disabled={!entry.link}
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                paddingVertical: 6,
+                                borderBottomWidth: 1,
+                                borderColor: "#eee",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: "bold",
+                                  color: TEXT_COLOR,
+                                  width: 70,
+                                }}
+                              >
+                                {entry.time} 発
+                              </Text>
+
+                              <Text
+                                style={{
+                                  fontSize: 10,
+                                  color: SUBTEXT_COLOR,
+                                  flex: 1,
+                                }}
+                                numberOfLines={1}
+                              >
+                                {entry.detail}
+                              </Text>
+
+                              {entry.link && (
+                                <Entypo
+                                  name="chevron-right"
+                                  size={16}
+                                  color={THEME_COLOR}
+                                  style={{ marginLeft: 8 }}
+                                />
+                              )}
+                            </TouchableOpacity>
+                          </View>
+                        );
+                      })}
                     </View>
-                  );
-                })}
-              </View>
-            ))}
+                  ))}
+                </ScrollView>
+              );
+            })}
           </ScrollView>
         </View>
       </View>
