@@ -7,6 +7,7 @@ import {
   StatusBar,
   SafeAreaView,
   Dimensions,
+  InteractionManager,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -94,13 +95,81 @@ const TransitScheduleMain = () => {
     .toString()
     .padStart(2, "0")}`;
 
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     if (nowLineRef.current && scrollRefVertical.current) {
+  //       nowLineRef.current.measure((fx, fy, width, height, px, py) => {
+  //         scrollRefVertical.current
+  //           .getScrollResponder()
+  //           .scrollResponderScrollNativeHandleToKeyboard(
+  //             nowLineRef.current,
+  //             500, // オフセット
+  //             true
+  //           );
+  //       });
+  //     }
+  //   }, 100);
+
+  //   return () => clearTimeout(timer);
+  // }, [selectedCampus, selectedDay, selectedRoute]);
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     InteractionManager.runAfterInteractions(() => {
+  //       if (nowLineRef.current && scrollRefVertical.current) {
+  //         nowLineRef.current.measure((fx, fy, width, height, px, py) => {
+  //           scrollRefVertical.current
+  //             .getScrollResponder()
+  //             .scrollResponderScrollNativeHandleToKeyboard(
+  //               nowLineRef.current,
+  //               500, // オフセット
+  //               true
+  //             );
+  //         });
+  //       }
+  //     });
+  //   }, 100);
+
+  //   return () => clearTimeout(timer);
+  // }, [selectedCampus, selectedDay, selectedRoute]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (nowLineRef.current && scrollRefVertical.current) {
+        console.log("nowLineRef.current", nowLineRef.current);
         nowLineRef.current.measure((fx, fy, width, height, px, py) => {
-          scrollRefVertical.current.scrollTo({ y: py - 300, animated: true });
+          scrollRefVertical.current
+            .getScrollResponder()
+            .scrollResponderScrollNativeHandleToKeyboard(
+              nowLineRef.current,
+              500,
+              true
+            );
         });
       }
+    }, 500); // 初回だけちょっと長め
+
+    return () => clearTimeout(timer);
+  }, []); // ←初回だけ！
+
+  // タブ切り替え時用（今まで通り）
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      InteractionManager.runAfterInteractions(() => {
+        console.log("nowLineRef.curren 2t", nowLineRef.current);
+
+        if (nowLineRef.current && scrollRefVertical.current) {
+          nowLineRef.current.measure((fx, fy, width, height, px, py) => {
+            scrollRefVertical.current
+              .getScrollResponder()
+              .scrollResponderScrollNativeHandleToKeyboard(
+                nowLineRef.current,
+                500,
+                true
+              );
+          });
+        }
+      });
     }, 100);
 
     return () => clearTimeout(timer);
@@ -153,7 +222,7 @@ const TransitScheduleMain = () => {
                 marginRight: 28,
               }}
             >
-              BusDess 強化版
+              時刻表
             </Text>
           </View>
 
