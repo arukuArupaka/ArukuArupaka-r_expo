@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Platform,
 } from "react-native";
 import {
   collection,
@@ -401,6 +402,31 @@ export const TextbookHome = () => {
                 </TouchableOpacity>
               );
             })}
+          </View>
+
+          <View>
+            {isEndLoading && <ActivityIndicator size="large" color="orange" />}
+
+            {/* Android限定の追加表示ボタン */}
+            {Platform.OS === "android" && !isEndLoading && (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "orange",
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  alignSelf: "center",
+                  marginVertical: 10,
+                }}
+                onPress={getNextData}
+              >
+                <Text
+                  style={{ color: "white", fontWeight: "bold", fontSize: 14 }}
+                >
+                  もっと見る
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View>
