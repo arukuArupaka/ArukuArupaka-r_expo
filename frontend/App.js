@@ -50,6 +50,7 @@ import FirebaseNotificationList from "./src/View/FirebaseNotification";
 import TimeTableFriendList from "./src/View/TimeTable/TimeTableFriendList";
 import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 import ACalendar from "./src/View/ACalender";
+import CheckDeviceToken from "./src/View/Others/CheckDeviceToken"
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -214,7 +215,7 @@ function App() {
               />
               <Stack.Screen
                 name="Bike"
-                component={BikeView}
+                component={CheckDeviceToken}
                 options={{
                   headerTitle: () => (
                     <MaterialIcons
