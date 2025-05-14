@@ -45,7 +45,7 @@ import {
   checkImageFalsy,
   Campus,
 } from "../../../../component/Textbook/interface/textBookData";
-import { ARUPAKA_BACKEND_URL } from "../../../../../env";
+import { ARUPAKA_BACKEND_URL } from '@env';
 
 const arupakaDbAdress = `${ARUPAKA_BACKEND_URL}/listing_item/create_item`;
 
