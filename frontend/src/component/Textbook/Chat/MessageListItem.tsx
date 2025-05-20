@@ -1,4 +1,4 @@
-import { View, Text ,ScrollView} from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 
 const MessageListItem = (props) => {
@@ -6,29 +6,43 @@ const MessageListItem = (props) => {
 
   useEffect(() => {
     if (!props.messageObject.id || !props.myID) return;
-    setIsMyMessage(props.messageObject.sendUser == props.myID);
-  },[props.messageObject.sendUser , props.myID]);
+    setIsMyMessage(props.messageObject.sendUser === props.myID);
+  }, [props.messageObject.sendUser, props.myID]);
+
+  // 改行のやつ、15文字で設定してます。
+  const insertLineBreaks = (text: string, interval: number) => {
+    const regex = new RegExp(`.{1,${interval}}`, "g"); // 文字列
+    return text.match(regex)?.join("\n") ?? text;
+  };
+
   return (
-<View
-style={{ height:40,flexDirection: isMyMessage ? "row-reverse" : "row" }}
- className={`h-12 ${isMyMessage ? "flex-row-reverse" : "flex-row"}`}>
-      {isMyMessage ? (
-        <View
-        style={{ height:30,backgroundColor:"orange",justifyContent:"center",borderRadius:10,paddingHorizontal:10,flexGrow:0 }}
-        className="my-2 h-8 bg-[#30CB89] justify-center rounded-xl px-2 flex-grow-0"
+    <View
+      style={{
+        height: "auto",
+        flexDirection: isMyMessage ? "row-reverse" : "row",
+        paddingVertical: 4,
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: isMyMessage ? "orange" : "gray",
+          justifyContent: "center",
+          borderRadius: 10,
+          paddingHorizontal: 10,
+          maxWidth: "70%", // 長文が画面幅を超えないように制限
+        }}
       >
-        <Text 
-        style={{fontSize:20,color:"white"}}
-        className="color-white">{props.messageObject.message}</Text>
-      </View>
-      ) : (
-        <View
-        style={{ height:30,backgroundColor:"gray",justifyContent:"center",borderRadius:10,paddingHorizontal:10,flexGrow:0 }}
-          className="my-2 h-8 bg-gray-300 justify-center rounded-xl px-2 flex-grow-0"
+        <Text
+          style={{
+            fontSize: 16,
+            color: isMyMessage ? "white" : "black",
+            lineHeight: 24,
+          
+          }}
         >
-          <Text className="">{props.messageObject.message}</Text>
-        </View>
-      )}
+          {insertLineBreaks(props.messageObject.message, 15)}
+        </Text>
+      </View>
     </View>
   );
 };
