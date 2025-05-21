@@ -19,7 +19,7 @@ const firebaseConfig = {
   authDomain: "arukuarupaka-6e101.firebaseapp.com",
   projectId: "arukuarupaka-6e101",
   storageBucket: "arukuarupaka-6e101.appspot.com",
-  messagingSenderId: "345656246915",
+  messagingSenderId: "345656defaultConfig 46915",
   appId: "1:345656246915:web:a57de8a3ad3a85ac7c51b6",
   measurementId: "G-XWS4GZFPNB",
 };

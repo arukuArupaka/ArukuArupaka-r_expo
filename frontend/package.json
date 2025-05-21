@@ -37,7 +37,7 @@
     "expo-notifications": "~0.31.2",
     "expo-status-bar": "~2.2.3",
     "expo-task-manager": "~13.1.5",
-    "firebase": "^10.8.0",
+    "firebase": "^11.7.1",
     "luxon": "^3.4.4",
     "nativewind": "2.0.11",
     "react": "19.0.0",
