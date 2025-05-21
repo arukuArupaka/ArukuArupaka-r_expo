@@ -261,7 +261,7 @@ const Weather = () => {
             >
               <Text style={{ textAlign: "center" }}>日の出</Text>
               <Image
-                source={require("./snurise.png")}
+                source={require("./sunrise.png")}
                 style={{ marginLeft: "40%", paddingTop: "12%" }}
               />
               <Text
