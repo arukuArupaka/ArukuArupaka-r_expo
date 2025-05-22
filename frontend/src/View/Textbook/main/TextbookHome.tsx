@@ -30,7 +30,7 @@ import {
   TextBookDataDB,
 } from "../../../component/Textbook/interface/textBookData";
 import { FontAwesome } from "@expo/vector-icons"; // アイコン用
-import { ARUPAKA_BACKEND_URL } from "../../../../env";
+import { ARUPAKA_BACKEND_URL } from '@env';
 
 const departmentList = [
   { departmantName: "すべて" },

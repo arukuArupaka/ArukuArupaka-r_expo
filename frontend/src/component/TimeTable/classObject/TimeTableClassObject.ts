@@ -1,4 +1,4 @@
-import { ARUPAKA_BACKEND_URL } from "../../../../env";
+import { ARUPAKA_BACKEND_URL } from '@env';
 import { ClassPeriod } from "../types/class-period";
 import { ConvertMethods } from "./convert-methods";
 

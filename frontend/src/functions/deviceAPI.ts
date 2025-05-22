@@ -1,4 +1,4 @@
-import { ARUPAKA_BACKEND_URL } from "../../env";
+import { ARUPAKA_BACKEND_URL } from '@env';
 import { IS_POST_DEVICE_ID, onUpdataThisFunction } from "./common";
 
 export const postDeviceId = async (deviceToken: string): Promise<boolean> => {
