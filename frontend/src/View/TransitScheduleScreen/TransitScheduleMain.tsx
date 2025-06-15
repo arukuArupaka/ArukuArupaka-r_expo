@@ -186,6 +186,26 @@ const TransitScheduleMain = () => {
     return () => clearTimeout(timer);
   }, [selectedCampus, selectedDay, selectedRoute]);
 
+  // 現在時刻ラインまで自動で下スクロール（ScrollViewのscrollToでy座標指定）
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      InteractionManager.runAfterInteractions(() => {
+        if (nowLineRef.current && scrollRefVertical.current) {
+          nowLineRef.current.measureLayout(
+            scrollRefVertical.current,
+            (x, y) => {
+              scrollRefVertical.current.scrollTo({ y: y - 100, animated: true });
+            },
+            (error) => {
+              // 失敗時は何もしない
+            }
+          );
+        }
+      });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [selectedCampus, selectedDay, selectedRoute]);
+
   // 端末の現在地から最寄りキャンパスのルートを自動選択
   useEffect(() => {
     (async () => {
@@ -204,7 +224,7 @@ const TransitScheduleMain = () => {
           campus.latitude,
           campus.longitude
         );
-        if (dist >= 1.5 && campusNearRoutes[campusKey]) {
+        if (dist <= 1.5 && campusNearRoutes[campusKey]) {
           setSelectedCampus(campusKey);
           // setSelectedRoute(campusNearRoutes[campusKey]);
           handleRouteTabPress(campusNearRoutes[campusKey]);
@@ -432,20 +452,14 @@ const TransitScheduleMain = () => {
                         const entryMinutes =
                           parseInt(entry.time.split(":")[0]) * 60 +
                           parseInt(entry.time.split(":")[1]);
-                        const nowMinutes =
-                          now.getHours() * 60 + now.getMinutes();
-                        // const nowMinutes = 14 * 60 + 30;
-
-                        const shouldInsertNowLine =
-                          !nowLineInserted && entryMinutes > nowMinutes;
-
+                        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+                        const shouldInsertNowLine = !nowLineInserted && entryMinutes > nowMinutes;
                         if (shouldInsertNowLine) {
                           nowLineInserted = true;
                         }
-
                         return (
                           <View key={index}>
-                            {shouldInsertNowLine && (
+                            {shouldInsertNowLine && route === selectedRoute && (
                               <View
                                 style={{
                                   alignItems: "center",
