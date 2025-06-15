@@ -14,14 +14,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useNavigation } from "@react-navigation/native";
 import { TIMETABLES } from "../../data/transitSchedule";
+import * as Location from "expo-location";
 
 // ===== 定数データ =====
-const campuses = ["BKC", "OIC", "KIC"];
+const campuses = [
+  "BKC",
+  // , "OIC", "KIC"
+];
+
+const campuseDetails = {
+  BKC: {
+    name: "BKC",
+    latitude: 34.982755,
+    longitude: 135.963002,
+  },
+  // , "OIC", "KIC"
+};
+
+const campusNearRoutes = {
+  BKC: "BKC ➔ 南草津駅",
+};
 
 const routes = {
   BKC: [
-    "BKC ➔ 南草津駅",
     "南草津駅 ➔ BKC",
+    "BKC ➔ 南草津駅",
     // "南草津駅 ➔ 大阪駅",
     // "南草津駅 ➔ 米原駅",
   ],
@@ -38,12 +55,44 @@ const BG_COLOR = "#F5F5F5";
 
 const { width: screenWidth } = Dimensions.get("window");
 
+// 祝日判定（簡易: 祝日ライブラリ未使用）
+const isHoliday = (date: Date) => {
+  // ここで祝日判定を追加したい場合はライブラリを利用してください
+  return false; // 祝日判定なし（必要なら拡張）
+};
+
+// 平日/土日祝の自動判別
+const getInitialDay = () => {
+  const today = new Date();
+  const day = today.getDay();
+  if (day === 0 || day === 6 || isHoliday(today)) {
+    return "土日祝";
+  }
+  return "平日";
+};
+
+// 2点間の距離計算（Haversine 公式）
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // 地球半径 km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 const TransitScheduleMain = () => {
   const [selectedCampus, setSelectedCampus] = useState("BKC");
   const [selectedRoute, setSelectedRoute] = useState(routes["BKC"][0]);
-  const [selectedDay, setSelectedDay] = useState("平日");
+  const [selectedDay, setSelectedDay] = useState(getInitialDay()); // ←ここを自動判別に
+  const [locationChecked, setLocationChecked] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
   const scrollRefHorizontal = useRef(null);
   const scrollRefVertical = useRef(null);
   const nowLineRef = useRef(null);
@@ -95,44 +144,6 @@ const TransitScheduleMain = () => {
     .toString()
     .padStart(2, "0")}`;
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (nowLineRef.current && scrollRefVertical.current) {
-  //       nowLineRef.current.measure((fx, fy, width, height, px, py) => {
-  //         scrollRefVertical.current
-  //           .getScrollResponder()
-  //           .scrollResponderScrollNativeHandleToKeyboard(
-  //             nowLineRef.current,
-  //             500, // オフセット
-  //             true
-  //           );
-  //       });
-  //     }
-  //   }, 100);
-
-  //   return () => clearTimeout(timer);
-  // }, [selectedCampus, selectedDay, selectedRoute]);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     InteractionManager.runAfterInteractions(() => {
-  //       if (nowLineRef.current && scrollRefVertical.current) {
-  //         nowLineRef.current.measure((fx, fy, width, height, px, py) => {
-  //           scrollRefVertical.current
-  //             .getScrollResponder()
-  //             .scrollResponderScrollNativeHandleToKeyboard(
-  //               nowLineRef.current,
-  //               500, // オフセット
-  //               true
-  //             );
-  //         });
-  //       }
-  //     });
-  //   }, 100);
-
-  //   return () => clearTimeout(timer);
-  // }, [selectedCampus, selectedDay, selectedRoute]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       if (nowLineRef.current && scrollRefVertical.current) {
@@ -174,6 +185,36 @@ const TransitScheduleMain = () => {
 
     return () => clearTimeout(timer);
   }, [selectedCampus, selectedDay, selectedRoute]);
+
+  // 端末の現在地から最寄りキャンパスのルートを自動選択
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setLocationChecked(true);
+        return;
+      }
+      let loc = await Location.getCurrentPositionAsync({});
+      let found = false;
+      for (const campusKey of Object.keys(campuseDetails)) {
+        const campus = campuseDetails[campusKey];
+        const dist = getDistanceFromLatLonInKm(
+          loc.coords.latitude,
+          loc.coords.longitude,
+          campus.latitude,
+          campus.longitude
+        );
+        if (dist >= 1.5 && campusNearRoutes[campusKey]) {
+          setSelectedCampus(campusKey);
+          // setSelectedRoute(campusNearRoutes[campusKey]);
+          handleRouteTabPress(campusNearRoutes[campusKey]);
+          found = true;
+          break;
+        }
+      }
+      setLocationChecked(true);
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: THEME_COLOR }}>
@@ -352,12 +393,14 @@ const TransitScheduleMain = () => {
                 selectedDay === "平日"
                   ? timetableData.weekday
                   : timetableData.weekend;
-              const groupedTimetable = timetable.reduce((acc, entry) => {
-                const hour = entry.time.split(":")[0] + "時台";
-                if (!acc[hour]) acc[hour] = [];
-                acc[hour].push(entry);
-                return acc;
-              }, {});
+              // 型を明示
+              const groupedTimetable: { [hour: string]: typeof timetable } =
+                timetable.reduce((acc, entry) => {
+                  const hour = entry.time.split(":")[0] + "時台";
+                  if (!acc[hour]) acc[hour] = [];
+                  acc[hour].push(entry);
+                  return acc;
+                }, {} as { [hour: string]: typeof timetable });
 
               let nowLineInserted = false;
 
