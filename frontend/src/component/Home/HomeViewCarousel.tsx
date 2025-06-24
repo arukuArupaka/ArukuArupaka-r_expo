@@ -13,7 +13,8 @@ const HomeCarousel = ({ navigation }) => {
     axios
       .get("https://arukuarupaka-r-expo-0ktv.onrender.com/home/photo/")
       .then((response) => {
-        setImages(response.data);
+        const shuffled = response.data.sort(() => Math.random() - 0.5);
+        setImages(shuffled);
       });
   }, []);
 
@@ -134,13 +135,7 @@ const HomeCarousel = ({ navigation }) => {
           ></MaterialIcons>
         </TouchableOpacity>
       </View>
-      <Pagination
-        carouselRef={_carousel}
-        activeDotIndex={activeDotIndex}
-        dotsLength={images.length}
-        inactiveDotStyle={{ backgroundColor: "#BBBBBB" }}
-        dotStyle={{ backgroundColor: "#30CB89" }}
-      ></Pagination>
+      
     </View>
   );
 };
