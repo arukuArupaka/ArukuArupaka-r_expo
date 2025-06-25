@@ -39,6 +39,8 @@ const routes = {
   BKC: [
     "南草津駅 ➔ BKC",
     "BKC ➔ 南草津駅",
+    "BKC → OIC",
+    "BKC → 衣笠",
     // "南草津駅 ➔ 大阪駅",
     // "南草津駅 ➔ 米原駅",
   ],
@@ -122,7 +124,7 @@ const TransitScheduleMain = () => {
     const index = routes[selectedCampus].indexOf(route);
     if (scrollRefHorizontal.current) {
       scrollRefHorizontal.current.scrollTo({
-        x: index * screenWidth,
+        x: index * (screenWidth - 32),
         animated: true,
       });
     }
@@ -194,7 +196,10 @@ const TransitScheduleMain = () => {
           nowLineRef.current.measureLayout(
             scrollRefVertical.current,
             (x, y) => {
-              scrollRefVertical.current.scrollTo({ y: y - 100, animated: true });
+              scrollRefVertical.current.scrollTo({
+                y: y - 100,
+                animated: true,
+              });
             },
             (error) => {
               // 失敗時は何もしない
@@ -413,6 +418,33 @@ const TransitScheduleMain = () => {
                 selectedDay === "平日"
                   ? timetableData.weekday
                   : timetableData.weekend;
+
+              if (timetable.length === 0) {
+                // 🔴 土日祝の時刻表がないときの表示
+                return (
+                  <View
+                    key={route}
+                    style={{
+                      width: screenWidth - 32,
+                      backgroundColor: "#fff",
+                      borderRadius: 12,
+                      alignItems: "center",
+                      padding: 24,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: TEXT_COLOR,
+                        fontSize: 20,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {selectedDay}なし
+                    </Text>
+                  </View>
+                );
+              }
+
               // 型を明示
               const groupedTimetable: { [hour: string]: typeof timetable } =
                 timetable.reduce((acc, entry) => {
@@ -452,8 +484,10 @@ const TransitScheduleMain = () => {
                         const entryMinutes =
                           parseInt(entry.time.split(":")[0]) * 60 +
                           parseInt(entry.time.split(":")[1]);
-                        const nowMinutes = now.getHours() * 60 + now.getMinutes();
-                        const shouldInsertNowLine = !nowLineInserted && entryMinutes > nowMinutes;
+                        const nowMinutes =
+                          now.getHours() * 60 + now.getMinutes();
+                        const shouldInsertNowLine =
+                          !nowLineInserted && entryMinutes > nowMinutes;
                         if (shouldInsertNowLine) {
                           nowLineInserted = true;
                         }
