@@ -17,14 +17,26 @@ const SendBoxContainer = (props) => {
     try {
       // メッセージをコンソールにログ出力
 
+      console.log("送信するメッセージ:", sendMessageObject);
+
       // Firestoreのドキュメント参照を取得
-      const docRef = doc(db, "chatData", `${props.friend}`, `${props.roomID}`, "messages");
+      const docRef = doc(
+        db,
+        "chatData",
+        `${props.friend}`,
+        `${props.roomID}`,
+        "messages"
+      );
 
       // ドキュメントを常に作成または更新
-      await setDoc(docRef, {
-        messages: arrayUnion({ ...sendMessageObject }),
-      }, { merge: true });
-      
+      await setDoc(
+        docRef,
+        {
+          messages: arrayUnion({ ...sendMessageObject }),
+        },
+        { merge: true }
+      );
+
       props.SendMessage(sendMessageObject);
     } catch (e) {
       // その他のエラーの場合

@@ -52,6 +52,7 @@ import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 import ACalendar from "./src/View/ACalender";
 import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitScheduleMain";
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
+import sendPushNotification from "./src/View/Others/CheckDeviceToken.tsx";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -106,7 +107,7 @@ function App() {
               />
               <Stack.Screen
                 name="TimeTable"
-                component={TimeTableView}
+                component={sendPushNotification}
                 options={({ route, navigation }) => ({
                   title: "",
                   headerRight: () => (

@@ -37,7 +37,6 @@ const MessageListItem = (props) => {
             fontSize: 16,
             color: isMyMessage ? "white" : "black",
             lineHeight: 24,
-          
           }}
         >
           {insertLineBreaks(props.messageObject.message, 15)}
