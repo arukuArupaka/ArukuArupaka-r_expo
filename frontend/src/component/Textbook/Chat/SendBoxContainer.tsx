@@ -18,6 +18,7 @@ const SendBoxContainer = (props) => {
       // メッセージをコンソールにログ出力
 
       console.log("送信するメッセージ:", sendMessageObject);
+      
 
       // Firestoreのドキュメント参照を取得
       const docRef = doc(
