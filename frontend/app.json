@@ -18,7 +18,6 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
       "buildNumber": "11.5.0",
-      // "googleServicesFile": "./GoogleService-Info.plist",
       "config": {
         "googleMapsApiKey": "AIzaSyCPSG4CAkxNfBtYI-gewsbFCCTnYpGExCs"
       },
@@ -85,7 +84,8 @@
             ]
           }
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

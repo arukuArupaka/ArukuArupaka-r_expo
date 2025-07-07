@@ -52,6 +52,12 @@ import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 import ACalendar from "./src/View/ACalender";
 import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitScheduleMain";
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
+import CleanMainView from "./src/View/clean/CleanMainView";
+import {
+  useFonts,
+  ZenMaruGothic_400Regular,
+  ZenMaruGothic_700Bold,
+} from "@expo-google-fonts/zen-maru-gothic";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -62,6 +68,10 @@ const Stack = createNativeStackNavigator();
 console.log("Current Platform:", Platform.OS); // これを追加
 
 function App() {
+  const [fontsLoaded] = useFonts({
+    ZenMaruGothic_400Regular,
+    ZenMaruGothic_700Bold,
+  });
   const navigationRef = useNavigationContainerRef();
   React.useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
@@ -92,6 +102,10 @@ function App() {
 
     return () => subscription.remove();
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <Provider store={AR_Store}>
@@ -392,6 +406,56 @@ function App() {
                 name="TransitScheduleMain"
                 options={() => ({ title: "建物詳細", headerShown: false })}
                 component={TransitScheduleMain}
+              />
+              <Stack.Screen
+                name="CleanMainView"
+                component={CleanMainView}
+                options={{
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity>
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF", //背景色
+                  },
+                }}
               />
               <Stack.Screen
                 name="TransitScheduleWebView"

@@ -12,6 +12,7 @@ import {
   Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -359,6 +360,30 @@ const HomeView = (props) => {
               item={() => (
                 <>
                   <FontAwesome5 name="bus" size={30} color="#7A1C23" />
+                </>
+              )}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: 10,
+            }}
+          >
+            <LargeAppListItem
+              appName="キャンパス美化"
+              color="#03D743"
+              test={props}
+              jumpPage="CleanMainView"
+              iconName="page-copy"
+              item={() => (
+                <>
+                  <MaterialIcons
+                    name="cleaning-services"
+                    size={24}
+                    color="#03D743"
+                  />
                 </>
               )}
             />
