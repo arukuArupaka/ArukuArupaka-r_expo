@@ -85,7 +85,7 @@ const CleanMainView = () => {
               fontFamily: "ZenMaruGothicBold",
             }}
           >
-            投稿する
+            リナ最強
           </Text>
         </TouchableOpacity>
       </View>
