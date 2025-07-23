@@ -52,6 +52,7 @@ import TimeTableFriendSearch from "./src/View/TimeTable/TimeTableFriendSearch";
 import ACalendar from "./src/View/ACalender";
 import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitScheduleMain";
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
+import CleanLoginView from "./src/View/clean/CleanLoginView";
 import CleanMainView from "./src/View/clean/CleanMainView";
 import {
   useFonts,
@@ -406,6 +407,11 @@ function App() {
                 name="TransitScheduleMain"
                 options={() => ({ title: "建物詳細", headerShown: false })}
                 component={TransitScheduleMain}
+              />
+              <Stack.Screen
+                name="CleanLoginView"
+                options={() => ({ headerShown: false })}
+                component={CleanLoginView}
               />
               <Stack.Screen
                 name="CleanMainView"

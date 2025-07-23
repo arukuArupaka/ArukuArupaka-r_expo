@@ -375,7 +375,7 @@ const HomeView = (props) => {
               appName="キャンパス美化"
               color="#03D743"
               test={props}
-              jumpPage="CleanMainView"
+              jumpPage="CleanLoginView"
               iconName="page-copy"
               item={() => (
                 <>
