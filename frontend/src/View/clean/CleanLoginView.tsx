@@ -7,84 +7,57 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 
 export default function SignupScreen() {
   const navigation = useNavigation();
   1;
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "#FFFEFA",
-          alignItems: "center",
-          paddingHorizontal: 20,
-        }}
-      >
-        <Image
-          source={require("../../../assets/arupaka_clean.png")}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
+        <View
           style={{
-            width: 200,
-            height: 200,
-            marginTop: 20,
-            marginBottom: 10,
-          }}
-          resizeMode="contain"
-        />
-        <Text
-          style={{
-            fontSize: 18,
-            fontFamily: "ZenMaruGothicBold",
-            textAlign: "center",
-            marginBottom: 30,
+            flex: 1,
+            backgroundColor: "#FFFEFA",
+            alignItems: "center",
+            paddingHorizontal: 20,
           }}
         >
-          みんなでキャンパス内を{"\n"}綺麗にしよう！
-        </Text>
-
-        {/* フォーム */}
-        <View style={{ width: "100%" }}>
-          {/* ニックネーム */}
-          <Text
+          <Image
+            source={require("../../../assets/arupaka_clean.png")}
             style={{
-              fontSize: 14,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
+              width: 200,
+              height: 200,
+              marginTop: 20,
+              marginBottom: 10,
             }}
-          >
-            ニックネーム
-          </Text>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: "#000",
-              borderRadius: 4,
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-              marginBottom: 16,
-              fontSize: 14,
-              backgroundColor: "#fff",
-            }}
+            resizeMode="contain"
           />
-
-          {/* メールアドレス */}
           <Text
             style={{
-              fontSize: 14,
+              fontSize: 18,
               fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
+              textAlign: "center",
+              marginBottom: 30,
             }}
           >
-            メールアドレス
+            みんなでキャンパス内を{"\n"}綺麗にしよう！
           </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
-          >
+
+          {/* フォーム */}
+          <View style={{ width: "100%" }}>
+            {/* ニックネーム */}
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+              }}
+            >
+              ニックネーム
+            </Text>
             <TextInput
               style={{
                 borderWidth: 1,
@@ -92,77 +65,108 @@ export default function SignupScreen() {
                 borderRadius: 4,
                 paddingHorizontal: 10,
                 paddingVertical: 8,
-                flex: 1,
+                marginBottom: 16,
                 fontSize: 14,
                 backgroundColor: "#fff",
               }}
             />
-            <View
+
+            {/* メールアドレス */}
+            <Text
               style={{
-                backgroundColor: "#eee",
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                borderRadius: 6,
-                marginLeft: 6,
+                fontSize: 14,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
               }}
             >
-              <Text
+              メールアドレス
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <TextInput
                 style={{
+                  borderWidth: 1,
+                  borderColor: "#000",
+                  borderRadius: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  flex: 1,
                   fontSize: 14,
-                  fontFamily: "ZenMaruGothicBold",
-                  color: "#444",
+                  backgroundColor: "#fff",
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: "#eee",
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderRadius: 6,
+                  marginLeft: 6,
                 }}
               >
-                @ed.ritsumei.ac.jp ⌄
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: "ZenMaruGothicBold",
+                    color: "#444",
+                  }}
+                >
+                  @ed.ritsumei.ac.jp ⌄
+                </Text>
+              </View>
             </View>
+
+            {/* パスワード */}
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+              }}
+            >
+              パスワード
+            </Text>
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: "#000",
+                borderRadius: 4,
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+                marginBottom: 24,
+                fontSize: 14,
+                backgroundColor: "#fff",
+              }}
+              secureTextEntry
+            />
           </View>
 
-          {/* パスワード */}
-          <Text
+          {/* アカウント作成ボタン */}
+          <TouchableOpacity
             style={{
-              fontSize: 14,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
+              backgroundColor: "#ddd",
+              paddingVertical: 10,
+              paddingHorizontal: 30,
+              borderRadius: 10,
             }}
+            onPress={() => navigation.navigate("CleanMainView")} // Navigate to CleanMainView
           >
-            パスワード
-          </Text>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: "#000",
-              borderRadius: 4,
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-              marginBottom: 24,
-              fontSize: 14,
-              backgroundColor: "#fff",
-            }}
-            secureTextEntry
-          />
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: "ZenMaruGothicBold",
+              }}
+            >
+              アカウント作成
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        {/* アカウント作成ボタン */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#ddd",
-            paddingVertical: 10,
-            paddingHorizontal: 30,
-            borderRadius: 10,
-          }}
-          onPress={() => navigation.navigate("CleanMainView")} // Navigate to CleanMainView
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: "ZenMaruGothicBold",
-            }}
-          >
-            アカウント作成
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
