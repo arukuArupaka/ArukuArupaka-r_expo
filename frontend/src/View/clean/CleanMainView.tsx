@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import {
   SafeAreaView,
@@ -11,13 +11,21 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import { Animated } from "react-native";
-
+import { supabase } from "./lib/supabase";
 const CleanMainView = () => {
   //フォント
   const [fontsLoaded] = useFonts({
     ZenMaruGothicBlack: require("../../../assets/fonts/ZenMaruGothic-Black.ttf"),
     ZenMaruGothicBold: require("../../../assets/fonts/ZenMaruGothic-Bold.ttf"),
   });
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data } = await supabase
+        .from("posts")
+        .select("id, latitude, longitude,  complete");
+    };
+    fetchPosts();
+  }, []);
   //マーカー・投稿
   const [markerLocation, setMarkerLocation] = useState(null);
 
