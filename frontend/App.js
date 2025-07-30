@@ -54,6 +54,7 @@ import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitSchedul
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
 import CleanLoginView from "./src/View/clean/CleanLoginView";
 import CleanMainView from "./src/View/clean/CleanMainView";
+import CleanPostView from "./src/View/clean/CleanPostView";
 import {
   useFonts,
   ZenMaruGothic_400Regular,
@@ -416,6 +417,56 @@ function App() {
               <Stack.Screen
                 name="CleanMainView"
                 component={CleanMainView}
+                options={{
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity>
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF", //背景色
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="CleanPostView"
+                component={CleanPostView}
                 options={{
                   headerTitle: () => (
                     <MaterialIcons

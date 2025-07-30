@@ -7,6 +7,7 @@ import {
   StatusBar,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
@@ -25,8 +26,10 @@ const CleanMainView = () => {
     const { coordinate } = event.nativeEvent;
     setMarkerLocation(coordinate);
   };
+  const navigation = useNavigation();
   const handlePost = () => {
     if (!markerLocation) return;
+    navigation.navigate("CleanPostView");
   };
   //マーカーの切り替え
   const [showMine, setShowMine] = useState(true);
