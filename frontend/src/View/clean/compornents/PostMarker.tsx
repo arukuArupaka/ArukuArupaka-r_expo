@@ -1,18 +1,19 @@
 import React from "react";
+import { Image } from "react-native";
 import { Marker } from "react-native-maps";
-import { MaterialIcons } from "@expo/vector-icons";
 
-const PostMarker = ({ post }) => {
-  const iconColor = post.complete ? "#46A3FF" : "#F06E6E";
+const PostMarker = ({ post, onPress }) => {
+  const imageSource =
+    post.status === "resolved"
+      ? require("../assets/image/broom-green.png")
+      : require("../assets/image/broom-red.png");
 
   return (
     <Marker
-      coordinate={{
-        latitude: post.latitude,
-        longitude: post.longitude,
-      }}
+      coordinate={{ latitude: post.latitude, longitude: post.longitude }}
+      onPress={() => onPress(post)}
     >
-      <MaterialIcons name="cleaning-services" size={30} color={iconColor} />
+      <Image source={imageSource} style={{ width: 40, height: 40 }} />
     </Marker>
   );
 };

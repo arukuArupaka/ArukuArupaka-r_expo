@@ -53,7 +53,7 @@ import ACalendar from "./src/View/ACalender";
 import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitScheduleMain";
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
 import CleanLoginView from "./src/View/clean/CleanLoginView";
-import CleanMainView from "./src/View/clean/CleanMainView";
+import CleanMainView from "./src/View/clean/CleanMainScreen";
 import {
   useFonts,
   ZenMaruGothic_400Regular,
