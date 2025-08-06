@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useFonts } from "expo-font";
 import React from "react";
 import {
   View,
@@ -10,10 +12,19 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import RNPickerSelect from "react-native-picker-select";
+// import { supabase } from "../../lib/supabase";
 
 export default function SignupScreen() {
   const navigation = useNavigation();
-  1;
+  const [nickname, setNickname] = useState("");
+  const [emailLocal, setEmailLocal] = useState("");
+  const [emailDomain, setEmailDomain] = useState("@ed.ritsumei.ac.jp");
+  const [password, setPassword] = useState("");
+  const [fontsLoaded] = useFonts({
+    ZenMaruGothicBlack: require("../../../assets/fonts/ZenMaruGothic-Black.ttf"),
+    ZenMaruGothicBold: require("../../../assets/fonts/ZenMaruGothic-Bold.ttf"),
+  });
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
@@ -59,6 +70,8 @@ export default function SignupScreen() {
               ニックネーム
             </Text>
             <TextInput
+              value={nickname}
+              onChangeText={setNickname}
               style={{
                 borderWidth: 1,
                 borderColor: "#000",
@@ -89,35 +102,75 @@ export default function SignupScreen() {
               }}
             >
               <TextInput
+                value={emailLocal}
+                onChangeText={setEmailLocal}
                 style={{
                   borderWidth: 1,
                   borderColor: "#000",
                   borderRadius: 4,
                   paddingHorizontal: 10,
                   paddingVertical: 8,
-                  flex: 1,
                   fontSize: 14,
+                  width: "60%",
                   backgroundColor: "#fff",
                 }}
               />
               <View
                 style={{
-                  backgroundColor: "#eee",
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 6,
-                  marginLeft: 6,
+                  marginLeft: 10,
+                  width: "40%",
                 }}
               >
-                <Text
+                <RNPickerSelect
+                  onValueChange={(value) => setEmailDomain(value)}
+                  value={emailDomain}
+                  items={[
+                    {
+                      label: "@ed.ritsumei.ac.jp",
+                      value: "@ed.ritsumei.ac.jp",
+                    },
+                    {
+                      label: "@st.ritsumei.ac.jp",
+                      value: "@st.ritsumei.ac.jp",
+                    },
+                    { label: "@creotech.co.jp", value: "@creotech.co.jp" },
+                  ]}
                   style={{
-                    fontSize: 14,
-                    fontFamily: "ZenMaruGothicBold",
-                    color: "#444",
+                    inputIOS: {
+                      fontSize: 14,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#444",
+                      backgroundColor: "#eee",
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      borderRadius: 6,
+                    },
+                    inputAndroid: {
+                      fontSize: 14,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#444",
+                      backgroundColor: "#eee",
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                      borderRadius: 6,
+                    },
                   }}
-                >
-                  @ed.ritsumei.ac.jp ⌄
-                </Text>
+                  Icon={() => (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: "#444",
+                        paddingVertical: 9,
+                        width: 150,
+                        textAlign: "right",
+                        paddingRight: 5,
+                        fontFamily: "ZenMaruGothicBold",
+                      }}
+                    >
+                      ⌄
+                    </Text>
+                  )}
+                />
               </View>
             </View>
 
@@ -132,6 +185,9 @@ export default function SignupScreen() {
               パスワード
             </Text>
             <TextInput
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
               style={{
                 borderWidth: 1,
                 borderColor: "#000",
@@ -142,7 +198,6 @@ export default function SignupScreen() {
                 fontSize: 14,
                 backgroundColor: "#fff",
               }}
-              secureTextEntry
             />
           </View>
 
@@ -154,14 +209,30 @@ export default function SignupScreen() {
               paddingHorizontal: 30,
               borderRadius: 10,
             }}
-            onPress={() => navigation.navigate("CleanMainView")} // Navigate to CleanMainView
+            //   onPress={async () => {
+            //     const email = emailLocal + emailDomain;
+
+            //     const { data, error } = await supabase.auth.signUp({
+            //       email: email,
+            //       password: password,
+            //       options: {
+            //         data: {
+            //           nickname: nickname, // ユーザーのメタデータとして保存
+            //         },
+            //       },
+            //     });
+
+            //     if (error) {
+            //       alert("登録に失敗しました: " + error.message);
+            //       return;
+            //     }
+
+            //     alert("登録完了しました！");
+            //     navigation.navigate("CleanMainView");
+            //   }}
+            onPress={() => navigation.navigate("CleanMainView")}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: "ZenMaruGothicBold",
-              }}
-            >
+            <Text style={{ fontSize: 16, fontFamily: "ZenMaruGothicBold" }}>
               アカウント作成
             </Text>
           </TouchableOpacity>

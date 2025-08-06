@@ -3,11 +3,18 @@ import { ActivityIndicator, Text } from "react-native";
 import MapView from "react-native-maps";
 import { supabase } from "../lib/supabase";
 import PostMarker from "./PostMarker";
+import NewPostMarker from "./NewPostMarker";
 
 const CleanMap = ({ onSelectPost, onRegionChangeComplete }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [markerLocation, setMarkerLocation] = useState(null);
+
+  const handleMapPress = (event) => {
+    const { coordinate } = event.nativeEvent;
+    setMarkerLocation(coordinate);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -43,7 +50,10 @@ const CleanMap = ({ onSelectPost, onRegionChangeComplete }) => {
         longitudeDelta: 0.007,
       }}
       onRegionChangeComplete={onRegionChangeComplete}
+      onPress={handleMapPress}
     >
+      {markerLocation && <NewPostMarker markerLocation={markerLocation} />}
+
       {posts.map((post) => (
         <PostMarker key={post.id} post={post} onPress={onSelectPost} />
       ))}
