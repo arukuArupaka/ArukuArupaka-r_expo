@@ -6,12 +6,16 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MapView, { Marker } from "react-native-maps";
 import { FontAwesome } from "@expo/vector-icons";
 import { Animated } from "react-native";
+import PostDetailCard from "./compornents/PostDtailCard";
+import CleanMap from "./compornents/CleanMap";
+import { PostButton } from "./compornents/PostButton";
 
 const CleanMainView = () => {
   //フォント
@@ -35,62 +39,37 @@ const CleanMainView = () => {
   const [showMine, setShowMine] = useState(true);
   const [showAll, setShowAll] = useState(true);
 
+  const [newPostLocation, setNewPostLocation] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  const navigateToPostPage = () => {
+    //投稿入力ページへ移動する
+  };
+
+  const handleSelectPost = (post) => {
+    setSelectedPost(post);
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <View style={{ flex: 1 }}>
-        <MapView
-          style={{ flex: 1 }}
-          initialRegion={{
-            latitude: 34.98222186686605, //初期状態でBKCが中心になるように設定
-            longitude: 135.96371280735272,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+        <CleanMap
+          onSelectPost={handleSelectPost}
+          onRegionChangeComplete={(region) => {
+            setNewPostLocation({
+              latitude: region.latitude,
+              longitude: region.longitude,
+            });
           }}
-          onPress={handleMapPress}
-          zoomEnabled={true} //ズーム機能
-          zoomTapEnabled={true} //ダブルタップでズーム(iosのみ)
-          showsCompass={false} //コンパス非表示
-        >
-          {markerLocation && (
-            <>
-              <Marker coordinate={markerLocation}>
-                <MaterialIcons
-                  name="cleaning-services"
-                  size={30}
-                  color="#F06E6E"
-                />
-              </Marker>
-            </>
-          )}
-        </MapView>
-        <TouchableOpacity
-          onPress={handlePost}
-          disabled={!markerLocation}
-          style={{
-            position: "absolute",
-            bottom: 50,
-            alignSelf: "center",
-            backgroundColor: markerLocation ? "#7ACCFF" : "#CECECE",
-            width: "40%",
-            height: "8%",
-            borderRadius: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "#fff",
-              fontWeight: "bold",
-              fontSize: 20,
-              fontFamily: "ZenMaruGothicBold",
-            }}
-          >
-            投稿する
-          </Text>
-        </TouchableOpacity>
+        />
+        <PostButton onPress={navigateToPostPage} />
+        {selectedPost && (
+          <PostDetailCard
+            post={selectedPost}
+            onClose={() => setSelectedPost(null)}
+          />
+        )}
       </View>
     </>
   );
