@@ -54,6 +54,7 @@ import TransitScheduleMain from "./src/View/TransitScheduleScreen/TransitSchedul
 import TransitScheduleWebView from "./src/View/TransitScheduleScreen/TransitScheduleWebView";
 import CleanLoginView from "./src/View/clean/CleanLoginView";
 import CleanMainView from "./src/View/clean/CleanMainView";
+import CleanHowToView from "./src/View/clean/CleanHowToView";
 import {
   useFonts,
   ZenMaruGothic_400Regular,
@@ -427,7 +428,7 @@ function App() {
                   headerRight:
                     Platform.OS === "ios"
                       ? () => (
-                          <TouchableOpacity>
+                          <TouchableOpacity onPress={() => navigationRef.navigate("CleanHowToView") }>
                             <MaterialIcons
                               name="question-mark"
                               size={40}
@@ -462,6 +463,25 @@ function App() {
                     backgroundColor: "#8DFFAF", //背景色
                   },
                 }}
+              />
+              <Stack.Screen
+                name="CleanHowToView"
+                component={CleanHowToView}
+                options={({ navigation }) => ({
+                  headerShown: true,
+                  headerTitle: () => (
+                    <MaterialIcons name="cleaning-services" size={40} color="black" />
+                  ),
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 8 }}>
+                      <MaterialIcons name="arrow-back" size={40} color="black" />
+                    </TouchableOpacity>
+                  ),
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF",
+                  },
+                  headerTitleAlign: 'center',
+                })}
               />
               <Stack.Screen
                 name="TransitScheduleWebView"
