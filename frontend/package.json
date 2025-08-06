@@ -18,6 +18,7 @@
     "@react-navigation/native": "^6.1.14",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.25",
+    "@supabase/supabase-js": "^2.52.1",
     "@types/react": "~19.0.10",
     "@types/redux-actions": "^2.6.5",
     "algoliasearch": "^4.22.1",
