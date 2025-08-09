@@ -1,17 +1,40 @@
 "use client"
 
+import { useState } from "react"
 import { ArrowLeft, Heart, Camera, AlertCircle, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Report } from "@/app/page"
+import { supabase } from "@/lib/supabase"
 
 interface UnresolvedReportsProps {
   reports: Report[]
   onBack: () => void
+  onAssigned: () => void // ← 新たに追加
 }
 
-export function UnresolvedReports({ reports, onBack }: UnresolvedReportsProps) {
+export function UnresolvedReports({ reports, onBack, onAssigned }: UnresolvedReportsProps) {
+  const [loadingId, setLoadingId] = useState<string | null>(null)
+
+  const handleAssignReport = async (reportId: string) => {
+    setLoadingId(reportId)
+
+    const { error } = await supabase
+      .from("posts")
+      .update({ status: "active" })
+      .eq("id", reportId)
+
+    setLoadingId(null)
+
+    if (error) {
+      alert("案件を担当に変更できませんでした: " + error.message)
+      return
+    }
+
+    onAssigned() // 状態を親に通知して遷移させる
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -50,9 +73,10 @@ export function UnresolvedReports({ reports, onBack }: UnresolvedReportsProps) {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <span className="text-sm text-gray-600">場所</span>
-                      <div className="font-medium">{report.location}</div>
-                    </div>
+  <span className="text-sm text-gray-600">場所</span>
+  <div className="font-medium">{report.building ?? report.place ?? "未指定"}</div>
+</div>
+
                     <div>
                       <span className="text-sm text-gray-600">コメント</span>
                       <div className="text-gray-800">{report.comment}</div>
@@ -71,8 +95,13 @@ export function UnresolvedReports({ reports, onBack }: UnresolvedReportsProps) {
                   </div>
 
                   <div className="mt-4">
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                      案件を担当する
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => handleAssignReport(report.id)}
+                      disabled={loadingId === report.id}
+                    >
+                      {loadingId === report.id ? "担当中..." : "案件を担当する"}
                     </Button>
                   </div>
                 </div>

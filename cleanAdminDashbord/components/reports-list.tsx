@@ -30,10 +30,11 @@ export function ReportsList({ reports, onReportClick,building }: ReportsListProp
                   <span className="text-sm">{report.likes}</span>
                 </div>
               </div>
-              <div className="mb-1">
-                <span className="text-sm text-gray-600">場所</span>
-                <div className="font-medium">{report.location}</div>
-              </div>
+            <div>
+  <span className="text-sm text-gray-600">場所</span>
+  <div className="font-medium">{report.building ?? report.place ?? "未指定"}</div>
+</div>
+
               <div className="mb-3">
                 <span className="text-sm text-gray-600">コメント</span>
                 <div className="text-gray-800">{report.comment}</div>
@@ -53,11 +54,27 @@ export function ReportsList({ reports, onReportClick,building }: ReportsListProp
 }
 
 function StatusBadge({ status }: { status: Report["status"] }) {
-  const variants = {
-    完了: "bg-green-100 text-green-800",
-    未完了: "bg-red-100 text-red-800",
-    進行中: "bg-yellow-100 text-yellow-800",
+  const statusMap: Record<string, { label: string; className: string }> = {
+    resolved: {
+      label: "解決済み",
+      className: "bg-blue-100 text-blue-800",
+    },
+    active: {
+      label: "進行中",
+      className: "bg-green-100 text-green-800",
+    },
+    new: {
+      label: "未解決",
+      className: "bg-orange-100 text-orange-800",
+    },
   }
 
-  return <Badge className={`${variants[status]} border-0`}>{status}</Badge>
+  if (!status || !statusMap[status]) return null
+
+  return (
+    <Badge className={`${statusMap[status].className} border-0`}>
+      {statusMap[status].label}
+    </Badge>
+  )
 }
+

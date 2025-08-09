@@ -9,10 +9,12 @@ interface HeaderProps {
   onActiveClick: () => void
   onUnresolvedClick: () => void
   onUsersClick: () => void
+  onPinsClick: () => void
   resolvedCount: number
   activeCount: number
   newCount: number
   totalPins: number
+  userCount: number
 }
 
 export function Header({
@@ -21,10 +23,12 @@ export function Header({
   onActiveClick,
   onUnresolvedClick,
   onUsersClick,
+  onPinsClick,
   resolvedCount,
   activeCount,
   newCount,
   totalPins,
+  userCount,
 }: HeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -39,9 +43,21 @@ export function Header({
           <User className="h-5 w-5" />
         </Button>
       </div>
-      <div className="flex gap-4 mt-4">
-        <StatCard number="2000" label="users" subtitle="登録ユーザー数" onClick={onUsersClick} clickable />
-        <StatCard number={totalPins.toString()} label="pins" subtitle="現在の案件数" />
+        <div className="flex gap-4 mt-4">
+        <StatCard
+          number={userCount.toString()}  // ここを固定の"11111"から動的に
+          label="users"
+          subtitle="登録ユーザー数"
+          onClick={onUsersClick}
+          clickable
+        />
+     <StatCard
+  number={totalPins.toString()}
+  label="pins"
+  subtitle="現在の案件数"
+  onClick={onPinsClick}
+  clickable
+/>
         <StatCard
           number={resolvedCount.toString()}
           label="Resolved"
