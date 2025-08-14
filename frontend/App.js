@@ -533,7 +533,7 @@ function App() {
                     backgroundColor: "#8DFFAF", //背景色
                   },
                 }}
-                />
+              />
               <Stack.Screen
                 name="TransitScheduleWebView"
                 options={() => ({ title: "建物詳細", headerShown: false })}
