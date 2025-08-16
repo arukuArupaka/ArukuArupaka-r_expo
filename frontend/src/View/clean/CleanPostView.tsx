@@ -7,8 +7,14 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
+import { supabase } from "../../lib/supabase";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImageAsync } from "../../lib/uploadImage";
+import { useRoute, RouteProp } from "@react-navigation/native";
 
 const buildings = [
   { name: "アクトα", reading: "あくと" },
@@ -100,256 +106,317 @@ export default function PostScreen() {
       String.fromCharCode(char.charCodeAt(0) + 0x60)
     );
   };
+
   const [locationDetail, setLocationDetail] = useState("");
   const [comment, setComment] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [isRequestingCleaning, setIsRequestingCleaning] = useState(true);
+  // 座標を受け取るパラメータ
+  type RootStackParamList = {
+    CleanPostView: { latitude: number; longitude: number };
+  };
+
+  const route = useRoute<RouteProp<RootStackParamList, "CleanPostView">>();
+  const { latitude, longitude } = route.params ?? {
+    latitude: undefined,
+    longitude: undefined,
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      a{" "}
-      <View style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={{ padding: 20 }}
-          keyboardShouldPersistTaps="always"
-        >
-          <Text
-            style={{
-              fontSize: 32,
-              fontFamily: "ZenMaruGothicBlack",
-              textAlign: "center",
-              marginBottom: 20,
-              color: "#4C4C4C",
-            }}
-          >
-            投稿
-          </Text>
-
-          {/* 建物 */}
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
-              color: "#4C4C4C",
-            }}
-          >
-            建物
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              borderWidth: 1,
-              borderColor: "#B6B6B6",
-              borderRadius: 6,
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-              marginBottom: 16,
-            }}
-          >
-            <FontAwesome6
-              name="magnifying-glass"
-              size={16}
-              color="#999"
-              style={{ marginRight: 6 }}
-            />
-            <TextInput
-              placeholder="建物を選択..."
-              value={selectedBuilding}
-              onChangeText={handleBuildingInput}
-              onFocus={() => {
-                if (selectedBuilding !== "") setShowSuggestions(true);
-              }}
-              style={{ flex: 1, fontSize: 14 }}
-            />
-          </View>
-          {showSuggestions && filteredBuildings.length > 0 && (
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                borderRadius: 6,
-                marginBottom: 16,
-                backgroundColor: "white",
-                overflow: "visible",
-                position: "absolute",
-                top: 150,
-                left: 20,
-                right: 20,
-                zIndex: 10,
-              }}
-            >
-              <ScrollView
-                style={{ maxHeight: 150 }}
-                keyboardShouldPersistTaps="handled"
-              >
-                {filteredBuildings.map((building, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      setSelectedBuilding(building.name);
-                      setShowSuggestions(false);
-                    }}
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      borderBottomWidth:
-                        index !== filteredBuildings.length - 1 ? 1 : 0,
-                      borderColor: "#eee",
-                    }}
-                  >
-                    <Text style={{ fontSize: 14 }}>{building.name}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
-
-          {/* 場所 */}
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
-              color: "#4C4C4C",
-            }}
-          >
-            場所
-          </Text>
-          <TextInput
-            placeholder="例：一階の男子トイレ、103号室の床"
-            value={locationDetail}
-            onChangeText={setLocationDetail}
-            style={{
-              borderWidth: 1,
-              borderColor: "#B6B6B6",
-              borderRadius: 6,
-              padding: 10,
-              fontSize: 14,
-              marginBottom: 16,
-            }}
-          />
-
-          {/* コメント */}
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
-              color: "#4C4C4C",
-            }}
-          >
-            コメント
-          </Text>
-          <TextInput
-            multiline
-            numberOfLines={4}
-            placeholder={`例：廊下を綺麗にして欲しい\n例：ペットボトル拾いました`}
-            value={comment}
-            onChangeText={setComment}
-            style={{
-              borderWidth: 1,
-              borderColor: "#B6B6B6",
-              borderRadius: 6,
-              padding: 10,
-              height: 100,
-              fontSize: 14,
-              marginBottom: 16,
-              textAlignVertical: "top",
-            }}
-          />
-
-          {/* 写真 */}
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: "ZenMaruGothicBold",
-              marginBottom: 6,
-              color: "#4C4C4C",
-            }}
-          >
-            写真
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              // ここで写真添付処理を追加
-            }}
-            style={{
-              height: 150,
-              borderWidth: 1,
-              borderColor: "#B6B6B6",
-              borderRadius: 6,
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 24,
-            }}
-          >
-            {photoUri ? (
-              <Image
-                source={{ uri: photoUri }}
-                style={{ width: "100%", height: "100%", borderRadius: 6 }}
-              />
-            ) : (
-              <FontAwesome6 name="camera" size={45} color="black" />
-            )}
-          </TouchableOpacity>
-
-          {/* チェックボックス */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 16,
-            }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={{ padding: 20 }}
+            keyboardShouldPersistTaps="handled"
           >
             <Text
               style={{
-                fontSize: 14,
-                fontFamily: "ZenMaruGothicBold",
-                marginRight: 8,
-              }}
-            >
-              掃除を依頼する
-            </Text>
-            <TouchableOpacity
-              onPress={() => setIsRequestingCleaning(!isRequestingCleaning)}
-            >
-              <FontAwesome5
-                name={isRequestingCleaning ? "check-square" : "square"}
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* 投稿ボタン */}
-          <TouchableOpacity
-            style={{
-              alignSelf: "flex-end",
-              backgroundColor: "#FF7A7A",
-              paddingVertical: 10,
-              paddingHorizontal: 24,
-              borderRadius: 12,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 3,
-              elevation: 4,
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                fontSize: 16,
-                fontFamily: "ZenMaruGothicBold",
+                fontSize: 32,
+                fontFamily: "ZenMaruGothicBlack",
+                textAlign: "center",
+                marginBottom: 20,
+                color: "#4C4C4C",
               }}
             >
               投稿
             </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+
+            {/* 建物 */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+                color: "#4C4C4C",
+              }}
+            >
+              建物
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "#B6B6B6",
+                borderRadius: 6,
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+                marginBottom: 16,
+              }}
+            >
+              <FontAwesome6
+                name="magnifying-glass"
+                size={16}
+                color="#999"
+                style={{ marginRight: 6 }}
+              />
+              <TextInput
+                placeholder="建物を選択..."
+                value={selectedBuilding}
+                onChangeText={handleBuildingInput}
+                onFocus={() => {
+                  if (selectedBuilding !== "") setShowSuggestions(true);
+                }}
+                style={{ flex: 1, fontSize: 14 }}
+              />
+            </View>
+            {showSuggestions && filteredBuildings.length > 0 && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  borderRadius: 6,
+                  marginBottom: 16,
+                  backgroundColor: "white",
+                  overflow: "visible",
+                  position: "absolute",
+                  top: 150,
+                  left: 20,
+                  right: 20,
+                  zIndex: 10,
+                }}
+              >
+                <ScrollView
+                  style={{ maxHeight: 150 }}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {filteredBuildings.map((building, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        setSelectedBuilding(building.name);
+                        setShowSuggestions(false);
+                      }}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderBottomWidth:
+                          index !== filteredBuildings.length - 1 ? 1 : 0,
+                        borderColor: "#eee",
+                      }}
+                    >
+                      <Text style={{ fontSize: 14 }}>{building.name}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+
+            {/* 場所 */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+                color: "#4C4C4C",
+              }}
+            >
+              場所
+            </Text>
+            <TextInput
+              placeholder="例：一階の男子トイレ、103号室の床"
+              value={locationDetail}
+              onChangeText={setLocationDetail}
+              style={{
+                borderWidth: 1,
+                borderColor: "#B6B6B6",
+                borderRadius: 6,
+                padding: 10,
+                fontSize: 14,
+                marginBottom: 16,
+              }}
+            />
+
+            {/* コメント */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+                color: "#4C4C4C",
+              }}
+            >
+              コメント
+            </Text>
+            <TextInput
+              multiline
+              numberOfLines={4}
+              placeholder={`例：廊下を綺麗にして欲しい\n例：ペットボトル拾いました`}
+              value={comment}
+              onChangeText={setComment}
+              style={{
+                borderWidth: 1,
+                borderColor: "#B6B6B6",
+                borderRadius: 6,
+                padding: 10,
+                height: 100,
+                fontSize: 14,
+                marginBottom: 16,
+                textAlignVertical: "top",
+              }}
+            />
+
+            {/* 写真 */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: "ZenMaruGothicBold",
+                marginBottom: 6,
+                color: "#4C4C4C",
+              }}
+            >
+              写真
+            </Text>
+            <TouchableOpacity
+              onPress={async () => {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 0.7,
+                });
+
+                if (!result.canceled && result.assets?.length) {
+                  setPhotoUri(result.assets[0].uri);
+                }
+              }}
+              style={{
+                height: 150,
+                borderWidth: 1,
+                borderColor: "#B6B6B6",
+                borderRadius: 6,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: 24,
+              }}
+            >
+              {photoUri ? (
+                <Image
+                  source={{ uri: photoUri }}
+                  style={{ width: "100%", height: "100%", borderRadius: 6 }}
+                />
+              ) : (
+                <FontAwesome6 name="camera" size={45} color="black" />
+              )}
+            </TouchableOpacity>
+
+            {/* チェックボックス */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "ZenMaruGothicBold",
+                  marginRight: 8,
+                }}
+              >
+                掃除を依頼する
+              </Text>
+              <TouchableOpacity
+                onPress={() => setIsRequestingCleaning(!isRequestingCleaning)}
+              >
+                <FontAwesome5
+                  name={isRequestingCleaning ? "check-square" : "square"}
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* 投稿ボタン */}
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const {
+                    data: { user },
+                  } = await supabase.auth.getUser();
+                  let imageUrl = null;
+                  if (photoUri) {
+                    imageUrl = await uploadImageAsync(
+                      photoUri,
+                      user.id,
+                      "post-images"
+                    );
+                  }
+                  const { error } = await supabase.from("posts").insert([
+                    {
+                      user_id: user.id,
+                      building: selectedBuilding,
+                      place: locationDetail,
+                      comment: comment,
+                      image_url: imageUrl,
+                      request: isRequestingCleaning,
+                      status: "new",
+                      latitude,
+                      longitude,
+                    },
+                  ]);
+
+                  if (error) {
+                    alert("投稿に失敗しました: " + error.message);
+                    return;
+                  }
+                  alert("投稿が完了しました！");
+                  setSelectedBuilding("");
+                  setLocationDetail("");
+                  setComment("");
+                  setPhotoUri(null);
+                  setIsRequestingCleaning(true);
+                } catch (e) {
+                  alert("エラーが発生しました: " + e.message);
+                }
+              }}
+              style={{
+                alignSelf: "flex-end",
+                backgroundColor: "#FF7A7A",
+                paddingVertical: 10,
+                paddingHorizontal: 24,
+                borderRadius: 12,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 3,
+                elevation: 4,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontFamily: "ZenMaruGothicBold",
+                }}
+              >
+                投稿
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
