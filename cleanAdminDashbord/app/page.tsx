@@ -5,7 +5,7 @@ import { Header } from "@/components/header"
 import { Sidebar } from "@/components/sidebar"
 import { ReportsList } from "@/components/reports-list"
 import { ReportDetail } from "@/components/report-detail"
-import { MapView } from "@/components/map-view"
+import dynamic from "next/dynamic"
 import { UserProfile } from "@/components/user-profile"
 import { ResolvedReports } from "@/components/resolved-reports"
 import { LoginScreen } from "@/components/login-screen"
@@ -13,8 +13,6 @@ import { ActiveReports } from "@/components/active-reports"
 import { UnresolvedReports } from "@/components/unresolved-reports"
 import { UsersManagement } from "@/components/users-management"
 import { supabase } from "@/lib/supabase"
-import dynamic from "next/dynamic"
-
 
 export type Post = {
   id: string
@@ -43,47 +41,41 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [userCount, setUserCount] = useState(0)
 
-  
-// postsだけ取得する関数
-const fetchPosts = async () => {
-  setLoading(true)
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false })
+  const fetchPosts = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false })
 
-  if (error) {
-    console.error("データ取得エラー:", error.message)
-    alert("データの取得に失敗しました")
-  } else {
-    setPosts(data as Post[])
+    if (error) {
+      console.error("データ取得エラー:", error.message)
+      alert("データの取得に失敗しました")
+    } else {
+      setPosts(data as Post[])
+    }
+    setLoading(false)
   }
-  setLoading(false)
-}
 
-// ユーザー数だけ取得する関数
-const fetchUserCount = async () => {
-  const { count, error } = await supabase
-    .from("users") // 自分のユーザーテーブル名に合わせてください
-    .select("id", { count: "exact", head: true })
+  const fetchUserCount = async () => {
+    const { count, error } = await supabase
+      .from("users")
+      .select("id", { count: "exact", head: true })
 
-  if (error) {
-    console.error("ユーザー数の取得に失敗しました:", error.message)
-  } else if (count !== null) {
-    setUserCount(count)
+    if (error) {
+      console.error("ユーザー数の取得に失敗しました:", error.message)
+    } else if (count !== null) {
+      setUserCount(count)
+    }
   }
-}
 
-  
   useEffect(() => {
-  if (isLoggedIn) {
-    fetchPosts()
-    fetchUserCount()
-  }
-}, [isLoggedIn])
+    if (isLoggedIn) {
+      fetchPosts()
+      fetchUserCount()
+    }
+  }, [isLoggedIn])
 
-
-  // 全体のフィルター処理
   const filteredReports =
     selectedLocation === "全て"
       ? posts
@@ -93,7 +85,6 @@ const fetchUserCount = async () => {
   const activeReports = posts.filter((report) => report.status === "active")
   const unresolvedReports = posts.filter((report) => report.status === "new")
 
-  // フィルター適用済みバージョン
   const filteredResolvedReports =
     selectedLocation === "全て"
       ? resolvedReports
@@ -127,9 +118,9 @@ const fetchUserCount = async () => {
   const handleUnresolvedView = () => setCurrentView("unresolved")
   const handleUsersView = () => setCurrentView("users")
 
-const MapView = dynamic(() => import("@/components/map-view").then(mod => mod.MapView), {
-  ssr: false,
-})
+  const DynamicMapView = dynamic(() => import("@/components/map-view").then(mod => mod.MapView), {
+    ssr: false,
+  })
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -141,28 +132,50 @@ const MapView = dynamic(() => import("@/components/map-view").then(mod => mod.Ma
         alert("ログイン失敗：" + error.message)
         return
       }
-      if (data.user) {
-        setIsLoggedIn(true)
-        setCurrentView("list")
+
+      const user = data.user
+      if (!user) {
+        alert("ユーザーが見つかりません")
+        return
       }
-    } catch (e) {
-      alert("ログイン中にエラーが発生しました")
+
+      // 管理者判定
+      const { data: adminData, error: adminError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
+        .single()
+
+      if (adminError || !adminData) {
+        alert("管理者ではありません")
+        return
+      }
+
+      if (adminData.role && adminData.role !== "admin") {
+        alert("管理者ではありません")
+        return
+      }
+
+      setIsLoggedIn(true)
+      setCurrentView("list")
+    } catch (e: any) {
+      alert("ログイン中にエラーが発生しました: " + e.message)
     }
   }
 
+  const handleResolveCompleted = async () => {
+    await fetchPosts()
+    setCurrentView("resolved")
+  }
+
+  // 仮の関数
   const handleLogout = () => {
     setIsLoggedIn(false)
     setCurrentView("login")
   }
 
   const handleAssigned = () => {
-    setCurrentView("list")
-    fetchPosts()
-  }
-
-  const handleResolveCompleted = async () => {
-    await fetchPosts()
-    setCurrentView("resolved")
+    alert("担当者割り当て処理")
   }
 
   if (!isLoggedIn) {
@@ -207,7 +220,7 @@ const MapView = dynamic(() => import("@/components/map-view").then(mod => mod.Ma
           {currentView === "detail" && selectedReport && (
             <ReportDetail report={selectedReport} onBack={handleBackToList} />
           )}
-          {currentView === "map" && <MapView reports={filteredReports} />}
+          {currentView === "map" && <DynamicMapView reports={filteredReports} />}
           {currentView === "user" && (
             <UserProfile onBack={handleListView} onLogout={handleLogout} />
           )}
