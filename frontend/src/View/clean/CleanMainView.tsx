@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { View, StatusBar } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "./lib/supabase";
 import PostDetailCard from "./compornents/PostDtailCard";
 import CleanMap from "./compornents/CleanMap";
 import { PostButton } from "./compornents/PostButton";

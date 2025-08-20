@@ -14,7 +14,7 @@ import {
   Keyboard,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "./lib/supabase";
 
 export default function CleanLoginView() {
   const navigation = useNavigation<any>();

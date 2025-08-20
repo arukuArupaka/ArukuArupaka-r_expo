@@ -11,9 +11,9 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "./lib/supabase";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageAsync } from "../../lib/uploadImage";
+import { uploadImageAsync } from "./lib/uploadImage";
 import { useRoute, RouteProp } from "@react-navigation/native";
 
 const buildings = [
