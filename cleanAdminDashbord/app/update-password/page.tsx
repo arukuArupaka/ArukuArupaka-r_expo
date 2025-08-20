@@ -1,7 +1,6 @@
-// /app/update-password/page.tsx (または /pages/update-password.tsx)
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -15,12 +14,36 @@ export default function UpdatePasswordPage() {
 
   const handleSubmit = async () => {
     setLoading(true)
-    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setMessage("")
 
-    if (error) {
-      setMessage("パスワード更新に失敗しました: " + error.message)
+    // 1. Supabase Auth のパスワード更新
+    const { data, error: authError } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+
+    if (authError) {
+      setMessage("パスワード更新に失敗しました: " + authError.message)
+      setLoading(false)
+      return
+    }
+
+    // 2. users テーブルの role を admin に更新
+    const userId = data?.user?.id
+    if (!userId) {
+      setMessage("ユーザー情報が取得できませんでした。")
+      setLoading(false)
+      return
+    }
+
+    const { error: dbError } = await supabase
+      .from("users")
+      .update({ role: "admin" })
+      .eq("id", userId)
+
+    if (dbError) {
+      setMessage("ユーザー情報の更新に失敗しました: " + dbError.message)
     } else {
-      setMessage("パスワードが更新されました。ログインしてください。")
+      setMessage("パスワードと権限が更新されました。ログインしてください。")
       setTimeout(() => router.push("/login"), 2000)
     }
 
