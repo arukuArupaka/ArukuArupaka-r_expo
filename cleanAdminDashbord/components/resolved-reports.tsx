@@ -49,10 +49,11 @@ export function ResolvedReports({ reports, onBack }: ResolvedReportsProps) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <span className="text-sm text-gray-600">場所</span>
-                      <div className="font-medium">{report.location}</div>
-                    </div>
+                  <div>
+  <span className="text-sm text-gray-600">場所</span>
+  <div className="font-medium">{report.building ?? report.place ?? "未指定"}</div>
+</div>
+
                     <div>
                       <span className="text-sm text-gray-600">コメント</span>
                       <div className="text-gray-800">{report.comment}</div>

@@ -56,10 +56,7 @@ export function UsersManagement({ onBack }: UsersManagementProps) {
           戻る
         </Button>
         <h1 className="text-2xl font-bold text-gray-900">ユーザー管理</h1>
-        <Button className="bg-blue-600 hover:bg-blue-700 gap-2">
-          <UserPlus className="h-4 w-4" />
-          新規ユーザー追加
-        </Button>
+        
       </div>
 
  <div className="grid gap-4">
