@@ -122,46 +122,51 @@ export default function AdminDashboard() {
     ssr: false,
   })
 
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (error) {
-        alert("ログイン失敗：" + error.message)
-        return
-      }
+ const handleLogin = async (email: string, password: string) => {
+  try {
+    // 1. Supabase Auth でログイン
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-      const user = data.user
-      if (!user) {
-        alert("ユーザーが見つかりません")
-        return
-      }
-
-      // 管理者判定
-      const { data: adminData, error: adminError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .single()
-
-      if (adminError || !adminData) {
-        alert("管理者ではありません")
-        return
-      }
-
-      if (adminData.role && adminData.role !== "admin") {
-        alert("管理者ではありません")
-        return
-      }
-
-      setIsLoggedIn(true)
-      setCurrentView("list")
-    } catch (e: any) {
-      alert("ログイン中にエラーが発生しました: " + e.message)
+    if (error) {
+      alert("ログイン失敗：" + error.message)
+      return
     }
+
+    const user = data.user
+    if (!user) {
+      alert("ユーザーが見つかりません")
+      return
+    }
+
+    // 2. users テーブルで role を取得
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single()
+
+    if (userError) {
+      alert("ユーザー情報の取得に失敗しました: " + userError.message)
+      return
+    }
+
+    // 3. role が admin でなければログイン不可
+    if (userData?.role !== "admin") {
+      alert("管理者ではありません")
+      return
+    }
+
+    // 4. ログイン成功
+    setIsLoggedIn(true)
+    setCurrentView("list")
+  } catch (e: any) {
+    alert("ログイン中にエラーが発生しました: " + e.message)
   }
+}
+
 
   const handleResolveCompleted = async () => {
     await fetchPosts()
