@@ -28,10 +28,9 @@ export type Report = {
   status?: "new" | "active" | "resolved";
 }
 
-
 export function MapView({ reports }: MapViewProps) {
   // 初期中心座標（例: 京都駅周辺）
-  const center: [number, number] = [34.981985, 135.961847];
+  const center: [number, number] = [34.9813369,135.96298]
 
   // カスタムアイコン（LucideのMapPinはSVGなので、LeafletのDivIconで代用）
   function getPinIcon(color: string) {
@@ -66,7 +65,7 @@ export function MapView({ reports }: MapViewProps) {
       <div className="flex-1 relative">
         <MapContainer
           center={center}
-          zoom={13}
+          zoom={17}
           style={{ width: "100%", height: "600px", zIndex: 1 }}
           scrollWheelZoom={true}
         >
