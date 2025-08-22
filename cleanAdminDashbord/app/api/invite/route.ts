@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "role設定に失敗しました: " + dbError.message }, { status: 500 })
     }
 
+    
     // ③ パスワードリセットリンクを送る（＝パスワード設定リンク）
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "http://localhost:3000/update-password",
