@@ -1,7 +1,6 @@
-// /app/update-password/page.tsx (または /pages/update-password.tsx)
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -15,7 +14,12 @@ export default function UpdatePasswordPage() {
 
   const handleSubmit = async () => {
     setLoading(true)
-    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setMessage("")
+
+    // パスワード更新だけ
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
 
     if (error) {
       setMessage("パスワード更新に失敗しました: " + error.message)
