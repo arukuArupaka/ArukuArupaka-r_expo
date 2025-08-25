@@ -39,8 +39,6 @@ const routes = {
   BKC: [
     "南草津駅 ➔ BKC",
     "BKC ➔ 南草津駅",
-    "BKC → OIC",
-    "BKC → 衣笠",
     // "南草津駅 ➔ 大阪駅",
     // "南草津駅 ➔ 米原駅",
   ],
@@ -124,7 +122,7 @@ const TransitScheduleMain = () => {
     const index = routes[selectedCampus].indexOf(route);
     if (scrollRefHorizontal.current) {
       scrollRefHorizontal.current.scrollTo({
-        x: index * (screenWidth - 32),
+        x: index * screenWidth,
         animated: true,
       });
     }
@@ -418,33 +416,6 @@ const TransitScheduleMain = () => {
                 selectedDay === "平日"
                   ? timetableData.weekday
                   : timetableData.weekend;
-
-              if (timetable.length === 0) {
-                // 🔴 土日祝の時刻表がないときの表示
-                return (
-                  <View
-                    key={route}
-                    style={{
-                      width: screenWidth - 32,
-                      backgroundColor: "#fff",
-                      borderRadius: 12,
-                      alignItems: "center",
-                      padding: 24,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: TEXT_COLOR,
-                        fontSize: 20,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {selectedDay}なし
-                    </Text>
-                  </View>
-                );
-              }
-
               // 型を明示
               const groupedTimetable: { [hour: string]: typeof timetable } =
                 timetable.reduce((acc, entry) => {
