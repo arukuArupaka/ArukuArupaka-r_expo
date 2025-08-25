@@ -10,7 +10,7 @@ interface SidebarProps {
   onLocationChange: (location: string) => void
   onMapView: () => void
   onListView: () => void
-  currentView: "list" | "detail" | "map"
+  currentView: "list" | "detail" | "map" | "user" | "resolved" | "active" | "unresolved" | "users" | "login"
 }
 
 export function Sidebar({ selectedLocation, onLocationChange, onMapView, onListView, currentView }: SidebarProps) {

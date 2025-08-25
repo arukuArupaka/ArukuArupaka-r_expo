@@ -41,6 +41,39 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [userCount, setUserCount] = useState(0)
 
+  // セッション復元 + 変化監視
+  useEffect(() => {
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // 既存のユーザーがadminか確認
+        const { data: userData } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+        if (userData?.role === "admin") {
+          setIsLoggedIn(true)
+          setCurrentView("list")
+        }
+      }
+    }
+
+    init()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setIsLoggedIn(true)
+        if (currentView === "login") setCurrentView("list")
+      } else {
+        setIsLoggedIn(false)
+        setCurrentView("login")
+      }
+    })
+
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
   const fetchPosts = async () => {
     setLoading(true)
     const { data, error } = await supabase
