@@ -8,11 +8,13 @@ interface HeaderProps {
   onResolvedClick: () => void
   onActiveClick: () => void
   onUnresolvedClick: () => void
+  onCSVClick: () => void
   onUsersClick: () => void
   onPinsClick: () => void
   resolvedCount: number
   activeCount: number
   newCount: number
+  CSVsheet: number
   totalPins: number
   userCount: number
 }
@@ -22,11 +24,13 @@ export function Header({
   onResolvedClick,
   onActiveClick,
   onUnresolvedClick,
+  onCSVClick,
   onUsersClick,
   onPinsClick,
   resolvedCount,
   activeCount,
   newCount,
+  CSVsheet,
   totalPins,
   userCount,
 }: HeaderProps) {
@@ -80,6 +84,14 @@ export function Header({
           color="text-orange-500"
           subtitle="未解決案件"
           onClick={onUnresolvedClick}
+          clickable
+        />
+        <StatCard
+          number={CSVsheet.toString()}
+          label="CSV"
+          color="text-lime-500"
+          subtitle="スプレッドシート"
+          onClick={onCSVClick}
           clickable
         />
       </div>

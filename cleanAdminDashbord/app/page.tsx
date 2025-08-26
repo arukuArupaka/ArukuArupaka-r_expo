@@ -100,6 +100,22 @@ export default function AdminDashboard() {
       ? unresolvedReports
       : unresolvedReports.filter((r) => r.building?.includes(selectedLocation))
 
+  const handleCSVClick = async () => {
+    try {
+      const res = await fetch("/api/sheets", { method: "POST" })
+      if (!res.ok) throw new Error("Failed to create sheet")
+      const json = await res.json()
+      if (json?.url) {
+        window.open(json.url, "_blank")
+      } else {
+        // Fallback to CSV if URL not available
+        window.open("/api/csv", "_blank")
+      }
+    } catch {
+      window.open("/api/csv", "_blank")
+    }
+  }
+
   const handleReportClick = (report: Post) => {
     setSelectedReport(report)
     setCurrentView("detail")
@@ -193,11 +209,13 @@ export default function AdminDashboard() {
         onResolvedClick={handleResolvedView}
         onActiveClick={handleActiveView}
         onUnresolvedClick={handleUnresolvedView}
+        onCSVClick={handleCSVClick}
         onUsersClick={handleUsersView}
         onPinsClick={handleListView}
         resolvedCount={resolvedReports.length}
         activeCount={activeReports.length}
         newCount={unresolvedReports.length}
+        CSVsheet={posts.length}
         totalPins={posts.length}
         userCount={userCount}
       />
@@ -207,7 +225,7 @@ export default function AdminDashboard() {
           onLocationChange={setSelectedLocation}
           onMapView={handleMapView}
           onListView={handleListView}
-          currentView={currentView}
+          currentView={currentView as unknown as "list" | "detail" | "map"}
         />
         <main className="flex-1 p-6">
           {currentView === "list" && (
