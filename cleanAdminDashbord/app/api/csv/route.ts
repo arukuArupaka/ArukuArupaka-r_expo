@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@supabase/supabase-js"
+
+// サーバー側は service_role で実行して RLS を回避（管理者のCSVエクスポート想定）
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 type Post = {
   id: string
@@ -20,7 +26,7 @@ function escapeCsv(value: string | number | null | undefined): string {
 }
 
 export async function GET() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("posts")
     .select("id, created_at, user_id, building, place, comment, status")
     .order("created_at", { ascending: false })
@@ -34,6 +40,8 @@ export async function GET() {
   const header = ["案件ID", "時間", "場所", "コメント", "アカウント情報", "ステータス"]
   const csvLines = [header.join(",")]
 
+  console.log("CSV rows count:", rows.length)
+
   for (const r of rows) {
     const location = r.building ? (r.place ? `${r.building} ${r.place}` : r.building) : (r.place ?? "")
     csvLines.push([
@@ -46,9 +54,12 @@ export async function GET() {
     ].join(","))
   }
 
-  const csv = csvLines.join("\n")
+  const csv = csvLines.join("\r\n")
 
-  return new NextResponse(csv, {
+  // Excel向けにUTF-8のBOMを先頭に付与して文字化けを防止
+  const bom = "\uFEFF"
+
+  return new NextResponse(bom + csv, {
     status: 200,
     headers: {
       "Content-Type": "text/csv; charset=utf-8",

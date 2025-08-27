@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { User } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
-  onUserClick: () => void
-  onResolvedClick: () => void
-  onActiveClick: () => void
-  onUnresolvedClick: () => void
-  onCSVClick: () => void
-  onUsersClick: () => void
-  onPinsClick: () => void
-  resolvedCount: number
-  activeCount: number
-  newCount: number
-  CSVsheet: number
-  totalPins: number
-  userCount: number
+  onUserClick: () => void;
+  onResolvedClick: () => void;
+  onActiveClick: () => void;
+  onUnresolvedClick: () => void;
+  onCSVClick: () => void;
+  onUsersClick: () => void;
+  onPinsClick: () => void;
+  resolvedCount: number;
+  activeCount: number;
+  newCount: number;
+  CSVsheet: number;
+  totalPins: number;
+  userCount: number;
 }
 
 export function Header({
@@ -47,21 +47,21 @@ export function Header({
           <User className="h-5 w-5" />
         </Button>
       </div>
-        <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-4">
         <StatCard
-          number={userCount.toString()}  // ここを固定の"11111"から動的に
+          number={userCount.toString()} // ここを固定の"11111"から動的に
           label="users"
           subtitle="登録ユーザー数"
           onClick={onUsersClick}
           clickable
         />
-     <StatCard
-  number={totalPins.toString()}
-  label="pins"
-  subtitle="現在の案件数"
-  onClick={onPinsClick}
-  clickable
-/>
+        <StatCard
+          number={totalPins.toString()}
+          label="pins"
+          subtitle="現在の案件数"
+          onClick={onPinsClick}
+          clickable
+        />
         <StatCard
           number={resolvedCount.toString()}
           label="Resolved"
@@ -90,13 +90,13 @@ export function Header({
           number={CSVsheet.toString()}
           label="CSV"
           color="text-lime-500"
-          subtitle="スプレッドシート"
+          subtitle="クリックしてダウンロード"
           onClick={onCSVClick}
           clickable
         />
       </div>
     </header>
-  )
+  );
 }
 
 function StatCard({
@@ -107,16 +107,16 @@ function StatCard({
   onClick,
   clickable = false,
 }: {
-  number: string
-  label: string
-  color?: string
-  subtitle?: string
-  onClick?: () => void
-  clickable?: boolean
+  number: string;
+  label: string;
+  color?: string;
+  subtitle?: string;
+  onClick?: () => void;
+  clickable?: boolean;
 }) {
   const cardClass = `bg-white rounded-lg border border-gray-200 px-6 py-4 shadow-sm ${
     clickable ? "cursor-pointer hover:shadow-md transition-shadow" : ""
-  }`
+  }`;
 
   return (
     <div className={cardClass} onClick={onClick}>
@@ -124,5 +124,5 @@ function StatCard({
       <div className={`text-sm ${color}`}>{label}</div>
       {subtitle && <div className="text-xs text-gray-500 mt-1">{subtitle}</div>}
     </div>
-  )
+  );
 }
