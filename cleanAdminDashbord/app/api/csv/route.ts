@@ -25,11 +25,24 @@ function escapeCsv(value: string | number | null | undefined): string {
   return s
 }
 
-export async function GET() {
-  const { data, error } = await supabaseAdmin
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const start = url.searchParams.get("start") // YYYY-MM-DD
+  const end = url.searchParams.get("end") // YYYY-MM-DD
+
+  // start/end をUTC境界に変換（含む範囲）
+  const startIso = start ? new Date(start + "T00:00:00.000Z").toISOString() : undefined
+  const endIso = end ? new Date(end + "T23:59:59.999Z").toISOString() : undefined
+
+  let query = supabaseAdmin
     .from("posts")
     .select("id, created_at, user_id, building, place, comment, status")
     .order("created_at", { ascending: false })
+
+  if (startIso) query = query.gte("created_at", startIso)
+  if (endIso) query = query.lte("created_at", endIso)
+
+  const { data, error } = await query
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

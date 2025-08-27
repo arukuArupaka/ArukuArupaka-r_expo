@@ -1,7 +1,14 @@
 "use client";
 
-import { User } from "lucide-react";
+import { User, Calendar as CalendarIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
+import { useState } from "react";
 
 interface HeaderProps {
   onUserClick: () => void;
@@ -34,6 +41,20 @@ export function Header({
   totalPins,
   userCount,
 }: HeaderProps) {
+  const [csvDialogOpen, setCsvDialogOpen] = useState(false);
+  const [range, setRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
+
+  const downloadCsv = () => {
+    const params = new URLSearchParams();
+    if (range.from) params.set("start", format(range.from, "yyyy-MM-dd"));
+    if (range.to) params.set("end", format(range.to, "yyyy-MM-dd"));
+    const url = `/api/csv${params.toString() ? `?${params.toString()}` : ""}`;
+    // そのままナビゲーションでダウンロード
+    window.location.href = url;
+    setCsvDialogOpen(false);
+    // 既存のカウンタクリック動作も必要なら呼ぶ
+    onCSVClick?.();
+  };
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -86,14 +107,44 @@ export function Header({
           onClick={onUnresolvedClick}
           clickable
         />
-        <StatCard
-          number={CSVsheet.toString()}
-          label="CSV"
-          color="text-lime-500"
-          subtitle="クリックしてダウンロード"
-          onClick={onCSVClick}
-          clickable
-        />
+        <div>
+          <div className="bg-white rounded-lg border border-gray-200 px-6 py-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setCsvDialogOpen(true)}>
+            <div className="text-2xl font-bold text-gray-900">{CSVsheet.toString()}</div>
+            <div className={`text-sm text-lime-500`}>CSV</div>
+            <div className="text-xs text-gray-500 mt-1">期間を選んでダウンロード</div>
+          </div>
+          <Dialog open={csvDialogOpen} onOpenChange={setCsvDialogOpen}>
+            <DialogContent className="sm:max-w-3xl w-[calc(100vw-2rem)] p-0 overflow-hidden">
+              <div className="p-6">
+                <DialogHeader>
+                  <DialogTitle>CSV出力の期間選択</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="max-h-[70vh] overflow-auto pr-1">
+                    <Calendar
+                      mode="range"
+                      numberOfMonths={2}
+                      selected={range as any}
+                      onSelect={(r: any) => setRange(r ?? { from: undefined, to: undefined })}
+                      locale={ja}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-700">
+                    <div>
+                      {range.from ? format(range.from, "yyyy-MM-dd") : "開始日未選択"} ～ {range.to ? format(range.to, "yyyy-MM-dd") : "終了日未選択"}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => setRange({ from: undefined, to: undefined })}>クリア</Button>
+                      <Button onClick={downloadCsv} disabled={!range.from && !range.to}>
+                        <Download className="h-4 w-4 mr-1" /> ダウンロード
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </header>
   );
