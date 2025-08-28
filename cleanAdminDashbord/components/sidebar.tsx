@@ -61,16 +61,19 @@ export function Sidebar({
           className={`w-full justify-between text-left h-12 ${
             currentView === "notification" ? "bg-gray-100" : ""
           }`}
-          onClick={onNotificationView}
+          onClick={
+            currentView === "notification" ? onListView : onNotificationView
+          }
         >
           <span className="flex items-center gap-2">
             <Send className="h-4 w-4" />
-            通知送信
+            {currentView === "notification" ? "リストを表示" : "通知送信"}
           </span>
           <ChevronRight className="h-4 w-4" />
         </Button>
 
         {currentView !== "map" &&
+          currentView !== "notification" &&
           locations.map((location) => (
             <Button
               key={location}

@@ -1,4 +1,7 @@
 export default function NotificationsPage() {
+  const sendPush = () => {
+    fetch("/api/sendPushApi");
+  };
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">通知送信</h1>
@@ -29,11 +32,12 @@ export default function NotificationsPage() {
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
           />
         </div>
+
         <button
-          type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+          onClick={() => sendPush()}
         >
-          送信
+          テストプッシュ通知
         </button>
       </form>
     </div>
