@@ -81,32 +81,6 @@ export default function PostScreen() {
   const [selectedBuilding, setSelectedBuilding] = useState("");
   const [filteredBuildings, setFilteredBuildings] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  const handleBuildingInput = (text: string) => {
-    setSelectedBuilding(text);
-
-    if (text.trim() === "") {
-      setShowSuggestions(false);
-      setFilteredBuildings([]);
-      return;
-    }
-    const katakanaText = toKatakana(text);
-    const filtered = buildings.filter(
-      (bld) => bld.reading.includes(text) || bld.reading.includes(katakanaText)
-    );
-    if (!filtered.some((bld) => bld.name === "その他")) {
-      filtered.push({ name: "その他", reading: "その他" });
-    }
-    setFilteredBuildings(filtered);
-    setShowSuggestions(true);
-  };
-
-  const toKatakana = (str: string) => {
-    return str.replace(/[\u3041-\u3096]/g, (char) =>
-      String.fromCharCode(char.charCodeAt(0) + 0x60)
-    );
-  };
-
   const [locationDetail, setLocationDetail] = useState("");
   const [comment, setComment] = useState("");
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -119,6 +93,62 @@ export default function PostScreen() {
   const { latitude, longitude } = route.params ?? {
     latitude: undefined,
     longitude: undefined,
+  };
+
+  const toKatakana = (str: string) =>
+    str.replace(/[\u3041-\u3096]/g, (char) =>
+      String.fromCharCode(char.charCodeAt(0) + 0x60)
+    );
+
+  const handleBuildingInput = (text: string) => {
+    setSelectedBuilding(text);
+    if (text.trim() === "") {
+      setShowSuggestions(false);
+      setFilteredBuildings([]);
+      return;
+    }
+    const katakanaText = toKatakana(text);
+    const filtered = buildings.filter(
+      (bld) => bld.reading.includes(text) || bld.reading.includes(katakanaText)
+    );
+    if (!filtered.some((bld) => bld.name === "その他"))
+      filtered.push({ name: "その他", reading: "その他" });
+    setFilteredBuildings(filtered);
+    setShowSuggestions(true);
+  };
+
+  const pickImage = async () => {
+    Alert.alert("画像を選択", "ギャラリーから選ぶかカメラで撮影しますか？", [
+      { text: "キャンセル", style: "cancel" },
+      {
+        text: "ギャラリー",
+        onPress: async () => {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.7,
+          });
+          if (!result.canceled && result.assets?.length)
+            setPhotoUri(result.assets[0].uri);
+        },
+      },
+      {
+        text: "カメラ",
+        onPress: async () => {
+          const { status } = await ImagePicker.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Alert.alert("権限が必要です", "カメラを使用するには許可が必要です");
+            return;
+          }
+          const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            quality: 0.7,
+          });
+          if (!result.canceled && result.assets?.length)
+            setPhotoUri(result.assets[0].uri);
+        },
+      },
+    ]);
   };
 
   return (
@@ -289,16 +319,7 @@ export default function PostScreen() {
               写真
             </Text>
             <TouchableOpacity
-              onPress={async () => {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  quality: 0.7,
-                });
-                if (!result.canceled && result.assets?.length) {
-                  setPhotoUri(result.assets[0].uri);
-                }
-              }}
+              onPress={pickImage}
               style={{
                 height: 150,
                 borderWidth: 1,
@@ -355,13 +376,12 @@ export default function PostScreen() {
                     data: { user },
                   } = await supabase.auth.getUser();
                   let imageUrl = null;
-                  if (photoUri) {
+                  if (photoUri)
                     imageUrl = await uploadImageAsync(
                       photoUri,
                       user.id,
                       "post-images"
                     );
-                  }
                   const { error } = await supabase.from("posts").insert([
                     {
                       user_id: user.id,
