@@ -1,4 +1,4 @@
-import { supabase } from "../../../lib/supabase";
+import { supabase } from "./supabase";
 
 export async function uploadImageAsync(uri, userId, bucket = "post-images") {
   // 拡張子を推定（クエリ文字列除去）

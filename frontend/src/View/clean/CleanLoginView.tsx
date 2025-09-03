@@ -289,82 +289,117 @@ export default function CleanLoginView() {
             />
           </View>
 
-          {/* アカウント作成ボタン */}
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#FF7A7A",
-              paddingVertical: 10,
-              paddingHorizontal: 30,
-              borderRadius: 10,
-            }}
-            onPress={async () => {
-              const email = emailLocal + emailDomain;
-
-              const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                  data: {
-                    nickname: nickname, // ユーザーのメタデータとして保存
-                  },
-                },
-              });
-
-              if (error) {
-                alert("登録に失敗しました: " + error.message);
-                return;
-              }
-
-              alert(
-                "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。"
-              );
-            }}
-          >
-            <Text
+          <View style={{ flexDirection: "row", gap: 12, width: "100%" }}>
+            {/* アカウント作成（プライマリ） */}
+            <TouchableOpacity
               style={{
-                fontSize: 16,
-                fontFamily: "ZenMaruGothicBold",
-                color: "#fff",
+                flex: 1,
+                backgroundColor: "#FF7A7A",
+                paddingVertical: 14,
+                borderRadius: 10,
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            >
-              アカウント作成
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              marginTop: 50,
-              backgroundColor: "#D9D9D9",
-              paddingVertical: 10,
-              paddingHorizontal: 30,
-              borderRadius: 10,
-            }}
-            onPress={async () => {
-              try {
-                console.log("Logging in with email:", emailLocal + emailDomain);
+              onPress={async () => {
                 const email = emailLocal + emailDomain;
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signUp({
                   email,
                   password,
+                  options: { data: { nickname } },
                 });
-                console.log("Login response:", data, error);
                 if (error) {
-                  alert("ログインに失敗しました: " + error.message);
+                  alert("登録に失敗しました: " + error.message);
                   return;
                 }
-                // await saveDeviceToken();
-                navigation.replace("CleanMainView");
-              } catch (error) {
-                alert("ログインに失敗しました: " + error.message);
+                alert(
+                  "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。"
+                );
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: "ZenMaruGothicBold",
+                  color: "#fff",
+                }}
+              >
+                アカウント作成
+              </Text>
+            </TouchableOpacity>
+
+            {/* ログイン（セカンダリ） */}
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                backgroundColor: "#D9D9D9",
+                borderColor: "#000",
+                paddingVertical: 14,
+                borderRadius: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={async () => {
+                try {
+                  const email = emailLocal + emailDomain;
+                  const { data, error } =
+                    await supabase.auth.signInWithPassword({ email, password });
+                  if (error) {
+                    alert("ログインに失敗しました: " + error.message);
+                    return;
+                  }
+                  navigation.replace("CleanMainView");
+                } catch (error: any) {
+                  alert("ログインに失敗しました: " + error.message);
+                }
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: "ZenMaruGothicBold",
+                  color: "#000",
+                }}
+              >
+                ログイン
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 確認メール再送信 */}
+          <TouchableOpacity
+            onPress={async () => {
+              if (!emailLocal) {
+                alert("メールアドレスを入力してください");
+                return;
+              }
+              try {
+                const email = emailLocal + emailDomain;
+                const { error } = await supabase.auth.resend({
+                  type: "signup",
+                  email,
+                });
+                if (error) {
+                  alert("再送信に失敗しました: " + error.message);
+                  return;
+                }
+                alert("確認メールを再送信しました。メールをご確認ください。");
+              } catch (error: any) {
+                alert("再送信に失敗しました: " + error.message);
               }
             }}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ marginTop: 16 }}
           >
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 14,
+                textAlign: "center",
+                textDecorationLine: "underline",
+                color: "#696969",
                 fontFamily: "ZenMaruGothicBold",
               }}
             >
-              ログイン
+              確認メールを再送信する
             </Text>
           </TouchableOpacity>
         </View>
