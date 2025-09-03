@@ -9,6 +9,7 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
 import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "./lib/supabase";
@@ -78,10 +79,10 @@ const buildings = [
 
 export default function PostScreen() {
   const [selectedBuilding, setSelectedBuilding] = useState("");
-  const [filteredBuildings, setFilteredBuildings] = useState([]);
+  const [filteredBuildings, setFilteredBuildings] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const handleBuildingInput = (text) => {
+  const handleBuildingInput = (text: string) => {
     setSelectedBuilding(text);
 
     if (text.trim() === "") {
@@ -89,19 +90,18 @@ export default function PostScreen() {
       setFilteredBuildings([]);
       return;
     }
-    // 入力をカタカナに変換
     const katakanaText = toKatakana(text);
     const filtered = buildings.filter(
       (bld) => bld.reading.includes(text) || bld.reading.includes(katakanaText)
     );
-    // 「その他」を候補の最後に追加（既に含まれていなければ）
     if (!filtered.some((bld) => bld.name === "その他")) {
       filtered.push({ name: "その他", reading: "その他" });
     }
     setFilteredBuildings(filtered);
     setShowSuggestions(true);
   };
-  const toKatakana = (str) => {
+
+  const toKatakana = (str: string) => {
     return str.replace(/[\u3041-\u3096]/g, (char) =>
       String.fromCharCode(char.charCodeAt(0) + 0x60)
     );
@@ -109,13 +109,12 @@ export default function PostScreen() {
 
   const [locationDetail, setLocationDetail] = useState("");
   const [comment, setComment] = useState("");
-  const [photoUri, setPhotoUri] = useState(null);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [isRequestingCleaning, setIsRequestingCleaning] = useState(true);
-  // 座標を受け取るパラメータ
+
   type RootStackParamList = {
     CleanPostView: { latitude: number; longitude: number };
   };
-
   const route = useRoute<RouteProp<RootStackParamList, "CleanPostView">>();
   const { latitude, longitude } = route.params ?? {
     latitude: undefined,
@@ -181,6 +180,7 @@ export default function PostScreen() {
                 style={{ flex: 1, fontSize: 14 }}
               />
             </View>
+
             {showSuggestions && filteredBuildings.length > 0 && (
               <View
                 style={{
@@ -295,7 +295,6 @@ export default function PostScreen() {
                   allowsEditing: true,
                   quality: 0.7,
                 });
-
                 if (!result.canceled && result.assets?.length) {
                   setPhotoUri(result.assets[0].uri);
                 }
@@ -376,19 +375,18 @@ export default function PostScreen() {
                       longitude,
                     },
                   ]);
-
                   if (error) {
-                    alert("投稿に失敗しました: " + error.message);
+                    Alert.alert("", "投稿に失敗しました: " + error.message);
                     return;
                   }
-                  alert("投稿が完了しました！");
+                  Alert.alert("", "投稿が完了しました！");
                   setSelectedBuilding("");
                   setLocationDetail("");
                   setComment("");
                   setPhotoUri(null);
                   setIsRequestingCleaning(true);
-                } catch (e) {
-                  alert("エラーが発生しました: " + e.message);
+                } catch (e: any) {
+                  Alert.alert("", "エラーが発生しました: " + e.message);
                 }
               }}
               style={{

@@ -1,5 +1,5 @@
 import * as Notifications from "expo-notifications";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import React from "react";
@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert, // 👈 追加
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { supabase } from "./lib/supabase";
@@ -26,9 +27,9 @@ export default function CleanLoginView() {
     ZenMaruGothicBlack: require("../../../assets/fonts/ZenMaruGothic-Black.ttf"),
     ZenMaruGothicBold: require("../../../assets/fonts/ZenMaruGothic-Bold.ttf"),
   });
+
   // 端末のプッシュトークンを取得してSupabaseに保存
   const saveDeviceToken = React.useCallback(async () => {
-    // 通知権限
     const { status: cur } = await Notifications.getPermissionsAsync();
     let status = cur;
     if (status !== "granted") {
@@ -41,16 +42,12 @@ export default function CleanLoginView() {
     }
 
     try {
-      // Expoのプッシュトークン（ExponentPushToken[...]）
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-
-      // ログイン中ユーザーを取得
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      // 自分の行を更新（auth_id の列名はあなたの設計に合わせて）
       const { error } = await supabase
         .from("user")
         .update({ device_id: token })
@@ -65,6 +62,7 @@ export default function CleanLoginView() {
       console.log("Push token error:", e);
     }
   }, []);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -80,6 +78,7 @@ export default function CleanLoginView() {
       mounted = false;
     };
   }, [navigation, saveDeviceToken]);
+
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session) {
@@ -91,6 +90,7 @@ export default function CleanLoginView() {
     });
     return () => sub.subscription.unsubscribe();
   }, [navigation, saveDeviceToken]);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
@@ -124,6 +124,7 @@ export default function CleanLoginView() {
               戻る
             </Text>
           </TouchableOpacity>
+
           <Image
             source={require("../../../assets/arupaka_clean.png")}
             style={{
@@ -134,6 +135,7 @@ export default function CleanLoginView() {
             }}
             resizeMode="contain"
           />
+
           <Text
             style={{
               fontSize: 18,
@@ -203,12 +205,7 @@ export default function CleanLoginView() {
                   backgroundColor: "#fff",
                 }}
               />
-              <View
-                style={{
-                  marginLeft: 10,
-                  width: "40%",
-                }}
-              >
+              <View style={{ marginLeft: 10, width: "40%" }}>
                 <RNPickerSelect
                   onValueChange={(value) => setEmailDomain(value)}
                   value={emailDomain}
@@ -299,24 +296,20 @@ export default function CleanLoginView() {
             }}
             onPress={async () => {
               const email = emailLocal + emailDomain;
-
-              const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                  data: {
-                    nickname: nickname, // ユーザーのメタデータとして保存
-                  },
-                },
+              const { error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: { data: { nickname } },
               });
 
               if (error) {
-                alert("登録に失敗しました: " + error.message);
+                Alert.alert("", "登録に失敗しました: " + error.message); // 👈 修正
                 return;
               }
 
-              alert(
-                "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。"
+              Alert.alert(
+                "",
+                "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。" // 👈 修正
               );
             }}
           >
@@ -330,6 +323,8 @@ export default function CleanLoginView() {
               アカウント作成
             </Text>
           </TouchableOpacity>
+
+          {/* ログインボタン */}
           <TouchableOpacity
             style={{
               marginTop: 50,
@@ -340,21 +335,18 @@ export default function CleanLoginView() {
             }}
             onPress={async () => {
               try {
-                console.log("Logging in with email:", emailLocal + emailDomain);
                 const email = emailLocal + emailDomain;
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { error } = await supabase.auth.signInWithPassword({
                   email,
                   password,
                 });
-                console.log("Login response:", data, error);
                 if (error) {
-                  alert("ログインに失敗しました: " + error.message);
+                  Alert.alert("", "ログインに失敗しました: " + error.message); // 👈 修正
                   return;
                 }
-                // await saveDeviceToken();
                 navigation.replace("CleanMainView");
-              } catch (error) {
-                alert("ログインに失敗しました: " + error.message);
+              } catch (error: any) {
+                Alert.alert("", "ログインに失敗しました: " + error.message); // 👈 修正
               }
             }}
           >
