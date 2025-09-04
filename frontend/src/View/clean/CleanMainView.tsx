@@ -20,6 +20,7 @@ const CleanMainView = () => {
 
   const [markerLocation, setMarkerLocation] = useState<LatLng | null>(null);
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
   useFocusEffect(
@@ -29,8 +30,12 @@ const CleanMainView = () => {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-        if (!cancelled && !session) {
+        if (cancelled) return;
+        if (!session) {
           navigation.replace("CleanLoginView");
+          setUserId(null);
+        } else {
+          setUserId(session.user.id);
         }
       })();
       return () => {
@@ -67,6 +72,7 @@ const CleanMainView = () => {
         {selectedPost && (
           <PostDetailCard
             post={selectedPost}
+            userId={userId}
             onClose={() => setSelectedPost(null)}
           />
         )}
