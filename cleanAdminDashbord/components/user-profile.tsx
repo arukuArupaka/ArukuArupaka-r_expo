@@ -1,12 +1,28 @@
-//user-profile.tsx
 "use client"
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
-import { ArrowLeft, Mail, Phone, Settings, LogOut, UserPlus, Loader2 } from "lucide-react"
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Settings,
+  LogOut,
+  UserPlus,
+  Loader2,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -28,9 +44,10 @@ interface UserProfileProps {
 
 type UserData = {
   name: string | null
+  nickname?: string | null
+  role: string | null
   mail: string | null
   phone?: string | null
-  role: string | null
   created_at: string
 }
 
@@ -42,6 +59,11 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
   const [inviteMessage, setInviteMessage] = useState("")
   const [inviteError, setInviteError] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [editData, setEditData] = useState<UserData | null>(null)
+  const [updateMessage, setUpdateMessage] = useState("")
+  const [updateError, setUpdateError] = useState("")
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -57,7 +79,11 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
           return
         }
 
-        const { data, error } = await supabase.from("users").select("*").eq("id", user.id).single()
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single()
 
         if (error) {
           console.error("ユーザーデータ取得エラー:", error.message)
@@ -112,6 +138,31 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
     }
   }
 
+  const handleProfileUpdate = async () => {
+    if (!editData) return
+
+    setUpdateMessage("")
+    setUpdateError("")
+
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        name: editData.name,
+        nickname: editData.nickname,
+        role: editData.role,
+        // devise 削除済み
+      })
+      .eq("id", (await supabase.auth.getUser()).data.user?.id)
+
+    if (error) {
+      setUpdateError("更新に失敗しました: " + error.message)
+    } else {
+      setUserData(editData)
+      setIsEditing(false)
+      setUpdateMessage("プロフィールを更新しました")
+    }
+  }
+
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto p-4 flex items-center justify-center">
@@ -125,7 +176,9 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
     return (
       <div className="max-w-2xl mx-auto p-4">
         <Alert variant="destructive">
-          <AlertDescription>ユーザーデータの取得に失敗しました。再度ログインしてください。</AlertDescription>
+          <AlertDescription>
+            ユーザーデータの取得に失敗しました。再度ログインしてください。
+          </AlertDescription>
         </Alert>
       </div>
     )
@@ -133,7 +186,11 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <Button variant="ghost" onClick={onBack} className="mb-6 p-0 h-auto text-gray-600 hover:text-gray-900">
+      <Button
+        variant="ghost"
+        onClick={onBack}
+        className="mb-6 p-0 h-auto text-gray-600 hover:text-gray-900"
+      >
         <ArrowLeft className="h-5 w-5 mr-2" />
         戻る
       </Button>
@@ -164,7 +221,6 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 <Phone className="h-5 w-5 text-gray-500" />
                 <div>
-                  <p className="text-sm text-gray-600">電話番号</p>
                   <p className="font-medium">{userData.phone}</p>
                 </div>
               </div>
@@ -174,7 +230,9 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
               <Settings className="h-5 w-5 text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">登録日</p>
-                <p className="font-medium">{new Date(userData.created_at).toLocaleDateString("ja-JP")}</p>
+                <p className="font-medium">
+                  {new Date(userData.created_at).toLocaleDateString("ja-JP")}
+                </p>
               </div>
             </div>
           </div>
@@ -182,6 +240,57 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
           <Separator />
 
           <div className="space-y-3">
+            {isEditing ? (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="name">名前</Label>
+                  <Input
+                    id="name"
+                    value={editData?.name ?? ""}
+                    onChange={(e) =>
+                      setEditData((prev) => prev && { ...prev, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="nickname">ニックネーム</Label>
+                  <Input
+                    id="nickname"
+                    value={editData?.nickname ?? ""}
+                    onChange={(e) =>
+                      setEditData((prev) => prev && { ...prev, nickname: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="role">役割</Label>
+                  <Input
+                    id="role"
+                    value={editData?.role ?? ""}
+                    onChange={(e) =>
+                      setEditData((prev) => prev && { ...prev, role: e.target.value })
+                    }
+                  />
+                </div>
+
+                {updateMessage && <Alert><AlertDescription>{updateMessage}</AlertDescription></Alert>}
+                {updateError && (
+                  <Alert variant="destructive"><AlertDescription>{updateError}</AlertDescription></Alert>
+                )}
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setIsEditing(false)}>
+                    キャンセル
+                  </Button>
+                  <Button onClick={handleProfileUpdate}>保存</Button>
+                </div>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={() => { setEditData(userData); setIsEditing(true) }}>
+                プロフィールを編集
+              </Button>
+            )}
+
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="w-full justify-start gap-3 bg-transparent">
@@ -248,8 +357,8 @@ export function UserProfile({ onBack, onLogout }: UserProfileProps) {
               ログアウト
             </Button>
           </div>
-            </CardContent>
+        </CardContent>
       </Card>
-    </div> 
+    </div>
   )
 }
