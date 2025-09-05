@@ -396,17 +396,20 @@ export default function PostScreen() {
                     },
                   ]);
                   if (error) {
-                    Alert.alert("", "投稿に失敗しました: " + error.message);
+                    Alert.alert(
+                      "エラー",
+                      "投稿に失敗しました: " + error.message
+                    );
                     return;
                   }
-                  Alert.alert("", "投稿が完了しました！");
+                  Alert.alert("成功", "投稿が完了しました！");
                   setSelectedBuilding("");
                   setLocationDetail("");
                   setComment("");
                   setPhotoUri(null);
                   setIsRequestingCleaning(true);
                 } catch (e: any) {
-                  Alert.alert("", "エラーが発生しました: " + e.message);
+                  Alert.alert("エラー", "エラーが発生しました: " + e.message);
                 }
               }}
               style={{

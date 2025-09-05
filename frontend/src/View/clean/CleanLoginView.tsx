@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert, // 👈 追加
+  Alert,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { supabase } from "./lib/supabase";
@@ -303,13 +303,13 @@ export default function CleanLoginView() {
               });
 
               if (error) {
-                Alert.alert("", "登録に失敗しました: " + error.message); // 👈 修正
+                Alert.alert("エラー", "登録に失敗しました: " + error.message);
                 return;
               }
 
               Alert.alert(
-                "",
-                "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。" // 👈 修正
+                "確認",
+                "確認メールを送りました。メール内のリンクを開いたあと、ログインしてください。"
               );
             }}
           >
@@ -341,12 +341,18 @@ export default function CleanLoginView() {
                   password,
                 });
                 if (error) {
-                  Alert.alert("", "ログインに失敗しました: " + error.message); // 👈 修正
+                  Alert.alert(
+                    "エラー",
+                    "ログインに失敗しました: " + error.message
+                  );
                   return;
                 }
                 navigation.replace("CleanMainView");
               } catch (error: any) {
-                Alert.alert("", "ログインに失敗しました: " + error.message); // 👈 修正
+                Alert.alert(
+                  "エラー",
+                  "ログインに失敗しました: " + error.message
+                );
               }
             }}
           >
