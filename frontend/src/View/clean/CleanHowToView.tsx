@@ -1,113 +1,186 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { MaterialIcons, FontAwesome, } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-const CleanHowToSample = require('../../../assets/CleanHowToSample.png');//これって勝手に写真追加して大丈夫でしたか？
-/*正直全ての機種に合うようにはなっていないかもです…*/
-const CleanHowToView = () => {
-  const navigation = useNavigation();
+import { useState, useEffect, useRef } from "react";
+import {
+  Text,
+  View,
+  Button,
+  Platform,
+  StyleSheet,
+  Alert,
+  Clipboard,
+} from "react-native";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+
+// アプリがフォアグラウンドで実行中でも通知を表示する設定
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+export default function App() {
+  const [expoPushToken, setExpoPushToken] = useState("");
+
+  useEffect(() => {
+    // アプリ起動時にトークンを取得する
+    registerForPushNotificationsAsync().then((token) => {
+      if (token) {
+        setExpoPushToken(token);
+        console.log("取得したExpo Push Token:", token);
+      }
+    });
+  }, []);
+
+  // ボタンを押してトークンを再取得・表示する関数
+  const handleGetToken = async () => {
+    const token = await registerForPushNotificationsAsync();
+    if (token) {
+      setExpoPushToken(token);
+      console.log("再取得したExpo Push Token:", token);
+      Alert.alert("トークン取得成功", token, [{ text: "OK" }]);
+    }
+  };
+
+  // トークンをクリップボードにコピーする関数
+  const copyToClipboard = () => {
+    if (expoPushToken) {
+      Clipboard.setString(expoPushToken);
+      Alert.alert(
+        "コピーしました",
+        "プッシュトークンをクリップボードにコピーしました。"
+      );
+    }
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* タイトル・説明 */}
-      <View style={styles.content}>
-        <Text style={styles.title}>学生のみんなで{"\n"}大学をもっとキレイにしよう！</Text>
-        <Text style={styles.description}>
-          キャンパス内で「ゴミが落ちてる…」「汚れてる…」{"\n"}という場所を見つけたら{"\n"}
-          アプリ上の地図にピンを立てて、{"\n"}コメントと一緒に投稿できる機能です🧹{"\n"}{"\n"}{"\n"}📍使い方はとってもカンタン！
-        </Text>
-        {/* 使い方 */}
-        <Text style={styles.usageStep}>1. 汚れている場所を見つける</Text>
-        <Text style={styles.usageStep}>2. 地図上にピンを立てる</Text>
-        <Text style={styles.usageStep}>3. コメントを添えて投稿！</Text>
-        {/* 地図イメージ＋説明 */}
-        <View style={styles.mapContainer}>
-          <Image 
-            source={CleanHowToSample}
-            style={styles.mapImage}
-            resizeMode="contain"
-          />
-          <FontAwesome 
-            name="hand-o-left" 
-            size={20} 
-            color='black' 
-            style={styles.handIcon}
-          />
-          <View style={styles.tapTextBox}>
-            <Text style={styles.tapText}>タップで{"\n"}ピンを立てよう！</Text>
-          </View>
-        </View>
-        {/* 補足文 */}
-        <Text style={styles.additionalText}>投稿してくれた人にはご褒美があるかも…</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Expo Push Token</Text>
+      <Text style={styles.info}>
+        以下のトークンをサーバーに送信して、プッシュ通知を送れるようになります。
+      </Text>
+
+      <Text style={styles.token} selectable onLongPress={copyToClipboard}>
+        {expoPushToken || "トークンを取得中…"}
+      </Text>
+      <Text style={styles.copyHint}>
+        (トークンを長押しするとコピーできます)
+      </Text>
+
+      <View style={styles.buttonContainer}>
+        <Button title="トークンを再取得する" onPress={handleGetToken} />
       </View>
     </View>
   );
-};
+}
 
+// プッシュ通知の権限をリクエストし、Expo Push Tokenを取得するメインの関数
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (!Device.isDevice) {
+    Alert.alert(
+      "エラー",
+      "プッシュ通知はエミュレーターやシミュレーターではなく、実機でテストする必要があります。"
+    );
+    return;
+  }
+
+  // 現在の通知許可ステータスを確認
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  // 許可が得られていない場合は、再度許可を求める
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  // 最終的に許可が得られなかった場合は処理を中断
+  if (finalStatus !== "granted") {
+    Alert.alert(
+      "許可が必要です",
+      "プッシュ通知の許可が得られませんでした。設定アプリから通知を許可してください。"
+    );
+    return;
+  }
+
+  // projectId を app.json/app.config.js から自動で取得
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+  if (!projectId) {
+    Alert.alert(
+      "設定エラー",
+      "app.json (または app.config.js) に projectId が設定されていません。`npx eas project:init` を実行してください。"
+    );
+    return;
+  }
+
+  // Expo Push Token を取得
+  try {
+    const pushTokenData = await Notifications.getExpoPushTokenAsync({
+      projectId,
+    });
+    token = pushTokenData.data;
+  } catch (e) {
+    console.error(e);
+    Alert.alert(
+      "トークン取得エラー",
+      `Expo Push Tokenの取得に失敗しました: ${e.message}`
+    );
+  }
+
+  // Android用の設定
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
+
+// スタイル
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
+    backgroundColor: "#f5f5f5",
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 16,
-    marginBottom: 40,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
-  description: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 16,
+  info: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 20,
   },
-  usageStep: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 15,
-    marginLeft:60,
-    alignSelf:'flex-start'
+  token: {
+    fontSize: 14,
+    textAlign: "center",
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
+    marginBottom: 5,
   },
-  mapContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginVertical: 16,
-    marginLeft: 5,
+  copyHint: {
+    fontSize: 12,
+    color: "#888",
+    marginBottom: 30,
   },
-  mapImage: {
-    width: 240,
-    height: 150,
-    borderRadius: 10,
-    alignSelf: 'flex-start',
+  buttonContainer: {
+    marginTop: 20,
   },
-  handIcon: {
-    position: 'absolute',
-    right:'35%',
-    top: '40%'
-},
-  tapTextBox:{
-    position: 'absolute',
-    right:'5%',
-    top: '40%'
-
-},
-  tapText: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#222',
-    textAlign: 'center',
-  },
-  additionalText: {
-    color: '#949494',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 25,
-    marginRight:10,
-    alignSelf:'flex-end'}
 });
-
-export default CleanHowToView;

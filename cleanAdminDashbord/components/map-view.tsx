@@ -6,7 +6,6 @@ import L from "leaflet";
 import { MapPin } from "lucide-react";
 import type { Report } from "@/app/page";
 
-
 interface MapViewProps {
   reports: Report[];
 }
@@ -26,8 +25,7 @@ export type Report = {
   complete?: boolean;
   good_count: number;
   status?: "new" | "active" | "resolved";
-}
-
+};
 
 export function MapView({ reports }: MapViewProps) {
   // 初期中心座標（例: 京都駅周辺）
@@ -75,7 +73,8 @@ export function MapView({ reports }: MapViewProps) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {reports.map((report) => {
-            if (report.latitude === undefined || report.longitude === undefined) return null;
+            if (report.latitude === undefined || report.longitude === undefined)
+              return null;
             const pinColor = report.status === "resolved" ? "green" : "red";
             return (
               <Marker
@@ -85,9 +84,15 @@ export function MapView({ reports }: MapViewProps) {
               >
                 <Popup>
                   <div>
-                    <div className="font-bold mb-1">{report.comment || "詳細なし"}</div>
-                    <div>緯度: {report.latitude}, 経度: {report.longitude}</div>
-                    <div>状態: {report.status === "resolved" ? "完了" : "未完了"}</div>
+                    <div className="font-bold mb-1">
+                      {report.comment || "詳細なし"}
+                    </div>
+                    <div>
+                      緯度: {report.latitude}, 経度: {report.longitude}
+                    </div>
+                    <div>
+                      状態: {report.status === "resolved" ? "完了" : "未完了"}
+                    </div>
                   </div>
                 </Popup>
               </Marker>
