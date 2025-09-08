@@ -37,6 +37,7 @@ const CleanMainView = () => {
           setUserId(null);
         } else {
           setUserId(session.user.id);
+          setUserId(null);
         }
       })();
       return () => {
