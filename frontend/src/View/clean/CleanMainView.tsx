@@ -23,7 +23,6 @@ const CleanMainView = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
-
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
@@ -31,13 +30,11 @@ const CleanMainView = () => {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-
         if (!cancelled && !session) {
           navigation.replace("CleanLoginView");
           setUserId(null);
         } else {
           setUserId(session.user.id);
-          setUserId(null);
         }
       })();
       return () => {
