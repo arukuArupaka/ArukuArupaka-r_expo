@@ -103,13 +103,15 @@ export function ActiveReports({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <span className="text-sm text-gray-600">場所</span>
-                      <div className="font-medium">
-                        {report.building ?? report.place ?? "未指定"}
-                      </div>
-                    </div>
-
+                  <div className="mb-3">
+                  <span className="text-sm text-gray-600">場所</span>
+                  <div className="font-medium">
+                    {report.building && <span>{report.building}</span>}
+                    {report.place && report.building && <span> / </span>}
+                    {report.place && <span>{report.place}</span>}
+                    {!report.building && !report.place && <span>未指定</span>}
+                  </div>
+                </div>
                     <div>
                       <span className="text-sm text-gray-600">コメント</span>
                       <div className="text-gray-800">{report.comment}</div>
