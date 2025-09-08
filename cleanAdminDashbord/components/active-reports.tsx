@@ -26,11 +26,11 @@ export function ActiveReports({
   const handleResolveReport = async (reportId: string) => {
     setLoadingId(reportId)
 
-    const resolvedDate = new Date().toISOString().split("T")[0] // YYYY-MM-DD形式
+    const resolved = new Date().toISOString().split("T")[0] // YYYY-MM-DD形式
 
     const { error } = await supabase
       .from("posts")
-      .update({ status: "resolved", resolvedDate })
+      .update({ status: "resolved" })
       .eq("id", reportId)
 
     setLoadingId(null)
