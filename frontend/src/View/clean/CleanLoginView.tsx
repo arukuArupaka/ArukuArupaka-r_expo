@@ -12,8 +12,10 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import Checkbox from "expo-checkbox";
 import { supabase } from "./lib/supabase";
 
 export default function CleanLoginView() {
@@ -22,6 +24,13 @@ export default function CleanLoginView() {
   const [emailLocal, setEmailLocal] = useState("");
   const [emailDomain, setEmailDomain] = useState("@ed.ritsumei.ac.jp");
   const [password, setPassword] = useState("");
+  // 生協連携用 state
+  const [coopMode, setCoopMode] = useState(false); // 生協と連携するか
+  const [realName, setRealName] = useState("");
+  const [birthDate, setBirthDate] = useState(""); // YYYY-MM-DD 形式想定
+  const [birthDateError, setBirthDateError] = useState<string | null>(null);
+  const [coopMemberNumber, setCoopMemberNumber] = useState("");
+  const [coopConsent, setCoopConsent] = useState(false); // 情報提供承諾
   const [fontsLoaded] = useFonts({
     ZenMaruGothicBlack: require("../../../assets/fonts/ZenMaruGothic-Black.ttf"),
     ZenMaruGothicBold: require("../../../assets/fonts/ZenMaruGothic-Bold.ttf"),
@@ -52,9 +61,9 @@ export default function CleanLoginView() {
 
       // 自分の行を更新（auth_id の列名はあなたの設計に合わせて）
       const { error } = await supabase
-        .from("user")
+        .from("users")
         .update({ device_id: token })
-        .eq("auth_id", user.id);
+        .eq("id", user.id);
 
       if (error) {
         console.log("Failed to save device token:", error);
@@ -80,6 +89,36 @@ export default function CleanLoginView() {
       mounted = false;
     };
   }, [navigation, saveDeviceToken]);
+
+  // 生年月日バリデーション (YYYY-MM-DD かつ実在日)
+  const validateBirthDate = (value: string) => {
+    if (!value) {
+      setBirthDateError("必須です");
+      return false;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      setBirthDateError("YYYY-MM-DD 形式で入力してください");
+      return false;
+    }
+    const [y, m, d] = value.split("-").map(Number);
+    const date = new Date(value + "T00:00:00Z");
+    if (
+      date.getUTCFullYear() !== y ||
+      date.getUTCMonth() + 1 !== m ||
+      date.getUTCDate() !== d
+    ) {
+      setBirthDateError("存在しない日付です");
+      return false;
+    }
+    // 年齢チェック (0~120歳程度)
+    const nowY = new Date().getUTCFullYear();
+    if (y < nowY - 120 || y > nowY) {
+      setBirthDateError("年が不正です");
+      return false;
+    }
+    setBirthDateError(null);
+    return true;
+  };
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session) {
@@ -94,12 +133,12 @@ export default function CleanLoginView() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "#FFFEFA",
+        <ScrollView
+          style={{ flex: 1, backgroundColor: "#FFFEFA" }}
+          contentContainerStyle={{
             alignItems: "center",
             paddingHorizontal: 20,
+            paddingBottom: 40,
           }}
         >
           <TouchableOpacity
@@ -140,9 +179,11 @@ export default function CleanLoginView() {
               fontFamily: "ZenMaruGothicBold",
               textAlign: "center",
               marginBottom: 30,
+              paddingHorizontal: 8,
+              lineHeight: 26,
             }}
           >
-            みんなでキャンパス内を{"\n"}綺麗にしよう！
+            みんなでキャンパスを もっと綺麗にしよう！
           </Text>
 
           {/* フォーム */}
@@ -287,6 +328,162 @@ export default function CleanLoginView() {
                 backgroundColor: "#fff",
               }}
             />
+
+            {/* 生協と連携 ボタン */}
+            <TouchableOpacity
+              onPress={() => setCoopMode((p) => !p)}
+              style={{
+                backgroundColor: coopMode ? "#03A87C" : "#D9D9D9",
+                paddingVertical: 12,
+                borderRadius: 10,
+                marginBottom: 16,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "ZenMaruGothicBold",
+                  color: coopMode ? "#fff" : "#000",
+                }}
+              >
+                {coopMode ? "生協連携をやめる" : "生協と連携して報酬を受け取る"}
+              </Text>
+            </TouchableOpacity>
+
+            {coopMode && (
+              <View style={{ marginBottom: 20 }}>
+                {/* 氏名 */}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: "ZenMaruGothicBold",
+                    marginBottom: 6,
+                  }}
+                >
+                  氏名（本名）
+                </Text>
+                <TextInput
+                  value={realName}
+                  onChangeText={setRealName}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#000",
+                    borderRadius: 4,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    marginBottom: 14,
+                    fontSize: 14,
+                    backgroundColor: "#fff",
+                  }}
+                  placeholder="山田 太郎"
+                />
+                {/* 生年月日 */}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: "ZenMaruGothicBold",
+                    marginBottom: 6,
+                  }}
+                >
+                  生年月日（YYYY-MM-DD）
+                </Text>
+                <TextInput
+                  value={birthDate}
+                  onChangeText={(v) => {
+                    setBirthDate(v);
+                    if (birthDateError) validateBirthDate(v); // 修正中も即時再検証
+                  }}
+                  keyboardType="numbers-and-punctuation"
+                  placeholder="2003-04-01"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#000",
+                    borderRadius: 4,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    marginBottom: 14,
+                    fontSize: 14,
+                    backgroundColor: "#fff",
+                  }}
+                  onBlur={() => validateBirthDate(birthDate)}
+                />
+                {birthDateError && (
+                  <Text
+                    style={{
+                      color: "#C00",
+                      fontSize: 11,
+                      marginTop: -10,
+                      marginBottom: 12,
+                      fontFamily: "ZenMaruGothicBold",
+                    }}
+                  >
+                    {birthDateError}
+                  </Text>
+                )}
+                {/* 生協会員番号 */}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: "ZenMaruGothicBold",
+                    marginBottom: 6,
+                  }}
+                >
+                  生協会員番号
+                </Text>
+                <TextInput
+                  value={coopMemberNumber}
+                  onChangeText={setCoopMemberNumber}
+                  keyboardType="number-pad"
+                  placeholder="（学籍番号ではありません）"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#000",
+                    borderRadius: 4,
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    marginBottom: 6,
+                    fontSize: 14,
+                    backgroundColor: "#fff",
+                  }}
+                />
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: "#444",
+                    marginBottom: 12,
+                    fontFamily: "ZenMaruGothicBold",
+                  }}
+                >
+                  ※
+                  学籍番号ではありません。生協の会員カードに記載の番号を入力してください。
+                </Text>
+                {/* 承諾チェック */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    gap: 8,
+                    marginBottom: 12,
+                  }}
+                >
+                  <Checkbox
+                    value={coopConsent}
+                    onValueChange={setCoopConsent}
+                  />
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 12,
+                      fontFamily: "ZenMaruGothicBold",
+                      lineHeight: 18,
+                    }}
+                  >
+                    インセンティブ付与のため、入力した個人情報を生協と共有することに同意します。
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
           <View style={{ flexDirection: "row", gap: 12, width: "100%" }}>
@@ -294,21 +491,97 @@ export default function CleanLoginView() {
             <TouchableOpacity
               style={{
                 flex: 1,
-                backgroundColor: "#FF7A7A",
+                backgroundColor:
+                  coopMode &&
+                  (!realName || !birthDate || !coopMemberNumber || !coopConsent)
+                    ? "#FFB2B2"
+                    : "#FF7A7A",
                 paddingVertical: 14,
                 borderRadius: 10,
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              disabled={
+                (coopMode &&
+                  (!realName ||
+                    !birthDate ||
+                    !coopMemberNumber ||
+                    !coopConsent ||
+                    birthDateError !== null)) ||
+                false
+              }
               onPress={async () => {
                 const email = emailLocal + emailDomain;
+                if (coopMode) {
+                  const ok = validateBirthDate(birthDate);
+                  if (
+                    !realName ||
+                    !birthDate ||
+                    !coopMemberNumber ||
+                    !coopConsent ||
+                    !ok
+                  ) {
+                    alert(
+                      birthDateError
+                        ? `生協連携に必要な項目を確認してください\n(${birthDateError})`
+                        : "生協連携に必要な項目を入力し、同意にチェックしてください。"
+                    );
+                    return;
+                  }
+                }
                 const { data, error } = await supabase.auth.signUp({
                   email,
                   password,
-                  options: { data: { nickname } },
+                  options: {
+                    data: {
+                      nickname,
+                      ...(coopMode
+                        ? {
+                            real_name: realName,
+                            birth_date: birthDate,
+                            coop_member_number: coopMemberNumber,
+                            coop_consent: coopConsent,
+                          }
+                        : {}),
+                    },
+                  },
                 });
                 if (error) {
                   alert("登録に失敗しました: " + error.message);
+                  return;
+                }
+                // user テーブルへも保存 / 行が無ければ挿入
+                try {
+                  if (coopMode && data.user) {
+                    const payload = {
+                      id: data.user.id, // users.id = auth.users.id
+                      real_name: realName,
+                      birth_date: birthDate || null,
+                      coop_member_number: coopMemberNumber,
+                      coop_consent: coopConsent,
+                      updated_at: new Date().toISOString(),
+                    };
+                    console.log("coop upsert payload", payload);
+                    const { error: upsertError } = await supabase
+                      .from("users")
+                      .upsert(payload, { onConflict: "id" });
+                    if (upsertError) {
+                      console.log(
+                        "userテーブルupsert失敗",
+                        upsertError.message
+                      );
+                      alert(
+                        "アカウントは作成しましたが、生協情報の保存に失敗しました: "
+                      );
+                      return; // 生協情報失敗時は成功アラート出さない
+                    }
+                    console.log("coop info upsert success");
+                  }
+                } catch (e) {
+                  console.log("userテーブルupsert例外", e);
+                  alert(
+                    "アカウントは作成しましたが、生協情報保存で例外が発生しました。ログを確認してください。"
+                  );
                   return;
                 }
                 alert(
@@ -402,7 +675,7 @@ export default function CleanLoginView() {
               確認メールを再送信する
             </Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
