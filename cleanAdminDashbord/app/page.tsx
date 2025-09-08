@@ -51,6 +51,7 @@ export default function AdminDashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   // セッション復元 + 変化監視
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
         data: { session },
       } = await supabase.auth.getSession();
       if (session) {
+        setCurrentUserEmail(session.user.email ?? null);
         // 既存のユーザーがadminか確認
         const { data: userData } = await supabase
           .from("users")
@@ -77,11 +79,13 @@ export default function AdminDashboard() {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
+          setCurrentUserEmail(session.user.email ?? null);
           setIsLoggedIn(true);
           if (currentView === "login") setCurrentView("list");
         } else {
           setIsLoggedIn(false);
           setCurrentView("login");
+          setCurrentUserEmail(null);
         }
       }
     );
@@ -305,6 +309,7 @@ export default function AdminDashboard() {
         CSVsheet={posts.length}
         totalPins={posts.length}
         userCount={userCount}
+  currentUserEmail={currentUserEmail ?? undefined}
       />
       <div className="flex">
         <Sidebar
