@@ -28,6 +28,7 @@ export type Post = {
   complete?: boolean
   good_count: number
   status?: "new" | "active" | "resolved"
+  resolved?: string // ←ここをresolveからresolvedに
 }
 
 export default function AdminDashboard() {
@@ -219,7 +220,7 @@ export default function AdminDashboard() {
 
   const handleResolveCompleted = async () => {
     await fetchPosts()
-    setCurrentView("resolved")
+    setCurrentView("resolved") // ←「解決済み」画面に遷移
   }
 
   // 仮の関数
@@ -228,8 +229,10 @@ export default function AdminDashboard() {
     setCurrentView("login")
   }
 
-  const handleAssigned = () => {
-    alert("担当者割り当て処理")
+  const handleAssigned = async () => {
+    // 案件状態変更後に再取得してリスト画面へ
+    await fetchPosts()
+    setCurrentView("active")
   }
 
   if (!isLoggedIn) {

@@ -60,11 +60,11 @@ export function ResolvedReports({ reports, onBack }: ResolvedReportsProps) {
                     </div>
                   </div>
 
-                  {report.resolvedDate && (
+                  {report.resolved && (
                     <div className="flex items-center gap-6 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <span>解決日: {report.resolvedDate}</span>
+                        <span>解決日: {report.resolved}</span>
                       </div>
                       {report.assignedTo && (
                         <div className="flex items-center gap-2">
