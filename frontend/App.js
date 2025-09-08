@@ -429,7 +429,11 @@ function App() {
                   headerRight:
                     Platform.OS === "ios"
                       ? () => (
-                          <TouchableOpacity onPress={() => navigationRef.navigate("CleanHowToView") }>
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigationRef.navigate("CleanHowToView")
+                            }
+                          >
                             <MaterialIcons
                               name="question-mark"
                               size={40}
@@ -485,7 +489,7 @@ function App() {
                 })}
               />
               <Stack.Screen
-              name="CleanPostView"
+                name="CleanPostView"
                 component={CleanPostView}
                 options={{
                   headerTitle: () => (
@@ -498,7 +502,11 @@ function App() {
                   headerRight:
                     Platform.OS === "ios"
                       ? () => (
-                          <TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigationRef.navigate("CleanHowToView")
+                            }
+                          >
                             <MaterialIcons
                               name="question-mark"
                               size={40}
@@ -517,7 +525,9 @@ function App() {
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() => navigationRef.navigate("Home")}
+                              onPress={() =>
+                                navigationRef.navigate("CleanMainView")
+                              }
                             >
                               <Ionicons
                                 name="chevron-back"
