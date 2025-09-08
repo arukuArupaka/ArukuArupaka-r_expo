@@ -15,20 +15,23 @@ import { UsersManagement } from "@/components/users-management";
 import { supabase } from "@/lib/supabase";
 
 export type Post = {
-  id: string;
-  created_at: string;
-  user_id: string;
-  building?: string;
-  place?: string;
-  longitude?: number;
-  latitude?: number;
-  comment?: string;
-  image_url?: string;
-  request?: boolean;
-  complete?: boolean;
-  good_count: number;
-  status?: "new" | "active" | "resolved";
-};
+
+  id: string
+  created_at: string
+  user_id: string
+  building?: string
+  place?: string
+  longitude?: number
+  latitude?: number
+  comment?: string
+  image_url?: string
+  request?: boolean
+  complete?: boolean
+  good_count: number
+  status?: "new" | "active" | "resolved"
+  resolved?: string // ←ここをresolveからresolvedに
+}
+
 
 export default function AdminDashboard() {
   const [selectedLocation, setSelectedLocation] = useState("全て");
@@ -259,6 +262,7 @@ export default function AdminDashboard() {
   };
 
   const handleResolveCompleted = async () => {
+
     await fetchPosts();
     setCurrentView("resolved");
   };
@@ -269,9 +273,13 @@ export default function AdminDashboard() {
     setCurrentView("login");
   };
 
-  const handleAssigned = () => {
-    alert("担当者割り当て処理");
-  };
+
+  const handleAssigned = async () => {
+    // 案件状態変更後に再取得してリスト画面へ
+    await fetchPosts()
+    setCurrentView("active")
+  }
+
 
   if (!isLoggedIn) {
     return <LoginScreen onLogin={handleLogin} />;
