@@ -14,7 +14,7 @@ import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "./lib/supabase";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageAsync } from "./lib/uploadImage";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 
 const buildings = [
   { name: "アクトα", reading: "あくと" },
@@ -77,6 +77,7 @@ const buildings = [
 ];
 
 export default function PostScreen() {
+  const navigation = useNavigation<any>();
   const [selectedBuilding, setSelectedBuilding] = useState("");
   const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -351,43 +352,64 @@ export default function PostScreen() {
             {/* 投稿ボタン */}
             <TouchableOpacity
               onPress={async () => {
+                console.log("Post button pressed");
                 try {
                   const {
                     data: { user },
                   } = await supabase.auth.getUser();
+                  console.log("User fetched:", user);
+
                   let imageUrl = null;
                   if (photoUri) {
+                    console.log("Uploading image...");
                     imageUrl = await uploadImageAsync(
                       photoUri,
                       user.id,
                       "post-images"
                     );
+                    console.log("Image uploaded:", imageUrl);
                   }
-                  const { error } = await supabase.from("posts").insert([
-                    {
-                      user_id: user.id,
-                      building: selectedBuilding,
-                      place: locationDetail,
-                      comment: comment,
-                      image_url: imageUrl,
-                      request: isRequestingCleaning,
-                      status: "new",
-                      latitude,
-                      longitude,
-                    },
-                  ]);
+                  
+                  console.log("Inserting post data...");
+                  const { data, error } = await supabase
+                    .from("posts")
+                    .insert([
+                      {
+                        user_id: user.id,
+                        building: selectedBuilding,
+                        place: locationDetail,
+                        comment: comment,
+                        image_url: imageUrl,
+                        request: isRequestingCleaning,
+                        status: "new",
+                        latitude,
+                        longitude,
+                      },
+                    ])
+                    .select();
+
+                  console.log("Supabase response:", { data, error });
 
                   if (error) {
+                    console.error("Supabase insert error:", error);
                     alert("投稿に失敗しました: " + error.message);
                     return;
                   }
-                  alert("投稿が完了しました！");
-                  setSelectedBuilding("");
-                  setLocationDetail("");
-                  setComment("");
-                  setPhotoUri(null);
-                  setIsRequestingCleaning(true);
+                  
+                  const postId = data && data[0] ? data[0].id : null;
+                  console.log("Navigating to CleanPostConfirmation with postId:", postId);
+                  navigation.navigate("CleanPostConfirmation", {
+                    selectedBuilding,
+                    locationDetail,
+                    comment,
+                    photoUri,
+                    isRequestingCleaning,
+                    latitude,
+                    longitude,
+                    postId,
+                  });
                 } catch (e) {
+                  console.error("An unexpected error occurred:", e);
                   alert("エラーが発生しました: " + e.message);
                 }
               }}

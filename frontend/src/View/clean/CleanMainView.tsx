@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useFonts } from "expo-font";
 import { View, StatusBar } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { supabase } from "./lib/supabase";
 import PostDetailCard from "./compornents/PostDtailCard";
 import CleanMap from "./compornents/CleanMap";
@@ -21,23 +22,22 @@ const CleanMainView = () => {
   const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const navigation = useNavigation<any>();
-  // 初期セッションの復元が完了するまで待ってから未ログインならLoginへ遷移
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "INITIAL_SESSION") {
-        if (!session) {
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!cancelled && !session) {
           navigation.replace("CleanLoginView");
         }
-        return;
-      }
-      if (event === "SIGNED_OUT") {
-        navigation.replace("CleanLoginView");
-      }
-    });
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, [navigation]);
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [navigation])
+  );
 
   const handleMapPress = (event: MapPressEvent) => {
     const coord = event?.nativeEvent?.coordinate;
