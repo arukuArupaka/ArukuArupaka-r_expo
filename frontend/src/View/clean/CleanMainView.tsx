@@ -19,14 +19,20 @@ const CleanMainView = () => {
 
   const [markerLocation, setMarkerLocation] = useState<LatLng | null>(null);
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
+
   // 初期セッションの復元が完了するまで待ってから未ログインならLoginへ遷移
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "INITIAL_SESSION") {
+
         if (!session) {
           navigation.replace("CleanLoginView");
+          setUserId(null);
+        } else {
+          setUserId(session.user.id);
         }
         return;
       }
@@ -67,6 +73,7 @@ const CleanMainView = () => {
         {selectedPost && (
           <PostDetailCard
             post={selectedPost}
+            userId={userId}
             onClose={() => setSelectedPost(null)}
           />
         )}
