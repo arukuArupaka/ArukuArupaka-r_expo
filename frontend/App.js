@@ -514,7 +514,11 @@ function App() {
                   headerRight:
                     Platform.OS === "ios"
                       ? () => (
-                          <TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigationRef.navigate("CleanHowToView")
+                            }
+                          >
                             <MaterialIcons
                               name="question-mark"
                               size={40}
@@ -533,7 +537,9 @@ function App() {
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() => navigationRef.navigate("Home")}
+                              onPress={() =>
+                                navigationRef.navigate("CleanMainView")
+                              }
                             >
                               <Ionicons
                                 name="chevron-back"

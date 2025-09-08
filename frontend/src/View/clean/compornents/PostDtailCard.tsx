@@ -12,39 +12,112 @@ import { FontAwesome } from "@expo/vector-icons";
 import { supabase } from "../lib/supabase";
 import EditPostComment from "./EditPostComment";
 
-const PostDetailCard = ({ post: initialPost, onClose }) => {
-  const [post, setPost] = useState(initialPost);
+interface PostDetailCardProps {
+  post: any; // TODO: 型を定義 (id, good_count, status, created_at, users, building, place, comment, image_url)
+  onClose: () => void;
+  userId: string | null | undefined; // 親から渡されるログインユーザーID
+}
+
+const PostDetailCard: React.FC<PostDetailCardProps> = ({
+  post,
+  onClose,
+  userId,
+}) => {
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(post?.good_count || 0);
+  const [pending, setPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const [postState, setPost] = useState(post);
 
-  useEffect(() => {
-    setPost(initialPost);
-  }, [initialPost]);
-
-  useEffect(() => {
-    const getUserId = async () => {
-      const { data } = await supabase.auth.getUser();
-      setCurrentUserId(data?.user?.id || null);
-    };
-    getUserId();
-  }, []);
-
-  const handleCommentUpdated = (updatedPost) => {
-    setPost(updatedPost);
+  // 既に自分がいいね済みか
+  const fetchLikeStatus = async () => {
+    if (!userId || !post?.id) return; // userId 未取得ならスキップ
+    const { data, error } = await supabase
+      .from("good")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("post_id", post.id)
+      .limit(1)
+      .maybeSingle();
+    if (error) {
+      console.warn("fetchLikeStatus error:", error.message);
+      return;
+    }
+    setLiked(!!data);
   };
 
-  if (!post) {
-    return null;
-  }
+  useEffect(() => {
+    fetchLikeStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post?.id, userId]);
+
+  const handleLike = async () => {
+    if (pending || !userId || !post?.id) return; // userId 無ければ操作不可
+    setPending(true);
+    const prevLiked = liked;
+    const prevCount = likeCount;
+
+    // 楽観的更新: liked を反転し likeCount を増減
+    const delta = liked ? -1 : 1;
+    setLiked(!liked);
+    setLikeCount((c) => Math.max(0, c + delta));
+
+    try {
+      // good テーブル更新 (状態判定のためだけに保持)
+      if (liked) {
+        const { error: delErr } = await supabase
+          .from("good")
+          .delete()
+          .eq("user_id", userId)
+          .eq("post_id", post.id);
+        if (delErr) throw delErr;
+      } else {
+        const { error: insErr } = await supabase.from("good").insert({
+          user_id: userId,
+          post_id: post.id,
+        });
+        if (insErr) throw insErr;
+      }
+
+      // posts.good_count をサーバー側に反映
+      // 競合対策が必要なら RPC/トリガー推奨。ここでは単純更新。
+      const newServerCount = Math.max(0, prevCount + delta);
+      const { data: updated, error: updErr } = await supabase
+        .from("posts")
+        .update({ good_count: newServerCount })
+        .eq("id", post.id)
+        .select("good_count")
+        .single();
+      if (updErr) throw updErr;
+      if (updated?.good_count !== undefined) {
+        setLikeCount(updated.good_count);
+        // ローカルの post オブジェクトにも即反映（親が再描画するケース向け）
+        post.good_count = updated.good_count; // eslint-disable-line no-param-reassign
+      }
+    } catch (e: any) {
+      // ロールバック
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      console.warn("handleLike error:", e?.message || e);
+      alert(`いいね処理に失敗しました：${e?.message ?? "Unknown error"}`);
+    } finally {
+      setPending(false);
+    }
+  };
+
+  if (!post) return null;
 
   const formattedDate = post.created_at
     ? new Date(post.created_at).toLocaleDateString("ja-JP")
     : "日付不明";
-
   const statusInfo = {
     text: post.status === "resolved" ? "完了" : "未完了",
     color: post.status === "resolved" ? "#4CAF50" : "#F57C00",
     bgColor: post.status === "resolved" ? "#E8F5E9" : "#FFF8E1",
+  };
+
+  const handleCommentUpdated = (updatedPost) => {
+    setPost(updatedPost);
   };
 
   return (
@@ -98,7 +171,7 @@ const PostDetailCard = ({ post: initialPost, onClose }) => {
                 {statusInfo.text}
               </Text>
             </View>
-            {post.user_id === currentUserId ? (
+            {post.user_id === userId ? (
               <TouchableOpacity
                 style={{ padding: 5 }}
                 onPress={() => setIsEditing(true)}
@@ -187,7 +260,16 @@ const PostDetailCard = ({ post: initialPost, onClose }) => {
           )}
 
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <FontAwesome name="heart" size={22} color="#ff4d4d" />
+            <TouchableOpacity
+              onPress={handleLike}
+              disabled={pending || !userId}
+            >
+              <FontAwesome
+                name={liked ? "heart" : "heart-o"}
+                size={22}
+                color={userId ? "#ff4d4d" : "#bbb"}
+              />
+            </TouchableOpacity>
             <Text
               style={{
                 marginLeft: 6,
@@ -196,8 +278,13 @@ const PostDetailCard = ({ post: initialPost, onClose }) => {
                 fontWeight: "bold",
               }}
             >
-              {post.good_count}
+              {likeCount}
             </Text>
+            {!userId && (
+              <Text style={{ marginLeft: 8, fontSize: 12, color: "#999" }}>
+                ログインしていいね
+              </Text>
+            )}
           </View>
         </Pressable>
         {isEditing && (

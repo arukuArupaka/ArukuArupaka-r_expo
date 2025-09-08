@@ -53,7 +53,12 @@ export function ReportDetail({ report, onBack }: ReportDetailProps) {
             {/* 場所 */}
             <div>
               <label className="text-sm font-medium text-gray-600">場所</label>
-              <div className="mt-1 text-lg">{report.building ?? report.place ?? "未指定"}</div>
+              <div className="font-medium">
+                    {report.building && <span>{report.building}</span>}
+                    {report.place && report.building && <span> / </span>}
+                    {report.place && <span>{report.place}</span>}
+                    {!report.building && !report.place && <span>未指定</span>}
+                  </div>
             </div>
 
             {/* コメント */}

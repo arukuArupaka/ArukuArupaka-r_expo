@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.arukuarupaka",
@@ -22,10 +20,7 @@
         "googleMapsApiKey": "AIzaSyCPSG4CAkxNfBtYI-gewsbFCCTnYpGExCs"
       },
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location",
-          "fetch"
-        ],
+        "UIBackgroundModes": ["location", "fetch"],
         "NSLocationWhenInUseUsageDescription": "位置情報を共有機能とマップ上にあなたの位置を表示するために必要です。",
         "NSLocationAlwaysUsageDescription": "キャンパス内での位置情報共有に使用します。",
         "NSLocalNotificationUsageDescription": "教室の場所を通知します。",
