@@ -24,6 +24,7 @@ interface HeaderProps {
   CSVsheet: number;
   totalPins: number;
   userCount: number;
+  currentUserEmail?: string;
 }
 
 export function Header({
@@ -40,6 +41,7 @@ export function Header({
   CSVsheet,
   totalPins,
   userCount,
+  currentUserEmail,
 }: HeaderProps) {
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [range, setRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
@@ -59,14 +61,21 @@ export function Header({
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">ADMIN DASHBOARD</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full bg-blue-500 text-white hover:bg-blue-600"
-          onClick={onUserClick}
-        >
-          <User className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-3">
+          {currentUserEmail && (
+            <span className="text-sm text-gray-700 max-w-[180px] truncate" title={currentUserEmail}>
+              {currentUserEmail}
+            </span>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-blue-500 text-white hover:bg-blue-600"
+            onClick={onUserClick}
+          >
+            <User className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
       <div className="flex gap-4 mt-4">
         <StatCard

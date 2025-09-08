@@ -50,19 +50,45 @@ export async function GET(request: Request) {
 
   const rows = (data as Post[] | null) ?? []
 
-  const header = ["案件ID", "時間", "場所", "コメント", "アカウント情報", "ステータス"]
+  const header = ["案件ID", "時間", "場所", "コメント", "メールアドレス", "ステータス"]
   const csvLines = [header.join(",")]
 
   console.log("CSV rows count:", rows.length)
 
+  // user_id -> email 変換: auth.users から service_role でまとめて取得
+  const uniqueUserIds = Array.from(new Set(rows.map(r => r.user_id).filter(Boolean)))
+
+  const idToEmail: Record<string, string> = {}
+  if (uniqueUserIds.length > 0) {
+    // 同時並列取得 (件数が多い場合はレート制限対策で適宜制限)
+    const chunks: string[][] = []
+    const chunkSize = 50 // レート/パフォーマンスバランス
+    for (let i = 0; i < uniqueUserIds.length; i += chunkSize) {
+      chunks.push(uniqueUserIds.slice(i, i + chunkSize))
+    }
+    for (const c of chunks) {
+      // chunk 内は Promise.all
+      const results = await Promise.all(
+        c.map(uid => supabaseAdmin.auth.admin.getUserById(uid).catch(err => ({ data: null, error: err } as any)))
+      )
+      results.forEach(res => {
+        const user = (res as any)?.data?.user
+        if (user?.id) {
+          idToEmail[user.id] = user.email || ""
+        }
+      })
+    }
+  }
+
   for (const r of rows) {
     const location = r.building ? (r.place ? `${r.building} ${r.place}` : r.building) : (r.place ?? "")
+    const email = r.user_id ? (idToEmail[r.user_id] || r.user_id) : ""
     csvLines.push([
       escapeCsv(r.id),
       escapeCsv(r.created_at),
       escapeCsv(location),
       escapeCsv(r.comment ?? ""),
-      escapeCsv(r.user_id),
+      escapeCsv(email),
       escapeCsv(r.status ?? ""),
     ].join(","))
   }
