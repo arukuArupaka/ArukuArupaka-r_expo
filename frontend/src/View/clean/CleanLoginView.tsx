@@ -13,6 +13,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import Checkbox from "expo-checkbox";
@@ -132,6 +134,7 @@ export default function CleanLoginView() {
   }, [navigation, saveDeviceToken]);
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView   style={{ flex: 1 }} behavior='padding'>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFEFA" }}>
         <ScrollView
           style={{ flex: 1, backgroundColor: "#FFFEFA" }}
@@ -178,12 +181,24 @@ export default function CleanLoginView() {
               fontSize: 18,
               fontFamily: "ZenMaruGothicBold",
               textAlign: "center",
+              marginBottom: 5,
+              paddingHorizontal: 8,
+              lineHeight: 26,
+            }}
+          >
+            みんなでキャンパスを
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: "ZenMaruGothicBold",
+              textAlign: "center",
               marginBottom: 30,
               paddingHorizontal: 8,
               lineHeight: 26,
             }}
           >
-            みんなでキャンパスを もっと綺麗にしよう！
+            綺麗にしよう！
           </Text>
 
           {/* フォーム */}
@@ -313,22 +328,22 @@ export default function CleanLoginView() {
             >
               パスワード
             </Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              style={{
-                borderWidth: 1,
-                borderColor: "#000",
-                borderRadius: 4,
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                marginBottom: 24,
-                fontSize: 14,
-                backgroundColor: "#fff",
-              }}
-            />
-
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#000",
+                  borderRadius: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  marginBottom: 24,
+                  fontSize: 14,
+                  backgroundColor: "#fff",
+                }}
+              />
+          
             {/* 生協と連携 ボタン */}
             <TouchableOpacity
               onPress={() => setCoopMode((p) => !p)}
@@ -677,6 +692,7 @@ export default function CleanLoginView() {
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 }
