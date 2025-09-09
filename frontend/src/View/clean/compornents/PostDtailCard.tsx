@@ -111,9 +111,16 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
     ? new Date(post.created_at).toLocaleDateString("ja-JP")
     : "日付不明";
   const statusInfo = {
-    text: post.status === "resolved" ? "完了" : "未完了",
-    color: post.status === "resolved" ? "#4CAF50" : "#F57C00",
-    bgColor: post.status === "resolved" ? "#E8F5E9" : "#FFF8E1",
+    text:
+      post.status === "resolved" || post.status === "self" ? "完了" : "未完了",
+    color:
+      post.status === "resolved" || post.status === "self"
+        ? "#4CAF50"
+        : "#F57C00",
+    bgColor:
+      post.status === "resolved" || post.status === "self"
+        ? "#E8F5E9"
+        : "#FFF8E1",
   };
 
   const handleCommentUpdated = (updatedPost) => {

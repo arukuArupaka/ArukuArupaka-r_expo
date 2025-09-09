@@ -8,7 +8,7 @@ export const NewPostMarker = ({ markerLocation }) => {
       <Marker coordinate={markerLocation}>
         <Image
           source={require("../assets/image/broom-blue.png")}
-          style={{ width: 50, height: 50 }}
+          style={{ width: 50, height: 55 }}
         />
       </Marker>
     </>
