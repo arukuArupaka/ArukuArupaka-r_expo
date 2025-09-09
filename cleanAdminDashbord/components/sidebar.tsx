@@ -1,25 +1,49 @@
-"use client"
+"use client";
 
-import { ChevronRight, Map } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronRight, Map } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const locations = ["全て", "コラーニングハウス", "コラーニングハウスII", "フォレストハウス", "ユニオンカフェテリア", "その他"]
+const locations = [
+  "全て",
+  "コラーニングハウス",
+  "コラーニングハウスII",
+  "フォレストハウス",
+  "ユニオンカフェテリア",
+  "その他",
+];
 
 interface SidebarProps {
-  selectedLocation: string
-  onLocationChange: (location: string) => void
-  onMapView: () => void
-  onListView: () => void
-  currentView: "list" | "detail" | "map" | "user" | "resolved" | "active" | "unresolved" | "users" | "login"
+  selectedLocation: string;
+  onLocationChange: (location: string) => void;
+  onMapView: () => void;
+  onListView: () => void;
+  currentView:
+    | "list"
+    | "detail"
+    | "map"
+    | "user"
+    | "resolved"
+    | "active"
+    | "unresolved"
+    | "users"
+    | "login";
 }
 
-export function Sidebar({ selectedLocation, onLocationChange, onMapView, onListView, currentView }: SidebarProps) {
+export function Sidebar({
+  selectedLocation,
+  onLocationChange,
+  onMapView,
+  onListView,
+  currentView,
+}: SidebarProps) {
   return (
     <aside className="w-80 bg-white border-r border-gray-200 p-6">
       <div className="space-y-2">
         <Button
           variant="ghost"
-          className={`w-full justify-between text-left h-12 ${currentView === "map" ? "bg-gray-100" : ""}`}
+          className={`w-full justify-between text-left h-12 ${
+            currentView === "map" ? "bg-gray-100" : ""
+          }`}
           onClick={currentView === "map" ? onListView : onMapView}
         >
           <span className="flex items-center gap-2">
@@ -34,7 +58,9 @@ export function Sidebar({ selectedLocation, onLocationChange, onMapView, onListV
             <Button
               key={location}
               variant="ghost"
-              className={`w-full justify-between text-left h-12 ${selectedLocation === location ? "bg-gray-100" : ""}`}
+              className={`w-full justify-between text-left h-12 ${
+                selectedLocation === location ? "bg-gray-100" : ""
+              }`}
               onClick={() => onLocationChange(location)}
             >
               <span>{location}</span>
@@ -43,5 +69,5 @@ export function Sidebar({ selectedLocation, onLocationChange, onMapView, onListV
           ))}
       </div>
     </aside>
-  )
+  );
 }
