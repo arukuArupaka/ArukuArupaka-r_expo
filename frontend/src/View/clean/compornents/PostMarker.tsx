@@ -7,8 +7,8 @@ const PostMarker = ({ post, onPress, userId }) => {
   if (post.user_id === userId) {
     imageSource =
       post.status === "resolved"
-        ? require("../assets/image/green.png")
-        : require("../assets/image/red.png");
+        ? require("../assets/image/broom-self-green.png")
+        : require("../assets/image/broom-self-red.png");
   } else {
     imageSource =
       post.status === "resolved"
