@@ -72,6 +72,7 @@ const CleanMainView = () => {
         <CleanMap
           onSelectPost={handleSelectPost}
           onRegionChangeComplete={handleRegionChangeComplete}
+          userId={userId}
         >
           {markerLocation && (
             <View

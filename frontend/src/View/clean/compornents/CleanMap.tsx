@@ -9,6 +9,7 @@ type Props = {
   onRegionChangeComplete?: (region: Region) => void;
   onMapPress?: (e: MapPressEvent) => void;
   children?: React.ReactNode;
+  userId: string | null | undefined;
 };
 
 const CleanMap: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const CleanMap: React.FC<Props> = ({
   onRegionChangeComplete,
   onMapPress,
   children,
+  userId,
 }) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ const CleanMap: React.FC<Props> = ({
   return (
     <MapView
       style={{ flex: 1 }}
-      onPress={onMapPress} // ← 親にフォワード
+      onPress={onMapPress}
       initialRegion={{
         latitude: 34.98222,
         longitude: 135.96371,
@@ -58,7 +60,12 @@ const CleanMap: React.FC<Props> = ({
       onRegionChangeComplete={onRegionChangeComplete}
     >
       {posts.map((post) => (
-        <PostMarker key={post.id} post={post} onPress={onSelectPost} />
+        <PostMarker
+          key={post.id}
+          post={post}
+          onPress={onSelectPost}
+          userId={userId}
+        />
       ))}
       {children}
     </MapView>
