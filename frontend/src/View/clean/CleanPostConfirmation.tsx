@@ -91,6 +91,10 @@ export default function CleanPostConfirmation() {
       >
         以下の内容で投稿されました！
       </Text>
+      <Image
+        source={require("./assets/image/arupaka-happy.png")}
+        style={{ width: 120, height: 120, alignSelf: "center" }}
+      />
       <Pressable
         style={{
           width: "85%",

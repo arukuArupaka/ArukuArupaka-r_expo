@@ -483,13 +483,11 @@ function App() {
                     />
                   ),
                   headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{ marginLeft: 8 }}
-                    >
-                      <MaterialIcons
-                        name="arrow-back"
-                        size={40}
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Ionicons
+                        name="chevron-back"
+                        style={{ marginRight: 10 }}
+                        size={30}
                         color="black"
                       />
                     </TouchableOpacity>
@@ -559,7 +557,7 @@ function App() {
               <Stack.Screen
                 name="CleanPostConfirmation"
                 component={CleanPostConfirmation}
-                options={({ navigation }) => ({
+                options={{
                   headerShown: true,
                   headerTitle: () => (
                     <MaterialIcons
@@ -568,23 +566,12 @@ function App() {
                       color="black"
                     />
                   ),
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{ marginLeft: 8 }}
-                    >
-                      <MaterialIcons
-                        name="arrow-back"
-                        size={40}
-                        color="black"
-                      />
-                    </TouchableOpacity>
-                  ),
                   headerStyle: {
                     backgroundColor: "#8DFFAF",
                   },
                   headerTitleAlign: "center",
-                })}
+                  headerBackVisible: false,
+                }}
               />
               <Stack.Screen
                 name="TransitScheduleWebView"
