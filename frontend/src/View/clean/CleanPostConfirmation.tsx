@@ -222,6 +222,7 @@ export default function CleanPostConfirmation() {
           height: "8%",
           borderRadius: 10,
         }}
+        onPress={() => navigation.navigate("CleanMainView" as never)}
       >
         <LinearGradient
           colors={["#C4E8FF", "#45B8FF"]}
