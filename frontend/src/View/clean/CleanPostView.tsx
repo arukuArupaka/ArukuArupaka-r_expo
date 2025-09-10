@@ -115,13 +115,18 @@ export default function PostScreen() {
   const [isRequestingCleaning, setIsRequestingCleaning] = useState(false);
   // 座標を受け取るパラメータ
   type RootStackParamList = {
-    CleanPostView: { latitude: number; longitude: number };
+    CleanPostView: {
+      latitude: number;
+      longitude: number;
+      onPosted?: () => void; // 投稿完了時のコールバック
+    };
   };
 
   const route = useRoute<RouteProp<RootStackParamList, "CleanPostView">>();
-  const { latitude, longitude } = route.params ?? {
+  const { latitude, longitude, onPosted } = route.params ?? {
     latitude: undefined,
     longitude: undefined,
+    onPosted: undefined,
   };
 
   return (
@@ -563,6 +568,12 @@ export default function PostScreen() {
                     longitude,
                     postId,
                   });
+                  // 投稿完了後コールバック（マップ側のrefetchTrigger用）
+                  if (onPosted) {
+                    try {
+                      onPosted();
+                    } catch {}
+                  }
                 } catch (e) {
                   console.error("An unexpected error occurred:", e);
                   alert("エラーが発生しました: " + e.message);

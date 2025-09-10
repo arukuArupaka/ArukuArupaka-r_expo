@@ -12,6 +12,7 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { supabase } from "./lib/supabase";
 import { uploadImageAsync } from "./lib/uploadImage";
+import { fetchPostById } from "./lib/postsApi";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -42,6 +43,7 @@ export default function CleanPostConfirmation() {
     comment = "",
     photoUri = null,
     isRequestingCleaning = false,
+    postId = null,
   } = route.params || {};
 
   useEffect(() => {
@@ -212,7 +214,6 @@ export default function CleanPostConfirmation() {
         )}
       </Pressable>
       <TouchableOpacity
-        onPress={() => navigation.navigate("CleanMainView" as never)}
         style={{
           position: "absolute",
           bottom: 50,

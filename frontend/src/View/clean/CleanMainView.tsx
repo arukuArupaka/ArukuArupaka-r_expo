@@ -32,6 +32,7 @@ const CleanMainView = () => {
     longitude: 135.96371,
   });
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [refetchToken, setRefetchToken] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
@@ -60,6 +61,10 @@ const CleanMainView = () => {
     navigation.navigate("CleanPostView", {
       latitude: markerLocation.latitude,
       longitude: markerLocation.longitude,
+      onPosted: () => {
+        // 投稿完了コールバックでトークン更新
+        setRefetchToken((t) => t + 1);
+      },
     });
   };
 
@@ -73,6 +78,7 @@ const CleanMainView = () => {
           onSelectPost={handleSelectPost}
           onRegionChangeComplete={handleRegionChangeComplete}
           userId={userId}
+          refetchTrigger={refetchToken}
         >
           {markerLocation && (
             <View
