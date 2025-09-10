@@ -28,6 +28,7 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
   const [pending, setPending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [postState, setPost] = useState(post);
+  const [imgError, setImgError] = useState(false); // 画像読み込みエラー状態
 
   // 既に自分がいいね済みか
   const fetchLikeStatus = async () => {
@@ -240,14 +241,23 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
             </Text>
           </View>
 
-          {post.image_url ? (
+          {post.image_url && !imgError ? (
             <Image
-              source={{ uri: post.image_url }}
+              source={{ uri: `${post.image_url}` }}
               style={{
                 width: "100%",
                 height: 180,
                 borderRadius: 10,
                 marginBottom: 20,
+              }}
+              onLoad={undefined}
+              onError={(e) => {
+                // 失敗時のみ簡易ログ（必要なら詳細ログ復活）
+                console.warn(
+                  "[PostDetailCard][Image error]",
+                  e?.nativeEvent?.error
+                );
+                setImgError(true);
               }}
             />
           ) : (
@@ -263,6 +273,11 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
               }}
             >
               <FontAwesome name="camera" size={40} color="#ccc" />
+              {post.image_url ? (
+                <Text style={{ fontSize: 10, color: "#999", marginTop: 6 }}>
+                  画像読み込み失敗 {imgError ? "(error)" : "(no url)"}
+                </Text>
+              ) : null}
             </View>
           )}
 

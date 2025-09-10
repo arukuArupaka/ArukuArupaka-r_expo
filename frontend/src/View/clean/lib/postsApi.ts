@@ -19,13 +19,29 @@ export interface Post {
   [key: string]: any; // フォールバック
 }
 
-// 単発取得関数（必要なら直接呼び出し可能）
 export const fetchPostsOnce = async (): Promise<Post[]> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select(`*, users ( name, nickname )`);
-  if (error) throw error;
-  return data || [];
+  const [limitedRes, newRes] = await Promise.all([
+    supabase
+      .from("posts")
+      .select(`*, users ( name, nickname )`)
+      .in("status", ["resolved", "self"])
+      .order("created_at", { ascending: false })
+      .limit(80),
+    supabase
+      .from("posts")
+      .select(`*, users ( name, nickname )`)
+      .eq("status", "new")
+      .order("created_at", { ascending: false }),
+  ]);
+
+  if (limitedRes.error) throw limitedRes.error;
+  if (newRes.error) throw newRes.error;
+
+  const combined = [...(newRes.data ?? []), ...(limitedRes.data ?? [])].sort(
+    (a: any, b: any) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  return combined as Post[];
 };
 
 // カスタムフック：一覧取得 + ローディング/エラー状態 + リフレッシュ
@@ -50,32 +66,38 @@ export const usePosts = () => {
   useEffect(() => {
     load();
 
-    // Realtime購読: INSERT / UPDATE / DELETE に対応
     const channel = supabase
       .channel("public:posts")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "posts" },
         (payload: any) => {
-          setPosts((prev) => [payload.new as Post, ...prev]);
+          setPosts((prev) => {
+            const next = [payload.new as Post, ...prev];
+            return resortAndTrim(next);
+          });
         }
       )
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "posts" },
         (payload: any) => {
-          setPosts((prev) =>
-            prev.map((p) =>
+          setPosts((prev) => {
+            const updated = prev.map((p) =>
               p.id === payload.new.id ? { ...p, ...(payload.new as Post) } : p
-            )
-          );
+            );
+            return resortAndTrim(updated);
+          });
         }
       )
       .on(
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "posts" },
         (payload: any) => {
-          setPosts((prev) => prev.filter((p) => p.id !== payload.old.id));
+          setPosts((prev) => {
+            const filtered = prev.filter((p) => p.id !== payload.old.id);
+            return resortAndTrim(filtered);
+          });
         }
       )
       .subscribe();
@@ -87,6 +109,25 @@ export const usePosts = () => {
 
   return { posts, loading, error, refetch: load };
 };
+
+// 並び替え + resolved/self 合計80件制限
+function resortAndTrim(list: Post[]): Post[] {
+  const sorted = [...list].sort(
+    (a, b) =>
+      new Date(b.created_at || 0).getTime() -
+      new Date(a.created_at || 0).getTime()
+  );
+  let limitedCount = 0;
+  const result: Post[] = [];
+  for (const p of sorted) {
+    if (p.status === "resolved" || p.status === "self") {
+      if (limitedCount >= 80) continue;
+      limitedCount++;
+    }
+    result.push(p);
+  }
+  return result;
+}
 
 // 追加例：IDで取得（今後の拡張用）
 export const fetchPostById = async (id: string): Promise<Post | null> => {
