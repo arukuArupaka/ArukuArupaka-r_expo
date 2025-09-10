@@ -111,16 +111,22 @@ export default function PostScreen() {
   const [locationDetail, setLocationDetail] = useState("");
   const [comment, setComment] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [isRequestingCleaning, setIsRequestingCleaning] = useState(true);
+  const [photoUriAfter, setPhotoUriAfter] = useState(null);
+  const [isRequestingCleaning, setIsRequestingCleaning] = useState(false);
   // 座標を受け取るパラメータ
   type RootStackParamList = {
-    CleanPostView: { latitude: number; longitude: number };
+    CleanPostView: {
+      latitude: number;
+      longitude: number;
+      onPosted?: () => void; // 投稿完了時のコールバック
+    };
   };
 
   const route = useRoute<RouteProp<RootStackParamList, "CleanPostView">>();
-  const { latitude, longitude } = route.params ?? {
+  const { latitude, longitude, onPosted } = route.params ?? {
     latitude: undefined,
     longitude: undefined,
+    onPosted: undefined,
   };
 
   return (
@@ -128,7 +134,7 @@ export default function PostScreen() {
       <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <View style={{ flex: 1 }}>
           <ScrollView
-            contentContainerStyle={{ padding: 20 }}
+            contentContainerStyle={{ paddingHorizontal: 20 }}
             keyboardShouldPersistTaps="handled"
           >
             <Text
@@ -136,12 +142,75 @@ export default function PostScreen() {
                 fontSize: 32,
                 fontFamily: "ZenMaruGothicBlack",
                 textAlign: "center",
-                marginBottom: 20,
+                marginTop: 15,
+                marginBottom: 10,
                 color: "#4C4C4C",
               }}
             >
               投稿
             </Text>
+
+            <View
+              style={{
+                marginBottom: 13,
+                gap: 8,
+              }}
+            >
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center" }}
+                onPress={() => setIsRequestingCleaning(false)}
+              >
+                <FontAwesome5
+                  name={!isRequestingCleaning ? "dot-circle" : "circle"}
+                  size={24}
+                  color="#4C4C4C"
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 8,
+                    fontFamily: "ZenMaruGothicBold",
+                    color: "#4C4C4C",
+                  }}
+                >
+                  自分で掃除する
+                </Text>
+                <Image
+                  source={require("./assets/image/pointup3.png")}
+                  style={{
+                    marginLeft: 0,
+                    marginTop: 5,
+                    width: 35,
+                    height: 35,
+                    zIndex: -1,
+                  }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginRight: 16,
+                }}
+                onPress={() => setIsRequestingCleaning(true)}
+              >
+                <FontAwesome5
+                  name={isRequestingCleaning ? "dot-circle" : "circle"}
+                  size={24}
+                  color="#4C4C4C"
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 8,
+                    fontFamily: "ZenMaruGothicBold",
+                    color: "#4C4C4C",
+                  }}
+                >
+                  掃除を依頼する
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             {/* 建物 */}
             <Text
@@ -192,7 +261,7 @@ export default function PostScreen() {
                   backgroundColor: "white",
                   overflow: "visible",
                   position: "absolute",
-                  top: 150,
+                  top: 231,
                   left: 20,
                   right: 20,
                   zIndex: 10,
@@ -289,69 +358,147 @@ export default function PostScreen() {
             >
               写真
             </Text>
-            <TouchableOpacity
-              onPress={async () => {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  quality: 0.7,
-                });
-
-                if (!result.canceled && result.assets?.length) {
-                  setPhotoUri(result.assets[0].uri);
-                }
-              }}
-              style={{
-                height: 150,
-                borderWidth: 1,
-                borderColor: "#B6B6B6",
-                borderRadius: 6,
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: 24,
-              }}
-            >
-              {photoUri ? (
-                <Image
-                  source={{ uri: photoUri }}
-                  style={{ width: "100%", height: "100%", borderRadius: 6 }}
-                />
-              ) : (
-                <FontAwesome6 name="camera" size={45} color="black" />
-              )}
-            </TouchableOpacity>
-
-            {/* チェックボックス */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <Text
+            {isRequestingCleaning ? (
+              <TouchableOpacity
+                onPress={async () => {
+                  const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    quality: 0.7,
+                  });
+                  if (!result.canceled && result.assets?.length) {
+                    setPhotoUri(result.assets[0].uri);
+                  }
+                }}
                 style={{
-                  fontSize: 14,
-                  fontFamily: "ZenMaruGothicBold",
-                  marginRight: 8,
+                  height: 150,
+                  borderWidth: 1,
+                  borderColor: "#B6B6B6",
+                  borderRadius: 6,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 24,
                 }}
               >
-                掃除を依頼する
-              </Text>
-              <TouchableOpacity
-                onPress={() => setIsRequestingCleaning(!isRequestingCleaning)}
-              >
-                <FontAwesome5
-                  name={isRequestingCleaning ? "check-square" : "square"}
-                  size={24}
-                  color="black"
-                />
+                {photoUri ? (
+                  <Image
+                    source={{ uri: photoUri }}
+                    style={{ width: "100%", height: "100%", borderRadius: 6 }}
+                  />
+                ) : (
+                  <FontAwesome6 name="camera" size={45} color="black" />
+                )}
               </TouchableOpacity>
-            </View>
+            ) : (
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 24 }}>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 4,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#4C4C4C",
+                    }}
+                  >
+                    掃除前
+                  </Text>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const result = await ImagePicker.launchImageLibraryAsync({
+                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                        allowsEditing: true,
+                        quality: 0.7,
+                      });
+                      if (!result.canceled && result.assets?.length) {
+                        setPhotoUri(result.assets[0].uri);
+                      }
+                    }}
+                    style={{
+                      height: 100,
+                      borderWidth: 1,
+                      borderColor: "#B6B6B6",
+                      borderRadius: 6,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {photoUri ? (
+                      <Image
+                        source={{ uri: photoUri }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 6,
+                        }}
+                      />
+                    ) : (
+                      <FontAwesome6 name="camera" size={32} color="black" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 4,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#4C4C4C",
+                    }}
+                  >
+                    掃除後
+                  </Text>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const result = await ImagePicker.launchImageLibraryAsync({
+                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                        allowsEditing: true,
+                        quality: 0.7,
+                      });
+                      if (!result.canceled && result.assets?.length) {
+                        setPhotoUriAfter(result.assets[0].uri);
+                      }
+                    }}
+                    style={{
+                      height: 100,
+                      borderWidth: 1,
+                      borderColor: "#B6B6B6",
+                      borderRadius: 6,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {photoUriAfter ? (
+                      <Image
+                        source={{ uri: photoUriAfter }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 6,
+                        }}
+                      />
+                    ) : (
+                      <FontAwesome6 name="camera" size={32} color="black" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             {/* 投稿ボタン */}
             <TouchableOpacity
               onPress={async () => {
+                // 写真バリデーション
+                if (isRequestingCleaning) {
+                  if (!photoUri) {
+                    alert("写真を選択してください");
+                    return;
+                  }
+                } else {
+                  if (!photoUri || !photoUriAfter) {
+                    alert("掃除前・掃除後の写真を両方選択してください");
+                    return;
+                  }
+                }
                 console.log("Post button pressed");
                 try {
                   const {
@@ -360,6 +507,7 @@ export default function PostScreen() {
                   console.log("User fetched:", user);
 
                   let imageUrl = null;
+                  let imageUrlAfter = null;
                   if (photoUri) {
                     console.log("Uploading image...");
                     imageUrl = await uploadImageAsync(
@@ -369,7 +517,14 @@ export default function PostScreen() {
                     );
                     console.log("Image uploaded:", imageUrl);
                   }
-                  
+                  if (!isRequestingCleaning && photoUriAfter) {
+                    imageUrlAfter = await uploadImageAsync(
+                      photoUriAfter,
+                      user.id,
+                      "post-images"
+                    );
+                  }
+
                   console.log("Inserting post data...");
                   const { data, error } = await supabase
                     .from("posts")
@@ -380,8 +535,9 @@ export default function PostScreen() {
                         place: locationDetail,
                         comment: comment,
                         image_url: imageUrl,
+                        image_url_after: imageUrlAfter,
                         request: isRequestingCleaning,
-                        status: "new",
+                        status: isRequestingCleaning ? "new" : "self",
                         latitude,
                         longitude,
                       },
@@ -395,19 +551,29 @@ export default function PostScreen() {
                     alert("投稿に失敗しました: " + error.message);
                     return;
                   }
-                  
+
                   const postId = data && data[0] ? data[0].id : null;
-                  console.log("Navigating to CleanPostConfirmation with postId:", postId);
+                  console.log(
+                    "Navigating to CleanPostConfirmation with postId:",
+                    postId
+                  );
                   navigation.navigate("CleanPostConfirmation", {
                     selectedBuilding,
                     locationDetail,
                     comment,
                     photoUri,
+                    photoUriAfter,
                     isRequestingCleaning,
                     latitude,
                     longitude,
                     postId,
                   });
+                  // 投稿完了後コールバック（マップ側のrefetchTrigger用）
+                  if (onPosted) {
+                    try {
+                      onPosted();
+                    } catch {}
+                  }
                 } catch (e) {
                   console.error("An unexpected error occurred:", e);
                   alert("エラーが発生しました: " + e.message);

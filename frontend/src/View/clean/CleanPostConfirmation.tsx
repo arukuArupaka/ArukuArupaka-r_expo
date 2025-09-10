@@ -12,6 +12,7 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { supabase } from "./lib/supabase";
 import { uploadImageAsync } from "./lib/uploadImage";
+import { fetchPostById } from "./lib/postsApi";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -42,6 +43,7 @@ export default function CleanPostConfirmation() {
     comment = "",
     photoUri = null,
     isRequestingCleaning = false,
+    postId = null,
   } = route.params || {};
 
   useEffect(() => {
@@ -91,6 +93,10 @@ export default function CleanPostConfirmation() {
       >
         以下の内容で投稿されました！
       </Text>
+      <Image
+        source={require("./assets/image/arupaka-happy.png")}
+        style={{ width: 120, height: 120, alignSelf: "center" }}
+      />
       <Pressable
         style={{
           width: "85%",
@@ -208,7 +214,6 @@ export default function CleanPostConfirmation() {
         )}
       </Pressable>
       <TouchableOpacity
-        onPress={() => navigation.navigate("CleanMainView" as never)}
         style={{
           position: "absolute",
           bottom: 50,
@@ -217,6 +222,7 @@ export default function CleanPostConfirmation() {
           height: "8%",
           borderRadius: 10,
         }}
+        onPress={() => navigation.navigate("CleanMainView" as never)}
       >
         <LinearGradient
           colors={["#C4E8FF", "#45B8FF"]}
