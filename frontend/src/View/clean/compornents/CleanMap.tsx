@@ -24,12 +24,43 @@ const CleanMap: React.FC<Props> = ({
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data, error } = await supabase.from("posts").select(`
-          *,
-          users ( name, nickname )
-        `);
-        if (error) throw error;
-        if (data) setPosts(data);
+        // resolved は最新100件、new は全件を取得し、作成日時の降順で結合
+        const [resolvedRes, newRes] = await Promise.all([
+          supabase
+            .from("posts")
+            .select(
+              `
+              *,
+              users ( name, nickname )
+            `
+            )
+            .eq("status", "resolved")
+            .order("created_at", { ascending: false })
+            .limit(100),
+          supabase
+            .from("posts")
+            .select(
+              `
+              *,
+              users ( name, nickname )
+            `
+            )
+            .eq("status", "new")
+            .order("created_at", { ascending: false }),
+        ]);
+
+        if (resolvedRes.error) throw resolvedRes.error;
+        if (newRes.error) throw newRes.error;
+
+        const combined = [
+          ...(newRes.data ?? []),
+          ...(resolvedRes.data ?? []),
+        ].sort(
+          (a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
+        setPosts(combined);
       } catch (err: any) {
         setError(err.message);
       } finally {
