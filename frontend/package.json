@@ -21,6 +21,7 @@
     "@supabase/supabase-js": "^2.52.1",
     "@types/react": "~19.0.10",
     "@types/redux-actions": "^2.6.5",
+    "base-64": "^1.0.0",
     "algoliasearch": "^4.22.1",
     "axios": "^1.6.7",
     "clone": "^2.1.2",

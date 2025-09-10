@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { supabase } from "./lib/supabase";
-import { uploadImageAsync } from "./lib/uploadImage";
-import { fetchPostById } from "./lib/postsApi";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 

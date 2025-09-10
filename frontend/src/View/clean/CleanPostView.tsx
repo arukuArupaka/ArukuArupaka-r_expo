@@ -13,8 +13,8 @@ import {
 import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "./lib/supabase";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageAsync } from "./lib/uploadImage";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { uploadPostWithImages } from "./lib/uploadImage";
 
 const buildings = [
   { name: "アクトα", reading: "あくと" },
@@ -364,7 +364,6 @@ export default function PostScreen() {
                   const result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
                     allowsEditing: true,
-                    quality: 0.7,
                   });
                   if (!result.canceled && result.assets?.length) {
                     setPhotoUri(result.assets[0].uri);
@@ -407,7 +406,6 @@ export default function PostScreen() {
                       const result = await ImagePicker.launchImageLibraryAsync({
                         mediaTypes: ImagePicker.MediaTypeOptions.Images,
                         allowsEditing: true,
-                        quality: 0.7,
                       });
                       if (!result.canceled && result.assets?.length) {
                         setPhotoUri(result.assets[0].uri);
@@ -452,7 +450,6 @@ export default function PostScreen() {
                       const result = await ImagePicker.launchImageLibraryAsync({
                         mediaTypes: ImagePicker.MediaTypeOptions.Images,
                         allowsEditing: true,
-                        quality: 0.7,
                       });
                       if (!result.canceled && result.assets?.length) {
                         setPhotoUriAfter(result.assets[0].uri);
@@ -499,64 +496,25 @@ export default function PostScreen() {
                     return;
                   }
                 }
-                console.log("Post button pressed");
                 try {
                   const {
                     data: { user },
                   } = await supabase.auth.getUser();
-                  console.log("User fetched:", user);
-
-                  let imageUrl = null;
-                  let imageUrlAfter = null;
-                  if (photoUri) {
-                    console.log("Uploading image...");
-                    imageUrl = await uploadImageAsync(
-                      photoUri,
-                      user.id,
-                      "post-images"
-                    );
-                    console.log("Image uploaded:", imageUrl);
-                  }
-                  if (!isRequestingCleaning && photoUriAfter) {
-                    imageUrlAfter = await uploadImageAsync(
-                      photoUriAfter,
-                      user.id,
-                      "post-images"
-                    );
-                  }
-
-                  console.log("Inserting post data...");
-                  const { data, error } = await supabase
-                    .from("posts")
-                    .insert([
-                      {
-                        user_id: user.id,
-                        building: selectedBuilding,
-                        place: locationDetail,
-                        comment: comment,
-                        image_url: imageUrl,
-                        image_url_after: imageUrlAfter,
-                        request: isRequestingCleaning,
-                        status: isRequestingCleaning ? "new" : "self",
-                        latitude,
-                        longitude,
-                      },
-                    ])
-                    .select();
-
-                  console.log("Supabase response:", { data, error });
-
-                  if (error) {
-                    console.error("Supabase insert error:", error);
-                    alert("投稿に失敗しました: " + error.message);
-                    return;
-                  }
-
-                  const postId = data && data[0] ? data[0].id : null;
-                  console.log(
-                    "Navigating to CleanPostConfirmation with postId:",
-                    postId
-                  );
+                  // 投稿処理開始
+                  const { post, imageUrl, imageUrlAfter } =
+                    await uploadPostWithImages({
+                      userId: user.id,
+                      building: selectedBuilding,
+                      place: locationDetail,
+                      comment,
+                      beforeUri: photoUri,
+                      afterUri: photoUriAfter,
+                      isRequestingCleaning,
+                      latitude,
+                      longitude,
+                    });
+                  const postId = post?.id || null;
+                  // 投稿完了後画面遷移
                   navigation.navigate("CleanPostConfirmation", {
                     selectedBuilding,
                     locationDetail,
