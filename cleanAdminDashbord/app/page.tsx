@@ -126,11 +126,18 @@ export default function AdminDashboard() {
 
   const locations = [
     "全て",
-    "コラーニングハウス",
-    "コラーニングハウスII",
+    "コラーニングハウスⅠ",
+    "コラーニングハウスⅡ",
     "フォレストハウス",
-    "ユニオンカフェテリア",
-    "その他",
+    "アドセミナリオ",
+    "ラルカディア・インテグレーションコア",
+    "セントラルアーク",
+    "サイエンスコア",
+    "バイオリンク",
+    "アクロスウィング",
+    "ユニオンスクエア",
+    "リンクスクエア",
+    "その他"
   ];
 
   const filteredReports =
@@ -138,9 +145,9 @@ export default function AdminDashboard() {
       ? posts
       : selectedLocation === "その他"
       ? posts.filter(
-          (report) => report.building && !locations.includes(report.building)
+          (report) => report.building && !locations.slice(1, -1).includes(report.building)
         )
-      : posts.filter((report) => report.building?.includes(selectedLocation));
+      : posts.filter((report) => report.building === selectedLocation);
 
   const resolvedReports = posts.filter(
     (report) => report.status === "resolved"
@@ -153,27 +160,27 @@ export default function AdminDashboard() {
       ? resolvedReports
       : selectedLocation === "その他"
       ? resolvedReports.filter(
-          (r) => r.building && !locations.includes(r.building)
+          (r) => r.building && !locations.slice(1, -1).includes(r.building)
         )
-      : resolvedReports.filter((r) => r.building?.includes(selectedLocation));
+      : resolvedReports.filter((r) => r.building === selectedLocation);
 
   const filteredActiveReports =
     selectedLocation === "全て"
       ? activeReports
       : selectedLocation === "その他"
       ? activeReports.filter(
-          (r) => r.building && !locations.includes(r.building)
+          (r) => r.building && !locations.slice(1, -1).includes(r.building)
         )
-      : activeReports.filter((r) => r.building?.includes(selectedLocation));
+      : activeReports.filter((r) => r.building === selectedLocation);
 
   const filteredUnresolvedReports =
     selectedLocation === "全て"
       ? unresolvedReports
       : selectedLocation === "その他"
       ? unresolvedReports.filter(
-          (r) => r.building && !locations.includes(r.building)
+          (r) => r.building && !locations.slice(1, -1).includes(r.building)
         )
-      : unresolvedReports.filter((r) => r.building?.includes(selectedLocation));
+      : unresolvedReports.filter((r) => r.building === selectedLocation);
 
   const handleCSVClick = async () => {
     try {
