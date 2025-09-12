@@ -106,14 +106,13 @@ export default function AdminDashboard() {
   };
 
   const fetchUserCount = async () => {
-    const { count, error } = await supabase
+    const { data, error } = await supabase
       .from("users")
-      .select("id", { count: "exact", head: true });
+      .select("id")
+      .eq("role", "admin"); // adminロールのみ
 
-    if (error) {
-      console.error("ユーザー数の取得に失敗しました:", error.message);
-    } else if (count !== null) {
-      setUserCount(count);
+    if (!error && data) {
+      setUserCount(data.length);
     }
   };
 
