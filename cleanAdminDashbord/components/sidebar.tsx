@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ChevronRight, Map } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronRight, Map } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const locations = [
 	"全て",

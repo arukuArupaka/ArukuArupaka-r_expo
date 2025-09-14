@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, Text } from "react-native";
 import MapView, { MapPressEvent, Region } from "react-native-maps";
-import { supabase } from "../lib/supabase";
 import PostMarker from "./PostMarker";
+import { usePosts } from "../lib/postsApi";
 
 type Props = {
   onSelectPost: (post: any) => void;
   onRegionChangeComplete?: (region: Region) => void;
   onMapPress?: (e: MapPressEvent) => void;
   children?: React.ReactNode;
+  userId: string | null | undefined;
+  refetchTrigger?: number; // 投稿後のみ更新するためのトークン
 };
 
 const CleanMap: React.FC<Props> = ({
@@ -16,28 +18,25 @@ const CleanMap: React.FC<Props> = ({
   onRegionChangeComplete,
   onMapPress,
   children,
+  userId,
+  refetchTrigger,
 }) => {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const { posts, loading, error, refetch } = usePosts();
+  // refetchTrigger が変化した時のみ再取得
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const { data, error } = await supabase.from("posts").select(`
-          *,
-          users ( name, nickname )
-        `);
-        if (error) throw error;
-        if (data) setPosts(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPosts();
-  }, []);
+    if (refetchTrigger) {
+      refetch();
+    }
+  }, [refetchTrigger, refetch]);
+
+  const uniquePosts = React.useMemo(() => {
+    const seen = new Set<string>();
+    return posts.filter((p: any) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  }, [posts]);
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} size="large" />;
   if (error)
@@ -48,7 +47,7 @@ const CleanMap: React.FC<Props> = ({
   return (
     <MapView
       style={{ flex: 1 }}
-      onPress={onMapPress} // ← 親にフォワード
+      onPress={onMapPress}
       initialRegion={{
         latitude: 34.98222,
         longitude: 135.96371,
@@ -57,8 +56,13 @@ const CleanMap: React.FC<Props> = ({
       }}
       onRegionChangeComplete={onRegionChangeComplete}
     >
-      {posts.map((post) => (
-        <PostMarker key={post.id} post={post} onPress={onSelectPost} />
+      {uniquePosts.map((post) => (
+        <PostMarker
+          key={post.id}
+          post={post}
+          onPress={onSelectPost}
+          userId={userId}
+        />
       ))}
       {children}
     </MapView>

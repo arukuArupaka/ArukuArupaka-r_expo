@@ -1,39 +1,93 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ArrowLeft, Heart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import type { Post } from "@/app/page"
-import { supabase } from "@/lib/supabase"
+import { useState, useEffect } from "react";
+import { ArrowLeft, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import type { Post } from "@/app/page";
+import { supabase } from "@/lib/supabase";
 
 interface ReportDetailProps {
-  report: Post
-  onBack: () => void
+  report: Post;
+  onBack: () => void;
 }
 
 export function ReportDetail({ report, onBack }: ReportDetailProps) {
-  const [resolving, setResolving] = useState(false)
+  const [resolving, setResolving] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userEmailLoading, setUserEmailLoading] = useState<boolean>(false);
+  const [userEmailError, setUserEmailError] = useState<string | null>(null);
+
+  // auth.users からメール取得 (users テーブルに email が無い場合)
+  useEffect(() => {
+    let aborted = false;
+    const fetchEmail = async () => {
+      if (!report?.user_id) return;
+      setUserEmailLoading(true);
+      setUserEmailError(null);
+
+      // まず public.users に email カラムがあればそこを見る (不要なら削除可)
+      const { data: publicUser } = await supabase
+        .from("users")
+        .select("email")
+        .eq("id", report.user_id)
+        .maybeSingle();
+
+      if (aborted) return;
+      if (publicUser?.email) {
+        setUserEmail(publicUser.email);
+        setUserEmailLoading(false);
+        return;
+      }
+
+      // 無い場合は管理用API経由 (service_role 使用) で auth 側から取得
+      try {
+        const res = await fetch(`/api/auth-user/${report.user_id}`);
+        if (aborted) return;
+        if (!res.ok) {
+          setUserEmailError("取得失敗");
+        } else {
+          const json = await res.json();
+          if (json?.email) {
+            setUserEmail(json.email);
+          } else {
+            setUserEmailError("未登録");
+          }
+        }
+      } catch (e) {
+        if (!aborted) setUserEmailError("取得エラー");
+      }
+      if (!aborted) setUserEmailLoading(false);
+    };
+    fetchEmail();
+    return () => {
+      aborted = true;
+    };
+  }, [report?.user_id]);
 
   const handleResolve = async () => {
-    setResolving(true)
+    setResolving(true);
     const { error } = await supabase
       .from("posts")
       .update({ status: "resolved" })
-      .eq("id", report.id)
+      .eq("id", report.id);
 
     if (error) {
-      alert("完了処理に失敗しました")
+      alert("完了処理に失敗しました");
     } else {
-      alert("ステータスを「解決済み」に更新しました")
-      onBack()
+      alert("ステータスを「解決済み」に更新しました");
+      onBack();
     }
-    setResolving(false)
-  }
+    setResolving(false);
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Button variant="ghost" onClick={onBack} className="mb-6 p-0 h-auto text-gray-600 hover:text-gray-900">
+      <Button
+        variant="ghost"
+        onClick={onBack}
+        className="mb-6 p-0 h-auto text-gray-600 hover:text-gray-900"
+      >
         <ArrowLeft className="h-5 w-5 mr-2" />
         戻る
       </Button>
@@ -43,7 +97,9 @@ export function ReportDetail({ report, onBack }: ReportDetailProps) {
           <div className="space-y-6">
             {/* 日付といいね数 */}
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">{new Date(report.created_at).toLocaleString()}</h2>
+              <h2 className="text-xl font-bold">
+                {new Date(report.created_at).toLocaleString()}
+              </h2>
               <div className="flex items-center gap-1 text-red-500">
                 <Heart className="h-5 w-5 fill-current" />
                 <span>{report.good_count}</span>
@@ -53,25 +109,47 @@ export function ReportDetail({ report, onBack }: ReportDetailProps) {
             {/* 場所 */}
             <div>
               <label className="text-sm font-medium text-gray-600">場所</label>
-              <div className="mt-1 text-lg">{report.building ?? report.place ?? "未指定"}</div>
+              <div className="font-medium">
+                {report.building && <span>{report.building}</span>}
+                {report.place && report.building && <span> / </span>}
+                {report.place && <span>{report.place}</span>}
+                {!report.building && !report.place && <span>未指定</span>}
+              </div>
             </div>
 
             {/* コメント */}
             <div>
-              <label className="text-sm font-medium text-gray-600">コメント</label>
+              <label className="text-sm font-medium text-gray-600">
+                コメント
+              </label>
               <div className="mt-1 text-lg">{report.comment || "なし"}</div>
             </div>
 
-            {/* アカウント（仮表示） */}
+            {/* アカウント */}
             <div>
-              <label className="text-sm font-medium text-gray-600">アカウント</label>
-              <div className="mt-1 text-lg">{report.user_id}</div>
-              {/* 本来ならユーザー情報もSupabaseから取得してメールアドレスを表示 */}
+              <label className="text-sm font-medium text-gray-600">
+                アカウント (メール)
+              </label>
+              <div className="mt-1 text-lg">
+                {userEmailLoading && (
+                  <span className="text-gray-400">読み込み中...</span>
+                )}
+                {!userEmailLoading && userEmail && <span>{userEmail}</span>}
+                {!userEmailLoading && !userEmail && userEmailError && (
+                  <span className="text-red-500">{userEmailError}</span>
+                )}
+                {!userEmailLoading && !userEmail && !userEmailError && (
+                  <span className="text-gray-400">不明</span>
+                )}
+              </div>
+              {/* email は auth.users から取得。public.users へ同期する場合は DB トリガでコピー推奨 */}
             </div>
 
             {/* 画像表示 */}
             <div>
-              <label className="text-sm font-medium text-gray-600 block mb-3">画像</label>
+              <label className="text-sm font-medium text-gray-600 block mb-3">
+                画像
+              </label>
               {report.image_url ? (
                 <img
                   src={report.image_url}
@@ -101,5 +179,5 @@ export function ReportDetail({ report, onBack }: ReportDetailProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
