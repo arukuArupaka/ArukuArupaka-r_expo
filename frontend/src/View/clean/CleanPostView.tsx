@@ -116,6 +116,13 @@ export default function PostScreen() {
   const [photoUriAfter, setPhotoUriAfter] = useState(null);
   const [isRequestingCleaning, setIsRequestingCleaning] = useState(false);
   const [rewardPoints, setRewardPoints] = useState(10);
+  // DB から取得する報酬ポイント（info テーブル想定）
+  const [selfRewardPointFromDB, setSelfRewardPointFromDB] = useState<
+    number | null
+  >(null);
+  const [requestRewardPointFromDB, setRequestRewardPointFromDB] = useState<
+    number | null
+  >(null);
   // Animated slider state
   const sliderAnim = useRef(new Animated.Value(0)).current; // 0 = left (自分で掃除する), 1 = right (掃除を依頼する)
   const [segmentWidth, setSegmentWidth] = useState(0);
@@ -134,6 +141,36 @@ export default function PostScreen() {
     longitude: undefined,
     onPosted: undefined,
   };
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("info")
+          .select("self_reward_points, request_reward_points")
+          .limit(1)
+          .single();
+        if (!error && data && mounted) {
+          const selfPt = Number(data.self_reward_points);
+          const reqPt = Number(data.request_reward_points);
+          setSelfRewardPointFromDB(Number.isFinite(selfPt) ? selfPt : null);
+          setRequestRewardPointFromDB(Number.isFinite(reqPt) ? reqPt : null);
+        }
+      } catch {}
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isRequestingCleaning) {
+      setRewardPoints((requestRewardPointFromDB ?? 10) || 10);
+    } else {
+      setRewardPoints((selfRewardPointFromDB ?? 20) || 20);
+    }
+  }, [isRequestingCleaning, selfRewardPointFromDB, requestRewardPointFromDB]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -189,7 +226,7 @@ export default function PostScreen() {
                     left: 3,
                     width: segmentWidth ? (segmentWidth - 6) / 2 : "50%",
                     borderRadius: 20,
-                    backgroundColor: "#19CC29",
+                    backgroundColor: "#88ffae",
                     transform: [
                       {
                         translateX: sliderAnim.interpolate({
@@ -215,8 +252,7 @@ export default function PostScreen() {
                       easing: Easing.out(Easing.cubic),
                       useNativeDriver: true,
                     }).start();
-                    // 報酬を増やす
-                    setRewardPoints(20);
+                    setRewardPoints((selfRewardPointFromDB ?? 20) || 20);
                   }}
                   style={{
                     flex: 1,
@@ -247,7 +283,7 @@ export default function PostScreen() {
                       easing: Easing.out(Easing.cubic),
                       useNativeDriver: true,
                     }).start();
-                    setRewardPoints(10);
+                    setRewardPoints((requestRewardPointFromDB ?? 10) || 10);
                   }}
                   style={{
                     flex: 1,
