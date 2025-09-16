@@ -218,16 +218,22 @@ export default function PostScreen() {
                     // 報酬を増やす
                     setRewardPoints(20);
                   }}
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 6,
+                  }}
+                >
+                  <Text
                     style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      paddingHorizontal: 6,
+                      fontSize: 15,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#fff",
                     }}
                   >
-                    <Text style={{ fontSize: 15, fontFamily: "ZenMaruGothicBold", color: "#fff" }}>
-                      自分で掃除する
-                    </Text>
+                    自分で掃除する
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -243,23 +249,38 @@ export default function PostScreen() {
                     }).start();
                     setRewardPoints(10);
                   }}
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 6,
+                  }}
+                >
+                  <Text
                     style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      paddingHorizontal: 6,
+                      fontSize: 15,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#fff",
                     }}
                   >
-                    <Text style={{ fontSize: 15, fontFamily: "ZenMaruGothicBold", color: "#fff" }}>
-                      掃除を依頼する
-                    </Text>
+                    掃除を依頼する
+                  </Text>
                 </TouchableOpacity>
               </View>
 
               {/* 報酬表示 */}
               <View style={{ marginTop: 8, alignItems: "center" }}>
                 <Text style={{ fontSize: 13, color: "#4C4C4C" }}>
-                  獲得ポイント: <Text style={{ fontFamily: "ZenMaruGothicBold", color: "#FF7A7A" }}>{rewardPoints}</Text> pt
+                  獲得ポイント:{" "}
+                  <Text
+                    style={{
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#FF7A7A",
+                    }}
+                  >
+                    {rewardPoints}
+                  </Text>{" "}
+                  pt
                 </Text>
               </View>
             </View>
