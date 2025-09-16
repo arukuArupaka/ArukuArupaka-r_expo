@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  Animated,
+  Easing,
 } from "react-native";
 import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "./lib/supabase";
@@ -113,6 +115,10 @@ export default function PostScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [photoUriAfter, setPhotoUriAfter] = useState(null);
   const [isRequestingCleaning, setIsRequestingCleaning] = useState(false);
+  const [rewardPoints, setRewardPoints] = useState(10);
+  // Animated slider state
+  const sliderAnim = useRef(new Animated.Value(0)).current; // 0 = left (自分で掃除する), 1 = right (掃除を依頼する)
+  const [segmentWidth, setSegmentWidth] = useState(0);
   // 座標を受け取るパラメータ
   type RootStackParamList = {
     CleanPostView: {
@@ -150,66 +156,112 @@ export default function PostScreen() {
               投稿
             </Text>
 
+            {/* セグメント切替 (自分で掃除する / 掃除を依頼する) */}
             <View
               style={{
-                marginBottom: 13,
-                gap: 8,
+                marginBottom: 10,
+                alignItems: "center",
               }}
             >
-              <TouchableOpacity
-                style={{ flexDirection: "row", alignItems: "center" }}
-                onPress={() => setIsRequestingCleaning(false)}
-              >
-                <FontAwesome5
-                  name={!isRequestingCleaning ? "dot-circle" : "circle"}
-                  size={24}
-                  color="#4C4C4C"
-                />
-                <Text
-                  style={{
-                    fontSize: 20,
-                    marginLeft: 8,
-                    fontFamily: "ZenMaruGothicBold",
-                    color: "#4C4C4C",
-                  }}
-                >
-                  自分で掃除する
-                </Text>
-                <Image
-                  source={require("./assets/image/pointup3.png")}
-                  style={{
-                    marginLeft: 0,
-                    marginTop: 5,
-                    width: 35,
-                    height: 35,
-                    zIndex: -1,
-                  }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginRight: 16,
+              <View
+                onLayout={(e) => {
+                  const w = e.nativeEvent.layout.width;
+                  setSegmentWidth(w);
                 }}
-                onPress={() => setIsRequestingCleaning(true)}
+                style={{
+                  width: "100%",
+                  maxWidth: 320,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: "#F0F0F0",
+                  padding: 3,
+                  flexDirection: "row",
+                  position: "relative",
+                }}
               >
-                <FontAwesome5
-                  name={isRequestingCleaning ? "dot-circle" : "circle"}
-                  size={24}
-                  color="#4C4C4C"
-                />
-                <Text
+                {/* animated slider */}
+                <Animated.View
+                  pointerEvents="none"
                   style={{
-                    fontSize: 20,
-                    marginLeft: 8,
-                    fontFamily: "ZenMaruGothicBold",
-                    color: "#4C4C4C",
+                    position: "absolute",
+                    top: 3,
+                    bottom: 3,
+                    left: 3,
+                    width: segmentWidth ? (segmentWidth - 6) / 2 : "50%",
+                    borderRadius: 20,
+                    backgroundColor: "#19CC29",
+                    transform: [
+                      {
+                        translateX: sliderAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [
+                            0,
+                            segmentWidth ? (segmentWidth - 6) / 2 : 0,
+                          ],
+                        }),
+                      },
+                    ],
                   }}
-                >
-                  掃除を依頼する
+                />
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    // 自分で掃除
+                    setIsRequestingCleaning(false);
+                    Animated.timing(sliderAnim, {
+                      toValue: 0,
+                      duration: 180,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start();
+                    // 報酬を増やす
+                    setRewardPoints(20);
+                  }}
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingHorizontal: 6,
+                    }}
+                  >
+                    <Text style={{ fontSize: 15, fontFamily: "ZenMaruGothicBold", color: "#fff" }}>
+                      自分で掃除する
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    // 掃除を依頼
+                    setIsRequestingCleaning(true);
+                    Animated.timing(sliderAnim, {
+                      toValue: 1,
+                      duration: 180,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start();
+                    setRewardPoints(10);
+                  }}
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingHorizontal: 6,
+                    }}
+                  >
+                    <Text style={{ fontSize: 15, fontFamily: "ZenMaruGothicBold", color: "#fff" }}>
+                      掃除を依頼する
+                    </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* 報酬表示 */}
+              <View style={{ marginTop: 8, alignItems: "center" }}>
+                <Text style={{ fontSize: 13, color: "#4C4C4C" }}>
+                  獲得ポイント: <Text style={{ fontFamily: "ZenMaruGothicBold", color: "#FF7A7A" }}>{rewardPoints}</Text> pt
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
 
             {/* 建物 */}
