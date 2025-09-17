@@ -2,7 +2,7 @@
   "expo": {
     "name": "歩くアルパカ＋R",
     "slug": "arukuarupaka",
-    "version": "14.0.1",
+    "version": "14.0.3",
     "orientation": "portrait",
     "icon": "./assets/main_icon.png",
     "userInterfaceStyle": "light",

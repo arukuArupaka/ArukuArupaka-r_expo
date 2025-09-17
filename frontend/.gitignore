@@ -29,8 +29,6 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
-
 # typescript
 *.tsbuildinfo
 
@@ -38,4 +36,3 @@ yarn-error.*
 package-lock.json
 yarn.lock
 
-.env

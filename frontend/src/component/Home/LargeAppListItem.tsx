@@ -6,22 +6,29 @@ const LargeAppListItem = (props) => {
     <TouchableOpacity
       style={{
         height: 75,
-        width: "320",
+        width: 320,
         borderColor: props.color,
         borderWidth: 2,
         borderRadius: 10,
         flexDirection: "row",
         alignItems: "center",
         margin: 8,
-        padding: 8,
-        display: "flex",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
       }}
       onPress={() => {
         props.test.navigation.navigate(props.jumpPage);
       }}
     >
-      {props.item() ? props.item() : ""}
-      <Text style={{ fontSize: 20, textAlign: "center", flex: 1 }}>
+      {props.item
+        ? typeof props.item === "function"
+          ? props.item()
+          : props.item
+        : null}
+      <Text
+        style={{ fontSize: 20, textAlign: "center", flex: 1, marginLeft: 8 }}
+        numberOfLines={1}
+      >
         {props.appName}
       </Text>
     </TouchableOpacity>
