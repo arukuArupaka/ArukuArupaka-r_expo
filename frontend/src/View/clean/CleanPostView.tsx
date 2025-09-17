@@ -119,10 +119,10 @@ export default function PostScreen() {
   const [rewardPoints, setRewardPoints] = useState(10);
   // DB から取得する報酬ポイント（info テーブル想定）
   const [selfRewardPointFromDB, setSelfRewardPointFromDB] = useState<
-    number | null
+    string | null
   >(null);
   const [requestRewardPointFromDB, setRequestRewardPointFromDB] = useState<
-    number | null
+    string | null
   >(null);
   // Animated slider state
   const sliderAnim = useRef(new Animated.Value(0)).current; // 0 = left (自分で掃除する), 1 = right (掃除を依頼する)
@@ -155,8 +155,12 @@ export default function PostScreen() {
         if (!error && data && mounted) {
           const selfPt = Number(data.self_reward_points);
           const reqPt = Number(data.request_reward_points);
-          setSelfRewardPointFromDB(Number.isFinite(selfPt) ? selfPt : null);
-          setRequestRewardPointFromDB(Number.isFinite(reqPt) ? reqPt : null);
+          setSelfRewardPointFromDB(
+            data.self_reward_points ? data.self_reward_points : null
+          );
+          setRequestRewardPointFromDB(
+            data.request_reward_points ? data.request_reward_points : null
+          );
         }
       } catch {}
     })();
