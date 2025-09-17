@@ -12,7 +12,8 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
+import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { supabase } from "./lib/supabase";
 import * as ImagePicker from "expo-image-picker";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
