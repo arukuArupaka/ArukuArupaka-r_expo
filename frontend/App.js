@@ -62,6 +62,7 @@ import {
   ZenMaruGothic_400Regular,
   ZenMaruGothic_700Bold,
 } from "@expo-google-fonts/zen-maru-gothic";
+import CleanPostRanking from "./src/View/clean/ClenPostRanking";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -469,6 +470,34 @@ function App() {
                     backgroundColor: "#8DFFAF", //背景色
                   },
                 }}
+              />
+              <Stack.Screen
+                name="CleanPostRanking"
+                component={CleanPostRanking}
+                options={({ navigation }) => ({
+                  headerShown: true,
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Ionicons
+                        name="chevron-back"
+                        style={{ marginRight: 10 }}
+                        size={30}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF",
+                  },
+                  headerTitleAlign: "center",
+                })}
               />
               <Stack.Screen
                 name="CleanHowToView"

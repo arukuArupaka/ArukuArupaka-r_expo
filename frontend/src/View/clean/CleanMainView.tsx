@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import { supabase } from "./lib/supabase";
 import PostDetailCard from "./compornents/PostDtailCard";
 import CleanMap from "./compornents/CleanMap";
+import RankingHeaderCard from "./compornents/RankingHeaderCard";
 import { PostButton } from "./compornents/PostButton";
 import NewPostMarker from "./compornents/NewPostMarker";
 import type { MapPressEvent } from "react-native-maps";
@@ -74,6 +75,7 @@ const CleanMainView = () => {
     <>
       <StatusBar barStyle="dark-content" />
       <View style={{ flex: 1 }}>
+        <RankingHeaderCard period="week" refetchTrigger={refetchToken} />
         <CleanMap
           onSelectPost={handleSelectPost}
           onRegionChangeComplete={handleRegionChangeComplete}
