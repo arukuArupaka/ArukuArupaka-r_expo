@@ -3,24 +3,28 @@ import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { supabase } from "../lib/supabase";
 
-interface PostDetailCardProps {
-  post: any; // TODO: 型を定義 (id, good_count, status, created_at, users, building, place, comment, image_url)
-  onClose: () => void;
-  userId: string | null | undefined; // 親から渡されるログインユーザーID
-}
-
-const PostDetailCard: React.FC<PostDetailCardProps> = ({
-  post,
-  onClose,
-  userId,
-}) => {
+const PostDetailCard = ({ post, onClose, userId }) => {
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(post?.good_count || 0);
+  const [likeCount, setLikeCount] = useState(post.good_count || 0);
   const [pending, setPending] = useState(false);
+  // 合計いいね数をサーバーから再取得
+  // const fetchLikeCount = async () => {
+  //   if (!post?.id) return;
+  //   const { count, error } = await supabase
+  //     .from("good")
+  //     .select("id", { count: "exact", head: true })
+  //     .eq("post_id", post.id);
 
-  // 既に自分がいいね済みか
+  //   if (error) {
+  //     console.warn("fetchLikeCount error:", error.message);
+  //     return;
+  //   }
+  //   setLikeCount(count ?? 0);
+  // };
+
+  // 自分がいいね済みかの確認
   const fetchLikeStatus = async () => {
-    if (!userId || !post?.id) return; // userId 未取得ならスキップ
+    if (!userId || !post?.id) return;
     const { data, error } = await supabase
       .from("good")
       .select("id")
@@ -28,6 +32,7 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
       .eq("post_id", post.id)
       .limit(1)
       .maybeSingle();
+
     if (error) {
       console.warn("fetchLikeStatus error:", error.message);
       return;
@@ -35,70 +40,75 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
     setLiked(!!data);
   };
 
+  // 初期ロード（post変更時にも）
   useEffect(() => {
     fetchLikeStatus();
+    //fetchLikeCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post?.id, userId]);
 
+  // いいね押下時（楽観的UI＋失敗時ロールバック＋最後にサーバー値へ同期）
   const handleLike = async () => {
-    if (pending || !userId || !post?.id) return; // userId 無ければ操作不可
+    console.log("HANDLE_LIKE", {
+      pending,
+      userId,
+      postId: post?.id,
+      likedBefore: liked,
+    });
+    if (pending || !userId || !post?.id) return;
     setPending(true);
+
     const prevLiked = liked;
     const prevCount = likeCount;
 
-    // 楽観的更新: liked を反転し likeCount を増減
-    const delta = liked ? -1 : 1;
-    setLiked(!liked);
-    setLikeCount((c) => Math.max(0, c + delta));
-
     try {
-      // good テーブル更新 (状態判定のためだけに保持)
       if (liked) {
-        const { error: delErr } = await supabase
+        // いいね解除（先にUI更新）
+        setLiked(false);
+        setLikeCount((c) => Math.max(0, c - 1));
+
+        const { error } = await supabase
           .from("good")
           .delete()
           .eq("user_id", userId)
           .eq("post_id", post.id);
-        if (delErr) throw delErr;
+
+        if (error) throw error;
       } else {
-        const { error: insErr } = await supabase.from("good").insert({
+        // いいね追加（先にUI更新）
+        setLiked(true);
+        setLikeCount((c) => c + 1);
+
+        const { error } = await supabase.from("good").insert({
           user_id: userId,
           post_id: post.id,
         });
-        if (insErr) throw insErr;
-      }
+        // もし複合ユニーク制約(user_id, post_id)があるなら
+        // upsertにしてignoreDuplicatesでもOK
+        // .upsert({ user_id: userId, post_id: post.id }, { onConflict: "user_id,post_id", ignoreDuplicates: true })
 
-      // posts.good_count をサーバー側に反映
-      // 競合対策が必要なら RPC/トリガー推奨。ここでは単純更新。
-      const newServerCount = Math.max(0, prevCount + delta);
-      const { data: updated, error: updErr } = await supabase
-        .from("posts")
-        .update({ good_count: newServerCount })
-        .eq("id", post.id)
-        .select("good_count")
-        .single();
-      if (updErr) throw updErr;
-      if (updated?.good_count !== undefined) {
-        setLikeCount(updated.good_count);
-        // ローカルの post オブジェクトにも即反映（親が再描画するケース向け）
-        post.good_count = updated.good_count; // eslint-disable-line no-param-reassign
+        if (error) throw error;
       }
-    } catch (e: any) {
-      // ロールバック
+    } catch (e) {
+      // 失敗 → UIを元に戻す＆通知
       setLiked(prevLiked);
       setLikeCount(prevCount);
       console.warn("handleLike error:", e?.message || e);
       alert(`いいね処理に失敗しました：${e?.message ?? "Unknown error"}`);
     } finally {
+      // サーバー値で再同期（重複・同時実行でも正確な数になる）
+      //await fetchLikeCount();
       setPending(false);
     }
   };
-
-  if (!post) return null;
+  if (!post) {
+    return null;
+  }
 
   const formattedDate = post.created_at
     ? new Date(post.created_at).toLocaleDateString("ja-JP")
     : "日付不明";
+
   const statusInfo = {
     text: post.status === "resolved" ? "完了" : "未完了",
     color: post.status === "resolved" ? "#4CAF50" : "#F57C00",
@@ -155,9 +165,9 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
               {statusInfo.text}
             </Text>
           </View>
-          <TouchableOpacity style={{ padding: 5 }}>
+          {/* <TouchableOpacity style={{ padding: 5 }}>
             <FontAwesome name="ellipsis-v" size={20} color="#888" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <View
@@ -237,11 +247,11 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
         )}
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity onPress={handleLike} disabled={pending || !userId}>
+          <TouchableOpacity onPress={handleLike} disabled={pending}>
             <FontAwesome
               name={liked ? "heart" : "heart-o"}
               size={22}
-              color={userId ? "#ff4d4d" : "#bbb"}
+              color="#ff4d4d"
             />
           </TouchableOpacity>
           <Text
@@ -254,11 +264,6 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({
           >
             {likeCount}
           </Text>
-          {!userId && (
-            <Text style={{ marginLeft: 8, fontSize: 12, color: "#999" }}>
-              ログインしていいね
-            </Text>
-          )}
         </View>
       </Pressable>
     </Pressable>
