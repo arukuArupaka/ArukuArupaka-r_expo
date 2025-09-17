@@ -28,9 +28,10 @@ export default function CleanLoginView() {
   const emailDomainItems = [
     { label: "@ed.ritsumei.ac.jp", value: "@ed.ritsumei.ac.jp" },
     { label: "@st.ritsumei.ac.jp", value: "@st.ritsumei.ac.jp" },
-    { label: "@gmail.com", value: "@gmail.com" },
+    { label: "@creotech.co.jp", value: "@creotech.co.jp" },
+    // { label: "@gmail.com", value: "@gmail.com" },
     // 追加ドメイン（必要に応じて増減してください）
-    { label: "@icloud.com ", value: "@icloud.com" },
+    // { label: "@icloud.com ", value: "@icloud.com" },
   ];
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
