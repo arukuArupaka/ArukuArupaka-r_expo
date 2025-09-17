@@ -25,7 +25,16 @@ export default function CleanLoginView() {
   const [nickname, setNickname] = useState("");
   const [emailLocal, setEmailLocal] = useState("");
   const [emailDomain, setEmailDomain] = useState("@ed.ritsumei.ac.jp");
+  const emailDomainItems = [
+    { label: "@ed.ritsumei.ac.jp", value: "@ed.ritsumei.ac.jp" },
+    { label: "@st.ritsumei.ac.jp", value: "@st.ritsumei.ac.jp" },
+    { label: "@creotech.co.jp", value: "@creotech.co.jp" },
+    // { label: "@gmail.com", value: "@gmail.com" },
+    // 追加ドメイン（必要に応じて増減してください）
+    // { label: "@icloud.com ", value: "@icloud.com" },
+  ];
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   // 生協連携用 state
   const [coopMode, setCoopMode] = useState(false); // 生協と連携するか
   const [realName, setRealName] = useState("");
@@ -119,6 +128,20 @@ export default function CleanLoginView() {
       return false;
     }
     setBirthDateError(null);
+    return true;
+  };
+
+  // パスワードバリデーション（6文字以上かつ英数小文字のみ）
+  const validatePassword = (value: string) => {
+    if (!value || value.length < 6) {
+      setPasswordError("6文字以上で入力してください");
+      return false;
+    }
+    if (!/^[a-z0-9]+$/.test(value)) {
+      setPasswordError("英数字の小文字のみで入力してください");
+      return false;
+    }
+    setPasswordError(null);
     return true;
   };
   useEffect(() => {
@@ -247,7 +270,14 @@ export default function CleanLoginView() {
               >
                 <TextInput
                   value={emailLocal}
-                  onChangeText={setEmailLocal}
+                  onChangeText={(text) => {
+                    // 小文字英数字と記号（@、.、-、_）のみ許可
+                    const filteredText = text.replace(/[^a-z0-9@.\-_]/g, "");
+                    setEmailLocal(filteredText);
+                  }}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   style={{
                     borderWidth: 1,
                     borderColor: "#000",
@@ -268,17 +298,7 @@ export default function CleanLoginView() {
                   <RNPickerSelect
                     onValueChange={(value) => setEmailDomain(value)}
                     value={emailDomain}
-                    items={[
-                      {
-                        label: "@ed.ritsumei.ac.jp",
-                        value: "@ed.ritsumei.ac.jp",
-                      },
-                      {
-                        label: "@st.ritsumei.ac.jp",
-                        value: "@st.ritsumei.ac.jp",
-                      },
-                      { label: "@creotech.co.jp", value: "@creotech.co.jp" },
-                    ]}
+                    items={emailDomainItems}
                     style={{
                       inputIOS: {
                         fontSize: 14,
@@ -330,7 +350,10 @@ export default function CleanLoginView() {
               </Text>
               <TextInput
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(v) => {
+                  setPassword(v);
+                  if (passwordError) validatePassword(v);
+                }}
                 secureTextEntry
                 style={{
                   borderWidth: 1,
@@ -342,7 +365,21 @@ export default function CleanLoginView() {
                   fontSize: 14,
                   backgroundColor: "#fff",
                 }}
+                onBlur={() => validatePassword(password)}
               />
+              {passwordError && (
+                <Text
+                  style={{
+                    color: "#C00",
+                    fontSize: 11,
+                    marginTop: -18,
+                    marginBottom: 24,
+                    fontFamily: "ZenMaruGothicBold",
+                  }}
+                >
+                  {passwordError}
+                </Text>
+              )}
 
               {/* 生協と連携 ボタン */}
               <TouchableOpacity
@@ -472,8 +509,7 @@ export default function CleanLoginView() {
                       fontFamily: "ZenMaruGothicBold",
                     }}
                   >
-                    ※
-                    学籍番号ではありません。生協の会員カードに記載の番号を入力してください。
+                    ※学籍番号ではありません。生協の会員カードに記載の番号を入力してください。
                   </Text>
                   {/* 承諾チェック */}
                   <View
@@ -528,10 +564,16 @@ export default function CleanLoginView() {
                       !coopMemberNumber ||
                       !coopConsent ||
                       birthDateError !== null)) ||
+                  passwordError !== null ||
                   false
                 }
                 onPress={async () => {
                   const email = emailLocal + emailDomain;
+                  // パスワード最終チェック
+                  if (!validatePassword(password)) {
+                    alert(passwordError || "パスワードを確認してください");
+                    return;
+                  }
                   if (coopMode) {
                     const ok = validateBirthDate(birthDate);
                     if (
@@ -590,9 +632,7 @@ export default function CleanLoginView() {
                           "userテーブルupsert失敗",
                           upsertError.message
                         );
-                        alert(
-                          "アカウントは作成しましたが、生協情報の保存に失敗しました: "
-                        );
+                        alert("メールを送信しました確認してください");
                         return; // 生協情報失敗時は成功アラート出さない
                       }
                       console.log("coop info upsert success");
@@ -634,6 +674,11 @@ export default function CleanLoginView() {
                 onPress={async () => {
                   try {
                     const email = emailLocal + emailDomain;
+                    // パスワードチェック（ログイン時も同一ポリシーを案内）
+                    if (!validatePassword(password)) {
+                      alert(passwordError || "パスワードを確認してください");
+                      return;
+                    }
                     const { data, error } =
                       await supabase.auth.signInWithPassword({
                         email,
