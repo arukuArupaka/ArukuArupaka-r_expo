@@ -113,7 +113,7 @@ export default function CleanPostRanking() {
               <Text
                 style={{ fontFamily: "ZenMaruGothicBold", color: "#FF7A7A" }}
               >
-                {myPoints} pt
+                {myPoints} 投稿
               </Text>
             ) : null}
           </View>

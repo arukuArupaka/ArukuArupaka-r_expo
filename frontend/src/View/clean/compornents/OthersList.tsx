@@ -38,7 +38,7 @@ export function OthersList({ others }) {
             {u.nickname}
           </Text>
           <Text style={{ fontFamily: "ZenMaruGothicBold", color: "#FF7A7A" }}>
-            {u.points} pt
+            {u.points} 投稿
           </Text>
         </View>
       ))}

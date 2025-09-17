@@ -68,7 +68,7 @@ export function PodiumItem({ rank, user, height }) {
         {user.nickname}
       </Text>
       <Text style={{ color: "#FF7A7A", marginBottom: 8 }}>
-        {user.points} pt
+        {user.points} 投稿
       </Text>
       <View
         style={{ width: "100%", height, borderRadius: 8, overflow: "hidden" }}
