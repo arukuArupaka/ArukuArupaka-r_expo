@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { supabase } from "@/lib/supabase";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { ReportsList } from "@/components/reports-list";
 import { ReportDetail } from "@/components/report-detail";
-import dynamic from "next/dynamic";
 import { UserProfile } from "@/components/user-profile";
 import { ResolvedReports } from "@/components/resolved-reports";
 import { LoginScreen } from "@/components/login-screen";
 import { ActiveReports } from "@/components/active-reports";
 import { UnresolvedReports } from "@/components/unresolved-reports";
 import { UsersManagement } from "@/components/users-management";
-import { supabase } from "@/lib/supabase";
+import { SelfReports } from "@/components/self";
 
 export type Post = {
   id: string;
@@ -27,8 +28,8 @@ export type Post = {
   request?: boolean;
   complete?: boolean;
   good_count: number;
-  status?: "new" | "active" | "resolved";
-  resolved?: string; // ←ここをresolveからresolvedに
+  status?: "new" | "active" | "resolved" | "self";
+  resolved?: string;
 };
 
 export default function AdminDashboard() {
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
     | "unresolved"
     | "users"
     | "login"
+    | "self"
   >("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -51,15 +53,15 @@ export default function AdminDashboard() {
   const [userCount, setUserCount] = useState(0);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
+  // Self画面切り替え
+  const handleSelfView = () => setCurrentView("self");
+
   // セッション復元 + 変化監視
   useEffect(() => {
     const init = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setCurrentUserEmail(session.user.email ?? null);
-        // 既存のユーザーがadminか確認
         const { data: userData } = await supabase
           .from("users")
           .select("role")
@@ -71,22 +73,19 @@ export default function AdminDashboard() {
         }
       }
     };
-
     init();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session) {
-          setCurrentUserEmail(session.user.email ?? null);
-          setIsLoggedIn(true);
-          if (currentView === "login") setCurrentView("list");
-        } else {
-          setIsLoggedIn(false);
-          setCurrentView("login");
-          setCurrentUserEmail(null);
-        }
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setCurrentUserEmail(session.user.email ?? null);
+        setIsLoggedIn(true);
+        if (currentView === "login") setCurrentView("list");
+      } else {
+        setIsLoggedIn(false);
+        setCurrentView("login");
+        setCurrentUserEmail(null);
       }
-    );
+    });
 
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -97,7 +96,6 @@ export default function AdminDashboard() {
       .from("posts")
       .select("*")
       .order("created_at", { ascending: false });
-
     if (error) {
       console.error("データ取得エラー:", error.message);
       alert("データの取得に失敗しました");
@@ -111,7 +109,6 @@ export default function AdminDashboard() {
     const { count, error } = await supabase
       .from("users")
       .select("id", { count: "exact", head: true });
-
     if (error) {
       console.error("ユーザー数の取得に失敗しました:", error.message);
     } else if (count !== null) {
@@ -142,59 +139,41 @@ export default function AdminDashboard() {
     "その他"
   ];
 
-  const filteredReports =
-    selectedLocation === "全て"
-      ? posts
-      : selectedLocation === "その他"
-      ? posts.filter(
-          (report) => report.building && !locations.slice(1, -1).includes(report.building)
-        )
-      : posts.filter((report) => report.building === selectedLocation);
+  const filteredReports = selectedLocation === "全て"
+    ? posts
+    : selectedLocation === "その他"
+    ? posts.filter((report) => report.building && !locations.slice(1, -1).includes(report.building))
+    : posts.filter((report) => report.building === selectedLocation);
 
-  const resolvedReports = posts.filter(
-    (report) => report.status === "resolved"
-  );
+  const resolvedReports = posts.filter((report) => report.status === "resolved");
   const activeReports = posts.filter((report) => report.status === "active");
   const unresolvedReports = posts.filter((report) => report.status === "new");
 
-  const filteredResolvedReports =
-    selectedLocation === "全て"
-      ? resolvedReports
-      : selectedLocation === "その他"
-      ? resolvedReports.filter(
-          (r) => r.building && !locations.slice(1, -1).includes(r.building)
-        )
-      : resolvedReports.filter((r) => r.building === selectedLocation);
+  const filteredResolvedReports = selectedLocation === "全て"
+    ? resolvedReports
+    : selectedLocation === "その他"
+    ? resolvedReports.filter((r) => r.building && !locations.slice(1, -1).includes(r.building))
+    : resolvedReports.filter((r) => r.building === selectedLocation);
 
-  const filteredActiveReports =
-    selectedLocation === "全て"
-      ? activeReports
-      : selectedLocation === "その他"
-      ? activeReports.filter(
-          (r) => r.building && !locations.slice(1, -1).includes(r.building)
-        )
-      : activeReports.filter((r) => r.building === selectedLocation);
+  const filteredActiveReports = selectedLocation === "全て"
+    ? activeReports
+    : selectedLocation === "その他"
+    ? activeReports.filter((r) => r.building && !locations.slice(1, -1).includes(r.building))
+    : activeReports.filter((r) => r.building === selectedLocation);
 
-  const filteredUnresolvedReports =
-    selectedLocation === "全て"
-      ? unresolvedReports
-      : selectedLocation === "その他"
-      ? unresolvedReports.filter(
-          (r) => r.building && !locations.slice(1, -1).includes(r.building)
-        )
-      : unresolvedReports.filter((r) => r.building === selectedLocation);
+  const filteredUnresolvedReports = selectedLocation === "全て"
+    ? unresolvedReports
+    : selectedLocation === "その他"
+    ? unresolvedReports.filter((r) => r.building && !locations.slice(1, -1).includes(r.building))
+    : unresolvedReports.filter((r) => r.building === selectedLocation);
 
   const handleCSVClick = async () => {
     try {
       const res = await fetch("/api/sheets", { method: "POST" });
       if (!res.ok) throw new Error("Failed to create sheet");
       const json = await res.json();
-      if (json?.url) {
-        window.open(json.url, "_blank");
-      } else {
-        // Fallback to CSV if URL not available
-        window.open("/api/csv", "_blank");
-      }
+      if (json?.url) window.open(json.url, "_blank");
+      else window.open("/api/csv", "_blank");
     } catch {
       window.open("/api/csv", "_blank");
     }
@@ -218,51 +197,25 @@ export default function AdminDashboard() {
   const handleUnresolvedView = () => setCurrentView("unresolved");
   const handleUsersView = () => setCurrentView("users");
 
-  const DynamicMapView = dynamic(
-    () => import("@/components/map-view").then((mod) => mod.MapView),
-    {
-      ssr: false,
-    }
-  );
+  const DynamicMapView = dynamic(() => import("@/components/map-view").then(mod => mod.MapView), { ssr: false });
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      // 1. Supabase Auth でログイン
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        alert("ログイン失敗：" + error.message);
-        return;
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { alert("ログイン失敗：" + error.message); return; }
 
       const user = data.user;
-      if (!user) {
-        alert("ユーザーが見つかりません");
-        return;
-      }
+      if (!user) { alert("ユーザーが見つかりません"); return; }
 
-      // 2. users テーブルで role を取得
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("role")
         .eq("id", user.id)
         .single();
+      if (userError) { alert("ユーザー情報取得失敗：" + userError.message); return; }
 
-      if (userError) {
-        alert("ユーザー情報の取得に失敗しました: " + userError.message);
-        return;
-      }
+      if (userData?.role !== "admin") { alert("管理者ではありません"); return; }
 
-      // 3. role が admin でなければログイン不可
-      if (userData?.role !== "admin") {
-        alert("管理者ではありません");
-        return;
-      }
-
-      // 4. ログイン成功
       setIsLoggedIn(true);
       setCurrentView("list");
     } catch (e: any) {
@@ -270,30 +223,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleResolveCompleted = async () => {
-    await fetchPosts();
-    setCurrentView("resolved");
-  };
+  const handleResolveCompleted = async () => { await fetchPosts(); setCurrentView("resolved"); };
+  const handleLogout = () => { setIsLoggedIn(false); setCurrentView("login"); };
+  const handleAssigned = async () => { await fetchPosts(); setCurrentView("active"); };
 
-  // 仮の関数
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setCurrentView("login");
-  };
-
-  const handleAssigned = async () => {
-    // 案件状態変更後に再取得してリスト画面へ
-    await fetchPosts();
-    setCurrentView("active");
-  };
-
-  if (!isLoggedIn) {
-    return <LoginScreen onLogin={handleLogin} />;
-  }
-
-  if (loading) {
-    return <p className="p-4">レポートを読み込んでいます...</p>;
-  }
+  if (!isLoggedIn) return <LoginScreen onLogin={handleLogin} />;
+  if (loading) return <p className="p-4">レポートを読み込んでいます...</p>;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -305,6 +240,7 @@ export default function AdminDashboard() {
         onCSVClick={handleCSVClick}
         onUsersClick={handleUsersView}
         onPinsClick={handleListView}
+        onSelfClick={handleSelfView} // ← Self ボタン追加
         resolvedCount={resolvedReports.length}
         activeCount={activeReports.length}
         newCount={unresolvedReports.length}
@@ -322,46 +258,15 @@ export default function AdminDashboard() {
           currentView={currentView as unknown as "list" | "detail" | "map"}
         />
         <main className="flex-1 p-6">
-          {currentView === "list" && (
-            <ReportsList
-              reports={filteredReports}
-              building={selectedLocation}
-              onReportClick={handleReportClick}
-            />
-          )}
-          {currentView === "detail" && selectedReport && (
-            <ReportDetail report={selectedReport} onBack={handleBackToList} />
-          )}
-          {currentView === "map" && (
-            <DynamicMapView reports={filteredReports} />
-          )}
-          {currentView === "user" && (
-            <UserProfile onBack={handleListView} onLogout={handleLogout} />
-          )}
-          {currentView === "resolved" && (
-            <ResolvedReports
-              reports={filteredResolvedReports}
-              onBack={handleListView}
-            />
-          )}
-          {currentView === "active" && (
-            <ActiveReports
-              reports={filteredActiveReports}
-              onBack={handleListView}
-              onResolved={handleResolveCompleted}
-              selectedLocation={selectedLocation}
-            />
-          )}
-          {currentView === "unresolved" && (
-            <UnresolvedReports
-              reports={filteredUnresolvedReports}
-              onBack={handleListView}
-              onAssigned={handleAssigned}
-            />
-          )}
-          {currentView === "users" && (
-            <UsersManagement onBack={handleListView} />
-          )}
+          {currentView === "list" && <ReportsList reports={filteredReports} building={selectedLocation} onReportClick={handleReportClick} />}
+          {currentView === "detail" && selectedReport && <ReportDetail report={selectedReport} onBack={handleBackToList} />}
+          {currentView === "map" && <DynamicMapView reports={filteredReports} />}
+          {currentView === "user" && <UserProfile onBack={handleListView} onLogout={handleLogout} />}
+          {currentView === "resolved" && <ResolvedReports reports={filteredResolvedReports} onBack={handleListView} />}
+          {currentView === "active" && <ActiveReports reports={filteredActiveReports} onBack={handleListView} onResolved={handleResolveCompleted} selectedLocation={selectedLocation} />}
+          {currentView === "unresolved" && <UnresolvedReports reports={filteredUnresolvedReports} onBack={handleListView} onAssigned={handleAssigned} />}
+          {currentView === "users" && <UsersManagement onBack={handleListView} />}
+          {currentView === "self" && <SelfReports />} {/* ← Self画面 */}
         </main>
       </div>
     </div>

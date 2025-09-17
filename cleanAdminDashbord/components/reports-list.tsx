@@ -2,7 +2,7 @@
 
 import { Heart, Camera } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-  import type { Report } from "@/app/page"
+import type { Report } from "@/app/page"
 
 interface ReportsListProps {
   reports: Report[]
@@ -30,15 +30,10 @@ export function ReportsList({ reports, onReportClick,building }: ReportsListProp
                   <span className="text-sm">{report.likes}</span>
                 </div>
               </div>
-              <div className="mb-3">
-            <span className="text-sm text-gray-600">場所</span>
-          <div className="font-medium">
-            {report.building && <span>{report.building}</span>}
-            {report.place && report.building && <span> / </span>}
-            {report.place && <span>{report.place}</span>}
-            {!report.building && !report.place && <span>未指定</span>}
-          </div>
-        </div>
+            <div>
+  <span className="text-sm text-gray-600">場所</span>
+  <div className="font-medium">{report.building ?? report.place ?? "未指定"}</div>
+</div>
 
               <div className="mb-3">
                 <span className="text-sm text-gray-600">コメント</span>
@@ -46,9 +41,22 @@ export function ReportsList({ reports, onReportClick,building }: ReportsListProp
               </div>
             </div>
             <div className="flex flex-col items-end gap-3">
-              <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Camera className="h-8 w-8 text-gray-400" />
-              </div>
+              <div>
+  <label className="text-sm font-medium text-gray-600 block mb-3">
+    画像
+  </label>
+  {report.image_url ? (
+    <img
+      src={report.image_url}
+      alt="投稿画像"
+      className="rounded-lg border border-gray-300 max-h-64 object-contain mx-auto"
+    />
+  ) : (
+    <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center bg-gray-50 text-gray-400">
+      画像がありません
+    </div>
+  )}
+</div>
               <StatusBadge status={report.status} />
             </div>
           </div>

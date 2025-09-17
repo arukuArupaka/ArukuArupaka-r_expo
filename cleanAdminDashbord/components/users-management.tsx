@@ -79,23 +79,7 @@ export function UsersManagement({ onBack }: UsersManagementProps) {
                   </div>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <User className="h-4 w-4 mr-2" />
-                      プロフィール表示
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Mail className="h-4 w-4 mr-2" />
-                      メール送信
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+               
               </div>
             </CardContent>
           </Card>

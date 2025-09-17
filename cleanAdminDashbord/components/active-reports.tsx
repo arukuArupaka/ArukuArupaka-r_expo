@@ -144,7 +144,15 @@ export function ActiveReports({
                 </div>
 
                 <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center ml-4">
-                  <Camera className="h-6 w-6 text-gray-400" />
+                  {report.image_url ? (
+    <img
+      src={report.image_url}
+      alt="現場写真"
+      className="object-cover w-20 h-20 rounded-lg"
+    />
+  ) : (
+    <Camera className="h-6 w-6 text-gray-400" />
+  )}
                 </div>
               </div>
             </CardContent>

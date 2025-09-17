@@ -2,10 +2,8 @@
 
 import { User, Calendar as CalendarIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useState } from "react";
@@ -18,13 +16,13 @@ interface HeaderProps {
   onCSVClick: () => void;
   onUsersClick: () => void;
   onPinsClick: () => void;
+  onSelfClick: () => void;
   resolvedCount: number;
   activeCount: number;
   newCount: number;
   CSVsheet: number;
   totalPins: number;
   userCount: number;
-  currentUserEmail?: string;
 }
 
 export function Header({
@@ -35,13 +33,13 @@ export function Header({
   onCSVClick,
   onUsersClick,
   onPinsClick,
+  onSelfClick,
   resolvedCount,
   activeCount,
   newCount,
   CSVsheet,
   totalPins,
   userCount,
-  currentUserEmail,
 }: HeaderProps) {
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [range, setRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
@@ -51,35 +49,28 @@ export function Header({
     if (range.from) params.set("start", format(range.from, "yyyy-MM-dd"));
     if (range.to) params.set("end", format(range.to, "yyyy-MM-dd"));
     const url = `/api/csv${params.toString() ? `?${params.toString()}` : ""}`;
-    // そのままナビゲーションでダウンロード
     window.location.href = url;
     setCsvDialogOpen(false);
-    // 既存のカウンタクリック動作も必要なら呼ぶ
     onCSVClick?.();
   };
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">ADMIN DASHBOARD</h1>
-        <div className="flex items-center gap-3">
-          {currentUserEmail && (
-            <span className="text-sm text-gray-700 max-w-[180px] truncate" title={currentUserEmail}>
-              {currentUserEmail}
-            </span>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full bg-blue-500 text-white hover:bg-blue-600"
-            onClick={onUserClick}
-          >
-            <User className="h-5 w-5" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full bg-blue-500 text-white hover:bg-blue-600"
+          onClick={onUserClick}
+        >
+          <User className="h-5 w-5" />
+        </Button>
       </div>
+
       <div className="flex gap-4 mt-4">
         <StatCard
-          number={userCount.toString()} // ここを固定の"11111"から動的に
+          number={userCount.toString()}
           label="users"
           subtitle="登録ユーザー数"
           onClick={onUsersClick}
@@ -114,6 +105,14 @@ export function Header({
           color="text-orange-500"
           subtitle="未解決案件"
           onClick={onUnresolvedClick}
+          clickable
+        />
+        <StatCard
+          number="–"
+          label="Self"
+          color="text-purple-500"
+          subtitle="自分の投稿"
+          onClick={onSelfClick}
           clickable
         />
         <div>
@@ -174,9 +173,7 @@ function StatCard({
   onClick?: () => void;
   clickable?: boolean;
 }) {
-  const cardClass = `bg-white rounded-lg border border-gray-200 px-6 py-4 shadow-sm ${
-    clickable ? "cursor-pointer hover:shadow-md transition-shadow" : ""
-  }`;
+  const cardClass = `bg-white rounded-lg border border-gray-200 px-6 py-4 shadow-sm ${clickable ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`;
 
   return (
     <div className={cardClass} onClick={onClick}>
