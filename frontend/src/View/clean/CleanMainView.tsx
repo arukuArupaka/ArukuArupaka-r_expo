@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useFonts } from "expo-font";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, TouchableOpacity } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { supabase } from "./lib/supabase";
@@ -10,6 +10,8 @@ import RankingHeaderCard from "./compornents/RankingHeaderCard";
 import { PostButton } from "./compornents/PostButton";
 import NewPostMarker from "./compornents/NewPostMarker";
 import type { MapPressEvent } from "react-native-maps";
+import { Ionicons } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -37,6 +39,7 @@ const CleanMainView = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
+  const headerHeight = useHeaderHeight();
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
@@ -46,8 +49,7 @@ const CleanMainView = () => {
         } = await supabase.auth.getSession();
         if (!cancelled && !session) {
           navigation.replace("CleanLoginView");
-          setUserId(null);
-        } else {
+        } else if (!cancelled && session) {
           setUserId(session.user.id);
         }
       })();
@@ -56,6 +58,11 @@ const CleanMainView = () => {
       };
     }, [navigation])
   );
+
+  const handleMapPress = (event: MapPressEvent) => {
+    const coord = event?.nativeEvent?.coordinate;
+    if (coord) setMarkerLocation(coord);
+  };
 
   const handlePost = () => {
     if (!markerLocation) return;
@@ -97,6 +104,34 @@ const CleanMainView = () => {
             </View>
           )}
         </CleanMap>
+        <View
+          pointerEvents="box-none"
+          style={{
+            position: "absolute",
+            top: 15,
+            left: 15,
+            zIndex: 3,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CleanMyPage")}
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: "#fff",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 8,
+            }}
+          >
+            <Ionicons name="person" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
 
         <PostButton onPress={handlePost} enabled={!!markerLocation} />
 
