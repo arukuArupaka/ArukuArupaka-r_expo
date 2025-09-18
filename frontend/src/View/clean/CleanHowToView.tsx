@@ -1,13 +1,12 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+// @ts-ignore: 型定義がなくても実体は Expo に同梱されているため問題ありません
+import { FontAwesome } from "@expo/vector-icons";
 const CleanHowToSample = require("../../../assets/CleanHowToSample.png");
 const broomRed = require("./assets/image/broom-red.png");
 const broomBlue = require("./assets/image/broom-blue.png");
 const broomGreen = require("./assets/image/broom-green.png");
 const CleanHowToView = () => {
-  const navigation = useNavigation();
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* タイトル・説明 */}

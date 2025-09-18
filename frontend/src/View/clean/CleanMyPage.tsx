@@ -12,6 +12,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+// @ts-ignore: 型定義がなくても Expo に同梱されているため問題ありません
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import PostDetailCard from "./compornents/PostDtailCard";
@@ -20,6 +21,7 @@ import IconById, {
   iconIds,
   getRandomIconId,
 } from "./compornents/IconById";
+import SupabaseInputField from "./compornents/ui/SupabaseInputField";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -34,9 +36,15 @@ const ProfileScreen = () => {
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [nickname, setNickname] = useState<string>("");
+  const [realName, setRealName] = useState<string>("");
+  const [birthDate, setBirthDate] = useState<string>("");
+  const [coopMemberNumber, setCoopMemberNumber] = useState<string>("");
+  const nicknameDirtyRef = useRef<boolean>(false);
+  const realNameDirtyRef = useRef<boolean>(false);
+  const birthDateDirtyRef = useRef<boolean>(false);
+  const coopNumberDirtyRef = useRef<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const hasLoadedFromDB = useRef<boolean>(false);
-  // coop_consent の状態を追加
   const [coopConsent, setCoopConsent] = useState<boolean>(false);
 
   const [myPosts, setMyPosts] = useState<any[]>([]);
@@ -59,7 +67,9 @@ const ProfileScreen = () => {
     try {
       const { data: profile, error: profileError } = await supabase
         .from("users")
-        .select("id,name,real_name,birth_date,coop_member_number,coop_consent")
+        .select(
+          "id,nickname,real_name,birth_date,coop_member_number,coop_consent"
+        )
         .eq("id", user.id)
         .maybeSingle();
 
@@ -74,7 +84,14 @@ const ProfileScreen = () => {
       setSelectedIconId(iconId);
       setSelectedIcon(getIconSourceById(iconId));
 
-      setNickname((profile as any)?.name ?? "");
+      if (!nicknameDirtyRef.current)
+        setNickname((profile as any)?.nickname ?? "");
+      if (!realNameDirtyRef.current)
+        setRealName((profile as any)?.real_name ?? "");
+      if (!birthDateDirtyRef.current)
+        setBirthDate((profile as any)?.birth_date ?? "");
+      if (!coopNumberDirtyRef.current)
+        setCoopMemberNumber((profile as any)?.coop_member_number ?? "");
       // coop_consent を反映
       setCoopConsent(Boolean((profile as any)?.coop_consent));
     } catch (error) {
@@ -84,31 +101,24 @@ const ProfileScreen = () => {
     }
   }, []);
 
-  const saveNickname = useCallback(
-    async (value?: string) => {
-      try {
-        if (!userId) return;
-        const nickRaw = value ?? nickname;
-        const nick = nickRaw.trim() === "" ? "" : nickRaw.trim();
-        const { data, error } = await supabase
-          .from("users")
-          .update({ name: nick })
-          .eq("id", userId)
-          .select("id")
-          .maybeSingle();
-        if (error) {
-          console.error("ニックネーム保存に失敗：", error);
-        } else if (!data) {
-          console.warn(
-            "ニックネーム更新対象の行がありません（users.id が未作成）"
-          );
-        }
-      } catch (e) {
-        console.error("ニックネーム保存中に予期せぬエラー：", e);
-      }
-    },
-    [userId, nickname]
-  );
+  // 画面離脱時などに一括で保存するためのまとめ関数
+  const saveAll = useCallback(async () => {
+    try {
+      if (!userId) return;
+      const payload: any = {
+        nickname: (nickname ?? "").trim(),
+        real_name: (realName ?? "").trim(),
+        birth_date: (birthDate ?? "").trim(),
+        coop_member_number: (coopMemberNumber ?? "").trim().replace(/\s+/g, ""),
+      };
+      const { error } = await supabase
+        .from("users")
+        .update(payload)
+        .eq("id", userId);
+    } catch (e) {
+      console.error("プロフィール保存中に予期せぬエラー:", e);
+    }
+  }, [userId, nickname, realName, birthDate, coopMemberNumber]);
 
   // coop_consent 保存関数
   const saveCoopConsent = useCallback(
@@ -154,15 +164,16 @@ const ProfileScreen = () => {
       console.error("アイコン保存中に予期せぬエラー：", e);
     }
   };
-  const saveAll = useCallback(async () => {
-    await Promise.all([saveNickname(), (async () => await saveIcon())()]);
-  }, [saveNickname]);
+
+  const saveAllWithIcon = useCallback(async () => {
+    await Promise.all([saveAll(), (async () => await saveIcon())()]);
+  }, [saveAll]);
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e: any) => {
       e.preventDefault();
       (async () => {
         try {
-          await saveAll();
+          await saveAllWithIcon();
         } catch (err) {
           console.warn("プロフィール保存に失敗:", err);
         } finally {
@@ -171,7 +182,7 @@ const ProfileScreen = () => {
       })();
     });
     return unsubscribe;
-  }, [navigation, saveAll]);
+  }, [navigation, saveAllWithIcon]);
   useEffect(() => {
     hasLoadedFromDB.current = false;
     fetchProfile();
@@ -183,13 +194,11 @@ const ProfileScreen = () => {
       fetchProfile();
       return () => {
         if (hasLoadedFromDB.current) {
-          void saveNickname();
+          void saveAll();
         }
       };
-    }, [fetchProfile, saveNickname])
+    }, [fetchProfile, saveAll])
   );
-
-  useEffect(() => {}, [nickname, userId, saveNickname]);
 
   const fetchMyPosts = useCallback(async () => {
     if (!userId) return;
@@ -201,7 +210,7 @@ const ProfileScreen = () => {
         .select(
           `
           *,
-          users ( name, nickname )
+          users ( nickname )
         `
         )
         .eq("user_id", userId)
@@ -303,153 +312,26 @@ const ProfileScreen = () => {
           </View>
         </Pressable>
       </Modal>
-      <Text
-        style={{
-          fontSize: 16,
-          fontFamily: "ZenMaruGothicBlack",
-          color: "#555555",
-          marginTop: 10,
+      <SupabaseInputField
+        label="ニックネーム"
+        table="users"
+        column="nickname"
+        userId={userId}
+        value={nickname}
+        onChangeText={(v) => {
+          nicknameDirtyRef.current = true;
+          setNickname(v);
         }}
-      >
-        ニックネーム
-      </Text>
-      <View>
-        <TextInput
-          style={{
-            borderWidth: 3,
-            borderColor: "#989898",
-            marginTop: 10,
-            padding: 8,
-            fontSize: 16,
-          }}
-          value={nickname ?? ""}
-          onChangeText={setNickname}
-          onSubmitEditing={() => {
-            void saveNickname();
-          }}
-          onEndEditing={() => {
-            void saveNickname();
-          }}
-          onBlur={() => {
-            void saveNickname();
-          }}
-          returnKeyType="done"
-          blurOnSubmit={true}
-          placeholder="ニックネームを入力"
-        />
-      </View>
-      <Text
-        style={{
-          fontSize: 16,
-          fontFamily: "ZenMaruGothicBlack",
-          color: "#555555",
-          marginTop: 10,
-        }}
-      >
-        氏名（本名）
-      </Text>
-      <View>
-        <TextInput
-          style={{
-            borderWidth: 3,
-            borderColor: "#989898",
-            marginTop: 10,
-            padding: 8,
-            fontSize: 16,
-          }}
-          value={nickname ?? ""}
-          onChangeText={setNickname}
-          onSubmitEditing={() => {
-            void saveNickname();
-          }}
-          onEndEditing={() => {
-            void saveNickname();
-          }}
-          onBlur={() => {
-            void saveNickname();
-          }}
-          returnKeyType="done"
-          blurOnSubmit={true}
-          placeholder="氏名（本名）を入力"
-        />
-      </View>
-      <Text
-        style={{
-          fontSize: 16,
-          fontFamily: "ZenMaruGothicBlack",
-          color: "#555555",
-          marginTop: 10,
-        }}
-      >
-        生年月日（YYYY-MM-DD）
-      </Text>
-      <View>
-        <TextInput
-          style={{
-            borderWidth: 3,
-            borderColor: "#989898",
-            marginTop: 10,
-            padding: 8,
-            fontSize: 16,
-          }}
-          value={nickname ?? ""}
-          onChangeText={setNickname}
-          onSubmitEditing={() => {
-            void saveNickname();
-          }}
-          onEndEditing={() => {
-            void saveNickname();
-          }}
-          onBlur={() => {
-            void saveNickname();
-          }}
-          returnKeyType="done"
-          blurOnSubmit={true}
-          placeholder="生年月日（YYYY-MM-DD）を入力"
-        />
-      </View>
-      <Text
-        style={{
-          fontSize: 16,
-          fontFamily: "ZenMaruGothicBlack",
-          color: "#555555",
-          marginTop: 10,
-        }}
-      >
-        生協会員番号
-      </Text>
-      <View>
-        <TextInput
-          style={{
-            borderWidth: 3,
-            borderColor: "#989898",
-            marginTop: 10,
-            padding: 8,
-            fontSize: 16,
-          }}
-          value={nickname ?? ""}
-          onChangeText={setNickname}
-          onSubmitEditing={() => {
-            void saveNickname();
-          }}
-          onEndEditing={() => {
-            void saveNickname();
-          }}
-          onBlur={() => {
-            void saveNickname();
-          }}
-          returnKeyType="done"
-          blurOnSubmit={true}
-          placeholder="生協会員番号を入力"
-        />
-      </View>
-      {/* coop_consent チェックボックス */}
+        placeholder="ニックネームを入力"
+      />
+
+      {/* coop_consent チェックボックス（ニックネームの直下に移動） */}
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
           marginTop: 10,
-          marginBottom: 16,
+          marginBottom: 0,
           justifyContent: "flex-end",
         }}
       >
@@ -476,6 +358,55 @@ const ProfileScreen = () => {
           />
         </TouchableOpacity>
       </View>
+
+      {coopConsent && (
+        <>
+          <SupabaseInputField
+            label="氏名（本名）"
+            table="users"
+            column="real_name"
+            userId={userId}
+            value={realName}
+            onChangeText={(v) => {
+              realNameDirtyRef.current = true;
+              setRealName(v);
+            }}
+            placeholder="氏名（本名）を入力"
+          />
+
+          <SupabaseInputField
+            label="生年月日（YYYY-MM-DD）"
+            table="users"
+            column="birth_date"
+            userId={userId}
+            value={birthDate}
+            onChangeText={(v) => {
+              birthDateDirtyRef.current = true;
+              setBirthDate(v);
+            }}
+            placeholder="生年月日（YYYY-MM-DD）を入力"
+            keyboardType="numbers-and-punctuation"
+            returnKeyType="done"
+            normalize={(v) => v}
+          />
+
+          <SupabaseInputField
+            label="生協会員番号"
+            table="users"
+            column="coop_member_number"
+            userId={userId}
+            value={coopMemberNumber}
+            onChangeText={(v) => {
+              coopNumberDirtyRef.current = true;
+              setCoopMemberNumber(v);
+            }}
+            placeholder="生協会員番号を入力"
+            keyboardType="number-pad"
+            returnKeyType="done"
+            normalize={(v) => v.replace(/\s+/g, "")}
+          />
+        </>
+      )}
 
       <Text
         style={{
@@ -595,13 +526,20 @@ const ProfileScreen = () => {
           ))}
       </View>
 
-      {selectedPost && (
-        <PostDetailCard
-          post={selectedPost}
-          userId={userId}
-          onClose={() => setSelectedPost(null)}
-        />
-      )}
+      <Modal
+        visible={!!selectedPost}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedPost(null)}
+      >
+        {selectedPost && (
+          <PostDetailCard
+            post={selectedPost}
+            userId={userId}
+            onClose={() => setSelectedPost(null)}
+          />
+        )}
+      </Modal>
     </ScrollView>
   );
 };

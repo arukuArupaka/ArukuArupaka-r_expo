@@ -15,7 +15,7 @@ export interface Post {
   latitude: number;
   longitude: number;
   created_at?: string;
-  users?: { name?: string; nickname?: string | null } | null;
+  users?: { nickname?: string | null } | null;
   [key: string]: any; // フォールバック
 }
 
@@ -23,13 +23,13 @@ export const fetchPostsOnce = async (): Promise<Post[]> => {
   const [limitedRes, newRes] = await Promise.all([
     supabase
       .from("posts")
-      .select(`*, users ( name, nickname )`)
+      .select(`*, users ( nickname )`)
       .in("status", ["resolved", "self"])
       .order("created_at", { ascending: false })
       .limit(80),
     supabase
       .from("posts")
-      .select(`*, users ( name, nickname )`)
+      .select(`*, users ( nickname )`)
       .eq("status", "new")
       .order("created_at", { ascending: false }),
   ]);
@@ -133,7 +133,7 @@ function resortAndTrim(list: Post[]): Post[] {
 export const fetchPostById = async (id: string): Promise<Post | null> => {
   const { data, error } = await supabase
     .from("posts")
-    .select(`*, users ( name, nickname )`)
+    .select(`*, users ( nickname )`)
     .eq("id", id)
     .single();
   if (error) throw error;
