@@ -2,7 +2,7 @@
 
 import { Heart, Camera } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import type { Report } from "@/app/page"
+  import type { Report } from "@/app/page"
 
 interface ReportsListProps {
   reports: Report[]
@@ -30,10 +30,15 @@ export function ReportsList({ reports, onReportClick,building }: ReportsListProp
                   <span className="text-sm">{report.likes}</span>
                 </div>
               </div>
-            <div>
-  <span className="text-sm text-gray-600">場所</span>
-  <div className="font-medium">{report.building ?? report.place ?? "未指定"}</div>
-</div>
+              <div className="mb-3">
+            <span className="text-sm text-gray-600">場所</span>
+          <div className="font-medium">
+            {report.building && <span>{report.building}</span>}
+            {report.place && report.building && <span> / </span>}
+            {report.place && <span>{report.place}</span>}
+            {!report.building && !report.place && <span>未指定</span>}
+          </div>
+        </div>
 
               <div className="mb-3">
                 <span className="text-sm text-gray-600">コメント</span>

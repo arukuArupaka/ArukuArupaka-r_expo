@@ -56,11 +56,13 @@ import CleanLoginView from "./src/View/clean/CleanLoginView";
 import CleanMainView from "./src/View/clean/CleanMainView";
 import CleanPostView from "./src/View/clean/CleanPostView";
 import CleanMyPage from "./src/View/clean/CleanMyPage";
+import CleanPostConfirmation from "./src/View/clean/CleanPostConfirmation";
 import {
   useFonts,
   ZenMaruGothic_400Regular,
   ZenMaruGothic_700Bold,
 } from "@expo-google-fonts/zen-maru-gothic";
+import CleanPostRanking from "./src/View/clean/ClenPostRanking";
 
 const searchClient = algoliasearch(
   "8LXF97V2DN",
@@ -472,13 +474,108 @@ function App() {
               <Stack.Screen
                 name="CleanMyPage"
                 component={CleanMyPage}
-                options={({ route }) => ({
+                options={{
                   headerTitle: () => (
                     <MaterialIcons
                       name="cleaning-services"
                       size={40}
                       color="black"
                     />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigationRef.navigate("CleanHowToView")
+                            }
+                          >
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigationRef.navigate("CleanMainView")
+                              }
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF", //背景色
+                  },
+                }}
+              />
+　　　　　　　　<Stack.Screen
+                name="CleanPostRanking"
+                component={CleanPostRanking}
+                options={({ navigation }) => ({
+                  headerShown: true,
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Ionicons
+                        name="chevron-back"
+                        style={{ marginRight: 10 }}
+                        size={30}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF",
+                  },
+                  headerTitleAlign: "center",
+                })}
+              />
+              <Stack.Screen
+                name="CleanHowToView"
+                component={CleanHowToView}
+                options={({ navigation }) => ({
+                  headerShown: true,
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Ionicons
+                        name="chevron-back"
+                        style={{ marginRight: 10 }}
+                        size={30}
+                        color="black"
+                      />
+                    </TouchableOpacity>
                   ),
                   headerRight:
                     Platform.OS === "ios"
@@ -523,6 +620,7 @@ function App() {
                   headerStyle: {
                     backgroundColor: "#8DFFAF", //背景色
                   },
+                  headerTitleAlign: "center",
                 })}
               />
               <Stack.Screen
@@ -573,6 +671,25 @@ function App() {
                   headerStyle: {
                     backgroundColor: "#8DFFAF", //背景色
                   },
+                }}
+              />
+              <Stack.Screen
+                name="CleanPostConfirmation"
+                component={CleanPostConfirmation}
+                options={{
+                  headerShown: true,
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF",
+                  },
+                  headerTitleAlign: "center",
+                  headerBackVisible: false,
                 }}
               />
               <Stack.Screen

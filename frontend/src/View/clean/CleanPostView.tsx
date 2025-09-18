@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,15 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  Animated,
+  Easing,
 } from "react-native";
-import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
+import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { supabase } from "./lib/supabase";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageAsync } from "./lib/uploadImage";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { uploadPostWithImages } from "./lib/uploadImage";
 
 const buildings = [
   { name: "アクトα", reading: "あくと" },
@@ -77,6 +80,7 @@ const buildings = [
 ];
 
 export default function PostScreen() {
+  const navigation = useNavigation<any>();
   const [selectedBuilding, setSelectedBuilding] = useState("");
   const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -110,24 +114,75 @@ export default function PostScreen() {
   const [locationDetail, setLocationDetail] = useState("");
   const [comment, setComment] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
-  const [isRequestingCleaning, setIsRequestingCleaning] = useState(true);
+  const [photoUriAfter, setPhotoUriAfter] = useState(null);
+  const [isRequestingCleaning, setIsRequestingCleaning] = useState(false);
+  const [rewardPoints, setRewardPoints] = useState(10);
+  // DB から取得する報酬ポイント（info テーブル想定）
+  const [selfRewardPointFromDB, setSelfRewardPointFromDB] = useState<
+    string | null
+  >(null);
+  const [requestRewardPointFromDB, setRequestRewardPointFromDB] = useState<
+    string | null
+  >(null);
+  // Animated slider state
+  const sliderAnim = useRef(new Animated.Value(0)).current; // 0 = left (自分で掃除する), 1 = right (掃除を依頼する)
+  const [segmentWidth, setSegmentWidth] = useState(0);
   // 座標を受け取るパラメータ
   type RootStackParamList = {
-    CleanPostView: { latitude: number; longitude: number };
+    CleanPostView: {
+      latitude: number;
+      longitude: number;
+      onPosted?: () => void; // 投稿完了時のコールバック
+    };
   };
 
   const route = useRoute<RouteProp<RootStackParamList, "CleanPostView">>();
-  const { latitude, longitude } = route.params ?? {
+  const { latitude, longitude, onPosted } = route.params ?? {
     latitude: undefined,
     longitude: undefined,
+    onPosted: undefined,
   };
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("info")
+          .select("self_reward_points, request_reward_points")
+          .limit(1)
+          .single();
+        if (!error && data && mounted) {
+          const selfPt = Number(data.self_reward_points);
+          const reqPt = Number(data.request_reward_points);
+          setSelfRewardPointFromDB(
+            data.self_reward_points ? data.self_reward_points : null
+          );
+          setRequestRewardPointFromDB(
+            data.request_reward_points ? data.request_reward_points : null
+          );
+        }
+      } catch {}
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isRequestingCleaning) {
+      setRewardPoints((requestRewardPointFromDB ?? 10) || 10);
+    } else {
+      setRewardPoints((selfRewardPointFromDB ?? 20) || 20);
+    }
+  }, [isRequestingCleaning, selfRewardPointFromDB, requestRewardPointFromDB]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <View style={{ flex: 1 }}>
           <ScrollView
-            contentContainerStyle={{ padding: 20 }}
+            contentContainerStyle={{ paddingHorizontal: 20 }}
             keyboardShouldPersistTaps="handled"
           >
             <Text
@@ -135,12 +190,141 @@ export default function PostScreen() {
                 fontSize: 32,
                 fontFamily: "ZenMaruGothicBlack",
                 textAlign: "center",
-                marginBottom: 20,
+                marginTop: 15,
+                marginBottom: 10,
                 color: "#4C4C4C",
               }}
             >
               投稿
             </Text>
+
+            {/* セグメント切替 (自分で掃除する / 掃除を依頼する) */}
+            <View
+              style={{
+                marginBottom: 10,
+                alignItems: "center",
+              }}
+            >
+              <View
+                onLayout={(e) => {
+                  const w = e.nativeEvent.layout.width;
+                  setSegmentWidth(w);
+                }}
+                style={{
+                  width: "100%",
+                  maxWidth: 320,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: "#F0F0F0",
+                  padding: 3,
+                  flexDirection: "row",
+                  position: "relative",
+                }}
+              >
+                {/* animated slider */}
+                <Animated.View
+                  pointerEvents="none"
+                  style={{
+                    position: "absolute",
+                    top: 3,
+                    bottom: 3,
+                    left: 3,
+                    width: segmentWidth ? (segmentWidth - 6) / 2 : "50%",
+                    borderRadius: 20,
+                    backgroundColor: "#88ffae",
+                    transform: [
+                      {
+                        translateX: sliderAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [
+                            0,
+                            segmentWidth ? (segmentWidth - 6) / 2 : 0,
+                          ],
+                        }),
+                      },
+                    ],
+                  }}
+                />
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    // 自分で掃除
+                    setIsRequestingCleaning(false);
+                    Animated.timing(sliderAnim, {
+                      toValue: 0,
+                      duration: 180,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start();
+                    setRewardPoints((selfRewardPointFromDB ?? 20) || 20);
+                  }}
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#fff",
+                    }}
+                  >
+                    自分で掃除する
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    // 掃除を依頼
+                    setIsRequestingCleaning(true);
+                    Animated.timing(sliderAnim, {
+                      toValue: 1,
+                      duration: 180,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start();
+                    setRewardPoints((requestRewardPointFromDB ?? 10) || 10);
+                  }}
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#fff",
+                    }}
+                  >
+                    掃除を依頼する
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* 報酬表示 */}
+              <View style={{ marginTop: 8, alignItems: "center" }}>
+                <Text style={{ fontSize: 13, color: "#4C4C4C" }}>
+                  獲得ポイント:{" "}
+                  <Text
+                    style={{
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#FF7A7A",
+                    }}
+                  >
+                    {rewardPoints}
+                  </Text>{" "}
+                  pt
+                </Text>
+              </View>
+            </View>
 
             {/* 建物 */}
             <Text
@@ -191,7 +375,7 @@ export default function PostScreen() {
                   backgroundColor: "white",
                   overflow: "visible",
                   position: "absolute",
-                  top: 150,
+                  top: 231,
                   left: 20,
                   right: 20,
                   zIndex: 10,
@@ -288,106 +472,182 @@ export default function PostScreen() {
             >
               写真
             </Text>
-            <TouchableOpacity
-              onPress={async () => {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  quality: 0.7,
-                });
-
-                if (!result.canceled && result.assets?.length) {
-                  setPhotoUri(result.assets[0].uri);
-                }
-              }}
-              style={{
-                height: 150,
-                borderWidth: 1,
-                borderColor: "#B6B6B6",
-                borderRadius: 6,
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: 24,
-              }}
-            >
-              {photoUri ? (
-                <Image
-                  source={{ uri: photoUri }}
-                  style={{ width: "100%", height: "100%", borderRadius: 6 }}
-                />
-              ) : (
-                <FontAwesome6 name="camera" size={45} color="black" />
-              )}
-            </TouchableOpacity>
-
-            {/* チェックボックス */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <Text
+            {isRequestingCleaning ? (
+              <TouchableOpacity
+                onPress={async () => {
+                  const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                  });
+                  if (!result.canceled && result.assets?.length) {
+                    setPhotoUri(result.assets[0].uri);
+                  }
+                }}
                 style={{
-                  fontSize: 14,
-                  fontFamily: "ZenMaruGothicBold",
-                  marginRight: 8,
+                  height: 150,
+                  borderWidth: 1,
+                  borderColor: "#B6B6B6",
+                  borderRadius: 6,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 24,
                 }}
               >
-                掃除を依頼する
-              </Text>
-              <TouchableOpacity
-                onPress={() => setIsRequestingCleaning(!isRequestingCleaning)}
-              >
-                <FontAwesome5
-                  name={isRequestingCleaning ? "check-square" : "square"}
-                  size={24}
-                  color="black"
-                />
+                {photoUri ? (
+                  <Image
+                    source={{ uri: photoUri }}
+                    style={{ width: "100%", height: "100%", borderRadius: 6 }}
+                  />
+                ) : (
+                  <FontAwesome6 name="camera" size={45} color="black" />
+                )}
               </TouchableOpacity>
-            </View>
+            ) : (
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 24 }}>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 4,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#4C4C4C",
+                    }}
+                  >
+                    掃除前
+                  </Text>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const result = await ImagePicker.launchImageLibraryAsync({
+                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                        allowsEditing: true,
+                      });
+                      if (!result.canceled && result.assets?.length) {
+                        setPhotoUri(result.assets[0].uri);
+                      }
+                    }}
+                    style={{
+                      height: 100,
+                      borderWidth: 1,
+                      borderColor: "#B6B6B6",
+                      borderRadius: 6,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {photoUri ? (
+                      <Image
+                        source={{ uri: photoUri }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 6,
+                        }}
+                      />
+                    ) : (
+                      <FontAwesome6 name="camera" size={32} color="black" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 4,
+                      fontFamily: "ZenMaruGothicBold",
+                      color: "#4C4C4C",
+                    }}
+                  >
+                    掃除後
+                  </Text>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const result = await ImagePicker.launchImageLibraryAsync({
+                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                        allowsEditing: true,
+                      });
+                      if (!result.canceled && result.assets?.length) {
+                        setPhotoUriAfter(result.assets[0].uri);
+                      }
+                    }}
+                    style={{
+                      height: 100,
+                      borderWidth: 1,
+                      borderColor: "#B6B6B6",
+                      borderRadius: 6,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {photoUriAfter ? (
+                      <Image
+                        source={{ uri: photoUriAfter }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 6,
+                        }}
+                      />
+                    ) : (
+                      <FontAwesome6 name="camera" size={32} color="black" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             {/* 投稿ボタン */}
             <TouchableOpacity
               onPress={async () => {
+                // 写真バリデーション
+                if (isRequestingCleaning) {
+                  if (!photoUri) {
+                    alert("写真を選択してください");
+                    return;
+                  }
+                } else {
+                  if (!photoUri || !photoUriAfter) {
+                    alert("掃除前・掃除後の写真を両方選択してください");
+                    return;
+                  }
+                }
                 try {
                   const {
                     data: { user },
                   } = await supabase.auth.getUser();
-                  let imageUrl = null;
-                  if (photoUri) {
-                    imageUrl = await uploadImageAsync(
-                      photoUri,
-                      user.id,
-                      "post-images"
-                    );
-                  }
-                  const { error } = await supabase.from("posts").insert([
-                    {
-                      user_id: user.id,
+                  // 投稿処理開始
+                  const { post, imageUrl, imageUrlAfter } =
+                    await uploadPostWithImages({
+                      userId: user.id,
                       building: selectedBuilding,
                       place: locationDetail,
-                      comment: comment,
-                      image_url: imageUrl,
-                      request: isRequestingCleaning,
-                      status: "new",
+                      comment,
+                      beforeUri: photoUri,
+                      afterUri: photoUriAfter,
+                      isRequestingCleaning,
                       latitude,
                       longitude,
-                    },
-                  ]);
-
-                  if (error) {
-                    alert("投稿に失敗しました: " + error.message);
-                    return;
+                    });
+                  const postId = post?.id || null;
+                  // 投稿完了後画面遷移
+                  navigation.navigate("CleanPostConfirmation", {
+                    selectedBuilding,
+                    locationDetail,
+                    comment,
+                    photoUri,
+                    photoUriAfter,
+                    isRequestingCleaning,
+                    latitude,
+                    longitude,
+                    postId,
+                  });
+                  // 投稿完了後コールバック（マップ側のrefetchTrigger用）
+                  if (onPosted) {
+                    try {
+                      onPosted();
+                    } catch {}
                   }
-                  alert("投稿が完了しました！");
-                  setSelectedBuilding("");
-                  setLocationDetail("");
-                  setComment("");
-                  setPhotoUri(null);
-                  setIsRequestingCleaning(true);
                 } catch (e) {
+                  console.error("An unexpected error occurred:", e);
                   alert("エラーが発生しました: " + e.message);
                 }
               }}
