@@ -34,7 +34,6 @@ import {
 import { SearchSearch } from "./src/View/Textbook/main/SearchHome/SearchSearch";
 // import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
 import { New_headerTextbook } from "./src/component/Textbook/New_headerTextbook";
-import { CleanHowToView } from "./src/View/clean/CleanHowToView";
 
 //algolia用
 import { InstantSearch } from "react-instantsearch-core";
