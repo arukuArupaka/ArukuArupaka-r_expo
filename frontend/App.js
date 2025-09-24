@@ -34,6 +34,7 @@ import {
 import { SearchSearch } from "./src/View/Textbook/main/SearchHome/SearchSearch";
 // import { HeaderforTextbook1 } from './src/component/Textbook/HeaderforTextbook1';
 import { New_headerTextbook } from "./src/component/Textbook/New_headerTextbook";
+import { CleanHowToView } from "./src/View/clean/CleanHowToView";
 
 //algolia用
 import { InstantSearch } from "react-instantsearch-core";
@@ -320,7 +321,6 @@ function App() {
                   ),
                 }}
               />
-
               <Stack.Screen
                 name="Map"
                 component={MapLoot}
@@ -394,7 +394,6 @@ function App() {
                 component={TextbookNavigateRoot}
                 options={{ headerShown: false }}
               />
-
               {/* <Stack.Screen name="TimeTableSetting" component={TimeTableSetting} options={{ title: '' }} /> */}
               {/* <Stack.Screen name="settings" component={ASetting}/> */}
               <Stack.Screen
@@ -527,7 +526,7 @@ function App() {
                   },
                 }}
               />
-　　　　　　　　<Stack.Screen
+              <Stack.Screen
                 name="CleanPostRanking"
                 component={CleanPostRanking}
                 options={({ navigation }) => ({
@@ -555,74 +554,7 @@ function App() {
                   headerTitleAlign: "center",
                 })}
               />
-              <Stack.Screen
-                name="CleanHowToView"
-                component={CleanHowToView}
-                options={({ navigation }) => ({
-                  headerShown: true,
-                  headerTitle: () => (
-                    <MaterialIcons
-                      name="cleaning-services"
-                      size={40}
-                      color="black"
-                    />
-                  ),
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                      <Ionicons
-                        name="chevron-back"
-                        style={{ marginRight: 10 }}
-                        size={30}
-                        color="black"
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerRight:
-                    Platform.OS === "ios"
-                      ? () => (
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigationRef.navigate("CleanHowToView")
-                            }
-                          >
-                            <MaterialIcons
-                              name="question-mark"
-                              size={40}
-                              color="black"
-                            />
-                          </TouchableOpacity>
-                        )
-                      : null,
-                  headerLeft:
-                    Platform.OS === "ios"
-                      ? () => (
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <TouchableOpacity
-                              onPress={() => {
-                                navigationRef.navigate("CleanMainView");
-                              }}
-                            >
-                              <Ionicons
-                                name="chevron-back"
-                                style={{ marginRight: 10 }}
-                                size={30}
-                                color="black"
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        )
-                      : undefined,
-                  headerStyle: {
-                    backgroundColor: "#8DFFAF", //背景色
-                  },
-                  headerTitleAlign: "center",
-                })}
-              />
+
               <Stack.Screen
                 name="CleanPostView"
                 component={CleanPostView}
