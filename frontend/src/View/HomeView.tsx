@@ -51,6 +51,7 @@ import { useTimeTable } from "../component/TimeTable/TimeTableContext";
 import { AsyncFunctions } from "../component/TimeTable/classObject/async-functions";
 import HomeAdmobFooter from "../component/Home/HomeAdmobFooter";
 import LargeAppListItem from "../component/Home/LargeAppListItem";
+import { supabase } from "./clean/lib/supabase";
 
 //右上アクションボタンのコンポーネント
 const Headerlist = (props) => {
@@ -176,6 +177,7 @@ const HomeView = (props) => {
   //fireBaseログイン確認
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
+  const [showBikaButton, setShowBikaButton] = useState(false);
   const {
     userSettingContent,
     hasNewFirebaseNotification,
@@ -185,6 +187,28 @@ const HomeView = (props) => {
   } = useTimeTable();
 
   const user = useSelector((state: any) => state.user.userObject);
+  useEffect(() => {
+    const fetchBikaFlag = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("info")
+          .select("show_bika_botton")
+          .limit(1);
+        if (error) {
+          console.warn(
+            "Supabase fetch error (info.show_bika_botton):",
+            error.message
+          );
+          return;
+        }
+        const row = Array.isArray(data) ? data[0] : (data as any);
+        setShowBikaButton(!!row?.show_bika_botton);
+      } catch (e: any) {
+        console.warn("Supabase fetch exception:", e?.message ?? e);
+      }
+    };
+    fetchBikaFlag();
+  }, []);
 
   const firebaseUserAddFriendConvertToken = async (friendConvertToken) => {
     try {
@@ -364,30 +388,33 @@ const HomeView = (props) => {
               )}
             />
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: 10,
-            }}
-          >
-            <LargeAppListItem
-              appName="キャンパス美化"
-              color="#03D743"
-              test={props}
-              jumpPage="CleanMainView"
-              iconName="page-copy"
-              item={() => (
-                <>
-                  <MaterialIcons
-                    name="cleaning-services"
-                    size={24}
-                    color="#03D743"
-                  />
-                </>
-              )}
-            />
-          </View>
+          {/* 変更: キャンパス美化はフラグが true のときのみ表示 */}
+          {showBikaButton && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
+              <LargeAppListItem
+                appName="キャンパス美化"
+                color="#03D743"
+                test={props}
+                jumpPage="CleanMainView"
+                iconName="page-copy"
+                item={() => (
+                  <>
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={24}
+                      color="#03D743"
+                    />
+                  </>
+                )}
+              />
+            </View>
+          )}
           <View style={styles.appListFlex}>
             <AppList
               appName="駐輪場"
