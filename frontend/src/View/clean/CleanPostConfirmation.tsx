@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   Image,
   Alert,
@@ -53,12 +52,12 @@ export default function CleanPostConfirmation() {
         if (user) {
           const { data, error } = await supabase
             .from("users")
-            .select("name")
+            .select("nickname")
             .eq("id", user.id)
             .single();
           if (error) throw error;
-          if (data?.name) {
-            setName(data.name);
+          if (data?.nickname) {
+            setName(data.nickname);
           }
         }
       } catch (error) {

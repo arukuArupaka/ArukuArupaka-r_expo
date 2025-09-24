@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+// @ts-ignore: Expo に同梱のため型定義がなくても実行時には存在します
 import { FontAwesome } from "@expo/vector-icons";
 import { supabase } from "../lib/supabase";
 import EditPostComment from "./EditPostComment";
@@ -312,7 +313,6 @@ const PostDetailCard = ({ post, onClose, userId }) => {
             onCommentUpdated={handleCommentUpdated}
           />
         )}
-
       </Pressable>
     </TouchableWithoutFeedback>
   );

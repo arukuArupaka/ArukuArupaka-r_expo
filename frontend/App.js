@@ -58,6 +58,7 @@ import CleanMainView from "./src/View/clean/CleanMainView";
 import CleanPostView from "./src/View/clean/CleanPostView";
 import CleanMyPage from "./src/View/clean/CleanMyPage";
 import CleanPostConfirmation from "./src/View/clean/CleanPostConfirmation";
+import CleanHowToView from "./src/View/clean/CleanHowToView";
 import {
   useFonts,
   ZenMaruGothic_400Regular,

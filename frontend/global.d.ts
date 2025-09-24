@@ -1,7 +1,7 @@
 // global.d.ts
-import 'react-native';
+import "react-native";
 
-declare module 'react-native' {
+declare module "react-native" {
   interface ViewProps {
     className?: string;
   }
@@ -13,3 +13,5 @@ declare module 'react-native' {
   }
   // 他のコンポーネントも同様に定義できます
 }
+
+declare module "@expo/vector-icons";
