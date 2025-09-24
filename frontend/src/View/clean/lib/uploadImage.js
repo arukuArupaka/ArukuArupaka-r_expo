@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 // use legacy API to keep getInfoAsync and other legacy helpers available
-import * as FileSystem from "expo-file-system/legacy";
+import * as FileSystem from "expo-file-system";
 import { Platform } from "react-native";
 
 // デバッグ用ログを一括制御（必要になったら true）
