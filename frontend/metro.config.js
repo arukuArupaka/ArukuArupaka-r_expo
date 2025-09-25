@@ -1,28 +1,16 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+// metro.config.js
+const { getDefaultConfig } = require("expo/metro-config");
 
-const defaultConfig = getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname);
 
-const {
-  resolver: { sourceExts, assetExts },
-} = defaultConfig;
+// ★ serializer まわりは触らない
+// SVG を使う場合だけ transformer / resolver を調整
+config.transformer.babelTransformerPath = require.resolve(
+  "react-native-svg-transformer"
+);
+config.resolver.assetExts = config.resolver.assetExts.filter(
+  (ext) => ext !== "svg"
+);
+config.resolver.sourceExts = [...config.resolver.sourceExts, "svg", "cjs"]; // cjsが必要なら残す
 
-const config = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-    // SVG を使わないならこの行は削除してOK
-    babelTransformerPath: require.resolve('react-native-svg-transformer'),
-  },
-  resolver: {
-    // SVG を画像として読み込めるようにする設定（不要なら削除OK）
-    assetExts: assetExts.filter(ext => ext !== 'svg'),
-    sourceExts: [...sourceExts, 'svg', 'cjs'],
-    unstable_enablePackageExports: false,
-  },
-};
-
-module.exports = mergeConfig(defaultConfig, config);
+module.exports = config;
