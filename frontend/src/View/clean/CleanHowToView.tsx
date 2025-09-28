@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 // @ts-ignore: 型定義がなくても実体は Expo に同梱されているため問題ありません
 import { FontAwesome } from "@expo/vector-icons";
 const CleanHowToSample = require("../../../assets/CleanHowToSample.png");
@@ -8,7 +8,7 @@ const broomBlue = require("./assets/image/broom-blue.png");
 const broomGreen = require("./assets/image/broom-green.png");
 const CleanHowToView = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* タイトル・説明 */}
       <View style={styles.content}>
         <Text style={styles.title}>
@@ -69,7 +69,7 @@ const CleanHowToView = () => {
           投稿してくれた人にはご褒美があるかも…
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
