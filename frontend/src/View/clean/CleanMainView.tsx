@@ -87,7 +87,7 @@ const CleanMainView = () => {
             left: "50%",
             marginLeft: -23,
             marginTop: -45,
-            zIndex: 100,
+            zIndex: 10,
           }}
         >
           <NewPostMarker markerLocation={markerLocation} />

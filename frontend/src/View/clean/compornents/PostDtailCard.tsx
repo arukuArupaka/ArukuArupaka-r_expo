@@ -137,6 +137,7 @@ const PostDetailCard = ({ post, onClose, userId }) => {
           backgroundColor: "rgba(0,0,0,0.5)",
           justifyContent: "center",
           alignItems: "center",
+          zIndex: 100,
         }}
         onPress={onClose}
       >
