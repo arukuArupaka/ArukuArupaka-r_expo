@@ -606,6 +606,56 @@ function App() {
                 }}
               />
               <Stack.Screen
+                name="CleanHowToView"
+                component={CleanHowToView}
+                options={{
+                  headerTitle: () => (
+                    <MaterialIcons
+                      name="cleaning-services"
+                      size={40}
+                      color="black"
+                    />
+                  ),
+                  headerRight:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <TouchableOpacity>
+                            <MaterialIcons
+                              name="question-mark"
+                              size={40}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )
+                      : null,
+                  headerLeft:
+                    Platform.OS === "ios"
+                      ? () => (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => navigationRef.navigate("Home")}
+                            >
+                              <Ionicons
+                                name="chevron-back"
+                                style={{ marginRight: 10 }}
+                                size={30}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      : undefined,
+                  headerStyle: {
+                    backgroundColor: "#8DFFAF", //背景色
+                  },
+                }}
+              />
+              <Stack.Screen
                 name="CleanPostConfirmation"
                 component={CleanPostConfirmation}
                 options={{

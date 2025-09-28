@@ -11,7 +11,6 @@ import { PostButton } from "./compornents/PostButton";
 import NewPostMarker from "./compornents/NewPostMarker";
 import type { MapPressEvent } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
-import { useHeaderHeight } from "@react-navigation/elements";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -39,7 +38,6 @@ const CleanMainView = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigation = useNavigation<any>();
-  const headerHeight = useHeaderHeight();
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
@@ -82,6 +80,18 @@ const CleanMainView = () => {
     <>
       <StatusBar barStyle="dark-content" />
       <View style={{ flex: 1 }}>
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            marginLeft: -23,
+            marginTop: -45,
+            zIndex: 100,
+          }}
+        >
+          <NewPostMarker markerLocation={markerLocation} />
+        </View>
         <RankingHeaderCard period="week" refetchTrigger={refetchToken} />
         <CleanMap
           onSelectPost={handleSelectPost}
@@ -89,7 +99,7 @@ const CleanMainView = () => {
           userId={userId}
           refetchTrigger={refetchToken}
         >
-          {markerLocation && (
+          {/* {markerLocation && (
             <View
               style={{
                 position: "absolute",
@@ -98,11 +108,10 @@ const CleanMainView = () => {
                 marginLeft: -20,
                 marginTop: -40,
               }}
-              pointerEvents="none"
             >
               <NewPostMarker markerLocation={markerLocation} />
             </View>
-          )}
+          )} */}
         </CleanMap>
         <View
           pointerEvents="box-none"
