@@ -50,7 +50,7 @@ export async function GET(request: Request) {
 
   const rows = (data as Post[] | null) ?? []
 
-  const header = ["案件ID", "時間", "場所", "コメント", "メールアドレス", "ステータス"]
+  const header = ["案件ID", "時間", "場所", "コメント", "メールアドレス", "生協会員番号", "氏名", "生年月日", "ステータス"]
   const csvLines = [header.join(",")]
 
   console.log("CSV rows count:", rows.length)
@@ -80,15 +80,39 @@ export async function GET(request: Request) {
     }
   }
 
+  // user_id -> coop_member_number / real_name / birth_date 変換: users テーブルを一括参照
+  const idToCoop: Record<string, string> = {}
+  const idToName: Record<string, string> = {}
+  const idToBirth: Record<string, string> = {}
+  if (uniqueUserIds.length > 0) {
+    const { data: userRows } = await supabaseAdmin
+      .from("users")
+      .select("id, coop_member_number, real_name, birth_date")
+      .in("id", uniqueUserIds)
+
+    ;(userRows ?? []).forEach((u: any) => {
+      if (!u?.id) return
+      idToCoop[u.id] = u.coop_member_number ?? ""
+      idToName[u.id] = u.real_name ?? ""
+      idToBirth[u.id] = u.birth_date ?? ""
+    })
+  }
+
   for (const r of rows) {
     const location = r.building ? (r.place ? `${r.building} ${r.place}` : r.building) : (r.place ?? "")
     const email = r.user_id ? (idToEmail[r.user_id] || r.user_id) : ""
+    const coop_number = r.user_id ? (idToCoop[r.user_id] || "") : ""
+    const real_name = r.user_id ? (idToName[r.user_id] || "") : ""
+    const birth_date = r.user_id ? (idToBirth[r.user_id] || "") : ""
     csvLines.push([
       escapeCsv(r.id),
       escapeCsv(r.created_at),
       escapeCsv(location),
       escapeCsv(r.comment ?? ""),
       escapeCsv(email),
+      escapeCsv(coop_number),
+      escapeCsv(real_name),
+      escapeCsv(birth_date),
       escapeCsv(r.status ?? ""),
     ].join(","))
   }
