@@ -326,7 +326,7 @@ const ProfileScreen = () => {
       />
 
       {/* coop_consent チェックボックス（ニックネームの直下に移動） */}
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -406,7 +406,7 @@ const ProfileScreen = () => {
             normalize={(v) => v.replace(/\s+/g, "")}
           />
         </>
-      )}
+      )} */}
 
       <Text
         style={{
