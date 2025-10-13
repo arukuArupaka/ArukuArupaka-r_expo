@@ -588,7 +588,9 @@ function App() {
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() => navigationRef.navigate("Home")}
+                              onPress={() =>
+                                navigationRef.navigate("CleanMainView")
+                              }
                             >
                               <Ionicons
                                 name="chevron-back"
