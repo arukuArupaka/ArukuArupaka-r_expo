@@ -403,11 +403,12 @@ const HomeView = (props) => {
                 test={props}
                 jumpPage="CleanMainView"
                 iconName="page-copy"
+                subText="🧹あなたの手でキャンパスを綺麗にしよう🧹"
                 item={() => (
                   <>
                     <MaterialIcons
                       name="cleaning-services"
-                      size={24}
+                      size={30}
                       color="#03D743"
                     />
                   </>

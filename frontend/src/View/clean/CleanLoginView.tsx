@@ -382,7 +382,7 @@ export default function CleanLoginView() {
               )}
 
               {/* 生協と連携 ボタン */}
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => setCoopMode((p) => !p)}
                 style={{
                   backgroundColor: coopMode ? "#03A87C" : "#D9D9D9",
@@ -403,7 +403,7 @@ export default function CleanLoginView() {
                     ? "生協連携をやめる"
                     : "生協と連携して報酬を受け取る"}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {coopMode && (
                 <View style={{ marginBottom: 20 }}>
