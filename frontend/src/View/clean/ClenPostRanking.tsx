@@ -28,6 +28,9 @@ export default function CleanPostRanking() {
           >
             クリーンランキング
           </Text>
+          <Text style={{ fontSize: 12, color: "#6A6A6A", marginTop: 4 }}>
+            自分で掃除したものみカウントされます
+          </Text>
         </View>
         <View style={{ width: 48 }} />
       </View>
@@ -166,7 +169,8 @@ function useRanking(period) {
 
         let query: any = supabase
           .from("posts")
-          .select("user_id, created_at, users ( nickname )");
+          .select("user_id, created_at, users ( nickname )")
+          .eq("status", "self");
         for (const f of filters) {
           query = query[f.op](f.col, f.val);
         }
