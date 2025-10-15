@@ -68,7 +68,7 @@ const ProfileScreen = () => {
       const { data: profile, error: profileError } = await supabase
         .from("users")
         .select(
-          "id,nickname,real_name,birth_date,coop_member_number,coop_consent"
+          "id,icon,nickname,real_name,birth_date,coop_member_number,coop_consent"
         )
         .eq("id", user.id)
         .maybeSingle();
@@ -78,28 +78,38 @@ const ProfileScreen = () => {
       }
 
       let iconId = Number((profile as any)?.icon);
-      if (!Number.isInteger(iconId) || iconId < 1 || iconId > 10) {
-        iconId = initialRandomIconIdRef.current;
-      }
-      setSelectedIconId(iconId);
-      setSelectedIcon(getIconSourceById(iconId));
 
-      if (!nicknameDirtyRef.current)
-        setNickname((profile as any)?.nickname ?? "");
-      if (!realNameDirtyRef.current)
-        setRealName((profile as any)?.real_name ?? "");
-      if (!birthDateDirtyRef.current)
-        setBirthDate((profile as any)?.birth_date ?? "");
-      if (!coopNumberDirtyRef.current)
-        setCoopMemberNumber((profile as any)?.coop_member_number ?? "");
-      // coop_consent を反映
-      setCoopConsent(Boolean((profile as any)?.coop_consent));
-    } catch (error) {
-      console.error("プロフィール情報の取得中にエラーが発生：", error);
-    } finally {
-      hasLoadedFromDB.current = true;
-    }
-  }, []);
+      if (!Number.isInteger(iconId) || iconId < 1 || iconId > 10) {
+        // 初回のみ：ランダム決定して即時保存
+        iconId = initialRandomIconIdRef.current;
+        setSelectedIconId(iconId);
+        setSelectedIcon(getIconSourceById(iconId));
+        try {
+          await supabase.from("users").update({ icon: iconId }).eq("id", user.id);
+        } catch (e) {
+          console.error("初回アイコン保存に失敗：", e);
+        }
+      } else {
+     // 以降：保存済みをそのまま表示
+     setSelectedIconId(iconId);
+     setSelectedIcon(getIconSourceById(iconId));
+   }
+
+   if (!nicknameDirtyRef.current)
+     setNickname((profile as any)?.nickname ?? "");
+   if (!realNameDirtyRef.current)
+     setRealName((profile as any)?.real_name ?? "");
+   if (!birthDateDirtyRef.current)
+     setBirthDate((profile as any)?.birth_date ?? "");
+   if (!coopNumberDirtyRef.current)
+     setCoopMemberNumber((profile as any)?.coop_member_number ?? "");
+   setCoopConsent(Boolean((profile as any)?.coop_consent));
+ } catch (error) {
+   console.error("プロフィール情報の取得中にエラーが発生：", error);
+ } finally {
+   hasLoadedFromDB.current = true;
+ }
+}, []);
 
   // 画面離脱時などに一括で保存するためのまとめ関数
   const saveAll = useCallback(async () => {
@@ -146,24 +156,29 @@ const ProfileScreen = () => {
     [userId, coopConsent]
   );
 
-  const saveIcon = async (iconIdArg?: number) => {
+  const saveIcon = useCallback(async (iconIdArg?: number) => {
     try {
       if (!userId) return; // 自分の行だけ更新
       const idToSave = iconIdArg ?? selectedIconId;
       if (!Number.isInteger(idToSave) || idToSave < 1 || idToSave > 10) return;
 
-      const { error } = await supabase
+      // 更新結果を返させて検証
+      const { data, error } = await supabase
         .from("users")
         .update({ icon: idToSave })
-        .eq("id", userId);
+        .eq("id", userId)
+        .select("id")
+        .maybeSingle();
 
       if (error) {
         console.error("アイコンの保存に失敗：", error);
+      } else if (!data) {
+        console.warn("ユーザー行が存在せず更新0件でした（必要なら upsert を検討）");
       }
     } catch (e) {
       console.error("アイコン保存中に予期せぬエラー：", e);
     }
-  };
+  }, [userId, selectedIconId]);
 
   const saveAllWithIcon = useCallback(async () => {
     await Promise.all([saveAll(), (async () => await saveIcon())()]);
@@ -229,8 +244,9 @@ const ProfileScreen = () => {
     fetchMyPosts();
   }, [fetchMyPosts]);
 
-  const handleOverlayPress = async () => {
-    await saveIcon();
+ 
+  // 外側タップ時は保存せず閉じるのみ
+  const handleOverlayPress = () => {
     setModalVisible(false);
   };
 
@@ -297,14 +313,18 @@ const ProfileScreen = () => {
               }}
             >
               {iconIds.map((id) => (
-                <TouchableOpacity
-                  key={id}
-                  onPress={async () => {
-                    setSelectedIcon(getIconSourceById(id));
-                    setSelectedIconId(id);
-                    await saveIcon(id);
-                  }}
-                >
+               <TouchableOpacity
+               key={id}
+               onPress={async () => {
+                 // 先にUI反映
+                 setSelectedIcon(getIconSourceById(id));
+                 setSelectedIconId(id);
+                 // DB保存
+                 await saveIcon(id);
+                 // モーダルを閉じる（外側のonPressは何もしない）
+                 setModalVisible(false);
+               }}
+             >
                   <IconById id={id} size={50} style={{ margin: 5 }} />
                 </TouchableOpacity>
               ))}
