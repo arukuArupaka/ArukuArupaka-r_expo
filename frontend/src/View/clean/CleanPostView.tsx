@@ -310,7 +310,7 @@ export default function PostScreen() {
               </View>
 
               {/* 報酬表示 */}
-              <View style={{ marginTop: 8, alignItems: "center" }}>
+              {/* <View style={{ marginTop: 8, alignItems: "center" }}>
                 <Text style={{ fontSize: 13, color: "#4C4C4C" }}>
                   獲得ポイント:{" "}
                   <Text
@@ -323,7 +323,7 @@ export default function PostScreen() {
                   </Text>{" "}
                   pt
                 </Text>
-              </View>
+              </View> */}
             </View>
 
             {/* 建物 */}
