@@ -154,7 +154,7 @@ export default function RankingHeaderCard({
         style={{
           color: "black",
           fontFamily: "ZenMaruGothicBold",
-          fontSize: 13,
+          fontSize: 12,
         }}
       >
         自分の投稿：{count}件
@@ -163,7 +163,7 @@ export default function RankingHeaderCard({
         style={{
           color: "black",
           fontFamily: "ZenMaruGothicBold",
-          fontSize: 13,
+          fontSize: 12,
         }}
       >
         ランキング：{rankLabel}
