@@ -2,5 +2,10 @@
   "devDependencies": {
     "eslint": "^9.35.0",
     "patch-package": "^8.0.0"
+  },
+  "scripts": {
+    "env:sync": "node -e \"const fs=require('fs');const path=require('path');const appDir=path.join(__dirname,'frontend');const envPath=path.join(appDir,'.env_server');const appJsonPath=path.join(appDir,'app.json');if(!fs.existsSync(envPath)){console.error('[env:sync] .env_server not found');process.exit(1);}if(!fs.existsSync(appJsonPath)){console.error('[env:sync] app.json not found');process.exit(1);}const raw=fs.readFileSync(envPath,'utf8');const env=Object.fromEntries(raw.split(/\\r?\\n/).filter(l=>l&&!/^(#|;)/.test(l)).map(l=>{const i=l.indexOf('=');if(i<0)return null;return [l.slice(0,i).trim(),l.slice(i+1).trim()];}).filter(Boolean));const j=JSON.parse(fs.readFileSync(appJsonPath,'utf8'));j.expo=j.expo||{};j.expo.extra=j.expo.extra||{};j.expo.extra.APP_ENV=env.APP_ENV||'development';j.expo.extra.SUPABASE_URL=env.SUPABASE_URL||'';j.expo.extra.SUPABASE_ANON_KEY=env.SUPABASE_ANON_KEY||'';fs.writeFileSync(appJsonPath,JSON.stringify(j,null,2));console.log('[env:sync] synced to frontend/app.json');\"",
+    "prestart": "npm run env:sync",
+    "prebuild": "npm run env:sync"
   }
 }
