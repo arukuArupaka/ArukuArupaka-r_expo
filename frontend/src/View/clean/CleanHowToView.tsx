@@ -4,8 +4,9 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 const CleanHowToSample = require("../../../assets/CleanHowToSample.png");
 const broomRed = require("./assets/image/broom-red.png");
-const broomBlue = require("./assets/image/broom-blue.png");
 const broomGreen = require("./assets/image/broom-green.png");
+import { NewPostMarkerIcon } from "./compornents/NewPostMarker"; // 追加
+
 const CleanHowToView = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -58,7 +59,8 @@ const CleanHowToView = () => {
               <Text style={styles.pinLabel}>掃除完了</Text>
             </View>
             <View style={styles.pinItem}>
-              <Image source={broomBlue} style={styles.pinImage} />
+              {/* 青ほうきの代わりに NewPostMarkerIcon を表示 */}
+              <NewPostMarkerIcon size={28} />
               <Text style={styles.pinLabel}>自分の投稿</Text>
             </View>
           </View>

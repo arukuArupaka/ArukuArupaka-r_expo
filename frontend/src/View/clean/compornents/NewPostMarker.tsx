@@ -17,4 +17,10 @@ export const NewPostMarker = ({ markerLocation }) => {
     </>
   );
 };
+
+// MapViewの外でも使えるシンプルなアイコン（HowTo画面等で利用）
+export const NewPostMarkerIcon = ({ size = 28, color = "blue", style }: { size?: number; color?: string; style?: any }) => (
+  <MaterialCommunityIcons name="target" size={size} color={color} style={style} />
+);
+
 export default NewPostMarker;
