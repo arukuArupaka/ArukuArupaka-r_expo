@@ -4,8 +4,9 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 const CleanHowToSample = require("../../../assets/CleanHowToSample.png");
 const broomRed = require("./assets/image/broom-red.png");
-const broomBlue = require("./assets/image/broom-blue.png");
 const broomGreen = require("./assets/image/broom-green.png");
+import { NewPostMarkerIcon } from "./compornents/NewPostMarker"; // 追加
+
 const CleanHowToView = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -19,12 +20,11 @@ const CleanHowToView = () => {
           という場所を見つけたら{"\n"}
           アプリ上の地図に掃除マークを置いて、{"\n"}
           コメントと一緒に投稿できる機能です🧹{"\n"}
-          {"\n"}
-          {"\n"}🧹使い方はとってもカンタン！
+          {"\n"}🎯使い方はとってもカンタン！
         </Text>
         {/* 使い方 */}
         <Text style={styles.usageStep}>1. 汚れている場所を見つける</Text>
-        <Text style={styles.usageStep}>2. 地図上に掃除マークを置く</Text>
+        <Text style={styles.usageStep}>2. そこに🎯マークを合わせる</Text>
         <Text style={styles.usageStep}>3. コメントを添えて投稿！</Text>
         {/* 地図イメージ＋説明 */}
         <View style={styles.mapContainer}>
@@ -41,7 +41,7 @@ const CleanHowToView = () => {
           />
           <View style={styles.tapTextBox}>
             <Text style={styles.tapText}>
-              タップで{"\n"}掃除マークを置こう！
+            汚れている場所に{"\n"}🎯マークを合わせよう！
             </Text>
           </View>
         </View>
@@ -58,13 +58,12 @@ const CleanHowToView = () => {
               <Text style={styles.pinLabel}>掃除完了</Text>
             </View>
             <View style={styles.pinItem}>
-              <Image source={broomBlue} style={styles.pinImage} />
+              <NewPostMarkerIcon size={28} />
               <Text style={styles.pinLabel}>自分の投稿</Text>
             </View>
           </View>
         </View>
 
-        {/* 補足文 */}
         <Text style={styles.additionalText}>
           投稿してくれた人にはご褒美があるかも…
         </Text>
@@ -98,39 +97,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "ZenMaruGothicBold",
     color: "black",
-    marginBottom: 20,
-    marginLeft: 60,
+    marginBottom: 10,
+    marginLeft: 40,
     alignSelf: "flex-start",
   },
   mapContainer: {
     width: "100%",
-    alignItems: "center",
-    marginLeft: 5,
+  alignItems: "center",
+  flexDirection: "row",
+  justifyContent: "center",
   },
   mapImage: {
-    width: 240,
+    width: 150,
     height: 150,
-    borderRadius: 30,
-    alignSelf: "flex-start",
-    shadowColor: "#000",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.2,
+  alignSelf: "flex-start",
   },
   handIcon: {
     position: "absolute",
-    right: "35%",
-    top: "40%",
+    left: "45%", 
+    top: "45%",
   },
   tapTextBox: {
-    position: "absolute",
-    right: "5%",
-    top: "40%",
+    flexShrink: 1,
+  marginLeft: 25,
   },
   tapText: {
     fontSize: 13,
-    fontFamily: "ZenMaruGothicBold",
-    color: "#222",
-    textAlign: "center",
+  fontFamily: "ZenMaruGothicBold",
+  color: "#222",
+  textAlign: "left"
   },
   pinContainer: {
     width: "100%",
@@ -168,7 +163,7 @@ const styles = StyleSheet.create({
     color: "#949494",
     fontFamily: "ZenMaruGothicBold",
     fontSize: 16,
-    marginTop: 25,
+    marginTop: 10,
     marginRight: 10,
     alignSelf: "flex-end",
   },
