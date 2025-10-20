@@ -18,12 +18,14 @@ interface HeaderProps {
   onCSVClick: () => void;
   onUsersClick: () => void;
   onPinsClick: () => void;
+  onSelfResolveClick: () => void; // ← 追加
   resolvedCount: number;
   activeCount: number;
   newCount: number;
   CSVsheet: number;
   totalPins: number;
   userCount: number;
+  selfResolvedCount: number; // ← 追加
   currentUserEmail?: string;
 }
 
@@ -35,12 +37,14 @@ export function Header({
   onCSVClick,
   onUsersClick,
   onPinsClick,
+  onSelfResolveClick, // ← 追加
   resolvedCount,
   activeCount,
   newCount,
   CSVsheet,
   totalPins,
   userCount,
+  selfResolvedCount, // ← 追加
   currentUserEmail,
 }: HeaderProps) {
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
@@ -154,6 +158,14 @@ export function Header({
             </DialogContent>
           </Dialog>
         </div>
+        <StatCard
+          number={selfResolvedCount.toString()}
+          label="Self Resolve"
+          color="text-purple-500"
+          subtitle="自身で解決"
+          onClick={onSelfResolveClick}
+          clickable
+        />
       </div>
     </header>
   );
