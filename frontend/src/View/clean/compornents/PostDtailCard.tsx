@@ -13,7 +13,20 @@ import { FontAwesome } from "@expo/vector-icons";
 import { supabase } from "../lib/supabase";
 import EditPostComment from "./EditPostComment";
 
-const PostDetailCard = ({ post, onClose, userId }) => {
+const PostDetailCard = ({ post, onClose, userId, isVisible }) => {
+  // 投稿データの再取得
+  const fetchPost = async () => {
+    if (!post?.id) return;
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("id", post.id)
+      .maybeSingle();
+    if (!error && data) {
+      setPost(data);
+      setLikeCount(data.good_count || 0);
+    }
+  };
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.good_count || 0);
   const [pending, setPending] = useState(false);
@@ -39,12 +52,14 @@ const PostDetailCard = ({ post, onClose, userId }) => {
     setLiked(!!data);
   };
 
-  // 初期ロード（post変更時にも）
+  // カードが開かれるたびに投稿データといいね状態を取得
   useEffect(() => {
-    fetchLikeStatus();
-    //fetchLikeCount();
+    if (isVisible) {
+      fetchPost();
+      fetchLikeStatus();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post?.id, userId]);
+  }, [isVisible, post?.id, userId]);
 
   // いいね押下時（楽観的UI＋失敗時ロールバック＋最後にサーバー値へ同期）
   const handleLike = async () => {
@@ -71,10 +86,15 @@ const PostDetailCard = ({ post, onClose, userId }) => {
           .delete()
           .eq("user_id", userId)
           .eq("post_id", post.id);
-
         if (error) throw error;
+
+        // postsテーブルのgood_countをデクリメント
+        const { error: updateError } = await supabase
+          .from("posts")
+          .update({ good_count: Math.max(0, likeCount - 1) })
+          .eq("id", post.id);
+        if (updateError) throw updateError;
       } else {
-        // いいね追加（先にUI更新）
         setLiked(true);
         setLikeCount((c) => c + 1);
 
@@ -82,11 +102,14 @@ const PostDetailCard = ({ post, onClose, userId }) => {
           user_id: userId,
           post_id: post.id,
         });
-        // もし複合ユニーク制約(user_id, post_id)があるなら
-        // upsertにしてignoreDuplicatesでもOK
-        // .upsert({ user_id: userId, post_id: post.id }, { onConflict: "user_id,post_id", ignoreDuplicates: true })
-
         if (error) throw error;
+
+        // postsテーブルのgood_countをインクリメント
+        const { error: updateError } = await supabase
+          .from("posts")
+          .update({ good_count: likeCount + 1 })
+          .eq("id", post.id);
+        if (updateError) throw updateError;
       }
     } catch (e) {
       // 失敗 → UIを元に戻す＆通知
@@ -95,8 +118,6 @@ const PostDetailCard = ({ post, onClose, userId }) => {
       console.warn("handleLike error:", e?.message || e);
       alert(`いいね処理に失敗しました：${e?.message ?? "Unknown error"}`);
     } finally {
-      // サーバー値で再同期（重複・同時実行でも正確な数になる）
-      //await fetchLikeCount();
       setPending(false);
     }
   };

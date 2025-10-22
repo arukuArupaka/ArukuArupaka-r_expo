@@ -149,6 +149,7 @@ const CleanMainView = () => {
             post={selectedPost}
             userId={userId}
             onClose={() => setSelectedPost(null)}
+            isVisible={!!selectedPost} // 追加
           />
         )}
       </View>
