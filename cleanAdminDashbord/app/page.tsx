@@ -13,6 +13,7 @@ import { ActiveReports } from "@/components/active-reports";
 import { UnresolvedReports } from "@/components/unresolved-reports";
 import { UsersManagement } from "@/components/users-management";
 import { supabase } from "@/lib/supabase";
+import { SelfResolveBox } from "@/components/self-resolve-box"; // ← 追加
 
 export type Post = {
   id: string;
@@ -24,6 +25,7 @@ export type Post = {
   latitude?: number;
   comment?: string;
   image_url?: string;
+  image_url_after?: string; // ← 追加
   request?: boolean;
   complete?: boolean;
   good_count: number;
@@ -44,6 +46,7 @@ export default function AdminDashboard() {
     | "unresolved"
     | "users"
     | "login"
+    | "self-resolve" 
   >("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -156,6 +159,12 @@ export default function AdminDashboard() {
   );
   const activeReports = posts.filter((report) => report.status === "active");
   const unresolvedReports = posts.filter((report) => report.status === "new");
+  const selfResolvedReports = posts.filter(
+    (report) => report.status === "self"
+  );
+
+  // 自己解決のダミー件数を削除
+  // const selfResolvedCount = 2;
 
   const filteredResolvedReports =
     selectedLocation === "全て"
@@ -217,6 +226,7 @@ export default function AdminDashboard() {
   const handleActiveView = () => setCurrentView("active");
   const handleUnresolvedView = () => setCurrentView("unresolved");
   const handleUsersView = () => setCurrentView("users");
+  const handleSelfResolveView = () => setCurrentView("self-resolve"); // ← ハンドラを追加
 
   const DynamicMapView = dynamic(
     () => import("@/components/map-view").then((mod) => mod.MapView),
@@ -305,15 +315,17 @@ export default function AdminDashboard() {
         onCSVClick={handleCSVClick}
         onUsersClick={handleUsersView}
         onPinsClick={handleListView}
+        onSelfResolveClick={handleSelfResolveView}
         resolvedCount={resolvedReports.length}
         activeCount={activeReports.length}
         newCount={unresolvedReports.length}
         CSVsheet={posts.length}
         totalPins={posts.length}
         userCount={userCount}
+        selfResolvedCount={selfResolvedReports.length} // ← 動的な件数に変更
         currentUserEmail={currentUserEmail ?? undefined}
       />
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar
           selectedLocation={selectedLocation}
           onLocationChange={setSelectedLocation}
@@ -321,7 +333,7 @@ export default function AdminDashboard() {
           onListView={handleListView}
           currentView={currentView as unknown as "list" | "detail" | "map"}
         />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4">
           {currentView === "list" && (
             <ReportsList
               reports={filteredReports}
@@ -361,6 +373,9 @@ export default function AdminDashboard() {
           )}
           {currentView === "users" && (
             <UsersManagement onBack={handleListView} />
+          )}
+          {currentView === "self-resolve" && (
+            <SelfResolveBox reports={selfResolvedReports} /> // ← フィルタリングしたデータを渡す
           )}
         </main>
       </div>
